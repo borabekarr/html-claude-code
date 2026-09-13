@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Components" name="Blur Carousel" subtitle="Cover-flow carousel · center item sharp, side items scale, fade & soft-blur as you scroll" viewport="900x760" -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blur Carousel — scroll-driven cover flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ---------------- Stage ---------------- */
+  .stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    background: radial-gradient(1100px 760px at 50% 18%, #0d1526 0%, #020617 72%);
+    transition: background 0.45s ease;
+  }
+  .stage.light {
+    background: radial-gradient(1000px 720px at 50% 22%, #eef2f8 0%, #cdd6e3 72%);
+  }
+
+  /* heading above the carousel */
+  .lede {
+    text-align: center;
+    color: #fff;
+    transition: color 0.45s ease;
+  }
+  .stage.light .lede { color: #0F172A; }
+  .lede .eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 9px;
+  }
+  .lede h1 {
+    font-size: 27px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  /* ---------------- Carousel ---------------- */
+  .carousel {
+    --accent: #10B981;
+    --side-scale: 0.82;
+    --side-opacity: 0.46;
+    --max-blur: 9px;
+    position: relative;
+    width: min(760px, 100%);
+  }
+
+  /* edge fade so cards melt into the stage at the rim */
+  .carousel::before,
+  .carousel::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 70px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .carousel::before { left: 0;  background: linear-gradient(to right, rgba(2,6,23,0.7), transparent); }
+  .carousel::after  { right: 0; background: linear-gradient(to left,  rgba(2,6,23,0.7), transparent); }
+  .stage.light .carousel::before { background: linear-gradient(to right, rgba(205,214,227,0.85), transparent); }
+  .stage.light .carousel::after  { background: linear-gradient(to left,  rgba(205,214,227,0.85), transparent); }
+
+  .rail {
+    display: flex;
+    gap: 26px;
+    --gap: 26px;
+    --item-w: 262px;
+    padding: 30px calc(50% - (var(--item-w) / 2));
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .rail::-webkit-scrollbar { width: 0; height: 0; }
+
+  .card {
+    flex: none;
+    width: 262px;
+    height: 364px;
+    scroll-snap-align: center;
+    border-radius: 30px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    will-change: transform, opacity, filter;
+    transform: scale(var(--side-scale));
+    transform-origin: center center;
+    /* shadow scales with focus via the --foc custom prop set per card */
+    box-shadow:
+      0 calc(28px + var(--foc, 0) * 26px) calc(46px + var(--foc, 0) * 40px) calc(-24px) rgba(2,6,23, calc(0.45 + var(--foc, 0) * 0.35)),
+      inset 0 1px 0 rgba(255,255,255,0.35),
+      inset 0 -2px 0 rgba(0,0,0,0.28),
+      inset 0 0 0 1px rgba(255,255,255,0.10);
+  }
+
+  /* gradient face + 7px grid texture (Deha signature) */
+  .card .face {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px),
+      var(--grad);
+    background-size: 22px 22px, 22px 22px, cover;
+    /* the blur lives on the face so the shadow stays crisp */
+    filter: blur(calc(var(--blur, 0) * 1px));
+    transform: scale(1.04); /* hide blur bleed at edges */
+  }
+  .card .face::after {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(120% 90% at 80% 0%, rgba(255,255,255,0.30) 0%, transparent 50%),
+      linear-gradient(to top, rgba(2,6,23,0.55) 0%, transparent 48%);
+  }
+
+  /* dimming veil that deepens as a card moves off-centre */
+  .card .veil {
+    position: absolute; inset: 0;
+    background: rgba(2,6,23,0.5);
+    opacity: calc(1 - var(--foc, 0));
+    transition: opacity 0.05s linear;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .card .inner {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.32);
+    filter: blur(calc(var(--blur, 0) * 0.7px));
+  }
+  .card .badge {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.28);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .card .badge .material-icons { font-size: 14px; }
+  .card .glyph {
+    margin-top: auto;
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,0.20);
+    border: 1px solid rgba(255,255,255,0.28);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .card .glyph .material-icons { font-size: 28px; }
+  .card h3 {
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+    margin-top: 16px;
+  }
+  .card .desc {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.86);
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+  .card .foot {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.22);
+  }
+  .card .foot .val { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; }
+  .card .foot .delta {
+    display: inline-flex; align-items: center; gap: 2px;
+    font-size: 11.5px; font-weight: 800;
+  }
+  .card .foot .delta .material-icons { font-size: 14px; }
+
+  /* ---------------- Dots + caption ---------------- */
+  .below {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: -4px;
+  }
+  .dots { display: flex; align-items: center; gap: 8px; }
+  /* nav row: arrows flank the dots so horizontal paging is easy on desktop */
+  .nav-row { display: flex; align-items: center; gap: 16px; }
+  /* Arrows mirror the "inner card" primitive: white inner surface sitting on a
+     grey external bezel — kept fully round. */
+  .nav-arrow {
+    width: 46px; height: 46px; flex: none; padding: 5px;
+    border: none; border-radius: 9999px; cursor: pointer;
+    background: #D4DCE8;
+    box-shadow: 0 6px 18px -8px rgba(15,23,42,0.30);
+    transition: transform 0.12s cubic-bezier(.22,1,.36,1), opacity 0.18s ease, background 0.4s ease, box-shadow 0.4s ease;
+  }
+  .nav-arrow-inner {
+    width: 100%; height: 100%; position: relative; overflow: hidden;
+    display: grid; place-items: center;
+    border-radius: 9999px;
+    background: #FFFFFF; border: 1px solid #CBD5E1; color: #0F172A;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,0.04);
+    transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .nav-arrow-inner .material-icons { font-size: 22px; position: relative; z-index: 1; }
+  .nav-arrow:hover .nav-arrow-inner { background: #F1F5F9; }
+  .nav-arrow:active { transform: scale(0.9); }
+  .nav-arrow:disabled { opacity: 0.34; cursor: default; }
+  .nav-arrow:disabled:active { transform: none; }
+  /* dark stage: dark inner card on a faint bezel with an external ring */
+  .stage:not(.light) .nav-arrow { background: rgba(255,255,255,0.07); box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 8px 22px -8px rgba(2,6,23,0.7); }
+  .stage:not(.light) .nav-arrow-inner { background: #1E293B; border-color: #334155; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+  .stage:not(.light) .nav-arrow:hover .nav-arrow-inner { background: #273449; }
+
+  /* ── green CTA arrow (shown at the first / last card) with live shimmer ── */
+  .nav-arrow.is-cta { background: #A7F3D0; box-shadow: 0 8px 22px -8px rgba(16,185,129,0.6); }
+  .nav-arrow.is-cta .nav-arrow-inner {
+    background: #10B981; border-color: #10B981; color: #fff;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
+    background-size: 7px 7px;
+    box-shadow: 0 6px 16px -6px rgba(16,185,129,0.7), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.20);
+  }
+  .nav-arrow-inner::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: 0;
+    background: linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.6) 50%, transparent 68%);
+    background-size: 260% 100%; background-repeat: no-repeat;
+    opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+  }
+  .nav-arrow.is-cta .nav-arrow-inner::after { opacity: 1; animation: navShimmer 1.8s linear infinite; }
+  @keyframes navShimmer { 0% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+  @media (prefers-reduced-motion: reduce) { .nav-arrow.is-cta .nav-arrow-inner::after { animation: none; } }
+  .dots .dot {
+    width: 7px; height: 7px;
+    border-radius: 9999px;
+    background: rgba(148,163,184,0.5);
+    transition: width 0.32s cubic-bezier(.4,0,.2,1), background 0.32s ease;
+    cursor: pointer;
+  }
+  .dots .dot.on { width: 26px; background: var(--accent); }
+  .stage.light .dots .dot { background: rgba(100,116,139,0.45); }
+
+  .caption {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.45s ease;
+  }
+  .stage.light .caption { color: rgba(15,23,42,0.5); }
+
+  /* ---------------- Controls (mirrors animated-header-scroll) ---------------- */
+  .controls {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 18px;
+    padding: 12px 20px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.62);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+  }
+  .ctl { display: flex; align-items: center; gap: 8px; }
+  .ctl label { letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700; }
+  .ctl input[type="range"] { width: 82px; accent-color: #10B981; cursor: pointer; }
+  .ctl input[type="color"] {
+    width: 26px; height: 26px; padding: 0;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 7px; background: none; cursor: pointer;
+  }
+  .seg { display: inline-flex; background: rgba(255,255,255,0.1); border-radius: 9px; padding: 3px; gap: 2px; }
+  .seg button {
+    border: none; background: none; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    padding: 4px 11px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .seg button.active { background: #10B981; color: #fff; }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="lede">
+      <div class="eyebrow">Featured</div>
+      <h1>Your workspaces</h1>
+    </div>
+
+    <div class="carousel" id="carousel">
+      <div class="rail" id="rail"></div>
+    </div>
+
+    <div class="below">
+      <div class="nav-row">
+        <button class="nav-arrow" id="prevBtn" aria-label="Previous card"><span class="nav-arrow-inner"><span class="material-icons">chevron_left</span></span></button>
+        <div class="dots" id="dots"></div>
+        <button class="nav-arrow" id="nextBtn" aria-label="Next card"><span class="nav-arrow-inner"><span class="material-icons">chevron_right</span></span></button>
+      </div>
+      <div class="caption" id="caption">Swipe, drag, or use the arrows · center card stays in focus</div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="ctl"><label for="blur">Blur</label><input type="range" id="blur" min="0" max="20" step="0.5" value="9"></div>
+    <div class="ctl"><label for="scale">Side scale</label><input type="range" id="scale" min="0.6" max="1" step="0.01" value="0.82"></div>
+    <div class="ctl"><label for="fade">Side fade</label><input type="range" id="fade" min="0.1" max="1" step="0.02" value="0.46"></div>
+    <div class="ctl">
+      <label>Theme</label>
+      <div class="seg" id="themeSeg">
+        <button class="active" data-theme="dark">Dark</button>
+        <button data-theme="light">Light</button>
+      </div>
+    </div>
+    <div class="ctl"><label for="accent">Accent</label><input type="color" id="accent" value="#10B981"></div>
+  </div>
+
+  <script>
+  (function () {
+    var stage    = document.getElementById('stage');
+    var carousel = document.getElementById('carousel');
+    var rail     = document.getElementById('rail');
+    var dotsWrap = document.getElementById('dots');
+    var caption  = document.getElementById('caption');
+
+    var clamp  = function (v, a, b) { return Math.min(Math.max(v, a), b); };
+    var smooth = function (t) { return t * t * (3 - 2 * t); };
+
+    // ---- Card data ----
+    var cards = [
+      { cat: 'Revenue',  ic: 'payments',      title: 'Revenue\nOverview',  desc: 'Live ARR, expansion & churn in one pane.',  val: '$2.41M', delta: '+12.5%', grad: 'linear-gradient(150deg,#10B981,#0E7C63)' },
+      { cat: 'Pipeline', ic: 'filter_alt',    title: 'Deal\nPipeline',     desc: '8 active deals worth $2.4M in play.',        val: '$2.40M', delta: '+6.2%',  grad: 'linear-gradient(150deg,#6366F1,#3F3FA8)' },
+      { cat: 'Customers',ic: 'groups',        title: 'Customer\nHealth',   desc: '142 accounts scored by usage & risk.',       val: '94 NPS', delta: '+8 pts', grad: 'linear-gradient(150deg,#0EA5E9,#0668A8)' },
+      { cat: 'Forecast', ic: 'insights',      title: 'Quarterly\nForecast',desc: 'Weighted projection to end of Q3.',          val: '$3.1M',  delta: '+14%',   grad: 'linear-gradient(150deg,#8B5CF6,#5B36B0)' },
+      { cat: 'Activity', ic: 'bolt',          title: 'Team\nActivity',     desc: 'Calls, emails & meetings this week.',         val: '1,284',  delta: '+22%',   grad: 'linear-gradient(150deg,#F97316,#B5470C)' },
+      { cat: 'Targets',  ic: 'flag',          title: 'Quota\nAttainment',  desc: 'Reps pacing against quarterly goals.',        val: '87%',    delta: '+5%',    grad: 'linear-gradient(150deg,#EC4899,#A82166)' }
+    ];
+
+    var els = cards.map(function (c, i) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.index = i;
+      card.style.setProperty('--grad', c.grad);
+      var titleHtml = c.title.replace('\n', '<br>');
+      card.innerHTML =
+        '<div class="face"></div>' +
+        '<div class="veil"></div>' +
+        '<div class="inner">' +
+          '<span class="badge"><span class="material-icons">workspaces</span>' + c.cat + '</span>' +
+          '<div class="glyph"><span class="material-icons">' + c.ic + '</span></div>' +
+          '<h3>' + titleHtml + '</h3>' +
+          '<div class="desc">' + c.desc + '</div>' +
+          '<div class="foot"><span class="val">' + c.val + '</span>' +
+            '<span class="delta"><span class="material-icons">trending_up</span>' + c.delta + '</span>' +
+          '</div>' +
+        '</div>';
+      card.addEventListener('click', function () { scrollToIndex(i); });
+      rail.appendChild(card);
+      return card;
+    });
+
+    // ---- Dots ----
+    var dots = cards.map(function (_, i) {
+      var d = document.createElement('span');
+      d.className = 'dot' + (i === 0 ? ' on' : '');
+      d.addEventListener('click', function () { scrollToIndex(i); });
+      dotsWrap.appendChild(d);
+      return d;
+    });
+
+    var activeIndex = 0;
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
+    prevBtn.addEventListener('click', function () { scrollToIndex(clamp(activeIndex - 1, 0, cards.length - 1)); });
+    nextBtn.addEventListener('click', function () { scrollToIndex(clamp(activeIndex + 1, 0, cards.length - 1)); });
+    function syncArrows() {
+      prevBtn.disabled = activeIndex <= 0;
+      nextBtn.disabled = activeIndex >= cards.length - 1;
+      // green-themed shimmering CTA on the actionable arrow at each extreme
+      nextBtn.classList.toggle('is-cta', activeIndex === 0);
+      prevBtn.classList.toggle('is-cta', activeIndex === cards.length - 1);
+    }
+
+    function scrollToIndex(i) {
+      var card = els[i];
+      var target = card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2;
+      rail.scrollTo({ left: target, behavior: 'smooth' });
+    }
+
+    // ---- The cover-flow math: one passive scroll handler ----
+    var sideScale   = 0.82;
+    var sideOpacity = 0.46;
+    var maxBlur     = 9;
+
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var railRect = rail.getBoundingClientRect();
+      var center = railRect.left + railRect.width / 2;
+      var step = els[0].offsetWidth + parseFloat(getComputedStyle(rail).gap || 26);
+
+      var nearest = 0, nearestDist = Infinity;
+
+      els.forEach(function (card, i) {
+        var r = card.getBoundingClientRect();
+        var cardCenter = r.left + r.width / 2;
+        var raw = Math.abs(cardCenter - center) / step;        // 0 at centre, 1 one slot away
+        var t = clamp(raw, 0, 1);
+        var foc = 1 - smooth(t);                                // 1 sharp -> 0 off
+
+        var scale   = sideScale + (1 - sideScale) * foc;
+        var opacity = sideOpacity + (1 - sideOpacity) * foc;
+        var blur    = maxBlur * (1 - foc);
+
+        card.style.transform = 'scale(' + scale.toFixed(4) + ')';
+        card.style.opacity   = opacity.toFixed(4);
+        card.style.setProperty('--foc', foc.toFixed(4));
+        card.style.setProperty('--blur', blur.toFixed(3));
+        card.style.zIndex = Math.round(foc * 100);
+
+        if (raw < nearestDist) { nearestDist = raw; nearest = i; }
+      });
+
+      if (nearest !== activeIndex) {
+        activeIndex = nearest;
+        dots.forEach(function (d, i) { d.classList.toggle('on', i === nearest); });
+        caption.textContent = cards[nearest].cat + ' · ' + (nearest + 1) + ' of ' + cards.length;
+        syncArrows();
+      }
+    }
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    rail.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', update);
+
+    // ---- Drag-to-scroll (desktop affordance) ----
+    var down = false, startX = 0, startScroll = 0, moved = false;
+    rail.addEventListener('pointerdown', function (e) {
+      down = true; moved = false; startX = e.clientX; startScroll = rail.scrollLeft;
+      rail.style.scrollSnapType = 'none';
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 3) moved = true;
+      rail.scrollLeft = startScroll - dx;
+    });
+    window.addEventListener('pointerup', function () {
+      if (!down) return;
+      down = false;
+      rail.style.scrollSnapType = 'x mandatory';
+      if (moved) scrollToIndex(activeIndex);  // settle to nearest
+    });
+
+    // ---- Controls ----
+    document.getElementById('themeSeg').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      this.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      stage.classList.toggle('light', b.dataset.theme === 'light');
+    });
+    document.getElementById('blur').addEventListener('input', function (e) {
+      maxBlur = parseFloat(e.target.value); update();
+    });
+    document.getElementById('scale').addEventListener('input', function (e) {
+      sideScale = parseFloat(e.target.value); update();
+    });
+    document.getElementById('fade').addEventListener('input', function (e) {
+      sideOpacity = parseFloat(e.target.value); update();
+    });
+    document.getElementById('accent').addEventListener('input', function (e) {
+      carousel.style.setProperty('--accent', e.target.value);
+      stage.style.setProperty('--accent', e.target.value);
+    });
+    stage.style.setProperty('--accent', '#10B981');
+
+    update();
+    syncArrows();
+    // ensure first card is centred on load
+    requestAnimationFrame(function () { scrollToIndex(0); requestAnimationFrame(update); });
+  })();
+  </script>
+<script src="../../../preview/_slowmo.js"></script>
+</body>
+</html>

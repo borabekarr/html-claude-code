@@ -1,0 +1,26 @@
+<!-- @dsCard group="Foundations" name="SpacingShadows" subtitle="Shadow token specimens" viewport="700x500" -->
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../_base.css">
+<link rel="stylesheet" href="../../_shared-feedback.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../jsx/_spacing-shadows.css">
+<link rel="stylesheet" href="../../_darkmode.css">
+<style>
+  body { margin: 0; background: #F1F5F9; }
+  html.dark body { background: #0B1220; }
+</style>
+</head>
+<body>
+<div id="spacing-shadows-root"></div>
+<script src="../../_darkmode.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script type="text/babel" src="../jsx/_spacing-shadows.jsx"></script>
+<script type="text/babel" data-presets="react">
+  ReactDOM.createRoot(document.getElementById('spacing-shadows-root')).render(React.createElement(window.SpacingShadows));
+</script>
+</body></html>

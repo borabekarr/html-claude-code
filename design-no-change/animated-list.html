@@ -1,0 +1,300 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Animated List" subtitle="Real-time push feed — items spring in from the top (Stripe Radar style)" viewport="700x720" --><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../../../preview/_base.css">
+<link rel="stylesheet" href="../../../preview/_controls.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  body { background: var(--bg-app); }
+  .material-icons {
+    font-family: 'Material Icons'; font-weight: normal; font-style: normal;
+    line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block;
+    white-space: nowrap; word-wrap: normal; direction: ltr;
+    -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+  .frame {
+    padding: 40px 24px 52px; display: flex; justify-content: center;
+    background-image: radial-gradient(ellipse 80% 55% at 50% 115%, rgba(16,185,129,0.12) 0%, transparent 60%);
+  }
+
+  /* ── Radar surface ────────────────────────────────────────────────── */
+  .radar {
+    --rd-surface: linear-gradient(168deg, #FFFFFF 0%, #F6F8FB 100%);
+    --rd-card:    #FFFFFF;
+    --rd-card-bd: rgba(15,23,42,0.07);
+    --rd-shadow:
+      0 30px 70px -22px rgba(15,23,42,0.34),
+      0 8px 20px -10px rgba(15,23,42,0.16),
+      inset 0 1px 0 rgba(255,255,255,0.95);
+    --rd-cardshadow:
+      inset 0 1px 0 rgba(255,255,255,1),
+      inset 0 -2px 0 rgba(15,23,42,0.05),
+      0 4px 12px -6px rgba(15,23,42,0.14);
+    position: relative; width: 404px; box-sizing: border-box;
+    padding: 24px 22px 22px; border-radius: 36px;
+    background: var(--rd-surface); border: 1px solid rgba(15,23,42,0.05);
+    box-shadow: var(--rd-shadow);
+    font-family: var(--font-display); color: var(--fg1); user-select: none; overflow: hidden;
+  }
+
+  /* header */
+  .rd-top { display: flex; align-items: center; gap: 11px; margin-bottom: 16px; }
+  .rd-ic {
+    width: 38px; height: 38px; border-radius: 12px; flex: none; display: grid; place-items: center; color: #fff;
+    background-color: #0F172A;
+    background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+    background-size: 7px 7px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -2px 0 rgba(0,0,0,0.35), 0 4px 12px -4px rgba(15,23,42,0.5);
+  }
+  .rd-ic .material-icons { font-size: 20px; }
+  .rd-tt { font-size: 17px; font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+  .rd-sb { font-size: 11.5px; font-weight: 700; color: var(--fg4); margin-top: 4px; }
+  .rd-live {
+    margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px 5px 9px; border-radius: 9999px;
+    font-size: 10.5px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--brand-primary-700); background: var(--brand-primary-50);
+    box-shadow: inset 0 0 0 1px rgba(16,185,129,0.22);
+    transition: opacity 240ms ease, filter 240ms ease;
+  }
+  .rd-live.paused { color: var(--fg4); background: var(--bg-chip); box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06); }
+  .rd-live .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand-primary); box-shadow: 0 0 0 0 rgba(16,185,129,0.5); animation: rd-pulse 1.8s ease-out infinite; }
+  .rd-live.paused .dot { background: var(--fg4); animation: none; }
+  @keyframes rd-pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); } 70% { box-shadow: 0 0 0 7px rgba(16,185,129,0); } 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } }
+
+  /* controls */
+  .rd-ctl { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .rd-ctl .seg { flex: 1; }
+  .rd-ctl .seg.fill { display: flex; }
+  .rd-sw-wrap { display: flex; align-items: center; gap: 8px; flex: none; }
+  .rd-sw-lbl { font-size: 11px; font-weight: 800; color: var(--fg3); letter-spacing: 0.02em; }
+  .rd-sw-wrap .sw-base { transform: scale(0.82); transform-origin: right center; }
+
+  /* feed */
+  .rd-feed { min-height: 336px; }
+
+  /* ── Event card ───────────────────────────────────────────────────── */
+  .ev {
+    display: flex; align-items: center; gap: 12px; padding: 11px 13px 11px 11px;
+    border-radius: 18px; background: var(--rd-card); border: 1px solid var(--rd-card-bd);
+    box-shadow: var(--rd-cardshadow);
+  }
+  .ev-ico {
+    width: 42px; height: 42px; border-radius: 12px; flex: none; display: grid; place-items: center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), inset 0 0 0 1px rgba(15,23,42,0.04);
+  }
+  .ev-ico .material-icons { font-size: 20px; }
+  .ev--low      .ev-ico { background: var(--brand-primary-50);   color: var(--brand-primary-600); }
+  .ev--elevated .ev-ico { background: var(--semantic-warning-bg); color: #B7860B; }
+  .ev--blocked  .ev-ico { background: var(--semantic-danger-bg);  color: var(--semantic-danger); }
+  .ev--review   .ev-ico { background: var(--semantic-hot-bg);     color: var(--semantic-hot); }
+
+  .ev-main { min-width: 0; flex: 1; }
+  .ev-amt-row { display: flex; align-items: baseline; gap: 8px; }
+  .ev-amt { font-size: 15px; font-weight: 900; letter-spacing: -0.02em; color: var(--fg1); font-variant-numeric: tabular-nums; }
+  .ev-meth { font-size: 11.5px; font-weight: 700; color: var(--fg4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-sub { font-size: 11.5px; font-weight: 600; color: var(--fg3); margin-top: 3px; display: flex; align-items: center; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-sub .material-icons { font-size: 13px; color: var(--fg4); }
+
+  .ev-right { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+  .ev-pill {
+    display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 9999px;
+    font-size: 10px; font-weight: 900; letter-spacing: 0.03em; white-space: nowrap;
+  }
+  .ev-pill .material-icons { font-size: 12px; }
+  .ev--low .ev-pill {
+    color: #fff; background: var(--brand-primary);
+    background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+    background-size: 7px 7px;
+    box-shadow: var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .ev--elevated .ev-pill { color: #92660A; background: var(--semantic-warning-bg); box-shadow: inset 0 0 0 1px rgba(234,179,8,0.3); }
+  .ev--blocked  .ev-pill { color: var(--semantic-danger); background: var(--semantic-danger-bg); box-shadow: inset 0 0 0 1px rgba(239,68,68,0.28); }
+  .ev--review   .ev-pill { color: var(--semantic-hot); background: var(--semantic-hot-bg); box-shadow: inset 0 0 0 1px rgba(249,115,22,0.28); }
+  .ev-score { font-size: 10px; font-weight: 800; color: var(--fg4); letter-spacing: 0.04em; font-variant-numeric: tabular-nums; }
+
+  /* ── Dark mode (System A — html.dark) ─────────────────────────────── */
+  html.dark .frame { background-image: radial-gradient(ellipse 80% 55% at 50% 115%, rgba(16,185,129,0.16) 0%, transparent 60%); }
+  html.dark .radar {
+    --rd-surface: linear-gradient(168deg, #1E293B 0%, #172033 100%);
+    --rd-card:    #243449;
+    --rd-card-bd: rgba(255,255,255,0.07);
+    --rd-shadow:
+      0 30px 70px -22px rgba(0,0,0,0.7), 0 8px 20px -10px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    --rd-cardshadow:
+      inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3),
+      0 4px 12px -6px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.06);
+  }
+  html.dark .rd-ic { background-color: #060B16; }
+  html.dark .rd-live { color: var(--brand-primary-300); background: rgba(16,185,129,0.12); }
+  html.dark .rd-live.paused { color: var(--fg4); background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07); }
+  html.dark .ev-ico { box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(255,255,255,0.04); }
+  html.dark .ev--low      .ev-ico { background: rgba(16,185,129,0.16);  color: var(--brand-primary-300); }
+  html.dark .ev--elevated .ev-ico { background: rgba(234,179,8,0.16);  color: #FACC15; }
+  html.dark .ev--blocked  .ev-ico { background: rgba(239,68,68,0.16);  color: #F87171; }
+  html.dark .ev--review   .ev-ico { background: rgba(249,115,22,0.16); color: #FB923C; }
+  html.dark .ev--elevated .ev-pill { color: #FDE68A; background: rgba(234,179,8,0.16); box-shadow: inset 0 0 0 1px rgba(234,179,8,0.3); }
+  html.dark .ev--blocked  .ev-pill { color: #FCA5A5; background: rgba(239,68,68,0.16); box-shadow: inset 0 0 0 1px rgba(239,68,68,0.32); }
+  html.dark .ev--review   .ev-pill { color: #FDBA74; background: rgba(249,115,22,0.16); box-shadow: inset 0 0 0 1px rgba(249,115,22,0.32); }
+
+  @media (max-width: 470px) {
+    .frame { padding: 22px 12px 34px; }
+    .radar { width: 100%; max-width: 404px; }
+  }
+</style>
+<link rel="stylesheet" href="../../../preview/_darkmode.css">
+</head><body><div class="card" style="padding:0; background:var(--bg-app);">
+  <div class="frame">
+    <div class="shell" style="border-radius:44px; padding:8px;">
+      <section class="radar" data-screen-label="Animated List" aria-label="Payments radar feed">
+        <div class="rd-top">
+          <span class="rd-ic"><span class="material-icons">radar</span></span>
+          <div>
+            <div class="rd-tt">Payments Radar</div>
+            <div class="rd-sb">Live risk scoring</div>
+          </div>
+          <span class="rd-live" id="liveBadge"><span class="dot"></span>Live</span>
+        </div>
+        <div id="root"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="../jsx/AnimatedList.jsx"></script>
+<script type="text/babel">
+/* =========================================================================
+   Demo — Payments Radar live feed built on <AnimatedList>.
+   New transactions are prepended (index 0) every ~2.1s; the list caps at 5
+   rows so the oldest exits. The segmented control switches the enter/exit
+   animation; the toggle pauses the stream.
+   ========================================================================= */
+const { useState, useRef, useEffect, useLayoutEffect, useCallback } = React;
+
+const ANIMS = ['scale', 'slide', 'fade', 'bounce'];
+const LABEL = { scale: 'Scale', slide: 'Slide', fade: 'Fade', bounce: 'Bounce' };
+
+const METHODS = [
+  { meth: 'Visa ···4242',       icon: 'credit_card' },
+  { meth: 'Mastercard ···8801', icon: 'credit_card' },
+  { meth: 'Amex ···1007',       icon: 'credit_card' },
+  { meth: 'Apple Pay',          icon: 'phone_iphone' },
+  { meth: 'PayPal wallet',      icon: 'account_balance_wallet' },
+  { meth: 'SEPA transfer',      icon: 'account_balance' },
+];
+const PLACES = ['Berlin, DE', 'Austin, US', 'Lisbon, PT', 'Toronto, CA', 'Tokyo, JP', 'Lagos, NG', 'Paris, FR', 'São Paulo, BR'];
+const RISK = {
+  low:      { label: 'Low risk', icon: 'verified_user' },
+  elevated: { label: 'Elevated', icon: 'bolt' },
+  review:   { label: 'Review',   icon: 'flag' },
+  blocked:  { label: 'Blocked',  icon: 'block' },
+};
+// weighted risk pool — mostly low, the occasional flag
+const RISK_POOL = ['low','low','low','low','elevated','elevated','review','blocked'];
+
+let _id = 0;
+function makeEvent() {
+  const m = METHODS[(Math.random() * METHODS.length) | 0];
+  const risk = RISK_POOL[(Math.random() * RISK_POOL.length) | 0];
+  const amt = (Math.random() * 880 + 12);
+  const score = risk === 'low' ? (Math.random()*18)|0
+              : risk === 'elevated' ? 42 + ((Math.random()*22)|0)
+              : risk === 'review' ? 60 + ((Math.random()*15)|0)
+              : 82 + ((Math.random()*16)|0);
+  return {
+    id: ++_id,
+    amount: '$' + amt.toFixed(2),
+    meth: m.meth, icon: m.icon,
+    place: PLACES[(Math.random() * PLACES.length) | 0],
+    risk, score: String(score).padStart(2, '0'),
+  };
+}
+function seed(n) { return Array.from({ length: n }, makeEvent).reverse(); }
+
+function renderEvent(it) {
+  const r = RISK[it.risk];
+  return (
+    <div className={'ev ev--' + it.risk}>
+      <span className="ev-ico"><span className="material-icons">{it.icon}</span></span>
+      <div className="ev-main">
+        <div className="ev-amt-row">
+          <span className="ev-amt">{it.amount}</span>
+          <span className="ev-meth">{it.meth}</span>
+        </div>
+        <div className="ev-sub"><span className="material-icons">place</span>{it.place}</div>
+      </div>
+      <div className="ev-right">
+        <span className="ev-pill"><span className="material-icons">{r.icon}</span>{r.label}</span>
+        <span className="ev-score">score {it.score}</span>
+      </div>
+    </div>
+  );
+}
+
+/* React-driven segmented control (sliding pill) — Deha .seg styles, brand accent.
+   Owns its own .active state so it does NOT rely on _controls.js. */
+function SegControl({ options, value, onChange }) {
+  const wrap = useRef(null);
+  const pill = useRef(null);
+  useLayoutEffect(() => {
+    const w = wrap.current; if (!w) return;
+    const btns = w.querySelectorAll('button');
+    const i = options.indexOf(value);
+    const b = btns[i]; if (!b) return;
+    pill.current.style.left = b.offsetLeft + 'px';
+    pill.current.style.width = b.offsetWidth + 'px';
+  }, [value]);
+  return (
+    <div className="seg compact accent fill" ref={wrap}>
+      <span className="seg-pill" ref={pill}></span>
+      {options.map((o) => (
+        <button key={o} className={o === value ? 'active' : ''} onClick={() => onChange(o)}>{LABEL[o]}</button>
+      ))}
+    </div>
+  );
+}
+
+function Radar() {
+  const [items, setItems] = useState(() => seed(5));
+  const [anim, setAnim] = useState('scale');
+  const [live, setLive] = useState(true);
+
+  useEffect(() => {
+    const badge = document.getElementById('liveBadge');
+    if (badge) badge.classList.toggle('paused', !live);
+    if (!live) return;
+    const t = setInterval(() => {
+      setItems((prev) => [makeEvent(), ...prev].slice(0, 5));
+    }, 2100);
+    return () => clearInterval(t);
+  }, [live]);
+
+  return (
+    <React.Fragment>
+      <div className="rd-ctl">
+        <SegControl options={ANIMS} value={anim} onChange={setAnim} />
+        <div className="rd-sw-wrap">
+          <span className="rd-sw-lbl">{live ? 'Live' : 'Paused'}</span>
+          <div className={'sw-base ' + (live ? 'sw-on' : 'sw-off')} role="switch"
+               aria-checked={live} onClick={() => setLive((v) => !v)}></div>
+        </div>
+      </div>
+      <div className="rd-feed">
+        <AnimatedList items={items} renderItem={renderEvent} maxVisible={5} gap={10} animation={anim} />
+      </div>
+    </React.Fragment>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Radar />);
+</script>
+<script src="../../../preview/_darkmode.js"></script>
+</body></html>
