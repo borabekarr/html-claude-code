@@ -1,0 +1,12 @@
+.td-specimen { color: var(--gray-900); }
+.td-word { font-family: 'Montserrat'; line-height: 1; letter-spacing: -0.025em; font-weight: 800; font-size: 56px; }
+.td-meta { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 6px; }
+.td-ladder { display:flex; align-items:baseline; gap: 20px; flex-wrap: wrap; margin-top: 18px; }
+.td-lw { font-family: 'Montserrat'; font-size: 22px; letter-spacing: -0.01em; color: var(--gray-900); line-height: 1; }
+.td-lw small { display:block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--gray-400); margin-top: 4px; text-transform: uppercase; }
+
+/* Dark mode — chrome adapts, type specimens (glyphs) stay */
+html.dark .card { background: var(--gray-800); background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 8%, transparent) 0%, rgba(28,28,28,1) 50%, var(--gray-800) 100%); }
+html.dark .td-meta { color: var(--gray-400); }
+html.dark .td-specimen { color: var(--gray-100); }
+html.dark .td-lw { color: var(--gray-100); }

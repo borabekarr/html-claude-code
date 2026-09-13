@@ -1,0 +1,146 @@
+.cards-outer { background: #FAFAFA; }
+html.dark .cards-outer { background: #0A0A0A !important; }
+
+.cards-frame { padding: 24px; background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 10%, transparent) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); }
+.cards-grid { display:grid; gap: 14px; grid-template-columns: 1fr; }
+/* GLOBAL RULE: every white-background card surface in this project derives its
+   background, border, and radius from the shared card tokens (--card-bg /
+   --card-border / --card-radius) defined in _shared-feedback.css. Do not
+   hard-code white card fills; reference the tokens so light and dark align. */
+.card-inner {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius); padding: var(--pad-card);
+  box-shadow: inset 0 0 0 1px rgba(17,17,17,0.04);
+  font-family: var(--font-display);
+}
+/* useSquircle takes over the corner rendering: real border/box-shadow are
+   dropped in favour of a clip-path silhouette + two ::before/::after rings
+   that trace the same squircle outline (see use-squircle.ts). Elements
+   without data-squircle="on" keep the plain border-radius fallback above.
+   The border/box-shadow reset + ::before/::after ring painting now live in
+   the shared [data-squircle="on"] recipe in _shared-feedback.css; this card
+   only supplies its own padding (padding-box/border-box +1px fix) and the
+   corner-radius binding, since both are component-specific. */
+.card-inner[data-squircle="on"] {
+  padding: calc(var(--pad-card) + 1px);
+  --corner-radius: var(--card-radius);
+}
+
+.concentric-demo-outer {
+  position: relative;
+  background: var(--shell-bg);
+  border-radius: 36px;
+  padding: 8px;
+}
+.concentric-demo-outer[data-squircle="on"] { border-radius: 0; }
+/* Outer shell only wants the corner-radius reset from the shared recipe --
+   the generic border/hairline paint is not wanted on the light-mode outer
+   shell, so it's suppressed here and re-enabled, dark-mode only, further
+   below for the outer's own required hairline. */
+.concentric-demo-outer[data-squircle="on"]::before,
+.concentric-demo-outer[data-squircle="on"]::after {
+  content: none;
+}
+.concentric-demo-inner {
+  border-radius: 28px;
+}
+.card-inner.concentric-demo-inner[data-squircle="on"] {
+  --corner-radius: 28px;
+}
+
+.concentric-demo {
+  position: relative;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out), filter calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  filter: drop-shadow(0 10px 15px rgba(17,17,17,0.12)) drop-shadow(0 2px 4px rgba(17,17,17,0.06));
+}
+.concentric-demo:hover {
+  transform: scale(1.007);
+  filter: drop-shadow(0 16px 25px rgba(17,17,17,0.13)) drop-shadow(0 3px 4.5px rgba(17,17,17,0.07));
+}
+.concentric-demo:active { transform: scale(1.003); }
+.card-accent {
+  background: var(--brand-primary-500); color: var(--brand-on-primary);
+  border-radius: 24px; padding: 18px;
+  box-shadow:
+    0 10px 40px -10px var(--brand-glow),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  position: relative; overflow:hidden;
+  cursor: pointer;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  font-family: var(--font-display);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.card-accent::before {
+  content:''; position:absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+.card-accent:hover {
+  transform: scale(1.007);
+  box-shadow:
+    0 16px 50px -10px color-mix(in srgb, var(--brand-primary-500) 60%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+}
+.card-accent:active { transform: scale(1.003); }
+:root[data-primary="richgold"] .card-accent { text-shadow: none; }
+/* Squircle conversion (Step 14): the outer glow box-shadow migrates to
+   filter:drop-shadow (clip-path clips box-shadow); inset highlight/shadow
+   stay as box-shadow since insets render inside the clipped box. Ring
+   pseudo-elements are suppressed -- this is a colored brand card, not a
+   bordered card-inner surface. */
+.card-accent[data-squircle="on"] {
+  --corner-radius: 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  filter: drop-shadow(0 10px 40px -10px var(--brand-glow));
+}
+.card-accent[data-squircle="on"]::before,
+.card-accent[data-squircle="on"]::after { content: none; }
+.card-accent[data-squircle="on"]:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  filter: drop-shadow(0 16px 50px -10px color-mix(in srgb, var(--brand-primary-500) 60%, transparent));
+}
+
+.card-name { font-weight:800; font-size:14px; }
+.card-desc { font-size:12px; color:#6B6B6B; line-height:1.45; margin-top:4px; }
+.card-desc-w { color: rgba(255,255,255,0.85); }
+.card-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px; color: #A1A1A1; margin-top: 8px; display:block; }
+.card-tag-w { color: rgba(255,255,255,0.7); }
+:root[data-primary="richgold"] .card-desc-w { color: rgba(17,17,17,0.72); }
+:root[data-primary="richgold"] .card-tag-w { color: rgba(17,17,17,0.60); }
+
+
+/* Dark mode — html.dark convention */
+html.dark .cards-frame { background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 8%, transparent) 0%, #0A0A0A 55%) !important; }
+html.dark .card-inner { box-shadow: inset 0 1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(255,255,255,.04); }
+html.dark .card-inner[data-squircle="on"] { box-shadow: none; }
+/* Canon (corrected): the shared recipe now defaults every squircle surface
+   to line-less in both modes, so the outer shell is the only one that opts
+   into a ring, dark-mode only. The inner demo card needs no suppression
+   rules any more -- it inherits line-less-everywhere from the default. */
+html.dark .concentric-demo-outer[data-squircle="on"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--card-border);
+  clip-path: var(--squircle-border-path);
+}
+html.dark .card-name { color: #F5F5F5; }
+html.dark .card-desc { color: #A1A1A1; }
+html.dark .card-tag { color: #6B6B6B; }
+html.dark .card-accent .card-name { color: #fff; }
+html.dark[data-primary="richgold"] .card-accent .card-name { color: var(--brand-on-primary); }
+html.dark .card-accent .card-desc-w { color: rgba(255,255,255,0.9); }
+html.dark .card-accent .card-tag-w { color: rgba(255,255,255,0.72); }

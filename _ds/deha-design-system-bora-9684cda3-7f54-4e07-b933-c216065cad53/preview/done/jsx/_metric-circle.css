@@ -1,0 +1,107 @@
+body { background: #FAFAFA; }
+.frame {
+  padding: 34px 30px;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+  background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 10%, transparent) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%);
+}
+.hint {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--fg4); display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 2px;
+}
+.hint .material-icons { font-size: 14px; }
+
+/* ── Grey pill bezel (own shell per component) ──────────────────────── */
+.shell.pill-shell { border-radius: 9999px; width: 180px; max-width: 100%; padding: 5px; }
+
+/* ── The capsule ────────────────────────────────────────────────────── */
+.metric-circle {
+  --c0: #0FB57C; --c1: #3DF0A6; --glow: #10E08F;
+  --num: #111111; --label: #A1A1A1; --track: rgba(17,17,17,0.08);
+  position: relative;
+  width: 100%;
+  min-height: 62px;
+  border-radius: 9999px;
+  display: flex; align-items: center; gap: 11px;
+  padding: 0 18px 0 11px;
+  box-sizing: border-box;
+  cursor: default;
+  user-select: none;
+  font-family: var(--font-display);
+  background: linear-gradient(180deg, #FFFFFF 0%, #EDF1F7 100%);
+  border: 1px solid #ECECEC;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -3px 6px rgba(17,17,17,0.05),
+    0 16px 34px -16px rgba(17,17,17,0.24);
+  transition: none;
+}
+
+/* ── Ring ───────────────────────────────────────────────────────────── */
+.ring-wrap { position: relative; width: 40px; height: 40px; flex-shrink: 0; }
+.halo {
+  position: absolute; inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 58%, var(--glow), transparent 62%);
+  opacity: 0.22; filter: blur(10px);
+  pointer-events: none;
+}
+/* NOTE: class is `mc-ring`, NOT `ring`. The bare token `ring` collides with
+   Tailwind's `ring` utility (Tailwind v4 scans source for class tokens and
+   generates `.ring { box-shadow: ... 0 0 0 1px <ring-color> }`). That 1px ring
+   shadow rendered as a dark square around the SVG at high-DPI — the recurring
+   "black square around the radial bar" bug. Keep this namespaced. */
+.mc-ring { position: relative; width: 40px; height: 40px; display: block; overflow: visible; }
+.track { fill: none; stroke: var(--track); stroke-width: 11; }
+.prog {
+  fill: none; stroke-width: 11; stroke-linecap: round;
+  stroke-dasharray: 251.327;
+  /* The ring glow comes ONLY from the blurred .halo sibling (above), not from
+     any SVG/CSS filter on the stroke. Every filter-on-the-stroke approach
+     (CSS drop-shadow+fill-box, then SVG feDropShadow) painted a Chromium
+     black-square filter-region artifact, so the stroke stays filter-free. */
+  transition: stroke-dashoffset calc(var(--duration-700) * var(--anim-mult, 1)) var(--ease-out);
+}
+.s0 { stop-color: var(--c0); transition: stop-color calc(var(--duration-700) * var(--anim-mult, 1)) var(--ease-out); }
+.s1 { stop-color: var(--c1); transition: stop-color calc(var(--duration-700) * var(--anim-mult, 1)) var(--ease-out); }
+
+/* ── Text ───────────────────────────────────────────────────────────── */
+/* Base state is visible; the pop is gated behind .anim (added by JS inside
+   rAF) so throttled/hidden tabs never freeze on the hidden keyframe. */
+.metric-circle.anim .text-block { animation: textPop calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out); }
+@keyframes textPop {
+  0%   { opacity: 0; transform: scale(0.94); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+.num {
+  display: flex; align-items: baseline;
+  font-size: 19px; font-weight: 800; line-height: 1;
+  letter-spacing: -0.025em; color: var(--num);
+  font-variant-numeric: tabular-nums;
+  transform-origin: left center;
+}
+.num .cur { font-size: 15px; font-weight: 800; margin-right: 2px; opacity: 0.92; }
+.num .suf { font-size: 15px; font-weight: 800; margin-left: 1px; }
+.mc-label {
+  font-size: 11px; font-weight: 600; color: var(--label);
+  margin-top: 3px; letter-spacing: 0.005em;
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .metric-circle, .prog, .num, .label, .halo { transition: none !important; }
+  .text-block, .metric-circle.pop, .metric-circle.pop .mc-ring { animation: none !important; }
+}
+
+/* ── Dark mode (System A) — canonical dark surface matching MetricCard/Cards ── */
+html.dark .metric-circle {
+  --num: #FAFAFA; --label: #868D97; --track: rgba(255,255,255,0.06);
+  background: #1C1C1C;
+  border: 1px solid #232323;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 0 0 1px rgba(255,255,255,0.04),
+    0 16px 34px -16px rgba(0,0,0,0.45);
+}
+html.dark .halo { opacity: 0.42; }

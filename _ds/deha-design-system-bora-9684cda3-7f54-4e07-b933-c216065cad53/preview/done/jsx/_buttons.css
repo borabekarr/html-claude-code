@@ -1,0 +1,935 @@
+/* _buttons.css — concatenated from buttons/Buttons.css + delete-button/DeleteButton.css. Refreshed 2026-09-01 (ax-jeru-push Step 4). */
+/* C2 canon: buttons/chips hover unified on the proximity engine (data-proximity
+   already wired on all buttons in Buttons.tsx) instead of a bare translateY lift,
+   at a dialed-down control magnitude (pinned-list --hover-scale-max: 1.010 precedent). */
+.btn-page-root {
+  --hover-scale-max: 1.008;
+  --hover-brightness-max: 1.015;
+}
+.btn-row { display:flex; gap: 12px; align-items:center; flex-wrap: wrap; }
+.btn-row + .btn-row { margin-top: 14px; }
+.btn-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #A1A1A1; display:block; margin-bottom: 6px; }
+
+.btn-primary {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 12px 20px;
+  background: var(--brand-primary-500); color: var(--brand-on-primary);
+  border: none; border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 14px 14px;
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+/* richgold uses dark on-primary text; the dark text-shadow would muddy it */
+:root[data-primary="richgold"] .btn-primary { text-shadow: none; }
+.btn-primary:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 6px 18px -4px var(--brand-glow);
+}
+.btn-primary:active { transform: scale(0.96); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15); }
+
+.btn-inverse {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 12px 20px;
+  background: var(--card-bg); color: var(--brand-primary-500);
+  border: none; border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 0 rgba(17,17,17,0.14);
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-inverse:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 0 rgba(17,17,17,0.14),
+    0 6px 18px -4px rgba(17,17,17,0.18);
+}
+.btn-inverse:active { transform: scale(0.96); box-shadow: inset 0 0 0 1px rgba(17,17,17,0.22), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(17,17,17,0.14); }
+
+.btn-glass {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.8);
+  color: #232323;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 0 rgba(17,17,17,0.12);
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-glass:hover {
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 0 rgba(17,17,17,0.12),
+    0 6px 18px -4px rgba(17,17,17,0.14);
+}
+.btn-glass:active { transform: scale(0.96); background: rgba(255,255,255,0.7); box-shadow: inset 0 0 0 1px rgba(17,17,17,0.22), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(17,17,17,0.12); }
+
+.btn-text {
+  position: relative;
+  background: none; border: none;
+  color: var(--brand-primary-500);
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  display:inline-flex; align-items:center; gap: 4px;
+  padding: 6px 0;
+  cursor: pointer;
+  transition:
+    opacity calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    outline-color var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-text::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-text:hover { opacity: 0.8; box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand-primary-500) 40%, transparent); }
+.btn-text:active { opacity: 0.55; }
+html.dark .btn-text:hover { box-shadow: 0 4px 12px -4px rgba(52,211,153,0.45); }
+
+.btn-mi { font-size: 18px; }
+
+/* Dark mode — html.dark convention */
+html.dark .btn-label { color: #A1A1A1; }
+html.dark .btn-inverse { background: #1C1C1C; color: var(--brand-primary-400); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3); }
+html.dark .btn-inverse:hover { background: var(--fp-hover); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3), 0 6px 18px -4px rgba(0,0,0,0.4); }
+html.dark .btn-glass { background: rgba(28,28,28,.7); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3); }
+html.dark .btn-glass:hover { background: rgba(39,52,73,.85); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3), 0 6px 18px -4px rgba(0,0,0,0.4); }
+html.dark .btn-text { color: var(--brand-primary-400); }
+
+/* ─────────────────────────────────────────────────────────────────
+   New variants (Step 3)
+   Tokens from _shared-feedback.css: --ease-spring, --ease-out,
+   --gap-icon-text, --font-display.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Apply button -- reuses .btn-green (class applied in TSX).
+   Only additive overrides go here. */
+.btn-apply {
+  min-width: 104px;
+  /* Rest width: falls back to `auto` (min-width + content) until the first
+     click, at which point buttons-hook.ts pins the measured pixel width
+     onto this var -- see runApplyBtn. That gives the width transition a
+     concrete number on both ends (compact AND extend), instead of relying
+     on the CSS keyword `auto`, which was true even before this step's
+     duration changes and previously made the extend-back transition snap
+     instantly rather than animate. */
+  width: var(--btn-apply-rest-w, auto);
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+  transform-origin: left center;
+  --color-1: 0 100% 63%;
+  --color-2: 270 100% 63%;
+  --color-3: 210 100% 63%;
+  --color-4: 195 100% 63%;
+  --color-5: 90 100% 63%;
+  /* Base timing-function is the phase-3 (done -> default) set: width/padding
+     use --ease-out here so the extend-back is a monotonic decelerate;
+     background-color/transform use --ease-press-calm (no overshoot -- the
+     old --ease-spring overshoot read as too powerful on click).
+     transition-duration is also overridden per state class below.
+     Order: width, padding, background-color, transform, box-shadow, scale. */
+  /* outline-color/outline-offset appended (7th/8th legs) so the shared
+     focus ring (previously supplied by a separate, fully-replacing
+     :focus-visible rule in _shared-feedback.css) animates on this button
+     too -- this is the winning declaration for .btn-green:focus-visible on
+     /components/buttons, since .btn-apply's own longhand transition
+     outranks .btn-green's shorthand at equal (0,1,0) specificity by load
+     order (Buttons.css loads after _shared-feedback.css). */
+  transition-property: width, padding, background-color, transform, box-shadow, scale, outline-color, outline-offset;
+  transition-timing-function: var(--ease-out), var(--ease-out), var(--ease-press-calm), var(--ease-press-calm), var(--ease-out), var(--ease-linear), var(--focus-ring-ease), var(--focus-ring-ease);
+  /* Resting / phase-3 duration set: width+padding+background-color all
+     revert together over --duration-expand so the return leg reads as one continuous
+     glide instead of the background finishing --duration-instant early and visually
+     decoupling from the still-growing width (the prior snap). */
+  transition-duration:
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-base) * var(--anim-mult, 1)),
+    calc(var(--duration-fast) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1)),
+    var(--focus-ring-duration),
+    var(--focus-ring-duration);
+}
+
+@keyframes btn-rainbow-scroll {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+.btn-apply::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(90deg,
+    hsl(var(--color-1)),
+    hsl(var(--color-5)),
+    hsl(var(--color-3)),
+    hsl(var(--color-4)),
+    hsl(var(--color-2)),
+    hsl(var(--color-1))
+  );
+  background-size: 200% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: btn-rainbow-scroll calc(3s * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative rainbow-scroll loop, no discrete-duration semantics, no token needed */
+  pointer-events: none;
+}
+
+.btn-apply::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 50%;
+  background: linear-gradient(90deg,
+    hsl(var(--color-1)),
+    hsl(var(--color-5)),
+    hsl(var(--color-3)),
+    hsl(var(--color-4)),
+    hsl(var(--color-2))
+  );
+  background-size: 200% 100%;
+  filter: blur(10px);
+  opacity: 0.7;
+  animation: btn-rainbow-scroll calc(3s * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative rainbow-scroll loop, no discrete-duration semantics, no token needed */
+  pointer-events: none;
+}
+
+/* Row 4 — proximity wrapper for the locked DeleteButton. Scoped to
+   .btn-page-root .btn-prox-wrap only; does not touch [data-proximity]::after
+   globally, which would overwrite .btn-apply::after's rainbow underglow. */
+.btn-page-root .btn-prox-wrap { display: inline-flex; align-items: center; position: relative; }
+.btn-page-root .btn-prox-wrap::after {
+  content: ''; position: absolute; inset: 50%;
+  width: max(100%, 40px); height: max(100%, 40px);
+  transform: translate(-50%, -50%); pointer-events: none;
+}
+
+/* Active state scoped to .btn-apply; hover is raised via .btn-page-root below */
+.btn-apply:active { transform: scale(var(--press-card)); }
+
+/* ── Apply state machine — compress-from-right + loading bar ── */
+
+/* Label: always-mounted, morphs out (scale+fade) when loading/done.
+   Split enter/exit timing -- the structural stagger fix: exit is fast and
+   undelayed so it visibly clears the stage first; enter (phase-3, done ->
+   default) is a slower spring delayed to land exactly as the width finishes
+   extending (delay = --duration-expand - --duration-slow = --duration-240),
+   instead of popping in --duration-fast before the button is done widening. */
+.btn-apply .btn-apply-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc((var(--duration-expand) - var(--duration-slow)) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc((var(--duration-expand) - var(--duration-slow)) * var(--anim-mult, 1));
+}
+.btn-apply.is-loading .btn-apply-label,
+.btn-apply.is-done    .btn-apply-label {
+  opacity: 0;
+  transform: scale(0.82);
+  pointer-events: none;
+  /* Exit (phase-1, default -> loading): fast, no delay -- outgoing layer
+     clears before the spinner fades in. */
+  transition:
+    opacity   calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out);
+}
+
+/* Loading: compress to a narrow pill holding the bar.
+   Phase-1 (default -> loading) duration override: width/padding compact
+   over --duration-compact. Re-tuned to the calm no-overshoot vocabulary -- the
+   overshoot curve here read as a click that was too powerful. */
+.btn-apply.is-loading {
+  min-width: unset;
+  width: 72px;
+  padding: 0 10px;
+  transition-timing-function: var(--ease-press-calm), var(--ease-press-calm), var(--ease-press-calm), var(--ease-out), var(--ease-out), var(--ease-linear);
+  transition-duration:
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-sweep) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1));
+}
+
+/* Done: compressed pill turns green.
+   Phase-2 (loading -> done) duration override: background-color sweeps to
+   green over --duration-sweep (up from --duration-slow) so the fill visibly travels instead of
+   snapping; width/padding hold their compact value (no visual change). */
+.btn-apply.is-done {
+  min-width: unset;
+  width: 72px;
+  padding: 0 10px;
+  background: var(--brand-primary-500);
+  color: var(--brand-on-primary);
+  transition-duration:
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-sweep) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1));
+}
+
+/* ── Radial spinner (replaces loading bar) ── */
+/* Spinner: hidden by default -- also the phase-2 exit target (loading ->
+   done), so it fades out fast with no delay. */
+.btn-apply-spinner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.82);
+  pointer-events: none;
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+}
+/* Enter (phase-1, default -> loading): --duration-fast delay so it arrives only
+   after the label has visibly cleared -- the stagger fix. */
+.btn-apply.is-loading .btn-apply-spinner {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+
+.btn-apply-spin-svg {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+
+/* Faint ring track */
+.btn-apply-spin-track {
+  stroke: rgba(255,255,255,0.22);
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* Rotating arc -- ~1/3 of circumference (circ ~69), rotating clockwise */
+.btn-apply-spin-arc {
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 23 46;
+  animation: btn-spin-rotate calc(800ms * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative spin-rotate loop, no token needed */
+  transform-origin: 16px 16px;
+}
+
+@keyframes btn-spin-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Check mark (done state) ──
+   Split enter/exit -- also part of the stagger fix: enter (phase-2,
+   loading -> done) delays --duration-fast behind the spinner's exit and scale-pops
+   in over --duration-slower; exit (phase-3, done -> default) is fast and undelayed
+   so it clears before the label re-enters. */
+.btn-apply-check {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  opacity: 0; transform: scale(0.82);
+  pointer-events: none;
+  transition:
+    opacity   calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out);
+}
+.btn-apply-check-ic {
+  font-size: 22px;
+  font-variation-settings: 'wght' 700, 'FILL' 1, 'GRAD' 0, 'opsz' 24;
+}
+.btn-apply.is-done .btn-apply-check {
+  opacity: 1; transform: scale(1);
+  transition:
+    opacity   calc(var(--duration-slow)   * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+
+/* Bold apply icon */
+.btn-apply-icon {
+  font-size: 16px;
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Dark mode for .btn-apply ── */
+/* White inner in dark; rainbow ::before border is preserved by .btn-green rules */
+html.dark .btn-apply { background: #FFFFFF; color: #111111; }
+html.dark .btn-apply .material-icons,
+html.dark .btn-apply .material-symbols-outlined { color: #111111; }
+
+/* Done state in dark: keep white button, green check glyph */
+html.dark .btn-apply.is-done { background: #FFFFFF; }
+html.dark .btn-apply.is-done .btn-apply-check-ic { color: var(--brand-primary-500); }
+
+/* Discuss button — mirrors .pc-discuss-btn (pipeline-card source) */
+.btn-discuss {
+  position: relative;
+  height: 36px; padding: 0 15px; gap: var(--gap-icon-text, 6px);
+  border-radius: 9999px; cursor: pointer;
+  font-family: var(--font-display); font-size: 12px; font-weight: 800;
+  display: inline-flex; align-items: center;
+  background: transparent; color: var(--r-text, #111111);
+  border: 1.5px solid var(--r-chip-bd, #D4D4D4);
+  transition:
+    border-color calc(var(--duration-base) * var(--anim-mult, 1)),
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-discuss::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-discuss:hover {
+  background: var(--r-btn-hover, var(--hover-standard-bg));
+  border-color: var(--r-btn, #6B6B6B);
+  box-shadow: 0 6px 18px -4px rgba(100,116,139,0.22);
+}
+.btn-discuss:active { transform: scale(var(--press-control)); }
+html.dark .btn-discuss { color: #F5F5F5; border-color: rgba(255,255,255,0.18); }
+html.dark .btn-discuss:hover { background: var(--hover-standard-bg); border-color: rgba(255,255,255,0.35); }
+
+/* Standalone .btn-delete fallback for contexts needing a plain delete CTA. */
+.btn-delete {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 20px; gap: var(--gap-icon-text, 8px);
+  border-radius: 9999px; border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  color: #fff; background: #EF4444;
+  box-shadow:
+    0 12px 30px -10px rgba(239,68,68,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22);
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-slow) * var(--anim-mult, 1));
+}
+.btn-delete:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 10px 26px -6px rgba(239,68,68,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22);
+}
+.btn-delete:active { transform: scale(var(--press-card)); }
+html.dark .btn-delete {
+  background: #DC2626;
+  box-shadow:
+    0 12px 30px -10px rgba(220,38,38,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -2px 0 rgba(0,0,0,0.3);
+}
+
+/* Task footer button — mirrors .tp-foot-btn driven by --fbtn (task-card source).
+   Caller sets --fbtn to the desired solid fill color; defaults to navy. */
+.btn-task {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--gap-icon-text, 6px);
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  color: #fff; background: var(--fbtn, #111111); border: 1px solid var(--fbtn, #111111);
+  padding: 6px 14px; border-radius: 9999px; cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1.5px 0 rgba(0,0,0,0.18),
+    0 0 10px -3px var(--fbtn, #111111);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition:
+    border-color calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    color calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-task:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1.5px 0 rgba(0,0,0,0.18),
+    0 8px 20px -4px var(--fbtn, #111111);
+}
+.btn-task:active { transform: scale(0.98); }
+.btn-task .material-icons { color: #fff; font-size: 16px; }
+
+/* Bold task-alt icon in the specimen row */
+.btn-task-icon {
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CTA button -- accent-colored pill with grid texture + glow.
+   Caller sets --accent (fill) and --ctaglow (shadow color). */
+.btn-cta {
+  position: relative;
+  overflow: hidden;
+  height: 46px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: 'Montserrat';
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px;
+  background-color: var(--accent);
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-size: cover, 14px 14px, 14px 14px;
+  box-shadow:
+    0 8px 22px -8px var(--ctaglow),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.14);
+  transition:
+    filter calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-cta:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    0 10px 28px -6px var(--ctaglow),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+.btn-cta:active { transform: scale(var(--press-control)); }
+
+/* ── Scoped hover overrides for shared pill buttons (.btn-green/.btn-yellow/.btn-red) ──
+   These live in _shared-feedback.css (global) with scale(1.03) hover.
+   .btn-page-root wrapper raises specificity (0,2,0) so these win on the buttons page only,
+   replacing scale with the canonical translateY(-1px) + tinted directional glow. */
+/* transform: none cancels _shared-feedback.css's literal .btn-green/.btn-yellow/
+   .btn-red :hover { transform: scale(1.03) } so the proximity engine's `scale`
+   property (dialed down via .btn-page-root above) is the only hover mechanism. */
+.btn-page-root .btn-green:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px color-mix(in srgb, var(--brand-primary-500) 40%, transparent), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-page-root .btn-yellow:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(245,158,11,0.42), inset 0 1px 0 rgba(255,255,255,0.28);
+}
+.btn-page-root .btn-red:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(239,68,68,0.42), inset 0 1px 0 rgba(255,255,255,0.28);
+}
+html.dark .btn-page-root .btn-green:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(52,211,153,0.45), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+
+/* ── Press companions: hover and press are independent (Bora) — restore the
+   press shrink that the transform:none hover rules above cancel, without
+   touching those rules' own declarations.
+   .btn-green companion excludes .btn-apply: :not(.btn-apply) adds a class to
+   the selector, pushing it to (0,0,5,0), which beats both the light rule at
+   (0,0,3,0) above AND the html.dark rule at (0,0,4,1) — class count (5>4)
+   decides before the element-count tiebreak, so one rule covers both themes.
+   .btn-apply carries the btn-green class too, so it needs its own pair of
+   companions (light + dark) at the card press token, or the excluded green
+   rule above would leave it unpressed in dark, where (0,0,4,1) still beats a
+   plain (0,0,4,0) apply-only companion. */
+.btn-page-root .btn-green:hover:active:not(.btn-apply) { transform: scale(0.96); }
+.btn-page-root .btn-yellow:hover:active { transform: scale(0.96); }
+.btn-page-root .btn-red:hover:active { transform: scale(0.96); }
+.btn-page-root .btn-apply:hover:active { transform: scale(var(--press-card)); }
+html.dark .btn-page-root .btn-apply:hover:active { transform: scale(var(--press-card)); }
+
+/* ── Softened hover for .btn-apply (Apply + Ask Jeru) ──
+   Specificity 0,3,0 + later in file — beats .btn-page-root .btn-green:hover above.
+   .btn-green is NOT redefined globally; these rules are scoped to .btn-page-root .btn-apply. */
+.btn-page-root .btn-apply:hover {
+  box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand-primary-500) 25%, transparent);
+}
+html.dark .btn-page-root .btn-apply:hover {
+  box-shadow: 0 4px 12px -4px rgba(52,211,153,0.28);
+}
+
+/* Rainbow buttons are scale-only under proximity: brightness/drop-shadow would
+   wash the gradient ring + glow. Doubled class beats hover-tokens.css's
+   [data-proximity]x3 (0,4,0 > 0,3,0) regardless of CSS load order. */
+.btn-page-root .btn-apply.btn-apply[data-proximity] { filter: none; }
+
+/* Row 3 (Colorful pills) proximity transition — locked _shared-feedback.css
+   (btn-green L37-51, btn-yellow L57-71, btn-red L77-91) only lists
+   background-color/transform/box-shadow; scale + filter channels added here
+   so hover-tokens.css's --prox mapping doesn't snap. :not(.btn-apply) keeps
+   row 2's Ask Jeru rainbow/scale-only transition untouched. */
+.btn-page-root .btn-green[data-proximity]:not(.btn-apply),
+.btn-page-root .btn-yellow[data-proximity],
+.btn-page-root .btn-red[data-proximity] {
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-press-calm),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    outline-color var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+
+/* ===== delete-button/DeleteButton.css (inlined) ===== */
+/* =========================================================================
+   Delete Button — Deha Design System
+   Byte-preserved from apps/web/design-system/claude-design/raw/delete-button/delete-button.html
+   (the .db* rule set only; the raw file's <body>/#root scaffold is preview
+   chrome, not part of the component, same precedent as other conversions).
+   ========================================================================= */
+
+.db {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: #fff;
+  overflow: hidden;
+  /* Press asymmetry: the transform leg reads its duration from --db-press-dur,
+     which :active swaps to the faster tier. All durations and easings below
+     resolve through motion-tokens.css var(--duration-*)/var(--ease-*) --
+     no raw ms/s literal or hand-written easing curve in this file.
+     motion-sweep step 2: every leg moved to a shorter token in the same
+     easing family -- brisk, not instant. Before -> after (ms):
+     press 180->140 (active 120->100), width 260->200,
+     color/bg/shadow 340->260, odometer roll curve promoted to
+     var(--ease-out) (was a component-local cubic-bezier var). */
+  --db-press-dur: calc(var(--duration-140) * var(--anim-mult, 1));
+  transition:
+    width calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out),
+    background-color calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    color calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    box-shadow calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    transform var(--db-press-dur) var(--ease-out);
+}
+.db:active {
+  --db-press-dur: calc(var(--duration-instant) * var(--anim-mult, 1));
+  transform: scale(0.97);
+}
+/* `done` is a terminal, non-clickable state (onClick ignores it) — do not offer
+   press feedback the machine will not honour. */
+.db[data-state='done'] {
+  cursor: default;
+}
+.db[data-state='done']:active {
+  transform: none;
+}
+.db-inner {
+  display: flex;
+  align-items: center;
+  width: max-content;
+}
+/* Content morph: the icon + text blur out and shrink slightly while the pill
+   re-colours and re-sizes, then the new content blurs back in. No colour-into-
+   background trick (that read as a glow), just a clean focus pull. */
+.db-inner {
+  transition:
+    opacity calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    filter calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out);
+}
+/* will-change only while a morph is actually in flight — a permanent layer
+   promotion on an idle button costs memory for nothing. */
+.db[data-phase='morph'] .db-inner,
+.db[data-phase='in'] .db-inner {
+  will-change: opacity, filter, transform;
+}
+/* MORPH is a hard, untransitioned snap into the hidden entrance pose (new
+   content mounts already blurred/shrunk) -- the label swap tracks the width
+   change directly instead of holding an OUT frame first (F24). */
+.db[data-phase='morph'] .db-inner {
+  opacity: 0;
+  filter: blur(6px);
+  transform: scale(0.82);
+  transition: none;
+}
+.db[data-phase='in'] .db-inner {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+  transition:
+    opacity calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-fade),
+    filter calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-out);
+}
+.db[data-phase='rest'] .db-inner {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-inner {
+    filter: none !important;
+    transform: none !important;
+  }
+  /* The digit roll is already reduced-motion gated; the badge's scale pop was
+     not, so it was the one piece of unrequested motion left under reduce. */
+  .db-count {
+    animation: none;
+  }
+  /* Belt and braces for the same failure mode DeleteButton.tsx guards in JS:
+     with the roll keyframes disabled, an outgoing digit has nothing to move it
+     off the incoming one, so it would sit superimposed. Never show it. */
+  .db-d.up {
+    display: none;
+  }
+}
+
+.db[data-state='idle'] {
+  background: var(--semantic-danger-bg);
+  color: var(--semantic-danger);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(239, 68, 68, 0.3),
+    0 8px 22px -12px rgba(239, 68, 68, 0.45);
+}
+.db[data-state='idle'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+/* Hover is a pointer affordance: gated so touch devices never get the sticky
+   post-tap hover. The 1px lift gives both live states the same "this responds"
+   read; `done` is excluded because it is not clickable. */
+@media (hover: hover) and (pointer: fine) {
+  .db[data-state='idle']:hover {
+    background: #fde6e6;
+    box-shadow:
+      inset 0 0 0 1.5px rgba(239, 68, 68, 0.45),
+      0 10px 26px -12px rgba(239, 68, 68, 0.55);
+  }
+  .db[data-state='idle']:hover,
+  .db[data-state='confirming']:hover {
+    transform: translateY(-1px);
+  }
+  .db[data-state='idle']:active,
+  .db[data-state='confirming']:active {
+    transform: translateY(0) scale(0.97);
+  }
+}
+[data-theme='dark'] .db[data-state='idle'] {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.42);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-theme='dark'] .db[data-state='idle']:hover {
+    background: rgba(239, 68, 68, 0.22);
+    box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.55);
+  }
+}
+
+.db[data-state='confirming'] {
+  background: var(--semantic-danger-bg);
+  color: var(--semantic-danger);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(239, 68, 68, 0.3),
+    0 6px 18px -10px rgba(239, 68, 68, 0.4);
+}
+.db[data-state='confirming'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+[data-theme='dark'] .db[data-state='confirming'] {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.42);
+}
+
+.db[data-state='done'] {
+  background-color: var(--brand-primary);
+  color: #fff;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+  box-shadow:
+    0 12px 28px -10px rgba(16, 185, 129, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+.db[data-state='done'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+[data-theme='dark'] .db[data-state='done'] {
+  box-shadow:
+    0 12px 28px -10px rgba(16, 185, 129, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.db-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.db-text {
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: 0.005em;
+  white-space: pre;
+}
+
+/* countdown — red round badge, white number, outer shadow */
+.db-count {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  /* Sized to sit close to .db-text's 15px (F24: was 34px, read oversized
+     next to the label). */
+  width: 26px;
+  height: 26px;
+  font-size: 15px;
+  border-radius: 50%;
+  background: var(--semantic-danger);
+  color: #fff;
+  font-weight: var(--weight-black);
+  font-variant-numeric: tabular-nums;
+  box-shadow:
+    0 5px 14px -3px rgba(239, 68, 68, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.18);
+  transition:
+    opacity calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade);
+  /* duration-150 + duration-140, delay duration-260 (motion-sweep: shorter than before). */
+  animation: dbPop calc((var(--duration-150) + var(--duration-140)) * var(--anim-mult, 1))
+    var(--ease-out) calc(var(--duration-260) * var(--anim-mult, 1)) backwards;
+}
+@keyframes dbPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* odometer roll — old digit slides up & out, new slides in from below */
+.db-roll {
+  position: relative;
+  display: inline-block;
+  height: 17px;
+  min-width: 12px;
+  overflow: hidden;
+}
+.db-d {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: block;
+  text-align: center;
+  /* Matches .db-text's 15px (F24: was 16px on a 34px badge). */
+  font-size: 15px;
+  line-height: 17px;
+}
+.db-d.cur {
+  position: static;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* duration-260 + duration-150 (motion-sweep: shorter than before). MIRROR: DeleteButton.tsx ROLL_MS
+     (410) times the same --anim-mult, so the JS swap back to the resting
+     digit stays in sync. */
+  .db-d.in {
+    animation: dbRollIn calc((var(--duration-260) + var(--duration-150)) * var(--anim-mult, 1))
+      var(--ease-out);
+  }
+  .db-d.up {
+    animation: dbRollUp calc((var(--duration-260) + var(--duration-150)) * var(--anim-mult, 1))
+      var(--ease-out) forwards;
+  }
+}
+@keyframes dbRollIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dbRollUp {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* ===== proximity-hover fallback tokens + visual mapping (inlined from
+ * src/styles/hover-tokens.css; the mirror does not ship that file).
+ * transform/opacity only per motion checklist -- no filter/brightness/
+ * drop-shadow here, unlike the app's hover-tokens.css original. ===== */
+:root {
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+}
+html.dark {
+  --fp-hover: rgba(255, 255, 255, 0.07);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-proximity] {
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform: scale(calc(1 + var(--prox, 0) * 0.014));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-proximity] { transition: none; transform: none; }
+}
