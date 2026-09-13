@@ -1,0 +1,86 @@
+/* ── AI caveat component CSS — verbatim from components-ai-caveat.html ──── */
+
+.card {
+  padding: 32px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: #FAFAFA;
+  background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 6%, transparent) 0%, #FAFAFA 55%);
+}
+
+/* ── AI message bubble ── */
+.ai-bubble {
+  background: rgba(255,255,255,0.85); backdrop-filter: blur(40px);
+  border: 1px solid #ECECEC;
+  border-radius: 20px;
+  padding: 22px 24px 16px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(17,17,17,0.03),
+    0 2px 12px rgba(17,17,17,0.04);
+}
+.ai-text {
+  font-size: 14px; font-weight: 500; color: #232323;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+.ai-text p + p { margin-top: 14px; }
+
+/* Action row */
+.ai-actions { display: flex; gap: 4px; align-items: center; }
+.ai-action-btn {
+  background: none; border: none; cursor: pointer;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  color: #D4D4D4;
+  transition: background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-140) * var(--anim-mult, 1)), transform calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-out);
+  padding: 0;
+}
+.ai-action-btn:hover { background: var(--fp-hover); color: #6B6B6B; }
+.ai-action-btn:active { transform: scale(var(--press-chip)); }
+.ai-action-btn .material-icons { font-size: 20px; line-height: 1; display: block; }
+
+/* ── Caveat banner ── */
+.ai-caveat {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px;
+  background: rgba(249,115,22,0.04);
+  border: 2px solid #F97316;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(249,115,22,0.06),
+    0 2px 8px rgba(249,115,22,0.06);
+}
+.ai-caveat-icon {
+  font-size: 22px;
+  color: #F97316;
+  flex-shrink: 0;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(249,115,22,0.2));
+}
+.ai-caveat-text {
+  font-size: 14px; font-weight: 700; color: #F97316;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  transition: none;
+}
+.ai-caveat-link {
+  color: #F97316;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1.5px;
+  cursor: pointer;
+  display: inline-block;
+  transition: color calc(var(--duration-150) * var(--anim-mult, 1)), transform calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-out);
+}
+.ai-caveat-link:hover { color: #EA580C; }
+.ai-caveat-link:active { transform: scale(0.95); }
+
+/* ── Component label ── */
+.section-label {
+  font-size: 10px; font-weight: 700; color: #A1A1A1;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: -4px;
+}

@@ -1,0 +1,3842 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<style data-ds="colors_and_type.css">/* =========================================================================
+   Deha Design System — Core tokens
+   Source of truth: uploads/code.html (Tailwind config + inline styles)
+   ========================================================================= */
+
+/* Font loading moved to index.html <link> tags with preconnect + display=swap
+   to eliminate render-blocking @import FOUT and horizontal-layout flash. */
+
+:root {
+  /* ---------- Brand ---------- */
+  --brand-primary:        #10B981;  /* Emerald-500 — the only brand color */
+  --brand-primary-50:     #ECFDF5;
+  --brand-primary-100:    #D1FAE5;
+  --brand-primary-200:    #A7F3D0;
+  --brand-primary-300:    #6EE7B7;
+  --brand-primary-400:    #34D399;
+  --brand-primary-500:    #10B981;
+  --brand-primary-600:    #059669;
+  --brand-primary-700:    #047857;
+  --brand-primary-800:    #065F46;
+  --brand-primary-900:    #064E3B;
+  --brand-glow:           rgba(16,185,129,0.50);
+
+  /* ---------- Extra palettes (Step 8) — raw stops, authored order 1..6 ---------- */
+  --sunflower-1:  oklch(95.6% 0.126 98.7);
+  --sunflower-2:  oklch(91.8% 0.174 96.9);
+  --sunflower-3:  oklch(87.8% 0.222 93.9);
+  --sunflower-4:  oklch(82.6% 0.258 87.8);
+  --sunflower-5:  oklch(78.1% 0.264 79.7);
+  --sunflower-6:  oklch(75.2% 0.258 75.3);
+
+  --bloodymary-1: oklch(41.7% 0.178 18.8);
+  --bloodymary-2: oklch(47.6% 0.198 22.3);
+  --bloodymary-3: oklch(53.2% 0.207 24.9);
+  --bloodymary-4: oklch(58.8% 0.211 26.8);
+  --bloodymary-5: oklch(64.2% 0.210 28.3);
+  --bloodymary-6: oklch(69.5% 0.205 29.5);
+
+  --petalglow-1:  oklch(87.0% 0.072 6.9);
+  --petalglow-2:  oklch(81.2% 0.111 5.7);
+  --petalglow-3:  oklch(75.5% 0.154 6.3);
+  --petalglow-4:  oklch(70.4% 0.196 8.0);
+  --petalglow-5:  oklch(66.7% 0.227 11.0);
+  --petalglow-6:  oklch(64.3% 0.248 14.1);
+
+  --sexyblue-1:   oklch(58.7% 0.254 256.9);
+  --sexyblue-2:   oklch(64.6% 0.213 250.4);
+  --sexyblue-3:   oklch(70.5% 0.173 243.9);
+  --sexyblue-4:   oklch(76.5% 0.132 237.4);
+  --sexyblue-5:   oklch(82.4% 0.091 231.0);
+  --sexyblue-6:   oklch(88.3% 0.051 224.5);
+
+  --richgold-1:   oklch(77.2% 0.185 91.5);
+  --richgold-2:   oklch(80.5% 0.175 93.4);
+  --richgold-3:   oklch(83.9% 0.168 95.3);
+  --richgold-4:   oklch(87.2% 0.152 97.2);
+  --richgold-5:   oklch(90.6% 0.130 99.1);
+  --richgold-6:   oklch(93.9% 0.108 101.0);
+
+  /* ---------- Neutrals (Gray) — Theme Palette Lab, chroma-0 (2026-07-10) ---------- */
+  --gray-50:              #FAFAFA;
+  --gray-100:             #F5F5F5;
+  --gray-200:             #ECECEC;
+  --gray-300:             #D4D4D4;
+  --gray-400:             #A1A1A1;
+  --gray-500:             #6B6B6B;
+  --gray-600:             #4A4A4A;
+  --gray-700:             #232323;
+  --gray-800:             #1C1C1C;
+  --gray-900:             #111111;
+
+  /* --slate-* retained as aliases for existing var(--slate-*) consumers; Step 5 migrates callers to --gray-* */
+  --slate-50:             var(--gray-50);
+  --slate-100:            var(--gray-100);
+  --slate-200:            var(--gray-200);
+  --slate-300:            var(--gray-300);
+  --slate-400:            var(--gray-400);
+  --slate-500:            var(--gray-500);
+  --slate-600:            var(--gray-600);
+  --slate-700:            var(--gray-700);
+  --slate-800:            var(--gray-800);
+  --slate-900:            var(--gray-900);
+
+  /* ---------- Semantic ---------- */
+  --semantic-success:     #10B981;  /* Emerald   — low priority, growth */
+  --semantic-success-bg:  #ECFDF5;
+  --semantic-warning:     #EAB308;  /* Yellow-500 — medium priority */
+  --semantic-warning-bg:  #FEFCE8;
+  --semantic-danger:      #EF4444;  /* Red-500   — high priority, urgent */
+  --semantic-danger-bg:   #FEF2F2;
+  --semantic-hot:         #F97316;  /* Orange-500 — Hot Lead */
+  --semantic-hot-bg:      #FFF7ED;
+
+  /* ---------- Foreground / background tokens ---------- */
+  --bg-app:               #FFFFFF;
+  --bg-app-gradient:      #FFFFFF;  /* App background is FLAT white. Use --bg-section-grid for highlighted sections. */
+  --bg-section-grid:
+    linear-gradient(to right, rgba(17,17,17,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17,17,17,0.035) 1px, transparent 1px);
+  --bg-section-grid-size: 24px 24px;
+  --bg-card:              rgba(255, 255, 255, 0.70);   /* glass-light */
+  --bg-card-solid:        #FFFFFF;
+  --bg-accent:            #10B981;
+  --bg-chip:              #ECECEC;
+  --shell-bg:             #D9D9D9;  /* grey "bezel" behind component surfaces */
+
+  --fg1:                  #0A0A0A;  /* primary text — gray-900 */
+  --fg2:                  #232323;  /* strong body — gray-700 */
+  --fg3:                  #6B6B6B;  /* secondary  — gray-500 */
+  --fg4:                  #A1A1A1;  /* tertiary   — gray-400 */
+  --fg5:                  #C4C4C4;  /* quaternary — gray-300 */
+  --fg-inverse:           #FFFFFF;
+  --fg-brand:             #10B981;
+  --brand-on-primary:     #fff;  /* text color on brand-primary-filled surfaces; themes may remap */
+
+  /* ---------- Borders ---------- */
+  --border-glass:         rgba(255, 255, 255, 0.60);
+  --border-glass-dark:    rgba(255, 255, 255, 0.10);
+  --border-hairline:      #ECECEC;    /* gray-200 */
+  --border-accent:        rgba(255, 255, 255, 0.30);  /* inside emerald cards */
+
+  /* ---------- Radii ---------- */
+  --radius-xs:            6px;
+  --radius-sm:            8px;       /* tiny chips, badges */
+  --radius-md:            12px;
+  --radius-lg:            16px;      /* buttons, inner cards (rounded-2xl) */
+  --radius-xl:            20px;      /* metric cards (rounded-[20px]) */
+  --radius-2xl:           24px;      /* hero / chart cards (rounded-[24px]) */
+  --radius-pill:          16px;     /* "pill" tokens — soft rounded, used for chips/filters/badges */
+  --radius-circle:        9999px;   /* only for circular elements (avatars, dots) */
+  --corner-smoothing:     0.6;      /* Apple/Figma 60% corner smoothing factor; consumed by use-squircle */
+
+  /* ---------- Spacing (4-point) ---------- */
+  --space-0:              0;
+  --space-1:              4px;
+  --space-2:              8px;
+  --space-3:              12px;
+  --space-4:              16px;      /* page padding */
+  --space-5:              20px;
+  --space-6:              24px;      /* card-to-card gap */
+  --space-8:              32px;
+  --space-10:             40px;
+  --space-12:             48px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-glass:
+    0 4px 6px -1px rgba(0,0,0,0.10),
+    0 2px 4px -1px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  --shadow-glass-dark:
+    0 4px 6px -1px rgba(0,0,0,0.50),
+    0 2px 4px -1px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+  --shadow-glass-sm:
+    0 1px 2px 0 rgba(0,0,0,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.40);
+  --shadow-recessed:      inset 0 2px 4px 0 rgba(0,0,0,0.06);
+  --shadow-emerald-glow:  0 10px 40px -10px rgba(16,185,129,0.50);
+  --shadow-emerald-glow-sm: 0 10px 30px -10px rgba(16,185,129,0.50);
+
+  /* ---------- Blur ---------- */
+  --blur-glass:           20px;
+  --blur-strong:          40px;
+
+  /* ---------- Typography ---------- */
+  --font-display:         'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-icon:            'Material Icons';
+  --font-symbol:          'Material Symbols Outlined';
+
+  --weight-medium:        500;
+  --weight-semibold:      600;
+  --weight-bold:          700;
+  --weight-extrabold:     800;
+  --weight-black:         900;
+
+  /* Type scale — derived directly from observed values in code.html */
+  --type-display-1:       36px;   /* metric numerals (e.g. "142") */
+  --type-display-2:       30px;   /* hero numerals (e.g. "0.0%", $1.2M) */
+  --type-h1:              28px;   /* page title */
+  --type-h2:              24px;   /* big chip numbers */
+  --type-h3:              20px;   /* hero card heading */
+  --type-h4:              16px;   /* card heading */
+  --type-h5:              15px;   /* task title */
+  --type-body:            14px;
+  --type-body-sm:         13px;
+  --type-meta:            12px;   /* chip / segmented control */
+  --type-micro:           11px;   /* metric label */
+  --type-mini:            10px;   /* axis labels, sub-meta */
+
+  --leading-none:         1;
+  --leading-tight:        1.15;
+  --leading-snug:         1.35;
+  --leading-relaxed:      1.6;
+
+  --tracking-tight:      -0.02em;
+  --tracking-normal:      0;
+  --tracking-wide:        0.05em;
+  --tracking-wider:       0.10em;
+  --tracking-widest:      0.15em;
+
+  /* Animation speed multiplier. Default 1 (normal). The UI library Slow-Down
+     toggle flips data-anim-slow on the root, scaling every calc()-wrapped
+     duration and delay across the design system. */
+  --anim-mult:            1;
+}
+
+/* Slow-Down toggle: quadruples all calc(<n>ms * var(--anim-mult)) timings. */
+:root[data-anim-slow="true"] { --anim-mult: 4; }
+
+/* =========================================================================
+   Dark mode
+   ========================================================================= */
+:root[data-theme="dark"],
+.dark {
+  --bg-app:               #111111;
+  --bg-app-gradient:      #111111;
+  --bg-section-grid:
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  --bg-card:              rgba(28, 28, 28, 0.70);
+  --bg-card-solid:        #1C1C1C;
+  --bg-chip:              #111111;
+  --shell-bg:             #0A0A0A;
+
+  --fg1:                  #EDEDED;
+  --fg2:                  #D4D4D4;
+  --fg3:                  #A1A1A1;
+  --fg4:                  #6B6B6B;
+  --fg5:                  #525252;
+
+  --border-hairline:      #232323;
+}
+
+/* =========================================================================
+   Primary theme remaps — Theme Palette Lab (Step 8)
+   Attribute-scoped like data-theme; only brand-role tokens overridden.
+   No data-primary attribute (or an unrecognized value) means emerald: the
+   :root defaults above stay exactly as today.
+   ========================================================================= */
+:root[data-primary="sunflower"] {
+  --brand-primary:        var(--sunflower-4);
+  --brand-primary-50:     color-mix(in oklch, var(--sunflower-1), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--sunflower-1), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--sunflower-1), white 35%);
+  --brand-primary-300:    var(--sunflower-2);
+  --brand-primary-400:    var(--sunflower-3);
+  --brand-primary-500:    var(--sunflower-4);
+  --brand-primary-600:    var(--sunflower-5);
+  --brand-primary-700:    var(--sunflower-6);
+  --brand-primary-800:    color-mix(in oklch, var(--sunflower-6), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--sunflower-6), black 35%);
+  --bg-accent:            var(--sunflower-4);
+  --fg-brand:             var(--sunflower-4);
+  --brand-glow:           color-mix(in oklch, var(--sunflower-4), transparent 50%);
+  --brand-on-primary:     #111111;
+}
+
+:root[data-primary="bloodymary"] {
+  --brand-primary:        var(--bloodymary-3);
+  --brand-primary-50:     color-mix(in oklch, var(--bloodymary-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--bloodymary-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--bloodymary-6), white 35%);
+  --brand-primary-300:    var(--bloodymary-5);
+  --brand-primary-400:    var(--bloodymary-4);
+  --brand-primary-500:    var(--bloodymary-3);
+  --brand-primary-600:    var(--bloodymary-2);
+  --brand-primary-700:    var(--bloodymary-1);
+  --brand-primary-800:    color-mix(in oklch, var(--bloodymary-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--bloodymary-1), black 35%);
+  --bg-accent:            var(--bloodymary-3);
+  --fg-brand:             var(--bloodymary-3);
+  --brand-glow:           color-mix(in oklch, var(--bloodymary-3), transparent 50%);
+}
+
+:root[data-primary="petalglow"] {
+  --brand-primary:        var(--petalglow-4);
+  --brand-primary-50:     color-mix(in oklch, var(--petalglow-1), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--petalglow-1), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--petalglow-1), white 35%);
+  --brand-primary-300:    var(--petalglow-2);
+  --brand-primary-400:    var(--petalglow-3);
+  --brand-primary-500:    var(--petalglow-4);
+  --brand-primary-600:    var(--petalglow-5);
+  --brand-primary-700:    var(--petalglow-6);
+  --brand-primary-800:    color-mix(in oklch, var(--petalglow-6), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--petalglow-6), black 35%);
+  --bg-accent:            var(--petalglow-4);
+  --fg-brand:             var(--petalglow-4);
+  --brand-glow:           color-mix(in oklch, var(--petalglow-4), transparent 50%);
+}
+
+:root[data-primary="sexyblue"] {
+  --brand-primary:        var(--sexyblue-3);
+  --brand-primary-50:     color-mix(in oklch, var(--sexyblue-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--sexyblue-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--sexyblue-6), white 35%);
+  --brand-primary-300:    var(--sexyblue-5);
+  --brand-primary-400:    var(--sexyblue-4);
+  --brand-primary-500:    var(--sexyblue-3);
+  --brand-primary-600:    var(--sexyblue-2);
+  --brand-primary-700:    var(--sexyblue-1);
+  --brand-primary-800:    color-mix(in oklch, var(--sexyblue-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--sexyblue-1), black 35%);
+  --bg-accent:            var(--sexyblue-3);
+  --fg-brand:             var(--sexyblue-3);
+  --brand-glow:           color-mix(in oklch, var(--sexyblue-3), transparent 50%);
+}
+
+:root[data-primary="richgold"] {
+  --brand-primary:        var(--richgold-3);
+  --brand-primary-50:     color-mix(in oklch, var(--richgold-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--richgold-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--richgold-6), white 35%);
+  --brand-primary-300:    var(--richgold-5);
+  --brand-primary-400:    var(--richgold-4);
+  --brand-primary-500:    var(--richgold-3);
+  --brand-primary-600:    var(--richgold-2);
+  --brand-primary-700:    var(--richgold-1);
+  --brand-primary-800:    color-mix(in oklch, var(--richgold-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--richgold-1), black 35%);
+  --bg-accent:            var(--richgold-3);
+  --fg-brand:             var(--richgold-3);
+  --brand-glow:           color-mix(in oklch, var(--richgold-3), transparent 50%);
+  --brand-on-primary:     #111111;
+}
+
+/* =========================================================================
+   Semantic / element-level helpers
+   Use these as classes OR copy the rules into component styles.
+   ========================================================================= */
+html, body {
+  font-family: var(--font-display);
+  color: var(--fg1);
+  background: var(--bg-app);
+  background-image: var(--bg-app-gradient);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.h1 {
+  font-size: var(--type-h1);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+  line-height: var(--leading-tight);
+}
+.h2 {
+  font-size: var(--type-h2);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.h3 {
+  font-size: var(--type-h3);
+  font-weight: var(--weight-bold);
+  color: var(--fg1);
+}
+.h4 {
+  font-size: var(--type-h4);
+  font-weight: var(--weight-bold);
+  color: var(--fg1);
+}
+.display-1 {
+  font-size: var(--type-display-1);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.display-2 {
+  font-size: var(--type-display-2);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.body {
+  font-size: var(--type-body);
+  font-weight: var(--weight-medium);
+  color: var(--fg2);
+}
+.meta {
+  font-size: var(--type-meta);
+  font-weight: var(--weight-semibold);
+  color: var(--fg3);
+}
+.micro-label {
+  font-size: var(--type-micro);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--fg4);
+}
+
+/* Card primitives ----------------------------------------------------- */
+.card-glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur-strong));
+  -webkit-backdrop-filter: blur(var(--blur-strong));
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-glass);
+}
+.card-accent {
+  background: #10B981;
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    var(--shadow-emerald-glow),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  color: var(--fg-inverse);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.card-accent::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* Pill / chip --------------------------------------------------------- */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-bold);
+  background: var(--bg-chip);
+  color: var(--fg2);
+}
+.pill--success { background: var(--brand-primary); color: #fff; }
+.pill--danger  { background: var(--semantic-danger-bg); color: var(--semantic-danger); }
+.pill--warning { background: var(--semantic-warning-bg); color: var(--semantic-warning); }
+
+/* Buttons ------------------------------------------------------------- */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  background: #10B981;
+  color: var(--brand-on-primary);
+  font-weight: 800;
+  font-size: var(--type-body);
+  border: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  box-shadow:
+    var(--shadow-emerald-glow-sm),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 14px 14px;
+  cursor: pointer;
+  transition: filter 200ms cubic-bezier(.22,1,.36,1), transform 200ms;
+}
+.btn-primary:hover { filter: brightness(1.05); }
+:root[data-primary="richgold"] .btn-primary { text-shadow: none; }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-inverse {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  color: var(--brand-primary);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-body);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+.btn-inverse:hover { background: var(--brand-primary-50); }
+</style><style data-ds="preview/_motion-tokens.css">/* motion-tokens.css
+ * Motion system source of truth: duration scale + easing curves shared
+ * across design-system components.
+ *
+ * --anim-mult convention (pre-existing, defined below global.css after this
+ * import): a global animation-speed multiplier, default 1, flipped to 4 via
+ * :root[data-anim-slow="true"] for the debug Slow-Down mode. Consumers wrap
+ * every duration as calc(var(--duration-*) * var(--anim-mult, 1)) so the
+ * multiplier keeps applying -- this file only owns the base duration/easing
+ * values, not the multiplier itself.
+ *
+ * Duration scale -- extracted verbatim from the literal ms values present in
+ * components/design-system/buttons/Buttons.css (step-8 motion-token
+ * extraction, plan: sonnet-executor-guardrails). Only 120ms / 160ms / 220ms
+ * had an exact, unambiguous match to a 4-tier scale; those are canonicalized
+ * here. The remaining literals found in Buttons.css (140, 150, 200, 240, 260,
+ * 340, 800, 3000ms) do NOT collapse onto this scale without changing the
+ * rendered timing, so per "extraction not redesign" they were left as
+ * literals in Buttons.css -- see the step-8 executor report for the full
+ * before/after migration table.
+ */
+:root {
+  --duration-instant: 100ms; /* reserved -- no current Buttons.css consumer at this tier; completes the scale for future use */
+  --duration-fast: 120ms;    /* .btn-delete transform */
+  --duration-base: 160ms;    /* most common transform/box-shadow transition duration in Buttons.css */
+  --duration-slow: 220ms;    /* .btn-cta / .btn-delete / .btn-apply / .btn-apply-label background-color & filter transitions */
+
+  /* Easing.
+   * --ease-spring and --ease-out are canonically defined below; the
+   * duplicate definition previously in
+   * ../../design-system/preview/_shared-feedback.css has been removed
+   * (step-2, plan: shared-foundations-registry) so this is the single
+   * definition site. Promoted here (plan:
+   * motion-token-debt) because ~66/47 app files resolved these vars only
+   * through the preview file's global load order, a fragile cross-file
+   * dependency. Buttons.css previously guarded one usage with a literal
+   * fallback, `var(--ease-out, cubic-bezier(.22,1,.36,1))`, for the
+   * theoretical case where --ease-out was not yet resolvable; since the
+   * running app always loads global.css (and therefore _shared-feedback.css)
+   * before any component mounts, that fallback was redundant and has been
+   * removed as part of this migration.
+   */
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1); /* overshoot curve retained only for legacy references; new work uses the no-bounce vocabulary */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1); /* standard ease-in-out; no literal instance existed in Buttons.css to extract from -- added to complete the easing set requested for this step, currently unused by Buttons.css */
+  --ease-press-calm: cubic-bezier(0.23, 1, 0.32, 1); /* Apple-calm press curve (plan: motion-debt-fixes step 1) -- ease-out family, no overshoot; replaces --ease-spring on press/click transforms across .btn-green/.btn-cta/[data-proximity]. Duration reuses --duration-base (160ms), already in the house state-change band. */
+
+  /* Step-5 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in Fab.css / Toast.css / InlineEdit.css
+   * flagged by .claude-ext/hooks/motion-token-gate.sh. Byte-match the
+   * literals they replace: a token added here must reproduce the extracted
+   * curve byte-for-byte, so no visual change accompanies the migration. */
+  --ease-standard:    cubic-bezier(.4, 0, .2, 1);    /* Fab.css .fab-plus transform */
+  --ease-accel:       cubic-bezier(.4, 0, 1, 1);     /* Toast.css exit anims; InlineEdit.css ieIcOut / .ie-act.is-confirming */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-spring-soft: cubic-bezier(.32, 1.32, .5, 1); /* Fab.css .fab-menu-hd */
+
+  /* Step-7 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in TaskBoard.css / TaskBoard.tsx flagged
+   * by motion-token-gate.sh; no existing token byte-matched these curves. */
+  --ease-bounce-soft: cubic-bezier(.34, 1.32, .64, 1); /* TaskBoard toastMorphIn / checkPop */
+  --ease-bounce: cubic-bezier(.34, 1.7, .46, 1);       /* TaskBoard syncMorphBounce / itemBounce */
+  --ease-confetti: cubic-bezier(.34, .84, .36, 1);     /* TaskBoard confettiFlow (TSX inline) */
+
+  /* Step-8 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in the six squircle-rollout files
+   * flagged by motion-token-gate.sh; no existing token byte-matched these
+   * curves, so they are added here. */
+  --ease-out-soft: cubic-bezier(.16, 1, .3, 1);      /* StatisticsGraphCard .sg-rangepop enter/exit + sg-load animation */
+  --ease-spring-firm: cubic-bezier(.34, 1.3, .5, 1); /* StatusCard chip/copy transforms */
+  --ease-exit-soft: cubic-bezier(.5, 0, .75, .4);    /* StatusCard .sc-chip-copied.is-exiting scPopOut */
+  --ease-spring-tight: cubic-bezier(.34, 1.4, .6, 1); /* TaskCard .tp-w hover transform */
+
+  /* Step-7 shell-sweep motion-token migration (plan: reveal-shell-sweep) --
+   * extracted verbatim from pre-existing literal curves in PrizeSheet.css
+   * flagged by motion-token-gate.sh; no existing token byte-matched these
+   * curves, so they are added here. --ease-fade replaces the bare CSS
+   * `ease` keyword (its exact cubic-bezier expansion) used for opacity
+   * fades throughout the file. */
+  --ease-fade:          cubic-bezier(.25, .1, .25, 1);  /* PrizeSheet.css opacity fades (== bare `ease`) */
+  --ease-spring-loose:  cubic-bezier(.16, 1.16, .3, 1); /* PrizeSheet.css wontag/prize enter transforms */
+  --ease-spring-medium: cubic-bezier(.16, 1.5,  .3, 1); /* PrizeSheet.css claim-btn/success enter + check pop */
+  --ease-spring-wide:   cubic-bezier(.16, 1.3,  .3, 1); /* PrizeSheet.css .ps-modal-shell enter transform */
+  --ease-linear:        linear;                          /* bare `linear` keyword, token-wrapped for the motion gate */
+  --ease-out-native:    ease-out;                         /* native `ease-out` keyword (cubic-bezier(0,0,.58,1)) -- token-wrapped for the gate; NOT the same curve as --ease-out. Sweep: DynamicCalendar dcPulse, StatisticsGraphCard sg-flash, OnboardingCompletion ocRipple/ocRowRipple */
+  --ease-bounce-glow:   cubic-bezier(.34, 1.18, .64, 1); /* AiMessageBox.css glow/bar/label enter animations */
+  --ease-draw:          cubic-bezier(.65, 0,    .35, 1); /* AiMessageBox.css .mb-done-check path draw-in */
+  --ease-spring-open:   cubic-bezier(.55, 1.35, .35, 1); /* ModelSelector.css .ms-shell.open expand */
+  --ease-slide-bounce:  cubic-bezier(.34, 1.3,  .64, 1); /* ModelSelector.css .ms-sel-indicator slide */
+  --ease-card-pop:      cubic-bezier(.34, 1.4,  .5,  1); /* NewsFeed.css .nf-card.anim-in enter */
+  --ease-avatar-swap:   cubic-bezier(.22, 1.4,  .4,  1); /* AvatarPicker.css apSwap keyframe */
+
+  /* Step-8 shell-sweep motion-token migration (plan: reveal-shell-sweep) --
+     extracted verbatim from a pre-existing literal curve in FileFolder.css
+     flagged by motion-token-gate.sh; no existing token byte-matched it. */
+  --ease-spring-strong: cubic-bezier(.34, 1.5, .64, 1); /* FileFolder.css .ff-pop-outer/.folder enter transform */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-spring-pop:    cubic-bezier(.34, 1.2, .5,  1); /* Calendar.css .cal-cell.selected calSelPop keyframe */
+
+  /* Step-1 motion-token migration (plan: reveal-shell-debts) -- extracted
+     verbatim from pre-existing literal curves in SprintPlannerCore.css; no
+     existing token byte-matched these curves, so they are added here. */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-toast-pop:   cubic-bezier(.34, 1.16, .64, 1); /* SprintPlannerCore.css toastMorphIn */
+
+  /* Step-1 motion-token migration (plan: ds-motion-parity) -- extracted
+     verbatim from a pre-existing literal curve in MotionTabs.css .mt-ic
+     transform transition; no existing token byte-matched it (closest was
+     a curve of cubic-bezier(.34, 1.56, .64, 1), whose last control point is
+     .64 vs .5 here) -- softer-settle sibling of that curve. */
+  --ease-spring-snap-soft: cubic-bezier(.34, 1.56, .5, 1); /* MotionTabs.css .mt-ic transform transition */
+
+  /* Step-2 motion-gate-pilot-fix migration (plan: motion-gate-pilot-fix) --
+     mints the un-mintable curves left raw in MorphSurface.css plus the
+     promoted CurrencyConverter local token, so downstream steps can route
+     through tokens instead of literals; no existing token byte-matched
+     these curves. */
+  --ease-morph:      cubic-bezier(0.34, 1.18, 0.5, 1); /* MorphSurface.css .ms2-wrap --ms2-morph-ease (dynamic-island morph) */
+  --ease-check-pop:  cubic-bezier(0.32, 1.5, 0.5, 1);  /* MorphSurface.css .ms2-check transform enter */
+  --ease-swap:       cubic-bezier(.5, 0, .3, 1);        /* promoted from CurrencyConverter --cc-ease-swap (swap-icon rotate) */
+
+  /* Step-11 retry motion-token migration (plan: reveal-shell-debts) --
+     extracted verbatim from a pre-existing literal curve in
+     OnboardingCompletion.css flagged by motion-token-gate.sh; no existing
+     token byte-matched this curve, so it is added here. */
+  --ease-confetti-fall: cubic-bezier(.3, .6, .5, 1); /* OnboardingCompletion.css ocConfettiFall keyframe */
+
+  /* Step-10 motion-token migration (plan: component-feedback-batch) --
+     extracted verbatim from a pre-existing literal curve in
+     DeleteModal.css dm-shake keyframe; no existing token byte-matched this
+     curve, so it is added here. */
+  --ease-shake: cubic-bezier(.36, .07, .19, .97); /* DeleteModal.css dm-shake keyframe */
+
+  /* Step-24 duration migration (plan: component-feedback-batch) -- the
+     ApplyButton morph choreography (buttons/Buttons.css) needed four
+     durations with no existing tier close enough to reuse without
+     flattening the requested stagger/bounce timing (the exact gap this
+     step exists to fix); added here rather than left as literals. */
+  --duration-slower: 300ms;  /* ApplyButton check-mark scale-pop transform (phase-2 enter) */
+  --duration-compact: 440ms; /* ApplyButton width/padding compact (phase-1, default -> loading) */
+  --duration-expand: 460ms;  /* ApplyButton width/padding extend (phase-3, done -> default) */
+  --duration-sweep: 360ms;   /* ApplyButton background-color sweep (phase-2/3, loading -> done -> default) */
+
+  /* Step-1 motion-token migration (plan: motion-sweep-top10) -- new duration
+     tiers minted at exact library-wide recurring values (>=20 uses), per
+     Bora's verbatim-mint decision (rounding to the nearest existing tier
+     would change rendered timing). Component steps in this plan reference
+     these; no existing token was modified. */
+  --duration-140: 140ms;   /* library sweep: 53 uses, no prior tier between fast(120) and base(160) */
+  --duration-150: 150ms;   /* library sweep: 81 uses */
+  --duration-180: 180ms;   /* library sweep: 68 uses */
+  --duration-200: 200ms;   /* library sweep: 123 uses -- single most common value in the library */
+  --duration-240: 240ms;   /* library sweep: 32 uses */
+  --duration-260: 260ms;   /* library sweep: 28 uses */
+  --duration-280: 280ms;   /* library sweep: 20 uses */
+  --duration-320: 320ms;   /* library sweep: 35 uses */
+  --duration-420: 420ms;   /* library sweep: 28 uses */
+  --duration-560: 560ms;   /* library sweep: 22 uses across 15 files (leaderboard FLIP-reorder, FileFolder, Calendar, etc.) */
+  --duration-1100: 1100ms;   /* shimmer-sweep duration; 1100ms recurs across several component files (StatisticsGraphCard, SprintPlannerCore, NewsFeed, IndexBar, todo-list-hook) */
+
+  /* Step-1 easing migration (plan: motion-sweep-top10) -- extracted verbatim
+     from curves in the top-10 component files with no byte-matching token
+     in this file or _shared-feedback.css. */
+  --ease-todo-fade-exit: cubic-bezier(.22,1,.38,1);   /* TodoList.css:274 .task.anim transform exit */
+  --ease-todo-badge-pop: cubic-bezier(.34,1.7,.5,1);  /* TodoList.css:335 .t-badge.pop badge-pop keyframe */
+  --ease-todo-settle:    cubic-bezier(.4,0,.06,1);    /* TodoList.css:276 .task.settling transform */
+  --ease-week-slide:     cubic-bezier(.4,0,.6,1);     /* TodoList.tsx:199 week nav transform transition */
+  --ease-dc-cell-pop:    cubic-bezier(.34,1.38,.4,1); /* DynamicCalendar.css:811 dcCellPop keyframe */
+  --ease-dc-spring:      cubic-bezier(.5, 1.5, .35, 1); /* DynamicCalendar.css:8 --dc-spring var */
+
+  /* Step-1 motion-token migration (plan: ds-motion-parity) -- extracted
+     verbatim from a pre-existing literal curve in DynamicIslandReader.css
+     (.di-pill width/height/border-radius morph transition); no existing
+     token byte-matched this curve, so it is added here. */
+  --ease-island-morph: cubic-bezier(.34, 1.32, .5, 1); /* DynamicIslandReader.css:21-23 .di-pill morph transition */
+
+  /* Step-4/5 motion-sweep-worklist migration (plan: fix-all-debts) -- new tokens
+     minted for literals recurring 3+ times library-wide with no existing exact
+     token match (post-consolidation: 15 of 27 proposals folded into existing
+     tiers within 15%, see reports/motion-sweep-worklist.md consolidation
+     addendum). Values extracted verbatim; no existing token modified. */
+  --duration-40: 40ms;   /* library-wide: 6 uses, no prior exact tier */
+  --duration-50: 50ms;   /* library-wide: 4 uses, no prior exact tier */
+  --duration-60: 60ms;   /* library-wide: 5 uses, no prior exact tier */
+  --duration-80: 80ms;   /* library-wide: 9 uses, no prior exact tier */
+  --duration-700: 700ms;   /* library-wide: 11 uses, no prior exact tier */
+  --duration-760: 760ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-800: 800ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-900: 900ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-1800: 1800ms;   /* library-wide: 7 uses, no prior exact tier */
+  --duration-1900: 1900ms;   /* library-wide: 6 uses, no prior exact tier */
+  --duration-2200: 2200ms;   /* library-wide: 4 uses, no prior exact tier */
+  --ease-sweep-1: cubic-bezier(0.32, 1.12, 0.4, 1.0);  /* library-wide non-hover reuse of an otherwise-unmatched curve, 6 uses */
+  --ease-motion-sweep-2236: cubic-bezier(.22, 1, .36, 1);  /* the three spellings of this curve (28 uses, rule 3) collapse to this one token -- exact value, no rounding */
+
+  /* Step-1 motion-normalization token coverage audit (plan: motion-normalization)
+     -- new tiers minted for exact literal ms values found in design-system
+     declarations with no existing byte-match; values extracted verbatim, no
+     rounding. --duration-360 is the plain library tier -- kept distinct from
+     --duration-sweep (360ms), which is ApplyButton-specific per its own
+     comment, so PipelineCard.css usages route through the plain tier. */
+  --duration-340: 340ms;   /* PipelineCard.css spam-target max-height transition */
+  --duration-360: 360ms;   /* PipelineCard.css filter/transform/scale-pop transitions */
+  --duration-380: 380ms;   /* PipelineCard.css .shell + DisclosureGroup.css var(--dg-dur) default */
+  --duration-400: 400ms;   /* PipelineCard.css pcxPop bubble animation */
+  --duration-480: 480ms;   /* PipelineCard.css pc-ripple animation */
+
+  /* Step-3 on-visible entrance migration (plan: ds-primer-entrance) -- Primer
+     "on-visible" reveal: fade + upward slide, triggered by IntersectionObserver
+     instead of mount. Fix round (plan: primer-entrance-fixes): retuned to
+     Primer's exact published values (@primer/react-brand main.css) --
+     --duration-entrance is --brand-animation-duration-default (0.6s);
+     --ease-brand-entrance is --brand-animation-easing-default, a new token
+     since this curve does not byte-match --ease-motion-sweep-2236.
+     --stagger-entrance mints a semantically-named alias for the 100ms
+     DOM-order stagger increment; the raw value equals --duration-instant but
+     is kept separate so the engine's stagger math reads as "stagger", not
+     "duration". */
+  --duration-entrance: 600ms;
+  --ease-brand-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --stagger-entrance: 100ms;
+
+  /* F3: the only sanctioned segmented-thumb (pill-switch) easing. Bounce /
+     overshoot curves are banned for pill switching per the frontend motion
+     contract -- every seg-pill / segmented-control thumb transition routes
+     through this token instead of a local overshoot bezier. */
+  --ease-pill-switch: cubic-bezier(.22, 1, .36, 1);
+
+  /* Step-1 focus-ring tokens (plan: focus-ring-tokens) -- one house
+     :focus-visible ring shared by every interactive control instead of
+     each component hardcoding its own outline. Color reuses the brand
+     emerald token; duration/ease reuse the existing base tier + fade
+     curve (curve, not spring, per house animation discipline) rather
+     than minting new values for a state change this small. */
+  --focus-ring-color: var(--brand-primary-500);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-duration: calc(var(--duration-base) * var(--anim-mult, 1));
+  --focus-ring-ease: var(--ease-fade);
+}
+
+/* ===========================================================================
+ * Motion family rules (plan: motion-family-rules, step 1) -- one global
+ * duration/easing rule per motion family, mirroring the .hover-standard
+ * pattern above (hover-tokens.css lines 31-54): a token block + a utility
+ * class, each with a source-recipe comment. Extracted from the best
+ * component per family, refined with Apple motion principles (ease-out
+ * entrances, faster exits, no overshoot). House bands: 150ms state changes,
+ * 200ms popovers/tooltips, 300ms overlays/modals (dept-frontend charter).
+ * No overshoot easings (curve family denylisted library-wide); every
+ * duration folds * var(--anim-mult, 1); calc() composition over new
+ * single-purpose tokens.
+ *
+ * Faster-exits rule (plan: faster-exits-rule, step 1): exit runs one
+ * duration tier faster than enter (Apple faster-exits: system responses
+ * snap). Every family with an open/close pair carries a
+ * `--{family}-exit-dur` token; consumers put the exit token on the
+ * closed/base leg and the enter token on the open leg. The sliding panel
+ * (`--panel-settle-dur`) has no exit token -- it is drag-settle physics,
+ * not an enter/exit pair, not an open/close pair. Stagger
+ * (`--stagger-item-dur`) has no exit token either -- it is entrance-only
+ * (per-item DOM-order reveal, never reversed).
+ *
+ * Non-family consumers (plan: faster-exits-debts, step 1): DeleteModal and
+ * WorkflowPublish alias --overlay-morph-exit-dur directly -- their close is
+ * an overlay morph, not a distinct family. DatePicker and the PipelineCard
+ * scrim use a local --{prefix}-exit-dur custom property set one duration
+ * tier below their own open tier -- no shared family fits their tier.
+ * Drag surfaces (SmoothDrawer, ExpandableScreen) keep momentum physics on
+ * drag release and snap one tier faster than their open leg on programmatic
+ * close (button, backdrop tap, Escape), per the Apple faster-exits rule.
+ * ========================================================================= */
+:root {
+  /* Popover -- best of Dropdown.css --dd-dur/--dd-ease (its default easing
+     overshoots, denylisted as a family default) vs MessageDropdown.css (a
+     settled, monotonic curve). Anchored to the 200ms popover band; transform
+     keeps MessageDropdown's settled curve. Exit anchors to the --duration-150
+     tier (faster-exits rule) -- Dropdown.css's fast close is now the family
+     rule, not a component-level exception. */
+  --popover-dur: var(--duration-200);
+  --popover-exit-dur: var(--duration-150);
+  --popover-ease: var(--ease-motion-sweep-2236);
+
+  /* Tooltip -- best of StatusCard .sc-tip (its transform curve overshoots)
+     vs WorkflowNodes .wf-tool::after (clean opacity/transform, monotonic) vs
+     GithubCalendar .gc-tip. WorkflowNodes is cleanest; anchored to the
+     200ms tooltip band (its recipe used 140ms at component scale). Exit
+     anchors to the --duration-150 tier (faster-exits rule). */
+  --tooltip-dur: var(--duration-200);
+  --tooltip-exit-dur: var(--duration-150);
+  --tooltip-ease: var(--ease-fade);
+  --tooltip-transform-ease: var(--ease-out);
+
+  /* Sliding panel/drawer settle -- SmoothDrawer.css lines 75-94 (filter/
+     transform, monotonic --ease-motion-sweep-2236) governs the SETTLE
+     transition only (open/close when not dragged), never live-drag
+     interpolation. The direction-aware [data-panel-state] keyframes below
+     (already a shared primitive) reuse the same fast tier + --ease-out;
+     extended here rather than duplicated. */
+  --panel-settle-dur: var(--duration-fast);
+  --panel-settle-ease: var(--ease-out);
+
+  /* Overlay morph -- MorphSurface.css --ms2-ease/--ms2-morph-dur (lines
+     14-40). Its 360ms (--duration-sweep) is Apple-motion-justified: a
+     dynamic-island-style width/height morph reads as sluggish at the
+     generic 300ms overlay band, so the recipe keeps --duration-sweep
+     locally. The house-wide overlay-morph family default anchors to the
+     300ms band; --ms2-ease is already monotonic and near-identical to the
+     house easing, aliased directly. Exit anchors to the --duration-240
+     tier (faster-exits rule). */
+  --overlay-morph-dur: var(--duration-slower);
+  --overlay-morph-exit-dur: var(--duration-240);
+  --overlay-morph-ease: var(--ease-press-calm);
+
+  /* Accordion -- DisclosureGroup.css --dg-dur/--dg-ease (lines 57-103,
+     default 380ms; its default easing overshoots and is denylisted as a
+     family default); aliased to the house easing instead. Exception:
+     grid-template-rows (line 114) animates a layout property, not
+     transform/opacity -- kept as the accordion's documented default
+     exception, matching the existing DisclosureGroup rule. Exit anchors to
+     the --duration-260 tier (faster-exits rule). */
+  --accordion-dur: var(--duration-380);
+  --accordion-exit-dur: var(--duration-260);
+  --accordion-ease: var(--ease-press-calm);
+
+  /* Toast -- Toast.css ts-enter keyframe (opacity + translateY(8px), house
+     --duration-base tier) plus its interaction legs (--ease-out). Exit uses
+     --toast-exit-dur (faster-exits rule, the --duration-fast tier) via the
+     reversed keyframe below rather than a second keyframe. The existing
+     toast-pop-named easing token is NOT reused here -- despite the name it
+     is sourced from a different component's overshoot curve, out of
+     vocabulary for a default toast mount. */
+  --toast-dur: var(--duration-base);
+  --toast-exit-dur: var(--duration-fast);
+  --toast-ease: var(--ease-out);
+
+  /* Panel-slide exit -- shared closing tier for [data-panel-state="exiting-*"]
+     slides (faster-exits rule, plan: faster-exits-debts, step 1). Calendar
+     is the anchor recipe, opening on the --duration-280 tier and closing on
+     the --duration-240 tier below. There is no enter token in this family --
+     each consumer keeps its own open tier and only aliases the close leg
+     here. Consumers that open on a faster tier override the property
+     locally, e.g.
+     .wae-ae-list-wrap { --panel-slide-exit-dur: var(--duration-150); } */
+  --panel-slide-exit-dur: var(--duration-240);
+
+  /* Stagger -- --stagger-entrance (100ms, line 220) is the per-item DOM-order
+     increment; AnimatedList.css entry opacity/filter transition (lines
+     100-102, --duration-240 + bare `ease`) supplies the per-item duration.
+     `ease` is byte-identical to --ease-fade (see --ease-fade comment above),
+     aliased directly rather than left bare. */
+  --stagger-item-dur: var(--duration-240);
+  --stagger-item-ease: var(--ease-fade);
+}
+
+.motion-popover {
+  transition:
+    opacity calc(var(--popover-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--popover-dur) * var(--anim-mult, 1)) var(--popover-ease);
+}
+.motion-popover.is-exiting {
+  transition:
+    opacity calc(var(--popover-exit-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--popover-exit-dur) * var(--anim-mult, 1)) var(--popover-ease);
+}
+.motion-tooltip {
+  transition:
+    opacity calc(var(--tooltip-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--tooltip-dur) * var(--anim-mult, 1)) var(--tooltip-transform-ease);
+}
+.motion-tooltip.is-exiting {
+  transition:
+    opacity calc(var(--tooltip-exit-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--tooltip-exit-dur) * var(--anim-mult, 1)) var(--tooltip-transform-ease);
+}
+.motion-overlay-morph {
+  transition:
+    width calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    height calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    border-radius calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--ease-out);
+}
+.motion-overlay-morph.is-exiting {
+  transition:
+    width calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    height calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    border-radius calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--ease-out);
+}
+.motion-accordion {
+  /* grid-template-rows: documented layout-property exception, see comment above. */
+  transition: grid-template-rows calc(var(--accordion-dur) * var(--anim-mult, 1)) var(--accordion-ease);
+}
+.motion-accordion.is-exiting {
+  transition: grid-template-rows calc(var(--accordion-exit-dur) * var(--anim-mult, 1)) var(--accordion-ease);
+}
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.motion-toast {
+  animation: toast-enter calc(var(--toast-dur) * var(--anim-mult, 1)) var(--toast-ease) both;
+}
+.motion-toast.is-exiting {
+  animation: toast-enter calc(var(--toast-exit-dur) * var(--anim-mult, 1)) var(--toast-ease) both reverse;
+}
+.motion-stagger-item {
+  transition:
+    opacity calc(var(--stagger-item-dur) * var(--anim-mult, 1)) var(--stagger-item-ease),
+    filter calc(var(--stagger-item-dur) * var(--anim-mult, 1)) var(--stagger-item-ease);
+  transition-delay: calc(var(--stagger-entrance) * var(--anim-mult, 1) * var(--stagger-index, 0));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-popover,
+  .motion-popover.is-exiting,
+  .motion-tooltip,
+  .motion-tooltip.is-exiting,
+  .motion-overlay-morph,
+  .motion-overlay-morph.is-exiting,
+  .motion-accordion,
+  .motion-accordion.is-exiting,
+  .motion-stagger-item {
+    transition: none;
+  }
+  .motion-toast,
+  .motion-toast.is-exiting {
+    animation: none;
+  }
+  [data-panel-state] {
+    animation: none;
+  }
+}
+
+/* Step-1 direction-aware panel switch (plan: dsfb-02-direction-aware-switch-canon)
+ * -- shared by usePanelDirection() consumers (lib/hooks/use-panel-direction.ts):
+ * a per-panel [data-panel-state] attribute drives enter/exit translateX(22px)
+ * + opacity keyframes. State names describe the direction of TRAVEL (+x =
+ * right); see the hook for the dir = Math.sign(toIdx - fromIdx) math.
+ * MotionTabs is the proof-of-use (extracted verbatim from its prior inlined
+ * mt-enter/exit-travel-* keyframes, unchanged values). Local component CSS
+ * still scopes pointer-events/positioning per state -- only the animation
+ * itself lives here so future consumers (calendar, leaderboard,
+ * workflow-add-elements) share one definition. */
+@keyframes panel-enter-right {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes panel-enter-left {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes panel-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(22px); }
+}
+@keyframes panel-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-22px); }
+}
+[data-panel-state="active"] { opacity: 1; }
+[data-panel-state="entering-right"] {
+  animation: panel-enter-right calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="entering-left"] {
+  animation: panel-enter-left calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="exiting-left"] {
+  animation: panel-exit-right calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="exiting-right"] {
+  animation: panel-exit-left calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+</style>
+<style data-ds="preview/_base.css">
+/* Shared base for preview cards. Each card is 700px wide, variable height. */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-family: var(--font-display);
+  color: var(--fg1);
+  -webkit-font-smoothing: antialiased;
+}
+.card {
+  width: 700px;
+  padding: 24px;
+  box-sizing: border-box;
+  background: #FFFFFF;
+  background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 6%, transparent) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%);
+  font-family: var(--font-display);
+  color: var(--fg1);
+}
+/* Default component "bezel": wrap a component's surface(s) in <div class="shell">
+   to sit them on the grey background (like the theme-editor / leaderboard).
+   Token-driven so it adapts to both dark systems automatically. */
+.shell {
+  background: var(--shell-bg);
+  border-radius: 28px;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(17,17,17,0.12), 0 2px 8px rgba(17,17,17,0.06);
+  transition: transform calc(220ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), box-shadow calc(220ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+/* Single-component shells zoom on hover — the grey bezel and its inner surface
+   scale together as ONE unit. Add `.zoom` ONLY to a shell wrapping a single
+   component. A shell that groups multiple elements stays static (no .zoom). */
+.shell.zoom { cursor: pointer; }
+.shell.zoom:hover { transform: scale(1.007); box-shadow: 0 16px 44px rgba(17,17,17,0.13), 0 3px 9px rgba(17,17,17,0.07); }
+.shell.zoom:active { transform: scale(1.003); }
+.card.card--flat { background: transparent; background-image: none; }
+.row { display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; }
+.grid { display: grid; gap: 12px; }
+.label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg4); }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--fg3); }
+</style>
+<style data-ds="preview/_darkmode.css">/* =========================================================================
+   Deha Design System — Dark mode overrides for component previews
+   Activated by `dark` class on <html> (toggled by _darkmode.js).
+   Components hardcode their colors, so these remap them to a coherent
+   dark palette. Brand emerald + semantic colors are intentionally kept.
+
+   Palette:
+     page      #111111     recessed   #111111 / #0A0A0A
+     shell     #0A0A0A     panel/card #1C1C1C
+     hover     #242424     border     #232323
+     text-1    #F5F5F5     text-2     #D4D4D4     text-3 #A1A1A1
+   ========================================================================= */
+
+/* ── Page-level surfaces (shared) ───────────────────────────────────── */
+html.dark body { background: #111111 !important; }
+
+html.dark .card {
+  background: #111111 !important;
+  background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, rgba(17,17,17,1) 55%, #111111 100%);
+  color: #F5F5F5;
+}
+/* Workflow-nodes keeps its dotted canvas look */
+html.dark .card:has(.wf-grid) {
+  background: #111111 !important;
+  background-image: radial-gradient(circle at 1px 1px, #232323 1px, transparent 1px) !important;
+  background-size: 16px 16px !important;
+}
+/* Template-cards card is a flat tray */
+html.dark .card:has(.tmpl-grid) {
+  background: #111111 !important;
+  background-image: none;
+}
+html.dark .frame {
+  background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(17,17,17,1) 50%, #111111 100%);
+}
+html.dark .card.card--flat {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Shared gray "outer shells" → dark bezel */
+html.dark .ms-outer,
+html.dark .exp-outer,
+html.dark .te-outer,
+html.dark .wf-outer,
+html.dark .lb-outer,
+html.dark .tmpl-outer,
+html.dark .pop-outer,
+html.dark .mem-outer,
+html.dark .wp-bezel,
+html.dark .mb-shell { background: #0A0A0A; }
+
+/* ── Segmented control (controls + leaderboard) ─────────────────────── */
+html.dark .seg { background: #111111; }
+html.dark .seg button { color: #A1A1A1; }
+html.dark .seg .seg-pill { background: #F5F5F5; }
+html.dark .seg button.active { color: #111111; }
+/* accent variant stays emerald in dark (same as light) */
+html.dark .seg.accent .seg-pill { background: #10B981; }
+html.dark .seg.accent button.active { color: #FFFFFF; }
+/* must out-specify the controls-scoped track rule (`.card > .row .seg …`) */
+html.dark .card > .row .seg.accent .seg-pill { background: #10B981; }
+html.dark .card > .row .seg.accent button.active { color: #FFFFFF; }
+
+/* ── components-controls ────────────────────────────────────────────── */
+html.dark .title { color: #F5F5F5; }
+html.dark .meta  { color: #A1A1A1; }
+html.dark .row + .row { border-top-color: #232323; }
+html.dark .sw-off { background: #4A4A4A; }
+html.dark .slider { background: #232323; }
+html.dark .slider .thumb { background: #F5F5F5; border-color: #232323; }
+/* The segmented control sits directly on the page card (#111111), so the
+   shared #111111 track is invisible. Raise the track + add a border so the two
+   options read as a distinct grouped control. */
+html.dark .card > .row .seg {
+  background: #1C1C1C;
+  box-shadow: inset 0 0 0 1px #232323, inset 0 2px 4px rgba(0,0,0,0.30);
+}
+html.dark .card > .row .seg button { color: #D4D4D4; }
+html.dark .card > .row .seg .seg-pill { background: #F5F5F5; }
+html.dark .card > .row .seg button.active { color: #111111; }
+
+/* ── components-pills ───────────────────────────────────────────────── */
+html.dark .pill-priority {
+  background: #1C1C1C; border-color: #232323; color: #D4D4D4;
+}
+html.dark .pill-tab {
+  background: #1C1C1C; border-color: #232323; color: #D4D4D4;
+}
+html.dark .pill-tab.dark { background: #0A0A0A; }
+/* Active (emerald) pill: drop the sharp white bottom highlight that breaks at
+   the rounded ends — match the soft inset of the inactive pills. */
+html.dark .pill-tab.active { box-shadow: inset 0 -2px 5px rgba(0,0,0,0.20); }
+html.dark .badge.tag {
+  background: #242424; color: #D4D4D4; border-color: #232323;
+}
+
+/* ── components-model-selector ──────────────────────────────────────── */
+html.dark .ms-trigger { background: #1C1C1C; border-color: #232323; }
+html.dark .ms-t-icon  { color: #D4D4D4; }
+html.dark .ms-t-model { color: #F5F5F5; }
+html.dark .ms-t-sep   { background: #232323; }
+html.dark .ms-panel   { background: #1C1C1C; }
+html.dark .ms-row::after { background: #232323; }
+html.dark .ms-row:hover  { background: #242424; }
+html.dark .ms-row:active { background: #232323; }
+html.dark .ms-row.sel        { background: rgba(16,185,129,0.16); box-shadow: inset 0 0 0 1px rgba(16,185,129,0.30); }
+html.dark .ms-row.sel:hover  { background: rgba(16,185,129,0.22); }
+html.dark .ms-name { color: #F5F5F5; }
+html.dark .ms-stat { color: #A1A1A1; }
+/* Selected row sits flush to the panel edge — round its outer corners so the
+   emerald ring follows the panel's rounding instead of cutting a straight line
+   across the top (Auto) / bottom (Pro). */
+html.dark .ms-row.sel:first-of-type { border-top-left-radius: 22px; border-top-right-radius: 22px; }
+html.dark .ms-row.sel:last-of-type  { border-bottom-left-radius: 22px; border-bottom-right-radius: 22px; }
+
+/* ── components-metric-card ─────────────────────────────────────────── */
+html.dark .metric { background: #1C1C1C; border-color: #232323; }
+html.dark .m-label { color: #D4D4D4; }
+html.dark .m-num   { color: #F5F5F5; }
+html.dark .exp-card  { background: #1C1C1C; }
+html.dark .exp-crumb strong { color: #D4D4D4; }
+html.dark .exp-close { background: #232323; color: #D4D4D4; }
+html.dark .exp-close:hover { background: #4A4A4A; }
+html.dark .exp-num   { color: #F5F5F5; }
+html.dark .exp-insight { color: #D4D4D4; }
+html.dark .exp-insight b { color: #F5F5F5; }
+html.dark .exp-chart-svg-wrap::after {
+  background: linear-gradient(to right, #1C1C1C 0%, transparent 16%, transparent 84%, #1C1C1C 100%);
+}
+
+/* ── components-leaderboard ─────────────────────────────────────────── */
+html.dark .lb { background: #1C1C1C; }
+html.dark .lb .h-title { color: #F5F5F5; }
+html.dark .lb .name { color: #F5F5F5 !important; }
+html.dark .lb .rev  { color: #F5F5F5 !important; }
+html.dark .lb .a2 { background: #232323; color: #D4D4D4; }
+html.dark .lb .row.win {
+  background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.35);
+}
+html.dark .lb .row:not(.win):hover { background: #242424; }
+
+/* ── components-task-card ───────────────────────────────────────────── */
+/* Card body is fully token-driven (bg/border/text). Only swap the glossy
+   white insets for dark edges and de-gloss the status tag. */
+html.dark .task {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.30), 0 1px 2px rgba(0,0,0,0.4);
+}
+html.dark .status-tag {
+  background: #111111;
+  border-color: #232323;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -2px 4px rgba(0,0,0,0.25);
+}
+html.dark .avatar { border-color: #1C1C1C; }
+
+/* ── components-theme-editor ────────────────────────────────────────── */
+html.dark { --tk-empty: #232323; }
+html.dark .te-panel { background: #1C1C1C; }
+html.dark .te-search { background: #111111; border-color: #232323; }
+html.dark .te-search input { color: #D4D4D4; }
+html.dark .te-save { background: #F5F5F5; color: #111111; }
+html.dark .te-save:hover { background: #ECECEC; }
+html.dark .te-divider { background: #232323; }
+html.dark .te-s-title { color: #F5F5F5; }
+html.dark .te-s-head .material-icons { color: #4A4A4A; }
+html.dark .te-mode { background: #111111; border-color: #232323; }
+html.dark .te-mode.sel { background: #202020; }
+html.dark .te-mode:not(.sel):hover { background: #202020; border-color: #4A4A4A; }
+html.dark .te-thumb { background: #0A0A0A; }
+html.dark .tw-block { background: #4A4A4A; }
+html.dark .tw-line  { background: #4A4A4A; }
+html.dark .te-mode-name { color: #F5F5F5; }
+html.dark .te-checkmark { background: #1C1C1C; border-color: #4A4A4A; }
+/* Selected checkmark badge: keep the emerald + grid-line treatment (matches the
+   hero accent card). The base .te-checkmark.active rule is out-specificity'd by
+   the html.dark .te-checkmark reset above, so restate it here. */
+html.dark .te-checkmark.active {
+  background: #10B981;
+  border-color: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
+  background-size: 5px 5px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(17,17,17,0.15);
+}
+html.dark .te-row:not(:last-child)::after { background: #232323; }
+html.dark .te-label { color: #F5F5F5; }
+html.dark .te-sw.sel { box-shadow: 0 0 0 2.5px #1C1C1C, 0 0 0 5px var(--c), 0 2px 8px rgba(0,0,0,0.4); }
+html.dark .te-a-lg { color: #F5F5F5; }
+html.dark input[type=range].te-range::-webkit-slider-thumb { border-color: #232323; background: #F5F5F5; }
+html.dark input[type=range].te-range::-moz-range-thumb { border-color: #232323; background: #F5F5F5; }
+html.dark .te-bright-pct { color: #D4D4D4; }
+html.dark .te-hotkey { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .te-tog { background: #4A4A4A; }
+/* Toggled-on stays emerald with grid (the html.dark .te-tog reset above wins on
+   specificity over the base .te-tog.on, so restate the green version). */
+html.dark .te-tog.on {
+  background: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.42), inset 0 -2px 0 rgba(17,17,17,0.14), inset 0 0 0 1px rgba(17,17,17,0.08);
+}
+
+/* ── components-workflow-add-elements ───────────────────────────────── */
+html.dark #canvas {
+  background-color: #111111;
+  background-image: radial-gradient(circle, #232323 1px, transparent 1px);
+}
+html.dark .canvas-hint {
+  background: rgba(28,28,28,0.85); border-color: rgba(255,255,255,0.08); color: #A1A1A1;
+}
+html.dark .pop-inner { background: #1C1C1C; }
+html.dark .ae-title { color: #F5F5F5; }
+html.dark .ae-tabs { background: #111111; }
+html.dark .ae-tab { color: #A1A1A1; }
+html.dark .ae-tab.active { background: #232323; color: #F5F5F5; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+html.dark .ae-tab:not(.active):hover { color: #D4D4D4; }
+html.dark .ae-search { background: #111111; border-color: #232323; }
+html.dark .ae-search input { color: #F5F5F5; }
+html.dark .ae-item:hover, html.dark .ae-item.hovered { background: #242424; }
+html.dark .ae-item.hovered .ae-chevron { color: #A1A1A1 !important; }
+html.dark .ae-name { color: #F5F5F5; }
+html.dark .ae-chevron { color: #4A4A4A !important; }
+html.dark .ae-sep { background: #232323; }
+html.dark .ae-ai-btn {
+  background-image: linear-gradient(#1C1C1C,#1C1C1C), linear-gradient(135deg,#6EE7B7 0%,#10B981 50%,#059669 100%);
+  color: #6EE7B7;
+}
+html.dark .ae-ai-btn:hover {
+  background-image: linear-gradient(#242424,#242424), linear-gradient(135deg,#6EE7B7 0%,#10B981 50%,#059669 100%);
+}
+html.dark .nodes-list::-webkit-scrollbar-thumb { background: #232323; }
+html.dark .node-item:hover { background: #242424; }
+html.dark .node-name { color: #F5F5F5; }
+
+/* ── components-workflow-nodes ──────────────────────────────────────── */
+html.dark .wf-tool { background: #1C1C1C; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-tool.connect { background: transparent; border-color: #6B6B6B; }
+html.dark .wf-tool.connect:hover { border-color: #A1A1A1; }
+html.dark .wf-tool.add:hover  { color: #6EE7B7; background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.40); }
+html.dark .wf-tool.edit:hover { color: #F5F5F5; background: #242424; border-color: #4A4A4A; }
+html.dark .wf-tool.del:hover  { color: #FCA5A5; background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.40); }
+html.dark .wf-card { background: #1C1C1C; }
+html.dark .wf-title { color: #F5F5F5; }
+html.dark .wf-title .ic { color: #D4D4D4; }
+html.dark .wf-menu:hover { background: #242424; color: #D4D4D4; }
+html.dark .wf-chip { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-chip.method { background: #242424; color: #A1A1A1; }
+html.dark .wf-url { color: #A1A1A1; }
+html.dark .wf-connect { background: #111111; border-color: #232323; color: #F5F5F5; }
+html.dark .wf-connect:hover { background: #242424; }
+html.dark .wf-connect .ic { color: #D4D4D4; }
+html.dark .wf-desc { color: #D4D4D4; }
+html.dark .wf-prompt { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-prompt .var { background: rgba(16,185,129,0.18); color: #6EE7B7; }
+html.dark .wf-warn { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.40); color: #FCA5A5; }
+
+/* ── components-workflow-publish ────────────────────────────────────── */
+html.dark .pb-btn { background: #F5F5F5; color: #111111; }
+html.dark .pb-btn:hover { background: #ECECEC; }
+html.dark .pb-popover { background: #1C1C1C; border-color: #232323; }
+html.dark .pb-pop-title { color: #F5F5F5; }
+html.dark .pb-version { color: #D4D4D4; background: #111111; border-color: #232323; }
+html.dark .pb-update-btn { background: #F5F5F5; color: #111111; }
+html.dark .pb-update-btn:hover { background: #ECECEC; }
+html.dark .pb-edited { border-top-color: #232323; }
+html.dark .pb-edited:hover { background: #242424; }
+html.dark .pb-edited-left { color: #D4D4D4; }
+html.dark .pb-edited .arrow { color: #4A4A4A; }
+html.dark .pb-div { background: #232323; }
+html.dark .pb-action:hover { background: #242424; }
+html.dark .pb-action:active { background: #232323; }
+html.dark .pb-action-label { color: #F5F5F5; }
+html.dark .pb-action .arrow { color: #4A4A4A; }
+
+/* ── components-workflow-template-cards ─────────────────────────────── */
+html.dark .tmpl-card { background: #1C1C1C; }
+html.dark .tmpl-preview { background: #0A0A0A; }
+html.dark .tmpl-conn { border-top-color: #4A4A4A; }
+html.dark .tmpl-use { background: #F5F5F5; color: #111111; }
+html.dark .tmpl-info { border-top-color: #232323; }
+html.dark .tmpl-title { color: #F5F5F5; }
+html.dark .tmpl-desc { color: #D4D4D4; }
+html.dark .badge-pro { background-color: #4A4A4A; }
+
+/* ── iconography ─────────────────────────────────────────────────────── */
+html.dark .ic .material-icons,
+html.dark .ic .material-symbols-outlined { color: #F5F5F5; }
+html.dark .ic span.name { color: #A1A1A1; }
+
+/* ── components-ai-caveat ───────────────────────────────────────────── */
+html.dark .ai-bubble {
+  background: #1C1C1C; border-color: #232323;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20), 0 2px 12px rgba(0,0,0,0.30);
+}
+html.dark .ai-text { color: #D4D4D4; }
+html.dark .ai-action-btn { color: #4A4A4A; }
+html.dark .ai-action-btn:hover { background: #242424; color: #D4D4D4; }
+/* Orange caveat keeps its accent — just deepen the wash and drop the white sheen. */
+html.dark .ai-caveat {
+  background: rgba(249,115,22,0.12);
+  border-color: #F97316;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.30);
+}
+
+/* =========================================================================
+   Kill the glossy white top-highlight on dark surfaces
+   The components bake `inset 0 1px 0 rgba(255,255,255,1)` into every card/
+   panel/button for a light-mode sheen — on dark it reads as a hard white
+   line. Re-state each box-shadow with a faint 0.05 highlight + dark edges.
+   (Colored badges/icons keep their gloss; it sits on a colored fill.)
+   ========================================================================= */
+html.dark .ms-trigger {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 4px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.30);
+}
+html.dark .ms-panel {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+html.dark .metric {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+html.dark .metric:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.28);
+}
+html.dark .exp-card { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .lb {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.20), inset 1px 0 0 rgba(255,255,255,0.03), inset -1px 0 0 rgba(255,255,255,0.03);
+}
+html.dark .lb .a2 {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+html.dark .badge.tag {
+  box-shadow: inset 0 -2px 5px rgba(0,0,0,0.20), inset 0 -1px 0 rgba(255,255,255,0.05);
+}
+html.dark .te-panel { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .te-hotkey {
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html.dark .pop-inner {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .pb-popover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html.dark .pb-version { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .tmpl-card { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .wf-tool {
+  box-shadow: 0 3px 8px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+html.dark .wf-card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .wf-chip {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .wf-connect {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+
+/* ── components-fab ─────────────────────────────────────────────────── */
+html.dark .fab-screen {
+  background: #1C1C1C;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+html.dark .sc-name { color: #F5F5F5; }
+html.dark .sc-hero { background: #0A0A0A; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .sc-ic { background: #111111; color: #D4D4D4; }
+html.dark .sc-it-name { color: #F5F5F5; }
+html.dark .sc-it-amt { color: #F5F5F5; }
+/* Round-3 parity fix: this rule used to own the expanded panel's dark
+   background + shadow, but it has HIGHER selector specificity than Fab.css's
+   own `.fab-screen.open .fab` rule (html + 4 classes here vs 3 classes
+   there), so its box-shadow silently won the cascade over Fab.css's
+   box-shadow:none and leaked a stray shadow/highlight onto the cards-page
+   parity shell. Background + border + filter are now fully owned locally in
+   Fab.css (see --fp-bezel-bg / dark-only border / filter:drop-shadow), so
+   this rule is retired rather than left to fight the cascade. */
+</style>
+<style data-ds="preview/_shared-feedback.css">/* _shared-feedback.css
+ * Shared utility classes for feedback UI patterns.
+ * Single source of truth -- component partials @reference these
+ * instead of redeclaring their own copies.
+ */
+
+/* --------------------------------------------------------------------------
+ * Grid texture utility
+ * Diluted from 0.14 to 0.07 per the "too griddy" complaint.
+ * Override --grid-alpha on a scoped selector to fine-tune per component.
+ * -------------------------------------------------------------------------- */
+:root {
+  --grid-alpha: 0.07;
+
+  /* Card surface tokens -- consumed by .card-inner and any other white-card surface */
+  --card-bg: #FFFFFF;
+  --card-border: #D4D4D4;
+  /* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+  --card-radius: var(--radius-xl, 20px);
+}
+
+html.dark {
+  --card-bg: #1C1C1C;
+  --card-border: #232323;
+}
+
+/* --------------------------------------------------------------------------
+ * .btn-green -- canonical green pill button
+ * Mirrors .pc-apply from _pipeline-card.css (class name swapped).
+ * -------------------------------------------------------------------------- */
+.btn-green {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #111111; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 6px rgba(17,17,17,0.28);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-green::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-green:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(17,17,17,0.32), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-green:active { transform: scale(0.96); }
+html.dark .btn-green { background: var(--brand-primary-500); color: var(--brand-on-primary); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px color-mix(in srgb, var(--brand-primary-500) 34%, transparent); }
+
+/* --------------------------------------------------------------------------
+ * .btn-yellow -- canonical yellow pill button (mirrors .btn-green structure)
+ * Amber fill in BOTH light and dark for distinct/colorful look
+ * -------------------------------------------------------------------------- */
+.btn-yellow {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #F59E0B; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 2px 6px rgba(245,158,11,0.30);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-yellow:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(245,158,11,0.34), inset 0 1px 0 rgba(255,255,255,0.28); }
+.btn-yellow:active { transform: scale(0.96); }
+html.dark .btn-yellow { background: #F59E0B; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px rgba(245,158,11,0.34); }
+
+/* --------------------------------------------------------------------------
+ * .btn-red -- canonical red pill button (mirrors .btn-green structure)
+ * Red fill in BOTH light and dark for distinct/colorful look
+ * -------------------------------------------------------------------------- */
+.btn-red {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #EF4444; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 2px 6px rgba(239,68,68,0.30);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-red::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-red:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(239,68,68,0.34), inset 0 1px 0 rgba(255,255,255,0.28); }
+.btn-red:active { transform: scale(0.96); }
+html.dark .btn-red { background: #EF4444; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px rgba(239,68,68,0.34); }
+
+/* --------------------------------------------------------------------------
+ * House focus-visible ring (plan: focus-ring-tokens) -- single shared ring
+ * for every interactive control, replacing the three hardcoded rings this
+ * rule folds (.btn-green/.btn-yellow/.btn-red used to each declare their
+ * own literal outline above). :where() keeps specificity at zero so any
+ * component rule can still override the ring locally if it ever needs to.
+ * --brand-primary-500 is a single global value (not theme-scoped), same
+ * as the ring it replaces, so no html.dark fallback is needed here.
+ * -------------------------------------------------------------------------- */
+:where(
+  .btn-green, .btn-yellow, .btn-red,
+  .btn-primary, .btn-inverse, .btn-glass, .btn-text,
+  .ap-edge-btn, .ap-thumb, .ap-submit, .ie-act
+):focus-visible,
+:where(.ie-field):focus-within {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* --------------------------------------------------------------------------
+ * AiMessageBox control family focus-visible + 44px hit layer (plan:
+ * claude-design-frontend-pass, step 6) -- .mb-btn/.mb-ai-btn/.mb-send are
+ * shared AiMessageBox.css classes reused across every ai-chat-* / ai-message-
+ * box-* component; the frontend pass rule set requires focus-visible and a
+ * 44px hit layer on every sub-44px button. Added once here (global DS rule)
+ * rather than per component, per the fix-loop-sequence amendment. .mb-send
+ * is the only one that already sits at a fixed 36x36 box; .mb-btn/.mb-ai-btn
+ * are variable-width pills whose height (padding 8px + line height) also
+ * falls under 44px.
+ * -------------------------------------------------------------------------- */
+.mb-btn, .mb-ai-btn, .mb-send { position: relative; }
+.mb-btn::after, .mb-ai-btn::after, .mb-send::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%;
+  width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+:where(.mb-btn, .mb-ai-btn, .mb-send):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ==========================================================================
+ * SHARED FOUNDATIONS — appended block; do NOT redefine tokens above this line.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * (a) Spacing scale — 4px base
+ * -------------------------------------------------------------------------- */
+:root {
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* Named use-case aliases */
+  --gap-icon-text: var(--space-2);   /* gap between an icon and adjacent text */
+  --pad-card:      var(--space-4);   /* padding from card border to content (matches .card-inner 16px) */
+  --gap-stack:     var(--space-4);   /* vertical rhythm between stacked elems  */
+  --gap-inline:    var(--space-3);   /* between sibling controls               */
+}
+
+/* --------------------------------------------------------------------------
+ * (b) Display typography — mirrors TypeDisplay.css exactly
+ * -------------------------------------------------------------------------- */
+:root {
+  --font-display: 'Montserrat';
+}
+
+.type-display {
+  font-family: 'Montserrat';
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+ * (c) Semantic color tokens — copied verbatim from ColorsSemantic.css
+ * -------------------------------------------------------------------------- */
+:root {
+  --sem-success: var(--brand-primary-500);
+  --sem-success-bg:   color-mix(in srgb, var(--brand-primary-500) 12%, transparent);
+  --sem-success-text: var(--brand-primary-600);
+
+  --sem-warning: #FBBF24;
+  --sem-warning-bg:   rgba(251, 191, 36, 0.12);
+  --sem-warning-text: #D97706;
+
+  --sem-danger: #EF4444;
+  --sem-danger-bg:   rgba(239, 68, 68, 0.12);
+  --sem-danger-text: #DC2626;
+
+  --sem-hot: #F97316;
+  --sem-hot-bg:   rgba(249, 115, 22, 0.12);
+  --sem-hot-text: #EA580C;
+}
+
+/* Dark mode panel backgrounds — verbatim from ColorsSemantic.css */
+html.dark .sem.success { background: #0c2a20 !important; color: var(--brand-primary-200) !important; }
+html.dark .sem.warning { background: #2a1f06 !important; color: #FDE68A !important; }
+html.dark .sem.danger  { background: #2a0d0d !important; color: #FCA5A5 !important; }
+html.dark .sem.hot     { background: #2a1506 !important; color: #FDBA74 !important; }
+
+/* --------------------------------------------------------------------------
+ * (d) .icon-badge — glossy colored-square utility
+ * DNA from .ms-icon (ModelSelector) + .tp-w-ic (TaskCard).
+ * Set --icon-c on a parent or the element itself to tint.
+ * -------------------------------------------------------------------------- */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge {
+  width: 30px; height: 30px; border-radius: var(--radius-sm, 8px);
+  display: grid; place-items: center; flex-shrink: 0;
+  background-color: var(--icon-c, var(--brand-primary-500));
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.20) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: cover, 16px 16px, 16px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+html.dark .icon-badge, :root[data-theme="dark"] .icon-badge {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10);
+}
+
+.icon-badge .material-icons,
+.icon-badge .material-symbols-outlined {
+  font-size: 16px; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  line-height: 1; display: block;
+}
+
+/* Size modifiers */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--sm {
+  width: 22px; height: 22px; border-radius: var(--radius-xs, 6px);
+}
+.icon-badge--sm .material-icons,
+.icon-badge--sm .material-symbols-outlined { font-size: 13px; }
+
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--lg {
+  width: 38px; height: 38px; border-radius: var(--radius-md, 12px);
+}
+.icon-badge--lg .material-icons,
+.icon-badge--lg .material-symbols-outlined { font-size: 20px; }
+
+/* Glow modifier — outward glow tinted to --icon-c, from .tp-w-ic */
+.icon-badge--glow {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10),
+    0 0 10px -2px var(--icon-c, var(--brand-primary-500));
+}
+
+/* --------------------------------------------------------------------------
+ * Motion vocabulary
+ * --ease-spring / --ease-out now defined once in motion-tokens.css
+ * (loaded earlier via global.css); this file only consumes them.
+ * -------------------------------------------------------------------------- */
+
+/* Fade + rise — enter/exit pair */
+@keyframes db-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes db-exit {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+
+/* Scale + fade — popover pair */
+@keyframes db-scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes db-scale-out {
+  from { opacity: 1; transform: scale(1);    }
+  to   { opacity: 0; transform: scale(0.88); }
+}
+
+/* Spring press */
+@keyframes db-bounce {
+  0%   { transform: scale(1);    }
+  35%  { transform: scale(0.93); }
+  65%  { transform: scale(1.04); }
+  82%  { transform: scale(0.98); }
+  100% { transform: scale(1);    }
+}
+
+/* Size / grid-template morph helper */
+@keyframes db-morph {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to   { grid-template-rows: 1fr; opacity: 1; }
+}
+
+/* Slide — horizontal pair */
+@keyframes db-slide-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes db-slide-out {
+  from { opacity: 1; transform: translateX(0);     }
+  to   { opacity: 0; transform: translateX(-12px); }
+}
+
+/* Motion utility classes — durations use --anim-mult for global slow-down */
+.db-fade-in  { animation: db-enter  calc(260ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-fade-out { animation: db-exit   calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-pop-in   { animation: db-scale-in  calc(280ms * var(--anim-mult, 1)) var(--ease-spring) both; }
+.db-pop-out  { animation: db-scale-out calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-press    { animation: db-bounce    calc(360ms * var(--anim-mult, 1)) var(--ease-spring) both; }
+.db-slide-in  { animation: db-slide-in  calc(260ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-slide-out { animation: db-slide-out calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+
+/* ============================================================
+   SQUIRCLE INNER-SURFACE RECIPE (shared, scoped opt-in)
+   Any surface driven by useSquircle() (lib/hooks/use-squircle.ts)
+   carries data-squircle="on" once its clip-path + ring custom
+   properties (--squircle-border-path / --squircle-hairline-path,
+   written by lib/squircle.ts) are computed. This block is the
+   shared "inner-card" treatment: the real border/box-shadow are
+   dropped in favour of two clip-path pseudo-elements that trace
+   the squircle outline.
+
+   Adopting components keep their own `padding` declaration --
+   `padding: calc(<their pad var> + 1px)` (the padding-box/
+   border-box offset + unpainted-crescent fix) -- since the pad
+   amount is component-specific; only the shared reset + ring
+   painting live here. Surface colors trace to the canonical
+   inner-card token (--card-border) so every adopter matches the
+   DS value truth.
+
+   Shadowed surfaces: box-shadow is clipped by clip-path, so a
+   surface that used box-shadow for depth must migrate that
+   shadow to filter: drop-shadow(...) on a wrapping element
+   instead (see .concentric-demo in Cards.css for the pattern).
+
+   Canon (corrected): the recipe defaults every squircle surface to
+   line-less in both modes. Only a dark-mode OUTER shell should ever
+   show the 1px --card-border ring; it opts in on its own scoped
+   selector (e.g. html.dark .tf-shell[data-squircle="on"]::before),
+   which fully redeclares content/position/background/clip-path and
+   wins on specificity over the default below (see .concentric-demo-outer
+   in Cards.css for the reference pattern).
+   ============================================================ */
+/* `html` prefix is a specificity bump, not a scoping change: at equal
+   attribute-only specificity, a component's own base rule (e.g. .card-inner's
+   border/box-shadow) loads after this shared block in the bundle and would
+   otherwise win the cascade purely on source order. The extra element
+   selector keeps this reset order-independent without adding a class. */
+html [data-squircle="on"] {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Default: no ring, no hairline, anywhere. */
+[data-squircle="on"]::before,
+[data-squircle="on"]::after {
+  content: none;
+}
+
+/* ============================================================
+   CANON HOVER — single shared hover recipe for card/tile surfaces
+   Source of truth: .concentric-demo / .concentric-demo:hover in
+   cards/Cards.css (the inner-card reference pattern). Card and tile
+   surfaces converging on the library-wide hover should apply this
+   class (or match its values 1:1) instead of redeclaring their own.
+   Scope: hover + active transform/shadow ONLY -- does not touch
+   layout, color, or entrance. JS-spring/proximity-driven surfaces
+   (use-proximity-group, hover-tokens.css [data-proximity]) already
+   own their transform via inline style and must NOT adopt this
+   class -- it would double up the animation.
+   ============================================================ */
+:root {
+  --canon-hover-scale:  1.006;
+  --canon-active-scale: 1.003;
+  --canon-shadow-rest:  drop-shadow(0 10px 15px rgba(17,17,17,0.12)) drop-shadow(0 2px 4px rgba(17,17,17,0.06));
+  --canon-shadow-hover: drop-shadow(0 16px 25px rgba(17,17,17,0.13)) drop-shadow(0 3px 4.5px rgba(17,17,17,0.07));
+  /* Tiered press-shrink scales, migrated from scattered literals
+     (.985 / .97 / .94 / .92 / .9 / .88) across design-system components:
+     card = whole cards, control = buttons and medium controls,
+     chip = small chips and tags. */
+  --press-card:    0.985;
+  --press-control: 0.94;
+  --press-chip:    0.90;
+}
+.canon-hover {
+  transition:
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    filter    calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  filter: var(--canon-shadow-rest);
+}
+/* Literal values repeated here (not just via custom property) so the
+   canon-hover recipe is grep-able and diff-able at a glance: hover
+   resolves to scale(1.006), active to scale(1.003) -- must match
+   --canon-hover-scale / --canon-active-scale above. */
+.canon-hover:hover  { transform: scale(1.006); filter: var(--canon-shadow-hover); }
+.canon-hover:active { transform: scale(1.003); }
+
+</style>
+<style data-ds="preview/done/jsx/_buttons.css">/* _buttons.css — concatenated from buttons/Buttons.css + delete-button/DeleteButton.css. Refreshed 2026-09-01 (ax-jeru-push Step 4). */
+/* C2 canon: buttons/chips hover unified on the proximity engine (data-proximity
+   already wired on all buttons in Buttons.tsx) instead of a bare translateY lift,
+   at a dialed-down control magnitude (pinned-list --hover-scale-max: 1.010 precedent). */
+.btn-page-root {
+  --hover-scale-max: 1.008;
+  --hover-brightness-max: 1.015;
+}
+.btn-row { display:flex; gap: 12px; align-items:center; flex-wrap: wrap; }
+.btn-row + .btn-row { margin-top: 14px; }
+.btn-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #A1A1A1; display:block; margin-bottom: 6px; }
+
+.btn-primary {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 12px 20px;
+  background: var(--brand-primary-500); color: var(--brand-on-primary);
+  border: none; border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 14px 14px;
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+/* richgold uses dark on-primary text; the dark text-shadow would muddy it */
+:root[data-primary="richgold"] .btn-primary { text-shadow: none; }
+.btn-primary:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 6px 18px -4px var(--brand-glow);
+}
+.btn-primary:active { transform: scale(0.96); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15); }
+
+.btn-inverse {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 12px 20px;
+  background: var(--card-bg); color: var(--brand-primary-500);
+  border: none; border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 0 rgba(17,17,17,0.14);
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-inverse:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -2px 0 rgba(17,17,17,0.14),
+    0 6px 18px -4px rgba(17,17,17,0.18);
+}
+.btn-inverse:active { transform: scale(0.96); box-shadow: inset 0 0 0 1px rgba(17,17,17,0.22), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(17,17,17,0.14); }
+
+.btn-glass {
+  display:inline-flex; align-items:center; gap: 8px;
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.8);
+  color: #232323;
+  border: none;
+  border-radius: 14px;
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 700;
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 0 rgba(17,17,17,0.12);
+  backdrop-filter: blur(20px);
+  cursor: pointer;
+  transition: transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out), background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), outline-color var(--focus-ring-duration) var(--focus-ring-ease), outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-glass:hover {
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(17,17,17,0.22),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -2px 0 rgba(17,17,17,0.12),
+    0 6px 18px -4px rgba(17,17,17,0.14);
+}
+.btn-glass:active { transform: scale(0.96); background: rgba(255,255,255,0.7); box-shadow: inset 0 0 0 1px rgba(17,17,17,0.22), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(17,17,17,0.12); }
+
+.btn-text {
+  position: relative;
+  background: none; border: none;
+  color: var(--brand-primary-500);
+  font-family: 'Montserrat'; font-size: 14px; font-weight: 800;
+  display:inline-flex; align-items:center; gap: 4px;
+  padding: 6px 0;
+  cursor: pointer;
+  transition:
+    opacity calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    outline-color var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+.btn-text::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-text:hover { opacity: 0.8; box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand-primary-500) 40%, transparent); }
+.btn-text:active { opacity: 0.55; }
+html.dark .btn-text:hover { box-shadow: 0 4px 12px -4px rgba(52,211,153,0.45); }
+
+.btn-mi { font-size: 18px; }
+
+/* Dark mode — html.dark convention */
+html.dark .btn-label { color: #A1A1A1; }
+html.dark .btn-inverse { background: #1C1C1C; color: var(--brand-primary-400); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3); }
+html.dark .btn-inverse:hover { background: var(--fp-hover); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3), 0 6px 18px -4px rgba(0,0,0,0.4); }
+html.dark .btn-glass { background: rgba(28,28,28,.7); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3); }
+html.dark .btn-glass:hover { background: rgba(39,52,73,.85); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -2px 0 rgba(0,0,0,.3), 0 6px 18px -4px rgba(0,0,0,0.4); }
+html.dark .btn-text { color: var(--brand-primary-400); }
+
+/* ─────────────────────────────────────────────────────────────────
+   New variants (Step 3)
+   Tokens from _shared-feedback.css: --ease-spring, --ease-out,
+   --gap-icon-text, --font-display.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Apply button -- reuses .btn-green (class applied in TSX).
+   Only additive overrides go here. */
+.btn-apply {
+  min-width: 104px;
+  /* Rest width: falls back to `auto` (min-width + content) until the first
+     click, at which point buttons-hook.ts pins the measured pixel width
+     onto this var -- see runApplyBtn. That gives the width transition a
+     concrete number on both ends (compact AND extend), instead of relying
+     on the CSS keyword `auto`, which was true even before this step's
+     duration changes and previously made the extend-back transition snap
+     instantly rather than animate. */
+  width: var(--btn-apply-rest-w, auto);
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+  transform-origin: left center;
+  --color-1: 0 100% 63%;
+  --color-2: 270 100% 63%;
+  --color-3: 210 100% 63%;
+  --color-4: 195 100% 63%;
+  --color-5: 90 100% 63%;
+  /* Base timing-function is the phase-3 (done -> default) set: width/padding
+     use --ease-out here so the extend-back is a monotonic decelerate;
+     background-color/transform use --ease-press-calm (no overshoot -- the
+     old --ease-spring overshoot read as too powerful on click).
+     transition-duration is also overridden per state class below.
+     Order: width, padding, background-color, transform, box-shadow, scale. */
+  /* outline-color/outline-offset appended (7th/8th legs) so the shared
+     focus ring (previously supplied by a separate, fully-replacing
+     :focus-visible rule in _shared-feedback.css) animates on this button
+     too -- this is the winning declaration for .btn-green:focus-visible on
+     /components/buttons, since .btn-apply's own longhand transition
+     outranks .btn-green's shorthand at equal (0,1,0) specificity by load
+     order (Buttons.css loads after _shared-feedback.css). */
+  transition-property: width, padding, background-color, transform, box-shadow, scale, outline-color, outline-offset;
+  transition-timing-function: var(--ease-out), var(--ease-out), var(--ease-press-calm), var(--ease-press-calm), var(--ease-out), var(--ease-linear), var(--focus-ring-ease), var(--focus-ring-ease);
+  /* Resting / phase-3 duration set: width+padding+background-color all
+     revert together over --duration-expand so the return leg reads as one continuous
+     glide instead of the background finishing --duration-instant early and visually
+     decoupling from the still-growing width (the prior snap). */
+  transition-duration:
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-expand) * var(--anim-mult, 1)),
+    calc(var(--duration-base) * var(--anim-mult, 1)),
+    calc(var(--duration-fast) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1)),
+    var(--focus-ring-duration),
+    var(--focus-ring-duration);
+}
+
+@keyframes btn-rainbow-scroll {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+.btn-apply::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(90deg,
+    hsl(var(--color-1)),
+    hsl(var(--color-5)),
+    hsl(var(--color-3)),
+    hsl(var(--color-4)),
+    hsl(var(--color-2)),
+    hsl(var(--color-1))
+  );
+  background-size: 200% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: btn-rainbow-scroll calc(3s * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative rainbow-scroll loop, no discrete-duration semantics, no token needed */
+  pointer-events: none;
+}
+
+.btn-apply::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  bottom: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 50%;
+  background: linear-gradient(90deg,
+    hsl(var(--color-1)),
+    hsl(var(--color-5)),
+    hsl(var(--color-3)),
+    hsl(var(--color-4)),
+    hsl(var(--color-2))
+  );
+  background-size: 200% 100%;
+  filter: blur(10px);
+  opacity: 0.7;
+  animation: btn-rainbow-scroll calc(3s * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative rainbow-scroll loop, no discrete-duration semantics, no token needed */
+  pointer-events: none;
+}
+
+/* Row 4 — proximity wrapper for the locked DeleteButton. Scoped to
+   .btn-page-root .btn-prox-wrap only; does not touch [data-proximity]::after
+   globally, which would overwrite .btn-apply::after's rainbow underglow. */
+.btn-page-root .btn-prox-wrap { display: inline-flex; align-items: center; position: relative; }
+.btn-page-root .btn-prox-wrap::after {
+  content: ''; position: absolute; inset: 50%;
+  width: max(100%, 40px); height: max(100%, 40px);
+  transform: translate(-50%, -50%); pointer-events: none;
+}
+
+/* Active state scoped to .btn-apply; hover is raised via .btn-page-root below */
+.btn-apply:active { transform: scale(var(--press-card)); }
+
+/* ── Apply state machine — compress-from-right + loading bar ── */
+
+/* Label: always-mounted, morphs out (scale+fade) when loading/done.
+   Split enter/exit timing -- the structural stagger fix: exit is fast and
+   undelayed so it visibly clears the stage first; enter (phase-3, done ->
+   default) is a slower spring delayed to land exactly as the width finishes
+   extending (delay = --duration-expand - --duration-slow = --duration-240),
+   instead of popping in --duration-fast before the button is done widening. */
+.btn-apply .btn-apply-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc((var(--duration-expand) - var(--duration-slow)) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc((var(--duration-expand) - var(--duration-slow)) * var(--anim-mult, 1));
+}
+.btn-apply.is-loading .btn-apply-label,
+.btn-apply.is-done    .btn-apply-label {
+  opacity: 0;
+  transform: scale(0.82);
+  pointer-events: none;
+  /* Exit (phase-1, default -> loading): fast, no delay -- outgoing layer
+     clears before the spinner fades in. */
+  transition:
+    opacity   calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out);
+}
+
+/* Loading: compress to a narrow pill holding the bar.
+   Phase-1 (default -> loading) duration override: width/padding compact
+   over --duration-compact. Re-tuned to the calm no-overshoot vocabulary -- the
+   overshoot curve here read as a click that was too powerful. */
+.btn-apply.is-loading {
+  min-width: unset;
+  width: 72px;
+  padding: 0 10px;
+  transition-timing-function: var(--ease-press-calm), var(--ease-press-calm), var(--ease-press-calm), var(--ease-out), var(--ease-out), var(--ease-linear);
+  transition-duration:
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-sweep) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1));
+}
+
+/* Done: compressed pill turns green.
+   Phase-2 (loading -> done) duration override: background-color sweeps to
+   green over --duration-sweep (up from --duration-slow) so the fill visibly travels instead of
+   snapping; width/padding hold their compact value (no visual change). */
+.btn-apply.is-done {
+  min-width: unset;
+  width: 72px;
+  padding: 0 10px;
+  background: var(--brand-primary-500);
+  color: var(--brand-on-primary);
+  transition-duration:
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-compact) * var(--anim-mult, 1)),
+    calc(var(--duration-sweep) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-240) * var(--anim-mult, 1)),
+    calc(var(--duration-instant) * var(--anim-mult, 1));
+}
+
+/* ── Radial spinner (replaces loading bar) ── */
+/* Spinner: hidden by default -- also the phase-2 exit target (loading ->
+   done), so it fades out fast with no delay. */
+.btn-apply-spinner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.82);
+  pointer-events: none;
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+}
+/* Enter (phase-1, default -> loading): --duration-fast delay so it arrives only
+   after the label has visibly cleared -- the stagger fix. */
+.btn-apply.is-loading .btn-apply-spinner {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+
+.btn-apply-spin-svg {
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+
+/* Faint ring track */
+.btn-apply-spin-track {
+  stroke: rgba(255,255,255,0.22);
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* Rotating arc -- ~1/3 of circumference (circ ~69), rotating clockwise */
+.btn-apply-spin-arc {
+  stroke: #fff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 23 46;
+  animation: btn-spin-rotate calc(800ms * var(--anim-mult, 1)) var(--ease-linear) infinite; /* motion-sweep: kept, decorative spin-rotate loop, no token needed */
+  transform-origin: 16px 16px;
+}
+
+@keyframes btn-spin-rotate {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Check mark (done state) ──
+   Split enter/exit -- also part of the stagger fix: enter (phase-2,
+   loading -> done) delays --duration-fast behind the spinner's exit and scale-pops
+   in over --duration-slower; exit (phase-3, done -> default) is fast and undelayed
+   so it clears before the label re-enters. */
+.btn-apply-check {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  opacity: 0; transform: scale(0.82);
+  pointer-events: none;
+  transition:
+    opacity   calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out);
+}
+.btn-apply-check-ic {
+  font-size: 22px;
+  font-variation-settings: 'wght' 700, 'FILL' 1, 'GRAD' 0, 'opsz' 24;
+}
+.btn-apply.is-done .btn-apply-check {
+  opacity: 1; transform: scale(1);
+  transition:
+    opacity   calc(var(--duration-slow)   * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1)),
+    transform calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+
+/* Bold apply icon */
+.btn-apply-icon {
+  font-size: 16px;
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Dark mode for .btn-apply ── */
+/* White inner in dark; rainbow ::before border is preserved by .btn-green rules */
+html.dark .btn-apply { background: #FFFFFF; color: #111111; }
+html.dark .btn-apply .material-icons,
+html.dark .btn-apply .material-symbols-outlined { color: #111111; }
+
+/* Done state in dark: keep white button, green check glyph */
+html.dark .btn-apply.is-done { background: #FFFFFF; }
+html.dark .btn-apply.is-done .btn-apply-check-ic { color: var(--brand-primary-500); }
+
+/* Discuss button — mirrors .pc-discuss-btn (pipeline-card source) */
+.btn-discuss {
+  position: relative;
+  height: 36px; padding: 0 15px; gap: var(--gap-icon-text, 6px);
+  border-radius: 9999px; cursor: pointer;
+  font-family: var(--font-display); font-size: 12px; font-weight: 800;
+  display: inline-flex; align-items: center;
+  background: transparent; color: var(--r-text, #111111);
+  border: 1.5px solid var(--r-chip-bd, #D4D4D4);
+  transition:
+    border-color calc(var(--duration-base) * var(--anim-mult, 1)),
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-discuss::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-discuss:hover {
+  background: var(--r-btn-hover, var(--hover-standard-bg));
+  border-color: var(--r-btn, #6B6B6B);
+  box-shadow: 0 6px 18px -4px rgba(100,116,139,0.22);
+}
+.btn-discuss:active { transform: scale(var(--press-control)); }
+html.dark .btn-discuss { color: #F5F5F5; border-color: rgba(255,255,255,0.18); }
+html.dark .btn-discuss:hover { background: var(--hover-standard-bg); border-color: rgba(255,255,255,0.35); }
+
+/* Standalone .btn-delete fallback for contexts needing a plain delete CTA. */
+.btn-delete {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 40px; padding: 0 20px; gap: var(--gap-icon-text, 8px);
+  border-radius: 9999px; border: none; cursor: pointer;
+  font-family: var(--font-display); font-size: 13px; font-weight: 800;
+  color: #fff; background: #EF4444;
+  box-shadow:
+    0 12px 30px -10px rgba(239,68,68,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22);
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-slow) * var(--anim-mult, 1));
+}
+.btn-delete:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 10px 26px -6px rgba(239,68,68,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22);
+}
+.btn-delete:active { transform: scale(var(--press-card)); }
+html.dark .btn-delete {
+  background: #DC2626;
+  box-shadow:
+    0 12px 30px -10px rgba(220,38,38,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -2px 0 rgba(0,0,0,0.3);
+}
+
+/* Task footer button — mirrors .tp-foot-btn driven by --fbtn (task-card source).
+   Caller sets --fbtn to the desired solid fill color; defaults to navy. */
+.btn-task {
+  flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--gap-icon-text, 6px);
+  font-family: var(--font-display); font-size: 11px; font-weight: 800;
+  color: #fff; background: var(--fbtn, #111111); border: 1px solid var(--fbtn, #111111);
+  padding: 6px 14px; border-radius: 9999px; cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1.5px 0 rgba(0,0,0,0.18),
+    0 0 10px -3px var(--fbtn, #111111);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  transition:
+    border-color calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    color calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-task:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.22),
+    inset 0 -1.5px 0 rgba(0,0,0,0.18),
+    0 8px 20px -4px var(--fbtn, #111111);
+}
+.btn-task:active { transform: scale(0.98); }
+.btn-task .material-icons { color: #fff; font-size: 16px; }
+
+/* Bold task-alt icon in the specimen row */
+.btn-task-icon {
+  font-weight: 900;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CTA button -- accent-colored pill with grid texture + glow.
+   Caller sets --accent (fill) and --ctaglow (shadow color). */
+.btn-cta {
+  position: relative;
+  overflow: hidden;
+  height: 46px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: 'Montserrat';
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 18px;
+  background-color: var(--accent);
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-size: cover, 14px 14px, 14px 14px;
+  box-shadow:
+    0 8px 22px -8px var(--ctaglow),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.14);
+  transition:
+    filter calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.btn-cta:hover {
+  filter: brightness(1.07);
+  box-shadow:
+    0 10px 28px -6px var(--ctaglow),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+.btn-cta:active { transform: scale(var(--press-control)); }
+
+/* ── Scoped hover overrides for shared pill buttons (.btn-green/.btn-yellow/.btn-red) ──
+   These live in _shared-feedback.css (global) with scale(1.03) hover.
+   .btn-page-root wrapper raises specificity (0,2,0) so these win on the buttons page only,
+   replacing scale with the canonical translateY(-1px) + tinted directional glow. */
+/* transform: none cancels _shared-feedback.css's literal .btn-green/.btn-yellow/
+   .btn-red :hover { transform: scale(1.03) } so the proximity engine's `scale`
+   property (dialed down via .btn-page-root above) is the only hover mechanism. */
+.btn-page-root .btn-green:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px color-mix(in srgb, var(--brand-primary-500) 40%, transparent), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.btn-page-root .btn-yellow:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(245,158,11,0.42), inset 0 1px 0 rgba(255,255,255,0.28);
+}
+.btn-page-root .btn-red:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(239,68,68,0.42), inset 0 1px 0 rgba(255,255,255,0.28);
+}
+html.dark .btn-page-root .btn-green:hover {
+  transform: none;
+  box-shadow: 0 6px 18px -4px rgba(52,211,153,0.45), inset 0 1px 0 rgba(255,255,255,0.22);
+}
+
+/* ── Press companions: hover and press are independent (Bora) — restore the
+   press shrink that the transform:none hover rules above cancel, without
+   touching those rules' own declarations.
+   .btn-green companion excludes .btn-apply: :not(.btn-apply) adds a class to
+   the selector, pushing it to (0,0,5,0), which beats both the light rule at
+   (0,0,3,0) above AND the html.dark rule at (0,0,4,1) — class count (5>4)
+   decides before the element-count tiebreak, so one rule covers both themes.
+   .btn-apply carries the btn-green class too, so it needs its own pair of
+   companions (light + dark) at the card press token, or the excluded green
+   rule above would leave it unpressed in dark, where (0,0,4,1) still beats a
+   plain (0,0,4,0) apply-only companion. */
+.btn-page-root .btn-green:hover:active:not(.btn-apply) { transform: scale(0.96); }
+.btn-page-root .btn-yellow:hover:active { transform: scale(0.96); }
+.btn-page-root .btn-red:hover:active { transform: scale(0.96); }
+.btn-page-root .btn-apply:hover:active { transform: scale(var(--press-card)); }
+html.dark .btn-page-root .btn-apply:hover:active { transform: scale(var(--press-card)); }
+
+/* ── Softened hover for .btn-apply (Apply + Ask Jeru) ──
+   Specificity 0,3,0 + later in file — beats .btn-page-root .btn-green:hover above.
+   .btn-green is NOT redefined globally; these rules are scoped to .btn-page-root .btn-apply. */
+.btn-page-root .btn-apply:hover {
+  box-shadow: 0 4px 12px -4px color-mix(in srgb, var(--brand-primary-500) 25%, transparent);
+}
+html.dark .btn-page-root .btn-apply:hover {
+  box-shadow: 0 4px 12px -4px rgba(52,211,153,0.28);
+}
+
+/* Rainbow buttons are scale-only under proximity: brightness/drop-shadow would
+   wash the gradient ring + glow. Doubled class beats hover-tokens.css's
+   [data-proximity]x3 (0,4,0 > 0,3,0) regardless of CSS load order. */
+.btn-page-root .btn-apply.btn-apply[data-proximity] { filter: none; }
+
+/* Row 3 (Colorful pills) proximity transition — locked _shared-feedback.css
+   (btn-green L37-51, btn-yellow L57-71, btn-red L77-91) only lists
+   background-color/transform/box-shadow; scale + filter channels added here
+   so hover-tokens.css's --prox mapping doesn't snap. :not(.btn-apply) keeps
+   row 2's Ask Jeru rainbow/scale-only transition untouched. */
+.btn-page-root .btn-green[data-proximity]:not(.btn-apply),
+.btn-page-root .btn-yellow[data-proximity],
+.btn-page-root .btn-red[data-proximity] {
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-press-calm),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    outline-color var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+}
+
+/* ===== delete-button/DeleteButton.css (inlined) ===== */
+/* =========================================================================
+   Delete Button — Deha Design System
+   Byte-preserved from apps/web/design-system/claude-design/raw/delete-button/delete-button.html
+   (the .db* rule set only; the raw file's <body>/#root scaffold is preview
+   chrome, not part of the component, same precedent as other conversions).
+   ========================================================================= */
+
+.db {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 54px;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  color: #fff;
+  overflow: hidden;
+  /* Press asymmetry: the transform leg reads its duration from --db-press-dur,
+     which :active swaps to the faster tier. All durations and easings below
+     resolve through motion-tokens.css var(--duration-*)/var(--ease-*) --
+     no raw ms/s literal or hand-written easing curve in this file.
+     motion-sweep step 2: every leg moved to a shorter token in the same
+     easing family -- brisk, not instant. Before -> after (ms):
+     press 180->140 (active 120->100), width 260->200,
+     color/bg/shadow 340->260, odometer roll curve promoted to
+     var(--ease-out) (was a component-local cubic-bezier var). */
+  --db-press-dur: calc(var(--duration-140) * var(--anim-mult, 1));
+  transition:
+    width calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out),
+    background-color calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    color calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    box-shadow calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-fade),
+    transform var(--db-press-dur) var(--ease-out);
+}
+.db:active {
+  --db-press-dur: calc(var(--duration-instant) * var(--anim-mult, 1));
+  transform: scale(0.97);
+}
+/* `done` is a terminal, non-clickable state (onClick ignores it) — do not offer
+   press feedback the machine will not honour. */
+.db[data-state='done'] {
+  cursor: default;
+}
+.db[data-state='done']:active {
+  transform: none;
+}
+.db-inner {
+  display: flex;
+  align-items: center;
+  width: max-content;
+}
+/* Content morph: the icon + text blur out and shrink slightly while the pill
+   re-colours and re-sizes, then the new content blurs back in. No colour-into-
+   background trick (that read as a glow), just a clean focus pull. */
+.db-inner {
+  transition:
+    opacity calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    filter calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out);
+}
+/* will-change only while a morph is actually in flight — a permanent layer
+   promotion on an idle button costs memory for nothing. */
+.db[data-phase='morph'] .db-inner,
+.db[data-phase='in'] .db-inner {
+  will-change: opacity, filter, transform;
+}
+/* MORPH is a hard, untransitioned snap into the hidden entrance pose (new
+   content mounts already blurred/shrunk) -- the label swap tracks the width
+   change directly instead of holding an OUT frame first (F24). */
+.db[data-phase='morph'] .db-inner {
+  opacity: 0;
+  filter: blur(6px);
+  transform: scale(0.82);
+  transition: none;
+}
+.db[data-phase='in'] .db-inner {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+  transition:
+    opacity calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-fade),
+    filter calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc((var(--duration-140) + var(--duration-fast)) * var(--anim-mult, 1)) var(--ease-out);
+}
+.db[data-phase='rest'] .db-inner {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-inner {
+    filter: none !important;
+    transform: none !important;
+  }
+  /* The digit roll is already reduced-motion gated; the badge's scale pop was
+     not, so it was the one piece of unrequested motion left under reduce. */
+  .db-count {
+    animation: none;
+  }
+  /* Belt and braces for the same failure mode DeleteButton.tsx guards in JS:
+     with the roll keyframes disabled, an outgoing digit has nothing to move it
+     off the incoming one, so it would sit superimposed. Never show it. */
+  .db-d.up {
+    display: none;
+  }
+}
+
+.db[data-state='idle'] {
+  background: var(--semantic-danger-bg);
+  color: var(--semantic-danger);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(239, 68, 68, 0.3),
+    0 8px 22px -12px rgba(239, 68, 68, 0.45);
+}
+.db[data-state='idle'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+/* Hover is a pointer affordance: gated so touch devices never get the sticky
+   post-tap hover. The 1px lift gives both live states the same "this responds"
+   read; `done` is excluded because it is not clickable. */
+@media (hover: hover) and (pointer: fine) {
+  .db[data-state='idle']:hover {
+    background: #fde6e6;
+    box-shadow:
+      inset 0 0 0 1.5px rgba(239, 68, 68, 0.45),
+      0 10px 26px -12px rgba(239, 68, 68, 0.55);
+  }
+  .db[data-state='idle']:hover,
+  .db[data-state='confirming']:hover {
+    transform: translateY(-1px);
+  }
+  .db[data-state='idle']:active,
+  .db[data-state='confirming']:active {
+    transform: translateY(0) scale(0.97);
+  }
+}
+[data-theme='dark'] .db[data-state='idle'] {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.42);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-theme='dark'] .db[data-state='idle']:hover {
+    background: rgba(239, 68, 68, 0.22);
+    box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.55);
+  }
+}
+
+.db[data-state='confirming'] {
+  background: var(--semantic-danger-bg);
+  color: var(--semantic-danger);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(239, 68, 68, 0.3),
+    0 6px 18px -10px rgba(239, 68, 68, 0.4);
+}
+.db[data-state='confirming'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+[data-theme='dark'] .db[data-state='confirming'] {
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+  box-shadow: inset 0 0 0 1.5px rgba(239, 68, 68, 0.42);
+}
+
+.db[data-state='done'] {
+  background-color: var(--brand-primary);
+  color: #fff;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+  box-shadow:
+    0 12px 28px -10px rgba(16, 185, 129, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.18),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+.db[data-state='done'] .db-inner {
+  padding: 0 26px;
+  gap: 10px;
+}
+[data-theme='dark'] .db[data-state='done'] {
+  box-shadow:
+    0 12px 28px -10px rgba(16, 185, 129, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.db-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.db-text {
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: 0.005em;
+  white-space: pre;
+}
+
+/* countdown — red round badge, white number, outer shadow */
+.db-count {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  /* Sized to sit close to .db-text's 15px (F24: was 34px, read oversized
+     next to the label). */
+  width: 26px;
+  height: 26px;
+  font-size: 15px;
+  border-radius: 50%;
+  background: var(--semantic-danger);
+  color: #fff;
+  font-weight: var(--weight-black);
+  font-variant-numeric: tabular-nums;
+  box-shadow:
+    0 5px 14px -3px rgba(239, 68, 68, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.18);
+  transition:
+    opacity calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade);
+  /* duration-150 + duration-140, delay duration-260 (motion-sweep: shorter than before). */
+  animation: dbPop calc((var(--duration-150) + var(--duration-140)) * var(--anim-mult, 1))
+    var(--ease-out) calc(var(--duration-260) * var(--anim-mult, 1)) backwards;
+}
+@keyframes dbPop {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* odometer roll — old digit slides up & out, new slides in from below */
+.db-roll {
+  position: relative;
+  display: inline-block;
+  height: 17px;
+  min-width: 12px;
+  overflow: hidden;
+}
+.db-d {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: block;
+  text-align: center;
+  /* Matches .db-text's 15px (F24: was 16px on a 34px badge). */
+  font-size: 15px;
+  line-height: 17px;
+}
+.db-d.cur {
+  position: static;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* duration-260 + duration-150 (motion-sweep: shorter than before). MIRROR: DeleteButton.tsx ROLL_MS
+     (410) times the same --anim-mult, so the JS swap back to the resting
+     digit stays in sync. */
+  .db-d.in {
+    animation: dbRollIn calc((var(--duration-260) + var(--duration-150)) * var(--anim-mult, 1))
+      var(--ease-out);
+  }
+  .db-d.up {
+    animation: dbRollUp calc((var(--duration-260) + var(--duration-150)) * var(--anim-mult, 1))
+      var(--ease-out) forwards;
+  }
+}
+@keyframes dbRollIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dbRollUp {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+/* ===== proximity-hover fallback tokens + visual mapping (inlined from
+ * src/styles/hover-tokens.css; the mirror does not ship that file).
+ * transform/opacity only per motion checklist -- no filter/brightness/
+ * drop-shadow here, unlike the app's hover-tokens.css original. ===== */
+:root {
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+}
+html.dark {
+  --fp-hover: rgba(255, 255, 255, 0.07);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-proximity] {
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform: scale(calc(1 + var(--prox, 0) * 0.014));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-proximity] { transition: none; transform: none; }
+}
+</style>
+<style data-ds="preview/done/jsx/_cards.css">.cards-outer { background: #FAFAFA; }
+html.dark .cards-outer { background: #0A0A0A !important; }
+
+.cards-frame { padding: 24px; background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 10%, transparent) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); }
+.cards-grid { display:grid; gap: 14px; grid-template-columns: 1fr; }
+/* GLOBAL RULE: every white-background card surface in this project derives its
+   background, border, and radius from the shared card tokens (--card-bg /
+   --card-border / --card-radius) defined in _shared-feedback.css. Do not
+   hard-code white card fills; reference the tokens so light and dark align. */
+.card-inner {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius); padding: var(--pad-card);
+  box-shadow: inset 0 0 0 1px rgba(17,17,17,0.04);
+  font-family: var(--font-display);
+}
+/* useSquircle takes over the corner rendering: real border/box-shadow are
+   dropped in favour of a clip-path silhouette + two ::before/::after rings
+   that trace the same squircle outline (see use-squircle.ts). Elements
+   without data-squircle="on" keep the plain border-radius fallback above.
+   The border/box-shadow reset + ::before/::after ring painting now live in
+   the shared [data-squircle="on"] recipe in _shared-feedback.css; this card
+   only supplies its own padding (padding-box/border-box +1px fix) and the
+   corner-radius binding, since both are component-specific. */
+.card-inner[data-squircle="on"] {
+  padding: calc(var(--pad-card) + 1px);
+  --corner-radius: var(--card-radius);
+}
+
+.concentric-demo-outer {
+  position: relative;
+  background: var(--shell-bg);
+  border-radius: 36px;
+  padding: 8px;
+}
+.concentric-demo-outer[data-squircle="on"] { border-radius: 0; }
+/* Outer shell only wants the corner-radius reset from the shared recipe --
+   the generic border/hairline paint is not wanted on the light-mode outer
+   shell, so it's suppressed here and re-enabled, dark-mode only, further
+   below for the outer's own required hairline. */
+.concentric-demo-outer[data-squircle="on"]::before,
+.concentric-demo-outer[data-squircle="on"]::after {
+  content: none;
+}
+.concentric-demo-inner {
+  border-radius: 28px;
+}
+.card-inner.concentric-demo-inner[data-squircle="on"] {
+  --corner-radius: 28px;
+}
+
+.concentric-demo {
+  position: relative;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out), filter calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  filter: drop-shadow(0 10px 15px rgba(17,17,17,0.12)) drop-shadow(0 2px 4px rgba(17,17,17,0.06));
+}
+.concentric-demo:hover {
+  transform: scale(1.007);
+  filter: drop-shadow(0 16px 25px rgba(17,17,17,0.13)) drop-shadow(0 3px 4.5px rgba(17,17,17,0.07));
+}
+.concentric-demo:active { transform: scale(1.003); }
+.card-accent {
+  background: var(--brand-primary-500); color: var(--brand-on-primary);
+  border-radius: 24px; padding: 18px;
+  box-shadow:
+    0 10px 40px -10px var(--brand-glow),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  position: relative; overflow:hidden;
+  cursor: pointer;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  font-family: var(--font-display);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.card-accent::before {
+  content:''; position:absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+.card-accent:hover {
+  transform: scale(1.007);
+  box-shadow:
+    0 16px 50px -10px color-mix(in srgb, var(--brand-primary-500) 60%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+}
+.card-accent:active { transform: scale(1.003); }
+:root[data-primary="richgold"] .card-accent { text-shadow: none; }
+/* Squircle conversion (Step 14): the outer glow box-shadow migrates to
+   filter:drop-shadow (clip-path clips box-shadow); inset highlight/shadow
+   stay as box-shadow since insets render inside the clipped box. Ring
+   pseudo-elements are suppressed -- this is a colored brand card, not a
+   bordered card-inner surface. */
+.card-accent[data-squircle="on"] {
+  --corner-radius: 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  filter: drop-shadow(0 10px 40px -10px var(--brand-glow));
+}
+.card-accent[data-squircle="on"]::before,
+.card-accent[data-squircle="on"]::after { content: none; }
+.card-accent[data-squircle="on"]:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  filter: drop-shadow(0 16px 50px -10px color-mix(in srgb, var(--brand-primary-500) 60%, transparent));
+}
+
+.card-name { font-weight:800; font-size:14px; }
+.card-desc { font-size:12px; color:#6B6B6B; line-height:1.45; margin-top:4px; }
+.card-desc-w { color: rgba(255,255,255,0.85); }
+.card-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px; color: #A1A1A1; margin-top: 8px; display:block; }
+.card-tag-w { color: rgba(255,255,255,0.7); }
+:root[data-primary="richgold"] .card-desc-w { color: rgba(17,17,17,0.72); }
+:root[data-primary="richgold"] .card-tag-w { color: rgba(17,17,17,0.60); }
+
+
+/* Dark mode — html.dark convention */
+html.dark .cards-frame { background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 8%, transparent) 0%, #0A0A0A 55%) !important; }
+html.dark .card-inner { box-shadow: inset 0 1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(255,255,255,.04); }
+html.dark .card-inner[data-squircle="on"] { box-shadow: none; }
+/* Canon (corrected): the shared recipe now defaults every squircle surface
+   to line-less in both modes, so the outer shell is the only one that opts
+   into a ring, dark-mode only. The inner demo card needs no suppression
+   rules any more -- it inherits line-less-everywhere from the default. */
+html.dark .concentric-demo-outer[data-squircle="on"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--card-border);
+  clip-path: var(--squircle-border-path);
+}
+html.dark .card-name { color: #F5F5F5; }
+html.dark .card-desc { color: #A1A1A1; }
+html.dark .card-tag { color: #6B6B6B; }
+html.dark .card-accent .card-name { color: #fff; }
+html.dark[data-primary="richgold"] .card-accent .card-name { color: var(--brand-on-primary); }
+html.dark .card-accent .card-desc-w { color: rgba(255,255,255,0.9); }
+html.dark .card-accent .card-tag-w { color: rgba(255,255,255,0.72); }
+</style>
+<style data-ds="preview/done/jsx/_iconography.css">.ic-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 14px; padding: 8px 0; }
+.ic-cell { display:flex; flex-direction:column; align-items:center; gap: 6px; }
+.ic-cell .material-icons, .ic-cell .material-symbols-outlined { font-size: 24px; color: var(--gray-900); }
+.ic-cell span.ic-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px; color: var(--gray-500); text-align:center; }
+.ic-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-400); margin-bottom: 4px; display:block; }
+.ic-section-gap { margin-top: 14px; }
+
+/* ── Dark mode: icon glyphs adapt to stay legible; semantic color overrides (inline) stay as-is ── */
+html.dark .ic-cell .material-icons,
+html.dark .ic-cell .material-symbols-outlined { color: var(--gray-100); }
+html.dark .ic-cell span.ic-name { color: var(--gray-400); }
+/* ic-section already uses --gray-400 — no change needed in dark */
+</style>
+<style data-ds="preview/done/jsx/_pills.css">/* _pills.css — port of pills/Pills.css. Refreshed 2026-09-01 (ax-jeru-push Step 4). */
+.pills-row {
+  display:flex; align-items:center; gap: 8px; flex-wrap: wrap;
+}
+.pills-row + .pills-row { margin-top: 12px; }
+
+.pill-priority { display:inline-flex; align-items:center; gap: 6px; padding: 6px 14px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 13px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+.pill-priority .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.pill-tab { position: relative; display:inline-flex; align-items:center; padding: 6px 16px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 12px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+/* GLOBAL RULE: every .pill-tab is a tap target and must satisfy the 44px hit-layer + :focus-visible checklist item, regardless of its visible (intentionally smaller) chip size. */
+.pill-tab::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.pill-tab:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15); font-weight: 800; }
+.pill-tab.dark { background:#111111; color:#fff; font-weight: 800; border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.06); }
+
+.badge { display:inline-flex; align-items:center; gap: 6px; padding: 1px 8px; border-radius: 9999px; font-size: 11px; font-weight: 900; font-family:'Montserrat'; }
+.badge.success { background-color: var(--brand-primary-500); color: var(--brand-on-primary); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.success .material-icons { font-size: 14px; font-variation-settings: 'wght' 700; }
+.badge.gci { background:var(--brand-primary-500); color: var(--brand-on-primary); border:none; padding: 4px 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.time { background:#EF4444; color:#fff; padding: 3px 8px; border:none; text-shadow: 0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.time .material-icons { font-size: 12px; font-variation-settings: 'wght' 700; }
+.badge.danger { background-color:#EF4444; color:#fff; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.danger .material-icons { font-size: 14px; font-variation-settings: 'wght' 700; }
+.badge.tag { background-color:#F5F5F5; color:#232323; font-size: 11px; padding: 3px 8px; border: 1px solid #ECECEC; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05); background-image: var(--grid-texture-image-subtle); background-size: var(--grid-texture-size); }
+.badge.tag .material-icons { font-size: 13px; color: #6B6B6B; font-variation-settings: 'wght' 700; }
+
+/* Task board column tags */
+.badge.col-tag { display:inline-flex; align-items:center; gap: 6px; padding: 5px 5px 5px 9px; border-radius: 9999px; font-family:'Montserrat'; font-size: 11px; font-weight: 800; color:#fff; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 1px 0 rgba(0,0,0,0.22); box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), inset 0 -1.5px 0 rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.col-tag .material-icons { font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.40), 0 1px 0 rgba(0,0,0,0.22); }
+.badge.col-tag .count { display:inline-grid; place-items:center; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 9999px; background: rgba(255,255,255,0.94); color: rgba(17,17,17,0.85); font-size: 10.5px; font-weight: 900; letter-spacing: 0; text-shadow: none; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08), inset 0 0 0 1px rgba(0,0,0,0.05); font-variant-numeric: tabular-nums; }
+.badge.col-tag.todo     { background-color:#6B6B6B; }
+.badge.col-tag.progress { background-color:#F97316; }
+.badge.col-tag.review   { background-color:#FACC15; color:#451A03; text-shadow: none; }
+.badge.col-tag.review .material-icons { text-shadow: none; }
+.badge.col-tag.done     { background-color:var(--brand-primary-500); }
+
+.pills-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #A1A1A1; margin-bottom: 8px; display:block; }
+
+/* Event badges — glassy colored pills (fill via inline backgroundColor) */
+.badge-event { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:9999px; flex-shrink:0; color:#fff; font-size:11px; font-weight:800; font-family:'Montserrat'; text-shadow:0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); white-space:nowrap; }
+.badge-event .material-icons { font-size:12px; color:rgba(255,255,255,0.85); }
+
+/* Dark mode — html.dark convention */
+html.dark .pill-priority { background: #1C1C1C; border-color: #232323; color: #D4D4D4; }
+html.dark .pill-tab { background: #1C1C1C; border-color: #232323; color: #A1A1A1; }
+html.dark .pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; }
+html.dark .pill-tab.dark { background: #FFFFFF; color: #111111; border-color: transparent; }
+html.dark .badge.tag { background-color: #1C1C1C; color: #D4D4D4; border-color: #232323; background-image: var(--grid-texture-image-dark); background-size: var(--grid-texture-size); }
+html.dark .badge.tag .material-icons { color: #A1A1A1; }
+html.dark .pills-label { color: #A1A1A1; }
+html.dark .badge-event[data-tone="black"] { background-color: #FFFFFF !important; color: #111111 !important; text-shadow: none; }
+html.dark .badge-event[data-tone="black"] .material-icons { color: #111111 !important; text-shadow: none; }
+html.dark .icon-badge[data-tone="black"] { background-color: #FFFFFF !important; }
+html.dark .icon-badge[data-tone="black"] .material-icons { color: #111111 !important; text-shadow: none; }
+
+/* ===== proximity-hover fallback tokens + visual mapping (inlined from
+ * src/styles/hover-tokens.css; the mirror does not ship that file).
+ * transform/opacity only per motion checklist. ===== */
+:root {
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+}
+html.dark {
+  --fp-hover: rgba(255, 255, 255, 0.07);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-proximity] {
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform: scale(calc(1 + var(--prox, 0) * 0.014));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-proximity] { transition: none; transform: none; }
+}
+</style>
+<style data-ds="styles.css">/* =========================================================================
+ * mirror/styles.css -- reconstruction 2026-09-10
+ *
+ * The real `styles.css` that most exports link last (as
+ * `_ds`-path-relative `<project-id>/styles.css`) was never captured (the
+ * GitHub clone holds only .dc.html files, no CSS). This file reconstructs
+ * it well enough to close the
+ * undefined-token / unmatched-class gaps found by Step 1's static sweep
+ * (.claude/tmp/render-fix/RENDER-AUDIT.md) across THE-24, by mapping every
+ * gap to an existing Deha Design System token or class already present in
+ * this mirror (colors_and_type.css, preview/_motion-tokens.css,
+ * preview/_shared-feedback.css, preview/done/jsx/_pills.css,
+ * preview/done/jsx/_buttons.css) or in the app source
+ * (apps/web/src/styles/grid-texture.css). See TOKEN-PICKS.md for the full
+ * pick table and reasoning, including where this file's own evidence
+ * corrected the plan's abstract vocabulary guess (--r-btn/--r-btn-hover/
+ * --r-chip-bd/--r-text are colors verified by usage, not radii).
+ *
+ * Structure: one optional `/* == shared == * /` block for tokens/classes
+ * whose correct value is a single DS-wide constant shared by two or more
+ * sections (never a per-component guess), then one `/* == <slug> == * /`
+ * section per slug from RENDER-AUDIT.md, scoped to that slug's own root/
+ * wrapper markup, never bare `:root` outside the shared block.
+ * ========================================================================= */
+
+/* == shared == */
+/* Every value below is copied or aliased from an existing, verified DS
+   source file (cited per group), not guessed -- see TOKEN-PICKS.md. */
+:root {
+  /* ---- grid texture: verbatim from apps/web/src/styles/grid-texture.css
+     (consumed by preview/done/jsx/_pills.css .badge* rules and .btn-cta,
+     but defined only in the app, never shipped into this mirror). ---- */
+  --grid-texture-image:
+    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+  --grid-texture-image-subtle:
+    linear-gradient(rgba(17, 17, 17, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.05) 1px, transparent 1px);
+  --grid-texture-image-dark:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  --grid-texture-size: 16px 16px;
+
+  /* ---- card surface + press-scale tokens: verbatim from
+     preview/_shared-feedback.css (the file every baked .card-inner /
+     .btn-apply / .btn-discuss / .btn-delete / .btn-cta comment already
+     names as their source of truth; only missing here because that sheet
+     is not linked by every export). ---- */
+  --card-bg: #FFFFFF;
+  --card-border: #D4D4D4;
+  /* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+  --card-radius: var(--radius-xl, 20px);
+  --pad-card: var(--space-4, 16px);
+  --gap-icon-text: var(--space-2, 8px);
+  --press-card: 0.985;
+  --press-control: 0.94;
+  --press-chip: 0.90;
+
+  /* ---- CTA fill/glow: `.btn-cta`'s own comment reads "Caller sets
+     --accent (fill) and --ctaglow (shadow color)". mainbox is the one
+     live caller in THE-24 and sets --accent:#10B981 / --ctaglow:
+     rgba(16,185,129,.45) inline (confirmed in its own source.dc.html) --
+     i.e. brand-primary / a brand-glow-strength shadow. Used as the
+     default for every other (currently dead) `.btn-cta` instance. ---- */
+  --accent: var(--brand-primary);
+  --ctaglow: var(--brand-glow);
+
+  /* ---- icon-badge tint: `.icon-badge`'s own rule already reads
+     `background-color: var(--icon-c, var(--brand-primary-500))` --
+     defining --icon-c to that same fallback is a no-op restoration of the
+     component's documented default, not a new guess. ---- */
+  --icon-c: var(--brand-primary-500);
+
+  /* ---- task-footer fill: `.btn-task`'s own comment reads "Caller sets
+     --fbtn to the desired solid fill color; defaults to navy" and its
+     rules fall back to #111111 (== --gray-900) everywhere it's read.
+     notification-badge / save-toggle-button set --fbtn inline per
+     instance already (not affected); this is only the resting default
+     for any other (currently dead) `.btn-task`. ---- */
+  --fbtn: var(--gray-900);
+
+  /* ---- proximity-hover standard background: verbatim from
+     preview/done/jsx/_pills.css `:root` (light value only; dark override
+     right below, mirroring that file exactly). Restored here too because
+     --r-btn-hover (next group) aliases it, and this styles.css section is
+     now injected even into exports that never link _pills.css at all
+     (ai-chat-attachmentcard / pages-attachmentcard) -- without this, the
+     injected sheet would trade one undefined token for another. Harmless
+     duplicate where _pills.css IS already linked (identical value, this
+     sheet always inlines last). ---- */
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+
+  /* ---- `.btn-discuss` colors: verified by reading
+     preview/done/jsx/_buttons.css directly -- despite the "r-" prefix
+     reading like a radius, every one of these four is consumed as a
+     *color* (border-color / background / text color), each already
+     carrying an inline fallback that is itself an exact DS gray step.
+     Defining them to those same steps restores the component's own
+     documented default; see TOKEN-PICKS.md "Plan-vocabulary correction". */
+  --r-btn: var(--gray-500);              /* .btn-discuss:hover border-color fallback (#6B6B6B == --gray-500) */
+  --r-btn-hover: var(--hover-standard-bg); /* .btn-discuss:hover background fallback, already DS-token-backed */
+  --r-chip-bd: var(--gray-300);          /* .btn-discuss border fallback (#D4D4D4 == --gray-300) */
+  --r-text: var(--gray-900);             /* .btn-discuss color fallback (#111111 == --gray-900) */
+
+  /* ---- `.btn-apply` rest width: its own comment documents "falls back
+     to `auto`... until buttons-hook.ts pins the measured pixel width" --
+     restoring that literal documented default, not a guess. `.btn-apply`
+     is not used live by any of THE-24; this only silences the sweep. ---- */
+  --btn-apply-rest-w: auto;
+
+  /* ---- proximity-hover engine: preview/done/jsx/_pills.css already reads
+     `scale(calc(1 + var(--prox, 0) * 0.014))` -- restoring the same 0
+     default (JS sets the live value per [data-proximity] element via the
+     dy*3 / radius-80 engine; frontend-motion-contract.md). ---- */
+  --prox: 0;
+
+  /* ---- per-item stagger index: preview/_motion-tokens.css
+     `.motion-stagger-item` already reads
+     `var(--stagger-index, 0)` -- restoring that same 0 default (JS sets
+     the live per-item index; the base value only matters pre-hydration
+     or for non-staggered instances). ---- */
+  --stagger-index: 0;
+}
+html.dark { --fp-hover: rgba(255, 255, 255, 0.07); } /* verbatim from _pills.css, dark-mode --fp-hover override */
+
+/* Canonical DS utility-class restorations shared by 2+ sections below,
+   copied verbatim from preview/done/jsx/_pills.css (cited per rule) --
+   these sheets exist in the mirror but are not linked by every export, so
+   the classes below have no rule at all in those exports' own cascade. */
+
+/* menudropdownanimation + notification-badge both nest a plain
+   `.dot` span inside `.pill-priority` with only `background` set inline;
+   verbatim from _pills.css `.pill-priority .dot`. */
+.pill-priority .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* menudropdownanimation + notification-badge both use `.pills-row` as a
+   horizontal pill/tab container; verbatim from _pills.css `.pills-row`. */
+.pills-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pills-row + .pills-row { margin-top: 12px; }
+
+/* Step 5 visual-audit correction (2026-09-10, coordinator follow-up): both
+   menudropdownanimation and notification-badge mount their nav tab row as
+   `class="pill-tab {{ v.cls }}"` / `class="pill-priority"`. Step 1's static
+   sweep classified `pill-tab` as noise (it only ever appears with a
+   template-suffix in these two files' markup) and never flagged it as
+   unmatched, so Step 3 never restored it -- but the literal token
+   `pill-tab` genuinely has zero base rule in either file (only
+   `html.dark .pill-tab*` overrides exist), same for `pill-priority`'s own
+   base rule (only `.pill-priority .dot` above and `html.dark .pill-priority`
+   exist). Neither export links `preview/done/jsx/_pills.css`. Visual
+   symptom: inactive tabs render with correct inline background/border color
+   but square corners (notification-badge) or no box at all
+   (menudropdownanimation, whose markup sets no inline border/background),
+   because only the base class rule -- not the per-instance inline style --
+   carries border-radius/box-shadow/transition. Verbatim from _pills.css. */
+.pill-tab { display:inline-flex; align-items:center; padding: 6px 16px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 12px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+.pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15); font-weight: 800; }
+.pill-tab.dark { background:#111111; color:#fff; font-weight: 800; border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.06); }
+.pill-priority { display:inline-flex; align-items:center; gap: 6px; padding: 6px 14px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 13px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+
+/* ai-chat-attachmentcard + pages-attachmentcard both use `.badge tag` as
+   an absolutely-positioned file-extension chip (background/position set
+   inline); verbatim from _pills.css `.badge` + `.badge.tag`. */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px; border-radius: 9999px; font-size: 11px; font-weight: 900; font-family: 'Montserrat'; }
+.badge.tag { background-color: #F5F5F5; color: #232323; font-size: 11px; padding: 3px 8px; border: 1px solid #ECECEC; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05); background-image: var(--grid-texture-image-subtle); background-size: var(--grid-texture-size); }
+.badge.tag .material-icons { font-size: 13px; color: #6B6B6B; font-variation-settings: 'wght' 700; }
+
+/* == ai-chat-attachments == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-image(-dark/-subtle), --grid-texture-size, --pad-card,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by /* == shared
+   == * /, all --btn-cta / --btn-task / --btn-discuss / .card-inner
+   consumers here inherit the same DS defaults, no per-component override
+   found in this slug's own markup. No unmatched classes.
+   RESIDUAL: this export's own source.dc.html does not link
+   a styles.css sheet (verified against the tool's own DS_TAG_RE), so
+   this section cannot be inlined until that link exists -- see the
+   step debrief. */
+
+/* == ai-chat-context == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes. This export links
+   a styles.css sheet, so this reconstruction reaches it directly. */
+
+/* == ai-chat-inline-citation == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == ai-chat-queue-input == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --ctaglow, --fbtn, --gap-icon-text, --grid-texture-*,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- same gap as
+   ai-chat-attachments, see step debrief. */
+
+/* == book-a-call-button == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. `.btn-discuss` ("View tokens" button) is live in
+   this slug's own markup and is the component whose usage confirmed the
+   --r-btn/--r-btn-hover/--r-chip-bd/--r-text color mapping above. No
+   unmatched classes. Links a styles.css sheet directly. */
+
+/* == calendar-booking == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == how-it-works == */
+/* Static undefined tokens: --grid-texture-*, --prox, --stagger-index --
+   all covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == mainbox == */
+/* Static undefined tokens: --btn-apply-rest-w, --card-bg, --card-border,
+   --card-radius, --fbtn, --gap-icon-text, --grid-texture-*, --pad-card,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. --accent/--ctaglow are NOT in this list: mainbox's
+   own `.btn-cta` sets them inline (`--accent:#10B981;
+   --ctaglow:rgba(16,185,129,.45)`), which is the live evidence behind the
+   shared --accent/--ctaglow mapping above. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == menudropdownanimation == */
+/* Static undefined tokens: --stagger-index, covered by
+   /* == shared == * /. Unmatched classes `.dot`, `.pills-row` (nested
+   `<span class="dot">` inside `<button class="pill-priority">`, plus a
+   top-level `.pills-row` tab container) -- both restored in
+   /* == shared == * / above (verbatim from _pills.css, shared with
+   notification-badge's identical usage). This export's only linked `_ds`
+   stylesheet is styles.css itself, so this is the slug most dependent on
+   this file. */
+
+/* == notification-badge == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --icon-c, --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text,
+   --stagger-index -- all covered by /* == shared == * /. Unmatched
+   classes `.dot`, `.pills-row` restored in /* == shared == * / (same
+   `.pill-priority .dot` / tab-row nesting as menudropdownanimation).
+   `.card-inner`, `.card-name`, `.card-desc` are genuinely component-local
+   (this slug's own demo-card wrapper): every visual property they need
+   (padding, font-size, weight, color, margin) is already set inline per
+   instance in this slug's own markup, so the only gap is establishing the
+   shared display font family -- the smallest rule, reusing the DS
+   typography token rather than inventing a value. */
+.card-inner, .card-name, .card-desc { font-family: var(--font-display); }
+
+/* == passwordstrength == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == payments-free-trial == */
+/* Static undefined tokens: --btn-apply-rest-w, --fbtn, --grid-texture-*,
+   --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index
+   -- all covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == progressive-input-stack == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched class `.material-icons` is a FALSE
+   POSITIVE: this export's own source.dc.html already links Google's
+   `fonts.googleapis.com/icon?family=Material+Icons` stylesheet, which
+   defines `.material-icons` at runtime; the static sweep only inspects
+   inline `<style>` blocks and cannot see that external link. No rule
+   added here -- adding one risks a specificity fight with Google's own
+   CSS for zero benefit. Links a styles.css sheet directly. */
+
+/* == save-toggle-button == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. Unmatched class `.icon-badge--lg`: this
+   slug's own baked CSS is missing BOTH `.icon-badge` (base) and
+   `.icon-badge--lg` (the sweep's classMatched() only sees
+   `html.dark .icon-badge[data-tone="black"]` and treats that
+   attribute-selector variant as a match for the bare class, a known blind
+   spot) -- fixing only the modifier would leave the badge with a sized
+   but unfilled box. Both restored verbatim from the canonical block in
+   preview/incoming/popover-offer-cold/Main.dc.html (`.icon-badge` /
+   `.icon-badge--lg`), scoped to this slug only since no other slug in
+   THE-24 uses `.icon-badge` live.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge {
+  width: 30px; height: 30px; border-radius: var(--radius-sm, 8px);
+  display: grid; place-items: center; flex-shrink: 0;
+  background-color: var(--icon-c, var(--brand-primary-500));
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.20) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: cover, 16px 16px, 16px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+html.dark .icon-badge, :root[data-theme="dark"] .icon-badge {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10);
+}
+.icon-badge .material-icons,
+.icon-badge .material-symbols-outlined {
+  font-size: 16px; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  line-height: 1; display: block;
+}
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--lg { width: 38px; height: 38px; border-radius: var(--radius-md, 12px); }
+.icon-badge--lg .material-icons,
+.icon-badge--lg .material-symbols-outlined { font-size: 20px; }
+
+/* == shiny-pill == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. `.btn-discuss` ("View tokens" button) is live
+   here too (same evidence as book-a-call-button). `.btn-cta` is present
+   in this slug's baked CSS but not applied to any element in its own
+   markup (dead), so --accent/--ctaglow only silence the sweep here. No
+   unmatched classes. Links a styles.css sheet directly -- this is the
+   sanity-anchor slug from Step 1 (`--r-btn` / `--accent` both present). */
+
+/* == slideuptext == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-chip,
+   --press-control, --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text,
+   --stagger-index -- all covered by /* == shared == * / (including
+   --press-chip, unique to this slug among THE-24). No unmatched classes.
+   Links a styles.css sheet directly. */
+
+/* == ai-chat-attachmentcard == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched classes `.badge`, `.tag`, `.material-icons`.
+   `.badge`/`.badge.tag` restored in /* == shared == * / (shared with
+   pages-attachmentcard's identical `<span class="badge tag">` usage).
+   `.material-icons` has no Google Fonts link anywhere in this export and
+   no rule can restore the actual icon glyph without hosting the font
+   file -- flagged under "needs Bora" in TOKEN-PICKS.md, no rule added.
+   RESIDUAL, more severe than the styles.css-not-linked cases above: this
+   export's source.dc.html has ZERO design-system links of any kind (no helmet,
+   no colors_and_type.css) -- this whole section cannot be inlined
+   through the current linking mechanism. See step debrief. */
+
+/* == pages-attachmentcard == */
+/* Identical to ai-chat-attachmentcard (same source, different path
+   prefix) -- same undefined token, same two unmatched classes, same
+   zero-design-system-links residual. See that section and the step debrief. */
+
+/* == pages-bookacallbutton == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == pages-citationchip == */
+/* Static undefined tokens: --card-bg, --card-border, --grid-texture-*,
+   --press-control, --prox, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-contextring == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-passwordmeter == */
+/* Static undefined tokens: --grid-texture-*, --icon-c, --prox,
+   --stagger-index -- all covered by /* == shared == * /. No unmatched
+   classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-savetoggle == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. No unmatched classes (this variant does
+   not itself use `.icon-badge--lg`, unlike save-toggle-button).
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-savetoggleoriginal == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched class `.material-symbols-outlined` is a
+   FALSE POSITIVE: this export links Google's
+   `fonts.googleapis.com/css2?family=Material+Symbols+Outlined...`
+   stylesheet already; same reasoning as progressive-input-stack's
+   `.material-icons`, no rule added.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+</style>
+
+<style>
+@keyframes kbdPop { 0% { transform: translateY(2px) scale(.94); } 60% { transform: translateY(-1px) scale(1.04); } 100% { transform: translateY(0) scale(1); } }
+@keyframes kbdRing { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.45); } 100% { box-shadow: 0 0 0 14px rgba(16,185,129,0); } }
+@keyframes kbdFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes kbdShimmer { to { background-position: 200% 50%; } }
+
+.kbdroot { --kbd-accent: #10B981; }
+.kbdroot .kbd {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 34px; height: 34px; padding: 0 10px; border-radius: 9px;
+  background: #FFFFFF; border: 1px solid #CBD5E1; color: #334155;
+  font-family: 'Montserrat', sans-serif; font-size: 12.5px; font-weight: 800; line-height: 1;
+  letter-spacing: .02em; white-space: nowrap; user-select: none; cursor: default;
+  box-shadow: inset 0 -3px 0 rgba(15,23,42,.10), inset 0 1px 0 #fff, 0 1px 2px rgba(15,23,42,.07);
+  transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-base) var(--ease-out),
+              background-color var(--duration-base), color var(--duration-base), border-color var(--duration-base);
+}
+.kbdroot .kbd-sm { min-width: 24px; height: 24px; padding: 0 7px; font-size: 10.5px; border-radius: 7px; box-shadow: inset 0 -2px 0 rgba(15,23,42,.10), inset 0 1px 0 #fff; }
+.kbdroot .kbd-lg { min-width: 46px; height: 46px; padding: 0 14px; font-size: 16px; border-radius: 12px; box-shadow: inset 0 -4px 0 rgba(15,23,42,.11), inset 0 1px 0 #fff, 0 2px 4px rgba(15,23,42,.07); }
+.kbdroot .kbd-wide { min-width: 76px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .kbdroot .kbd-i:hover { transform: translateY(-1.5px); border-color: #94A3B8; box-shadow: inset 0 -3px 0 rgba(15,23,42,.10), inset 0 1px 0 #fff, 0 6px 14px -6px rgba(15,23,42,.35); }
+}
+.kbdroot .kbd-i:active,
+.kbdroot .kbd[data-pressed="1"] {
+  transform: translateY(2px);
+  background: var(--kbd-accent); color: #fff; border-color: transparent;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.18), 0 0 0 4px color-mix(in srgb, var(--kbd-accent) 20%, transparent);
+  text-shadow: 0 1px 2px rgba(0,0,0,.22);
+}
+.kbdroot .kbd[data-pressed="1"] { animation: kbdRing var(--duration-480) ease-out; }
+.kbdroot .kbd[data-disabled="1"] { opacity: .42; box-shadow: inset 0 -2px 0 rgba(15,23,42,.08); transform: none; }
+.kbdroot .kbd[data-tone="danger"] { --kbd-accent: #EF4444; }
+.kbdroot .kbd[data-tone="warn"] { --kbd-accent: #F59E0B; }
+.kbdroot .kbd[data-tone="ink"] { --kbd-accent: #0F172A; }
+
+.kbdroot[data-look="flat"] .kbd { background: #F1F5F9; border-color: #E2E8F0; box-shadow: none; }
+.kbdroot[data-look="solid"] .kbd { background: #0F172A; border-color: transparent; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.16), inset 0 -2px 0 rgba(0,0,0,.35), 0 2px 6px rgba(15,23,42,.28); }
+@media (hover: hover) and (pointer: fine) {
+  .kbdroot[data-look="solid"] .kbd-i:hover { border-color: transparent; }
+}
+
+.kbdroot .kbd-combo { display: inline-flex; align-items: center; gap: 4px; }
+.kbdroot .kbd-plus { font-family: 'Montserrat'; font-size: 11px; font-weight: 800; color: #94A3B8; }
+.kbdroot .kbd-merged { gap: 0; }
+.kbdroot .kbd-merged .kbd:first-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+.kbdroot .kbd-merged .kbd:last-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; margin-left: 2px; }
+
+.kbdroot .cp-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; cursor: pointer; transition: background var(--duration-base), transform var(--duration-base) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .kbdroot .cp-row:hover { background: rgba(16,185,129,.08); transform: translateX(2px); }
+  .kbdroot .cp-row:hover .kbd { border-color: #94A3B8; }
+}
+.kbdroot .kbd-sec { display: block; animation: kbdFadeUp var(--duration-320) var(--ease-out) both; }
+.kbdroot .badge.kbd-ok { background: #10B981; color: #fff; box-shadow: inset 0 -2px 5px rgba(0,0,0,.14), inset 0 -1px 0 rgba(255,255,255,.15); padding: 3px 9px; }
+.kbdroot .badge.kbd-ok .material-icons { font-size: 14px; font-variation-settings: 'wght' 700; }
+.kbdroot .kbd-hint { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #94A3B8; font-family: 'Montserrat'; }
+
+html.dark .kbdroot .kbd { background: #1E293B; border-color: #334155; color: #E2E8F0; box-shadow: inset 0 -3px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07); }
+html.dark .kbdroot[data-look="flat"] .kbd { background: #0F172A; border-color: #1E293B; box-shadow: none; }
+html.dark .kbdroot[data-look="solid"] .kbd { background: #F8FAFC; color: #0F172A; }
+@media (hover: hover) and (pointer: fine) {
+  html.dark .kbdroot .kbd-i:hover { border-color: #64748B; }
+}
+.kbdroot .pills-seg button:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+.kbdroot .pills-seg button {
+  position: relative;
+}
+.kbdroot .pills-seg button::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kbdroot .kbd,
+  .kbdroot .kbd[data-pressed="1"],
+  .kbdroot .cp-row,
+  .kbdroot .kbd-sec {
+    animation: none !important;
+    transition-duration: 0.01ms !important; /* motion-sweep: kept */
+  }
+  .kbdroot [style*="transition"] {
+    transition-duration: 0.01ms !important; /* motion-sweep: kept */
+  }
+}
+</style>
+<style>:root{--font-display:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif;}</style></helmet>
+
+<div class="kbdroot" data-look="{{ look }}" style="{{ rootStyle }}">
+
+  <div style="max-width: 980px; margin: 0 auto; padding: 40px 28px 64px; display: flex; flex-direction: column; gap: 28px;">
+
+    <header style="display: flex; flex-direction: column; gap: 12px;">
+      <span class="pills-label" style="margin: 0;">Deha Design System · New component</span>
+      <div style="display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;">
+        <h1 style="font-family: 'Montserrat'; font-size: 40px; font-weight: 900; letter-spacing: -0.03em; margin: 0; color: #0F172A;">Kbd</h1>
+        <span class="badge tag"><span class="material-icons">keyboard</span> keycap</span>
+        <span class="badge kbd-ok"><span class="material-icons">bolt</span> live listening</span>
+      </div>
+      <p style="font-family: 'Montserrat'; font-size: 14px; font-weight: 500; line-height: 1.55; color: #64748B; margin: 0; max-width: 62ch; text-wrap: pretty;">Keyboard shortcuts rendered with proper key symbols. Composes into combos, reacts to real key presses, and drops into palettes, buttons, tooltips and cheat sheets.</p>
+    </header>
+
+    <div class="pills-seg" style="align-self: flex-start; flex-wrap: wrap;">
+      <div class="pills-seg-pill" style="{{ pillStyle }}"></div>
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button class="{{ t.cls }}" onClick="{{ t.select }}" ref="{{ t.ref }}">{{ t.label }}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isAnatomy }}" hint-placeholder-val="{{ true }}">
+      <div class="kbd-sec" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-inner">
+          <span class="pills-label">Sizes</span>
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="kbd kbd-sm kbd-i">⌘</span>
+            <span class="kbd kbd-sm kbd-i">SHIFT</span>
+            <span class="kbd kbd-i">⌘</span>
+            <span class="kbd kbd-i">SHIFT</span>
+            <span class="kbd kbd-lg kbd-i">⌘</span>
+            <span class="kbd kbd-lg kbd-i">SHIFT</span>
+          </div>
+
+          <span class="pills-label" style="margin-top: 22px;">Key types</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <span class="kbd kbd-i">⌥</span>
+            <span class="kbd kbd-i">⌃</span>
+            <span class="kbd kbd-i">⇧</span>
+            <span class="kbd kbd-i">␣</span>
+            <span class="kbd kbd-i">⏎</span>
+            <span class="kbd kbd-i">⎋</span>
+            <span class="kbd kbd-i">⌫</span>
+            <span class="kbd kbd-i">↑</span>
+            <span class="kbd kbd-i">↓</span>
+            <span class="kbd kbd-i">←</span>
+            <span class="kbd kbd-i">→</span>
+            <span class="kbd kbd-i kbd-wide">ENTER</span>
+            <span class="kbd kbd-i kbd-wide">HOLD</span>
+          </div>
+
+          <span class="pills-label" style="margin-top: 22px;">States</span>
+          <div style="display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd">K</span><span class="kbd-hint">Default</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd kbd-i">K</span><span class="kbd-hint">Hover me</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd" data-pressed="1">K</span><span class="kbd-hint">Active</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd" data-pressed="1" data-tone="danger">⌫</span><span class="kbd-hint">Danger</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd" data-pressed="1" data-tone="warn">!</span><span class="kbd-hint">Warning</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+              <span class="kbd" data-disabled="1">K</span><span class="kbd-hint">Disabled</span>
+            </div>
+          </div>
+
+          <span class="pills-label" style="margin-top: 22px;">Composition</span>
+          <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+            <span class="kbd-combo"><span class="kbd kbd-i">⌘</span><span class="kbd-plus">+</span><span class="kbd kbd-i">K</span></span>
+            <span class="kbd-combo"><span class="kbd kbd-i">⌘</span><span class="kbd kbd-i">⇧</span><span class="kbd kbd-i">P</span></span>
+            <span class="kbd-combo kbd-merged"><span class="kbd kbd-i">⌃</span><span class="kbd kbd-i">J</span></span>
+            <span class="kbd-combo"><span class="kbd kbd-i kbd-wide">HOLD</span><span class="kbd-plus">+</span><span class="kbd kbd-i">M</span></span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLive }}" hint-placeholder-val="{{ false }}">
+      <div class="kbd-sec" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-inner">
+          <span class="pills-label">Live keyboard listening</span>
+          <p style="font-family: 'Montserrat'; font-size: 13px; font-weight: 600; color: #64748B; margin: 0 0 18px;">Press any of these keys — the keycap lights while the key is physically down.</p>
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <sc-for list="{{ liveKeys }}" as="k" hint-placeholder-count="11">
+              <span class="kbd kbd-lg" data-pressed="{{ k.on }}">{{ k.glyph }}</span>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+            <span class="badge tag"><span class="material-icons">keyboard</span> Last key</span>
+            <span class="kbd kbd-sm">{{ lastKey }}</span>
+            <span class="badge kbd-ok"><span class="material-icons">bolt</span> {{ pressCount }} presses</span>
+          </div>
+        </div>
+
+        <div class="card-inner">
+          <span class="pills-label">Hold to confirm</span>
+          <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+            <span class="kbd-combo"><span class="kbd kbd-lg kbd-wide" data-pressed="{{ holdOn }}">HOLD</span><span class="kbd-plus">+</span><span class="kbd kbd-lg" data-pressed="{{ holdOn }}">M</span></span>
+            <div style="flex: 1 1 260px; min-width: 200px;">
+              <div style="height: 10px; border-radius: 9999px; background: #F1F5F9; box-shadow: inset 0 2px 4px rgba(0,0,0,.07); overflow: hidden;">
+                <div style="{{ holdBarStyle }}"></div>
+              </div>
+              <span class="kbd-hint" style="display: block; margin-top: 8px;">{{ holdLabel }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPalette }}" hint-placeholder-val="{{ false }}">
+      <div class="kbd-sec">
+        <div class="card-inner" style="padding: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 14px 14px 12px;">
+            <span class="material-icons" style="font-size: 20px; color: #94A3B8;">search</span>
+            <span style="font-family: 'Montserrat'; font-size: 15px; font-weight: 600; color: #94A3B8; flex: 1;">Search for a command to run…</span>
+            <span class="kbd kbd-sm">⎋</span>
+          </div>
+          <div style="height: 1px; background: #E2E8F0; margin: 0 6px 8px;"></div>
+          <span class="pills-label" style="padding: 0 14px;">Actions</span>
+          <div style="display: flex; flex-direction: column; gap: 2px; padding: 0 2px 6px;">
+            <sc-for list="{{ commands }}" as="c" hint-placeholder-count="5">
+              <div class="cp-row">
+                <span class="material-icons" style="font-size: 18px; color: #64748B;">{{ c.icon }}</span>
+                <span style="font-family: 'Montserrat'; font-size: 13.5px; font-weight: 700; color: #0F172A; flex: 1;">{{ c.label }}</span>
+                <span class="badge tag">{{ c.group }}</span>
+                <span class="kbd-combo">
+                  <sc-for list="{{ c.keys }}" as="key" hint-placeholder-count="2">
+                    <span class="kbd kbd-sm">{{ key }}</span>
+                  </sc-for>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-top: 1px solid #E2E8F0; margin-top: 4px;">
+            <span class="kbd-combo"><span class="kbd kbd-sm">↑</span><span class="kbd kbd-sm">↓</span><span class="kbd-hint" style="margin-left: 4px;">Navigate</span></span>
+            <span class="kbd-combo"><span class="kbd kbd-sm">⏎</span><span class="kbd-hint" style="margin-left: 4px;">Select</span></span>
+            <span class="kbd-combo"><span class="kbd kbd-sm">⎋</span><span class="kbd-hint" style="margin-left: 4px;">Close</span></span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInline }}" hint-placeholder-val="{{ false }}">
+      <div class="kbd-sec" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card-inner">
+          <span class="pills-label">Inside buttons</span>
+          <div class="btn-row">
+            <button class="btn-primary">Kaydet <span class="kbd kbd-sm" style="background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.35); color: #fff; box-shadow: none;">⌘S</span></button>
+            <button class="btn-inverse">Yeni görev <span class="kbd kbd-sm">N</span></button>
+            <button class="btn-glass">Filtrele <span class="kbd kbd-sm">F</span></button>
+            <button class="btn-discuss">Ara <span class="kbd kbd-sm">/</span></button>
+            <button class="btn-text">Tümünü aç <span class="kbd kbd-sm">⌘A</span></button>
+          </div>
+        </div>
+
+        <div class="card-inner">
+          <span class="pills-label">Search field affordance</span>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #F8FAFC; border: 1px solid #E2E8F0; box-shadow: inset 0 2px 4px rgba(0,0,0,.05);">
+            <span class="material-icons" style="font-size: 18px; color: #94A3B8;">search</span>
+            <span style="font-family: 'Montserrat'; font-size: 13.5px; font-weight: 600; color: #94A3B8; flex: 1;">Kişi, mülk veya görev ara</span>
+            <span class="kbd-combo"><span class="kbd kbd-sm">⌘</span><span class="kbd kbd-sm">K</span></span>
+          </div>
+        </div>
+
+        <div class="card-inner">
+          <span class="pills-label">Tooltip &amp; menu row</span>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: #0F172A; color: #fff; font-family: 'Montserrat'; font-size: 12.5px; font-weight: 700; box-shadow: 0 10px 26px -12px rgba(15,23,42,.8);">
+              Hızlı ekle
+              <span class="kbd kbd-sm" style="background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.24); color: #fff; box-shadow: none;">C</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <div class="cp-row"><span class="material-icons" style="font-size: 18px; color: #64748B;">content_copy</span><span style="font-family: 'Montserrat'; font-size: 13.5px; font-weight: 700; color: #0F172A; flex: 1;">Kopyala</span><span class="kbd-combo"><span class="kbd kbd-sm">⌘</span><span class="kbd kbd-sm">C</span></span></div>
+              <div class="cp-row"><span class="material-icons" style="font-size: 18px; color: #64748B;">edit</span><span style="font-family: 'Montserrat'; font-size: 13.5px; font-weight: 700; color: #0F172A; flex: 1;">Düzenle</span><span class="kbd kbd-sm">E</span></div>
+              <div class="cp-row"><span class="material-icons" style="font-size: 18px; color: #EF4444;">delete</span><span style="font-family: 'Montserrat'; font-size: 13.5px; font-weight: 700; color: #EF4444; flex: 1;">Sil</span><span class="kbd-combo"><span class="kbd kbd-sm">⌘</span><span class="kbd kbd-sm">⌫</span></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-accent">
+          <div class="card-name" style="font-size: 15px;">Boş liste durumu</div>
+          <div class="card-desc card-desc-w" style="font-size: 12.5px;">Henüz görev yok. İlk görevi klavyeden ekleyebilirsin.</div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 14px;">
+            <span class="kbd kbd-sm" style="background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.4); color: #fff; box-shadow: none;">⌘</span>
+            <span class="kbd kbd-sm" style="background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.4); color: #fff; box-shadow: none;">N</span>
+            <span class="card-tag card-tag-w" style="margin: 0;">ile yeni görev</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSheet }}" hint-placeholder-val="{{ false }}">
+      <div class="kbd-sec" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+        <sc-for list="{{ sheet }}" as="g" hint-placeholder-count="4">
+          <div class="card-inner">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+              <span class="badge col-tag {{ g.tone }}"><span class="material-icons">{{ g.icon }}</span> {{ g.title }} <span class="count">{{ g.count }}</span></span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+                <div class="cp-row" style="padding: 8px 10px;">
+                  <span style="font-family: 'Montserrat'; font-size: 13px; font-weight: 600; color: #334155; flex: 1;">{{ r.label }}</span>
+                  <span class="kbd-combo">
+                    <sc-for list="{{ r.keys }}" as="key" hint-placeholder-count="2">
+                      <span class="kbd kbd-sm">{{ key }}</span>
+                    </sc-for>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:860},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#10B981&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#10B981&quot;,&quot;#0F172A&quot;,&quot;#F59E0B&quot;,&quot;#EF4444&quot;],&quot;section&quot;:&quot;Appearance&quot;},&quot;look&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;raised&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;raised&quot;,&quot;flat&quot;,&quot;solid&quot;],&quot;section&quot;:&quot;Appearance&quot;}}">
+const TABS = [
+  { id: 'anatomy', label: 'Anatomy' },
+  { id: 'live', label: 'Live listening' },
+  { id: 'palette', label: 'Command palette' },
+  { id: 'inline', label: 'In context' },
+  { id: 'sheet', label: 'Cheat sheet' },
+];
+
+const LIVE = [
+  { id: 'Meta', glyph: '⌘' }, { id: 'Control', glyph: '⌃' }, { id: 'Alt', glyph: '⌥' },
+  { id: 'Shift', glyph: '⇧' }, { id: 'ArrowUp', glyph: '↑' }, { id: 'ArrowDown', glyph: '↓' },
+  { id: 'ArrowLeft', glyph: '←' }, { id: 'ArrowRight', glyph: '→' }, { id: ' ', glyph: '␣' },
+  { id: 'Enter', glyph: '⏎' }, { id: 'Escape', glyph: '⎋' },
+];
+
+const COMMANDS = [
+  { icon: 'person_add', label: 'Yeni kişi ekle', group: 'CRM', keys: ['⌘', 'N'] },
+  { icon: 'home_work', label: 'Mülk değerleme başlat', group: 'Portföy', keys: ['⌘', '⇧', 'V'] },
+  { icon: 'event', label: 'Görüşme planla', group: 'Takvim', keys: ['⌘', 'E'] },
+  { icon: 'insights', label: 'Pipeline raporunu aç', group: 'Rapor', keys: ['G', 'P'] },
+  { icon: 'dark_mode', label: 'Temayı değiştir', group: 'Sistem', keys: ['⌘', 'J'] },
+];
+
+const SHEET = [
+  { title: 'Navigation', icon: 'explore', tone: 'todo', rows: [
+    { label: 'Komut paleti', keys: ['⌘', 'K'] },
+    { label: 'Ana panel', keys: ['G', 'D'] },
+    { label: 'Kişiler', keys: ['G', 'C'] },
+    { label: 'Sonraki kayıt', keys: ['J'] },
+  ]},
+  { title: 'Editing', icon: 'bolt', tone: 'progress', rows: [
+    { label: 'Kaydet', keys: ['⌘', 'S'] },
+    { label: 'Geri al', keys: ['⌘', 'Z'] },
+    { label: 'Yinele', keys: ['⌘', '⇧', 'Z'] },
+    { label: 'Sil', keys: ['⌘', '⌫'] },
+  ]},
+  { title: 'Review', icon: 'visibility', tone: 'review', rows: [
+    { label: 'Yorum ekle', keys: ['⌘', '⌥', 'M'] },
+    { label: 'Onayla', keys: ['⇧', '⏎'] },
+    { label: 'Reddet', keys: ['⇧', '⌫'] },
+  ]},
+  { title: 'Global', icon: 'task_alt', tone: 'done', rows: [
+    { label: 'Ara', keys: ['/'] },
+    { label: 'Kısayolları göster', keys: ['?'] },
+    { label: 'Kapat', keys: ['⎋'] },
+  ]},
+];
+
+class Component extends DCLogic {
+  state = { tab: 'anatomy', pressed: {}, last: '—', count: 0, hold: 0, holding: false, pill: null };
+  tabEls = {};
+
+  componentDidMount() {
+    this._down = (e) => {
+      const k = e.key;
+      this.setState((s) => ({ pressed: { ...s.pressed, [k]: true }, last: k === ' ' ? '␣' : k, count: s.count + 1 }));
+      if (k.toLowerCase() === 'm' && !this.holdTimer) this.startHold();
+    };
+    this._up = (e) => {
+      this.setState((s) => { const p = { ...s.pressed }; delete p[e.key]; return { pressed: p }; });
+      if (e.key.toLowerCase() === 'm') this.stopHold();
+    };
+    this._blur = () => this.setState({ pressed: {} });
+    window.addEventListener('keydown', this._down);
+    window.addEventListener('keyup', this._up);
+    window.addEventListener('blur', this._blur);
+    this._resize = () => this.measure();
+    window.addEventListener('resize', this._resize);
+    this.measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.measure());
+    setTimeout(() => this.measure(), 400);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this._down);
+    window.removeEventListener('keyup', this._up);
+    window.removeEventListener('blur', this._blur);
+    window.removeEventListener('resize', this._resize);
+    this.stopHold();
+  }
+
+  componentDidUpdate() { this.measure(); }
+
+  measure() {
+    const el = this.tabEls[this.state.tab];
+    const wrap = el && el.parentElement;
+    if (!el || !wrap) return;
+    const a = el.getBoundingClientRect();
+    const b = wrap.getBoundingClientRect();
+    const next = { left: Math.round(a.left - b.left), width: Math.round(a.width) };
+    const cur = this.state.pill;
+    if (!cur || cur.left !== next.left || cur.width !== next.width) this.setState({ pill: next });
+  }
+
+  startHold() {
+    this.setState({ holding: true });
+    const t0 = performance.now();
+    const tick = () => {
+      const p = Math.min(1, (performance.now() - t0) / 1000);
+      this.setState({ hold: p });
+      if (p < 1) this.holdTimer = requestAnimationFrame(tick); else this.holdTimer = null;
+    };
+    this.holdTimer = requestAnimationFrame(tick);
+  }
+
+  stopHold() {
+    if (this.holdTimer) cancelAnimationFrame(this.holdTimer);
+    this.holdTimer = null;
+    this.setState({ holding: false, hold: 0 });
+  }
+
+  renderVals() {
+    const { tab, pressed, pill, hold, holding } = this.state;
+    const accent = this.props.accent ?? '#10B981';
+    const done = hold >= 1;
+    return {
+      look: this.props.look ?? 'raised',
+      rootStyle: { ['--kbd-accent']: accent },
+      tabs: TABS.map((t) => ({
+        label: t.label,
+        cls: tab === t.id ? 'active' : '',
+        select: () => this.setState({ tab: t.id }),
+        ref: (el) => { if (el) this.tabEls[t.id] = el; },
+      })),
+      pillStyle: pill ? { left: pill.left, width: pill.width, opacity: 1 } : { opacity: 0 },
+      isAnatomy: tab === 'anatomy',
+      isLive: tab === 'live',
+      isPalette: tab === 'palette',
+      isInline: tab === 'inline',
+      isSheet: tab === 'sheet',
+      liveKeys: LIVE.map((k) => ({ glyph: k.glyph, on: pressed[k.id] ? '1' : null })),
+      lastKey: this.state.last,
+      pressCount: this.state.count,
+      holdOn: holding ? '1' : null,
+      holdBarStyle: {
+        height: '100%',
+        width: (hold * 100).toFixed(1) + '%',
+        borderRadius: 9999,
+        background: done ? '#10B981' : accent,
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,.45)',
+        transition: 'width var(--duration-60) linear, background var(--duration-200)',
+      },
+      holdLabel: done ? 'Confirmed' : holding ? 'Keep holding M…' : 'Hold M for one second',
+      commands: COMMANDS,
+      sheet: SHEET.map((g) => ({ ...g, count: g.rows.length })),
+    };
+  }
+}
+</script>
+</body>
+</html>

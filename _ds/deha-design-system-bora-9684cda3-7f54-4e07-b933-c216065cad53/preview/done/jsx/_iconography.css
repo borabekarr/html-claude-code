@@ -1,0 +1,12 @@
+.ic-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 14px; padding: 8px 0; }
+.ic-cell { display:flex; flex-direction:column; align-items:center; gap: 6px; }
+.ic-cell .material-icons, .ic-cell .material-symbols-outlined { font-size: 24px; color: var(--gray-900); }
+.ic-cell span.ic-name { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 9px; color: var(--gray-500); text-align:center; }
+.ic-section { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-400); margin-bottom: 4px; display:block; }
+.ic-section-gap { margin-top: 14px; }
+
+/* ── Dark mode: icon glyphs adapt to stay legible; semantic color overrides (inline) stay as-is ── */
+html.dark .ic-cell .material-icons,
+html.dark .ic-cell .material-symbols-outlined { color: var(--gray-100); }
+html.dark .ic-cell span.ic-name { color: var(--gray-400); }
+/* ic-section already uses --gray-400 — no change needed in dark */

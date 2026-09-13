@@ -1,0 +1,476 @@
+/* motion-tokens.css
+ * Motion system source of truth: duration scale + easing curves shared
+ * across design-system components.
+ *
+ * --anim-mult convention (pre-existing, defined below global.css after this
+ * import): a global animation-speed multiplier, default 1, flipped to 4 via
+ * :root[data-anim-slow="true"] for the debug Slow-Down mode. Consumers wrap
+ * every duration as calc(var(--duration-*) * var(--anim-mult, 1)) so the
+ * multiplier keeps applying -- this file only owns the base duration/easing
+ * values, not the multiplier itself.
+ *
+ * Duration scale -- extracted verbatim from the literal ms values present in
+ * components/design-system/buttons/Buttons.css (step-8 motion-token
+ * extraction, plan: sonnet-executor-guardrails). Only 120ms / 160ms / 220ms
+ * had an exact, unambiguous match to a 4-tier scale; those are canonicalized
+ * here. The remaining literals found in Buttons.css (140, 150, 200, 240, 260,
+ * 340, 800, 3000ms) do NOT collapse onto this scale without changing the
+ * rendered timing, so per "extraction not redesign" they were left as
+ * literals in Buttons.css -- see the step-8 executor report for the full
+ * before/after migration table.
+ */
+:root {
+  --duration-instant: 100ms; /* reserved -- no current Buttons.css consumer at this tier; completes the scale for future use */
+  --duration-fast: 120ms;    /* .btn-delete transform */
+  --duration-base: 160ms;    /* most common transform/box-shadow transition duration in Buttons.css */
+  --duration-slow: 220ms;    /* .btn-cta / .btn-delete / .btn-apply / .btn-apply-label background-color & filter transitions */
+
+  /* Easing.
+   * --ease-spring and --ease-out are canonically defined below; the
+   * duplicate definition previously in
+   * ../../design-system/preview/_shared-feedback.css has been removed
+   * (step-2, plan: shared-foundations-registry) so this is the single
+   * definition site. Promoted here (plan:
+   * motion-token-debt) because ~66/47 app files resolved these vars only
+   * through the preview file's global load order, a fragile cross-file
+   * dependency. Buttons.css previously guarded one usage with a literal
+   * fallback, `var(--ease-out, cubic-bezier(.22,1,.36,1))`, for the
+   * theoretical case where --ease-out was not yet resolvable; since the
+   * running app always loads global.css (and therefore _shared-feedback.css)
+   * before any component mounts, that fallback was redundant and has been
+   * removed as part of this migration.
+   */
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1); /* overshoot curve retained only for legacy references; new work uses the no-bounce vocabulary */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1); /* standard ease-in-out; no literal instance existed in Buttons.css to extract from -- added to complete the easing set requested for this step, currently unused by Buttons.css */
+  --ease-press-calm: cubic-bezier(0.23, 1, 0.32, 1); /* Apple-calm press curve (plan: motion-debt-fixes step 1) -- ease-out family, no overshoot; replaces --ease-spring on press/click transforms across .btn-green/.btn-cta/[data-proximity]. Duration reuses --duration-base (160ms), already in the house state-change band. */
+
+  /* Step-5 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in Fab.css / Toast.css / InlineEdit.css
+   * flagged by .claude-ext/hooks/motion-token-gate.sh. Byte-match the
+   * literals they replace: a token added here must reproduce the extracted
+   * curve byte-for-byte, so no visual change accompanies the migration. */
+  --ease-standard:    cubic-bezier(.4, 0, .2, 1);    /* Fab.css .fab-plus transform */
+  --ease-accel:       cubic-bezier(.4, 0, 1, 1);     /* Toast.css exit anims; InlineEdit.css ieIcOut / .ie-act.is-confirming */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-spring-soft: cubic-bezier(.32, 1.32, .5, 1); /* Fab.css .fab-menu-hd */
+
+  /* Step-7 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in TaskBoard.css / TaskBoard.tsx flagged
+   * by motion-token-gate.sh; no existing token byte-matched these curves. */
+  --ease-bounce-soft: cubic-bezier(.34, 1.32, .64, 1); /* TaskBoard toastMorphIn / checkPop */
+  --ease-bounce: cubic-bezier(.34, 1.7, .46, 1);       /* TaskBoard syncMorphBounce / itemBounce */
+  --ease-confetti: cubic-bezier(.34, .84, .36, 1);     /* TaskBoard confettiFlow (TSX inline) */
+
+  /* Step-8 motion-token migration (plan: fix-all-debts) -- extracted verbatim
+   * from pre-existing literal curves in the six squircle-rollout files
+   * flagged by motion-token-gate.sh; no existing token byte-matched these
+   * curves, so they are added here. */
+  --ease-out-soft: cubic-bezier(.16, 1, .3, 1);      /* StatisticsGraphCard .sg-rangepop enter/exit + sg-load animation */
+  --ease-spring-firm: cubic-bezier(.34, 1.3, .5, 1); /* StatusCard chip/copy transforms */
+  --ease-exit-soft: cubic-bezier(.5, 0, .75, .4);    /* StatusCard .sc-chip-copied.is-exiting scPopOut */
+  --ease-spring-tight: cubic-bezier(.34, 1.4, .6, 1); /* TaskCard .tp-w hover transform */
+
+  /* Step-7 shell-sweep motion-token migration (plan: reveal-shell-sweep) --
+   * extracted verbatim from pre-existing literal curves in PrizeSheet.css
+   * flagged by motion-token-gate.sh; no existing token byte-matched these
+   * curves, so they are added here. --ease-fade replaces the bare CSS
+   * `ease` keyword (its exact cubic-bezier expansion) used for opacity
+   * fades throughout the file. */
+  --ease-fade:          cubic-bezier(.25, .1, .25, 1);  /* PrizeSheet.css opacity fades (== bare `ease`) */
+  --ease-spring-loose:  cubic-bezier(.16, 1.16, .3, 1); /* PrizeSheet.css wontag/prize enter transforms */
+  --ease-spring-medium: cubic-bezier(.16, 1.5,  .3, 1); /* PrizeSheet.css claim-btn/success enter + check pop */
+  --ease-spring-wide:   cubic-bezier(.16, 1.3,  .3, 1); /* PrizeSheet.css .ps-modal-shell enter transform */
+  --ease-linear:        linear;                          /* bare `linear` keyword, token-wrapped for the motion gate */
+  --ease-out-native:    ease-out;                         /* native `ease-out` keyword (cubic-bezier(0,0,.58,1)) -- token-wrapped for the gate; NOT the same curve as --ease-out. Sweep: DynamicCalendar dcPulse, StatisticsGraphCard sg-flash, OnboardingCompletion ocRipple/ocRowRipple */
+  --ease-bounce-glow:   cubic-bezier(.34, 1.18, .64, 1); /* AiMessageBox.css glow/bar/label enter animations */
+  --ease-draw:          cubic-bezier(.65, 0,    .35, 1); /* AiMessageBox.css .mb-done-check path draw-in */
+  --ease-spring-open:   cubic-bezier(.55, 1.35, .35, 1); /* ModelSelector.css .ms-shell.open expand */
+  --ease-slide-bounce:  cubic-bezier(.34, 1.3,  .64, 1); /* ModelSelector.css .ms-sel-indicator slide */
+  --ease-card-pop:      cubic-bezier(.34, 1.4,  .5,  1); /* NewsFeed.css .nf-card.anim-in enter */
+  --ease-avatar-swap:   cubic-bezier(.22, 1.4,  .4,  1); /* AvatarPicker.css apSwap keyframe */
+
+  /* Step-8 shell-sweep motion-token migration (plan: reveal-shell-sweep) --
+     extracted verbatim from a pre-existing literal curve in FileFolder.css
+     flagged by motion-token-gate.sh; no existing token byte-matched it. */
+  --ease-spring-strong: cubic-bezier(.34, 1.5, .64, 1); /* FileFolder.css .ff-pop-outer/.folder enter transform */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-spring-pop:    cubic-bezier(.34, 1.2, .5,  1); /* Calendar.css .cal-cell.selected calSelPop keyframe */
+
+  /* Step-1 motion-token migration (plan: reveal-shell-debts) -- extracted
+     verbatim from pre-existing literal curves in SprintPlannerCore.css; no
+     existing token byte-matched these curves, so they are added here. */
+  /* Approved overshoot: sanctioned ceiling is 1.32, set by Bora on
+     2026-08-23 (feedback/2026-08-23-motion-hover-overshoot.md F4). */
+  --ease-toast-pop:   cubic-bezier(.34, 1.16, .64, 1); /* SprintPlannerCore.css toastMorphIn */
+
+  /* Step-1 motion-token migration (plan: ds-motion-parity) -- extracted
+     verbatim from a pre-existing literal curve in MotionTabs.css .mt-ic
+     transform transition; no existing token byte-matched it (closest was
+     a curve of cubic-bezier(.34, 1.56, .64, 1), whose last control point is
+     .64 vs .5 here) -- softer-settle sibling of that curve. */
+  --ease-spring-snap-soft: cubic-bezier(.34, 1.56, .5, 1); /* MotionTabs.css .mt-ic transform transition */
+
+  /* Step-2 motion-gate-pilot-fix migration (plan: motion-gate-pilot-fix) --
+     mints the un-mintable curves left raw in MorphSurface.css plus the
+     promoted CurrencyConverter local token, so downstream steps can route
+     through tokens instead of literals; no existing token byte-matched
+     these curves. */
+  --ease-morph:      cubic-bezier(0.34, 1.18, 0.5, 1); /* MorphSurface.css .ms2-wrap --ms2-morph-ease (dynamic-island morph) */
+  --ease-check-pop:  cubic-bezier(0.32, 1.5, 0.5, 1);  /* MorphSurface.css .ms2-check transform enter */
+  --ease-swap:       cubic-bezier(.5, 0, .3, 1);        /* promoted from CurrencyConverter --cc-ease-swap (swap-icon rotate) */
+
+  /* Step-11 retry motion-token migration (plan: reveal-shell-debts) --
+     extracted verbatim from a pre-existing literal curve in
+     OnboardingCompletion.css flagged by motion-token-gate.sh; no existing
+     token byte-matched this curve, so it is added here. */
+  --ease-confetti-fall: cubic-bezier(.3, .6, .5, 1); /* OnboardingCompletion.css ocConfettiFall keyframe */
+
+  /* Step-10 motion-token migration (plan: component-feedback-batch) --
+     extracted verbatim from a pre-existing literal curve in
+     DeleteModal.css dm-shake keyframe; no existing token byte-matched this
+     curve, so it is added here. */
+  --ease-shake: cubic-bezier(.36, .07, .19, .97); /* DeleteModal.css dm-shake keyframe */
+
+  /* Step-24 duration migration (plan: component-feedback-batch) -- the
+     ApplyButton morph choreography (buttons/Buttons.css) needed four
+     durations with no existing tier close enough to reuse without
+     flattening the requested stagger/bounce timing (the exact gap this
+     step exists to fix); added here rather than left as literals. */
+  --duration-slower: 300ms;  /* ApplyButton check-mark scale-pop transform (phase-2 enter) */
+  --duration-compact: 440ms; /* ApplyButton width/padding compact (phase-1, default -> loading) */
+  --duration-expand: 460ms;  /* ApplyButton width/padding extend (phase-3, done -> default) */
+  --duration-sweep: 360ms;   /* ApplyButton background-color sweep (phase-2/3, loading -> done -> default) */
+
+  /* Step-1 motion-token migration (plan: motion-sweep-top10) -- new duration
+     tiers minted at exact library-wide recurring values (>=20 uses), per
+     Bora's verbatim-mint decision (rounding to the nearest existing tier
+     would change rendered timing). Component steps in this plan reference
+     these; no existing token was modified. */
+  --duration-140: 140ms;   /* library sweep: 53 uses, no prior tier between fast(120) and base(160) */
+  --duration-150: 150ms;   /* library sweep: 81 uses */
+  --duration-180: 180ms;   /* library sweep: 68 uses */
+  --duration-200: 200ms;   /* library sweep: 123 uses -- single most common value in the library */
+  --duration-240: 240ms;   /* library sweep: 32 uses */
+  --duration-260: 260ms;   /* library sweep: 28 uses */
+  --duration-280: 280ms;   /* library sweep: 20 uses */
+  --duration-320: 320ms;   /* library sweep: 35 uses */
+  --duration-420: 420ms;   /* library sweep: 28 uses */
+  --duration-560: 560ms;   /* library sweep: 22 uses across 15 files (leaderboard FLIP-reorder, FileFolder, Calendar, etc.) */
+  --duration-1100: 1100ms;   /* shimmer-sweep duration; 1100ms recurs across several component files (StatisticsGraphCard, SprintPlannerCore, NewsFeed, IndexBar, todo-list-hook) */
+
+  /* Step-1 easing migration (plan: motion-sweep-top10) -- extracted verbatim
+     from curves in the top-10 component files with no byte-matching token
+     in this file or _shared-feedback.css. */
+  --ease-todo-fade-exit: cubic-bezier(.22,1,.38,1);   /* TodoList.css:274 .task.anim transform exit */
+  --ease-todo-badge-pop: cubic-bezier(.34,1.7,.5,1);  /* TodoList.css:335 .t-badge.pop badge-pop keyframe */
+  --ease-todo-settle:    cubic-bezier(.4,0,.06,1);    /* TodoList.css:276 .task.settling transform */
+  --ease-week-slide:     cubic-bezier(.4,0,.6,1);     /* TodoList.tsx:199 week nav transform transition */
+  --ease-dc-cell-pop:    cubic-bezier(.34,1.38,.4,1); /* DynamicCalendar.css:811 dcCellPop keyframe */
+  --ease-dc-spring:      cubic-bezier(.5, 1.5, .35, 1); /* DynamicCalendar.css:8 --dc-spring var */
+
+  /* Step-1 motion-token migration (plan: ds-motion-parity) -- extracted
+     verbatim from a pre-existing literal curve in DynamicIslandReader.css
+     (.di-pill width/height/border-radius morph transition); no existing
+     token byte-matched this curve, so it is added here. */
+  --ease-island-morph: cubic-bezier(.34, 1.32, .5, 1); /* DynamicIslandReader.css:21-23 .di-pill morph transition */
+
+  /* Step-4/5 motion-sweep-worklist migration (plan: fix-all-debts) -- new tokens
+     minted for literals recurring 3+ times library-wide with no existing exact
+     token match (post-consolidation: 15 of 27 proposals folded into existing
+     tiers within 15%, see reports/motion-sweep-worklist.md consolidation
+     addendum). Values extracted verbatim; no existing token modified. */
+  --duration-40: 40ms;   /* library-wide: 6 uses, no prior exact tier */
+  --duration-50: 50ms;   /* library-wide: 4 uses, no prior exact tier */
+  --duration-60: 60ms;   /* library-wide: 5 uses, no prior exact tier */
+  --duration-80: 80ms;   /* library-wide: 9 uses, no prior exact tier */
+  --duration-700: 700ms;   /* library-wide: 11 uses, no prior exact tier */
+  --duration-760: 760ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-800: 800ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-900: 900ms;   /* library-wide: 3 uses, no prior exact tier */
+  --duration-1800: 1800ms;   /* library-wide: 7 uses, no prior exact tier */
+  --duration-1900: 1900ms;   /* library-wide: 6 uses, no prior exact tier */
+  --duration-2200: 2200ms;   /* library-wide: 4 uses, no prior exact tier */
+  --ease-sweep-1: cubic-bezier(0.32, 1.12, 0.4, 1.0);  /* library-wide non-hover reuse of an otherwise-unmatched curve, 6 uses */
+  --ease-motion-sweep-2236: cubic-bezier(.22, 1, .36, 1);  /* the three spellings of this curve (28 uses, rule 3) collapse to this one token -- exact value, no rounding */
+
+  /* Step-1 motion-normalization token coverage audit (plan: motion-normalization)
+     -- new tiers minted for exact literal ms values found in design-system
+     declarations with no existing byte-match; values extracted verbatim, no
+     rounding. --duration-360 is the plain library tier -- kept distinct from
+     --duration-sweep (360ms), which is ApplyButton-specific per its own
+     comment, so PipelineCard.css usages route through the plain tier. */
+  --duration-340: 340ms;   /* PipelineCard.css spam-target max-height transition */
+  --duration-360: 360ms;   /* PipelineCard.css filter/transform/scale-pop transitions */
+  --duration-380: 380ms;   /* PipelineCard.css .shell + DisclosureGroup.css var(--dg-dur) default */
+  --duration-400: 400ms;   /* PipelineCard.css pcxPop bubble animation */
+  --duration-480: 480ms;   /* PipelineCard.css pc-ripple animation */
+
+  /* Step-3 on-visible entrance migration (plan: ds-primer-entrance) -- Primer
+     "on-visible" reveal: fade + upward slide, triggered by IntersectionObserver
+     instead of mount. Fix round (plan: primer-entrance-fixes): retuned to
+     Primer's exact published values (@primer/react-brand main.css) --
+     --duration-entrance is --brand-animation-duration-default (0.6s);
+     --ease-brand-entrance is --brand-animation-easing-default, a new token
+     since this curve does not byte-match --ease-motion-sweep-2236.
+     --stagger-entrance mints a semantically-named alias for the 100ms
+     DOM-order stagger increment; the raw value equals --duration-instant but
+     is kept separate so the engine's stagger math reads as "stagger", not
+     "duration". */
+  --duration-entrance: 600ms;
+  --ease-brand-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --stagger-entrance: 100ms;
+
+  /* F3: the only sanctioned segmented-thumb (pill-switch) easing. Bounce /
+     overshoot curves are banned for pill switching per the frontend motion
+     contract -- every seg-pill / segmented-control thumb transition routes
+     through this token instead of a local overshoot bezier. */
+  --ease-pill-switch: cubic-bezier(.22, 1, .36, 1);
+
+  /* Step-1 focus-ring tokens (plan: focus-ring-tokens) -- one house
+     :focus-visible ring shared by every interactive control instead of
+     each component hardcoding its own outline. Color reuses the brand
+     emerald token; duration/ease reuse the existing base tier + fade
+     curve (curve, not spring, per house animation discipline) rather
+     than minting new values for a state change this small. */
+  --focus-ring-color: var(--brand-primary-500);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-duration: calc(var(--duration-base) * var(--anim-mult, 1));
+  --focus-ring-ease: var(--ease-fade);
+}
+
+/* ===========================================================================
+ * Motion family rules (plan: motion-family-rules, step 1) -- one global
+ * duration/easing rule per motion family, mirroring the .hover-standard
+ * pattern above (hover-tokens.css lines 31-54): a token block + a utility
+ * class, each with a source-recipe comment. Extracted from the best
+ * component per family, refined with Apple motion principles (ease-out
+ * entrances, faster exits, no overshoot). House bands: 150ms state changes,
+ * 200ms popovers/tooltips, 300ms overlays/modals (dept-frontend charter).
+ * No overshoot easings (curve family denylisted library-wide); every
+ * duration folds * var(--anim-mult, 1); calc() composition over new
+ * single-purpose tokens.
+ *
+ * Faster-exits rule (plan: faster-exits-rule, step 1): exit runs one
+ * duration tier faster than enter (Apple faster-exits: system responses
+ * snap). Every family with an open/close pair carries a
+ * `--{family}-exit-dur` token; consumers put the exit token on the
+ * closed/base leg and the enter token on the open leg. The sliding panel
+ * (`--panel-settle-dur`) has no exit token -- it is drag-settle physics,
+ * not an enter/exit pair, not an open/close pair. Stagger
+ * (`--stagger-item-dur`) has no exit token either -- it is entrance-only
+ * (per-item DOM-order reveal, never reversed).
+ *
+ * Non-family consumers (plan: faster-exits-debts, step 1): DeleteModal and
+ * WorkflowPublish alias --overlay-morph-exit-dur directly -- their close is
+ * an overlay morph, not a distinct family. DatePicker and the PipelineCard
+ * scrim use a local --{prefix}-exit-dur custom property set one duration
+ * tier below their own open tier -- no shared family fits their tier.
+ * Drag surfaces (SmoothDrawer, ExpandableScreen) keep momentum physics on
+ * drag release and snap one tier faster than their open leg on programmatic
+ * close (button, backdrop tap, Escape), per the Apple faster-exits rule.
+ * ========================================================================= */
+:root {
+  /* Popover -- best of Dropdown.css --dd-dur/--dd-ease (its default easing
+     overshoots, denylisted as a family default) vs MessageDropdown.css (a
+     settled, monotonic curve). Anchored to the 200ms popover band; transform
+     keeps MessageDropdown's settled curve. Exit anchors to the --duration-150
+     tier (faster-exits rule) -- Dropdown.css's fast close is now the family
+     rule, not a component-level exception. */
+  --popover-dur: var(--duration-200);
+  --popover-exit-dur: var(--duration-150);
+  --popover-ease: var(--ease-motion-sweep-2236);
+
+  /* Tooltip -- best of StatusCard .sc-tip (its transform curve overshoots)
+     vs WorkflowNodes .wf-tool::after (clean opacity/transform, monotonic) vs
+     GithubCalendar .gc-tip. WorkflowNodes is cleanest; anchored to the
+     200ms tooltip band (its recipe used 140ms at component scale). Exit
+     anchors to the --duration-150 tier (faster-exits rule). */
+  --tooltip-dur: var(--duration-200);
+  --tooltip-exit-dur: var(--duration-150);
+  --tooltip-ease: var(--ease-fade);
+  --tooltip-transform-ease: var(--ease-out);
+
+  /* Sliding panel/drawer settle -- SmoothDrawer.css lines 75-94 (filter/
+     transform, monotonic --ease-motion-sweep-2236) governs the SETTLE
+     transition only (open/close when not dragged), never live-drag
+     interpolation. The direction-aware [data-panel-state] keyframes below
+     (already a shared primitive) reuse the same fast tier + --ease-out;
+     extended here rather than duplicated. */
+  --panel-settle-dur: var(--duration-fast);
+  --panel-settle-ease: var(--ease-out);
+
+  /* Overlay morph -- MorphSurface.css --ms2-ease/--ms2-morph-dur (lines
+     14-40). Its 360ms (--duration-sweep) is Apple-motion-justified: a
+     dynamic-island-style width/height morph reads as sluggish at the
+     generic 300ms overlay band, so the recipe keeps --duration-sweep
+     locally. The house-wide overlay-morph family default anchors to the
+     300ms band; --ms2-ease is already monotonic and near-identical to the
+     house easing, aliased directly. Exit anchors to the --duration-240
+     tier (faster-exits rule). */
+  --overlay-morph-dur: var(--duration-slower);
+  --overlay-morph-exit-dur: var(--duration-240);
+  --overlay-morph-ease: var(--ease-press-calm);
+
+  /* Accordion -- DisclosureGroup.css --dg-dur/--dg-ease (lines 57-103,
+     default 380ms; its default easing overshoots and is denylisted as a
+     family default); aliased to the house easing instead. Exception:
+     grid-template-rows (line 114) animates a layout property, not
+     transform/opacity -- kept as the accordion's documented default
+     exception, matching the existing DisclosureGroup rule. Exit anchors to
+     the --duration-260 tier (faster-exits rule). */
+  --accordion-dur: var(--duration-380);
+  --accordion-exit-dur: var(--duration-260);
+  --accordion-ease: var(--ease-press-calm);
+
+  /* Toast -- Toast.css ts-enter keyframe (opacity + translateY(8px), house
+     --duration-base tier) plus its interaction legs (--ease-out). Exit uses
+     --toast-exit-dur (faster-exits rule, the --duration-fast tier) via the
+     reversed keyframe below rather than a second keyframe. The existing
+     toast-pop-named easing token is NOT reused here -- despite the name it
+     is sourced from a different component's overshoot curve, out of
+     vocabulary for a default toast mount. */
+  --toast-dur: var(--duration-base);
+  --toast-exit-dur: var(--duration-fast);
+  --toast-ease: var(--ease-out);
+
+  /* Panel-slide exit -- shared closing tier for [data-panel-state="exiting-*"]
+     slides (faster-exits rule, plan: faster-exits-debts, step 1). Calendar
+     is the anchor recipe, opening on the --duration-280 tier and closing on
+     the --duration-240 tier below. There is no enter token in this family --
+     each consumer keeps its own open tier and only aliases the close leg
+     here. Consumers that open on a faster tier override the property
+     locally, e.g.
+     .wae-ae-list-wrap { --panel-slide-exit-dur: var(--duration-150); } */
+  --panel-slide-exit-dur: var(--duration-240);
+
+  /* Stagger -- --stagger-entrance (100ms, line 220) is the per-item DOM-order
+     increment; AnimatedList.css entry opacity/filter transition (lines
+     100-102, --duration-240 + bare `ease`) supplies the per-item duration.
+     `ease` is byte-identical to --ease-fade (see --ease-fade comment above),
+     aliased directly rather than left bare. */
+  --stagger-item-dur: var(--duration-240);
+  --stagger-item-ease: var(--ease-fade);
+}
+
+.motion-popover {
+  transition:
+    opacity calc(var(--popover-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--popover-dur) * var(--anim-mult, 1)) var(--popover-ease);
+}
+.motion-popover.is-exiting {
+  transition:
+    opacity calc(var(--popover-exit-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--popover-exit-dur) * var(--anim-mult, 1)) var(--popover-ease);
+}
+.motion-tooltip {
+  transition:
+    opacity calc(var(--tooltip-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--tooltip-dur) * var(--anim-mult, 1)) var(--tooltip-transform-ease);
+}
+.motion-tooltip.is-exiting {
+  transition:
+    opacity calc(var(--tooltip-exit-dur) * var(--anim-mult, 1)) var(--tooltip-ease),
+    transform calc(var(--tooltip-exit-dur) * var(--anim-mult, 1)) var(--tooltip-transform-ease);
+}
+.motion-overlay-morph {
+  transition:
+    width calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    height calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    border-radius calc(var(--overlay-morph-dur) * var(--anim-mult, 1)) var(--ease-out);
+}
+.motion-overlay-morph.is-exiting {
+  transition:
+    width calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    height calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--overlay-morph-ease),
+    border-radius calc(var(--overlay-morph-exit-dur) * var(--anim-mult, 1)) var(--ease-out);
+}
+.motion-accordion {
+  /* grid-template-rows: documented layout-property exception, see comment above. */
+  transition: grid-template-rows calc(var(--accordion-dur) * var(--anim-mult, 1)) var(--accordion-ease);
+}
+.motion-accordion.is-exiting {
+  transition: grid-template-rows calc(var(--accordion-exit-dur) * var(--anim-mult, 1)) var(--accordion-ease);
+}
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.motion-toast {
+  animation: toast-enter calc(var(--toast-dur) * var(--anim-mult, 1)) var(--toast-ease) both;
+}
+.motion-toast.is-exiting {
+  animation: toast-enter calc(var(--toast-exit-dur) * var(--anim-mult, 1)) var(--toast-ease) both reverse;
+}
+.motion-stagger-item {
+  transition:
+    opacity calc(var(--stagger-item-dur) * var(--anim-mult, 1)) var(--stagger-item-ease),
+    filter calc(var(--stagger-item-dur) * var(--anim-mult, 1)) var(--stagger-item-ease);
+  transition-delay: calc(var(--stagger-entrance) * var(--anim-mult, 1) * var(--stagger-index, 0));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-popover,
+  .motion-popover.is-exiting,
+  .motion-tooltip,
+  .motion-tooltip.is-exiting,
+  .motion-overlay-morph,
+  .motion-overlay-morph.is-exiting,
+  .motion-accordion,
+  .motion-accordion.is-exiting,
+  .motion-stagger-item {
+    transition: none;
+  }
+  .motion-toast,
+  .motion-toast.is-exiting {
+    animation: none;
+  }
+  [data-panel-state] {
+    animation: none;
+  }
+}
+
+/* Step-1 direction-aware panel switch (plan: dsfb-02-direction-aware-switch-canon)
+ * -- shared by usePanelDirection() consumers (lib/hooks/use-panel-direction.ts):
+ * a per-panel [data-panel-state] attribute drives enter/exit translateX(22px)
+ * + opacity keyframes. State names describe the direction of TRAVEL (+x =
+ * right); see the hook for the dir = Math.sign(toIdx - fromIdx) math.
+ * MotionTabs is the proof-of-use (extracted verbatim from its prior inlined
+ * mt-enter/exit-travel-* keyframes, unchanged values). Local component CSS
+ * still scopes pointer-events/positioning per state -- only the animation
+ * itself lives here so future consumers (calendar, leaderboard,
+ * workflow-add-elements) share one definition. */
+@keyframes panel-enter-right {
+  from { opacity: 0; transform: translateX(-22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes panel-enter-left {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes panel-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(22px); }
+}
+@keyframes panel-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-22px); }
+}
+[data-panel-state="active"] { opacity: 1; }
+[data-panel-state="entering-right"] {
+  animation: panel-enter-right calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="entering-left"] {
+  animation: panel-enter-left calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="exiting-left"] {
+  animation: panel-exit-right calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+[data-panel-state="exiting-right"] {
+  animation: panel-exit-left calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out) both;
+}
