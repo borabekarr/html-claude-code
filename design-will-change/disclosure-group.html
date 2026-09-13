@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Components" name="Disclosure Group" subtitle="Composable expandable section — measured height spring, rotating chevron, optional content blur, accordion mode, pressable rows" viewport="640x720" -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Disclosure Group — Deha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="../../../colors_and_type.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    min-height: 100%;
+    display: grid; place-items: center;
+    padding: 48px 24px;
+    font-family: var(--font-display);
+    color: var(--fg1);
+    background: linear-gradient(180deg, #FBFCFD 0%, #EEF1F5 100%);
+  }
+  body[data-theme="dark"] {
+    background: linear-gradient(180deg, #070B14 0%, #0F172A 100%);
+  }
+  #root { width: 100%; display: grid; place-items: center; }
+
+  .msym {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal; font-style: normal;
+    line-height: 1; letter-spacing: normal; text-transform: none;
+    display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr;
+    font-feature-settings: 'liga'; -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  /* ---------------- list of groups ---------------- */
+  .dg-list { width: 380px; display: flex; flex-direction: column; gap: 12px; }
+  /* accordion mode keeps one section open at all times — reserve the height so
+     the whole panel never resizes as you switch between sections */
+  .dg-list.is-accordion { min-height: 404px; justify-content: flex-start; }
+
+  /* ====================================================================
+     THE PRIMITIVE — Disclosure Group
+     .dg            : the card (Trigger + Items live inside)
+     .dg-trigger    : tappable header row
+     .dg-chevron    : rotates 180deg on open
+     .dg-clip       : height-animated wrapper (measured)
+     .dg-items      : the content (optionally blurred while opening)
+     .dg-item       : a pressable row
+     Durations/easing come from --dg-dur / --dg-ease set per instance.
+     ==================================================================== */
+  .dg {
+    background: var(--slate-50);
+    border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 0 1px var(--border-hairline), inset 0 1px 0 rgba(255,255,255,.7);
+    overflow: hidden;
+  }
+  [data-theme="dark"] .dg { background: #16233B; box-shadow: inset 0 0 0 1px #2A3A52, inset 0 1px 0 rgba(255,255,255,.04); }
+
+  .dg-trigger {
+    display: flex; align-items: center; gap: 13px;
+    width: 100%; border: none; background: transparent;
+    padding: 14px 14px; cursor: pointer; text-align: left;
+    font-family: inherit; color: var(--fg1);
+    transition: background var(--dg-dur, 380ms) var(--dg-ease, cubic-bezier(.22,1,.36,1));
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dg-trigger:hover { background: rgba(15,23,42,.025); }
+  .dg-trigger:active { transform: scale(.992); }
+  [data-theme="dark"] .dg-trigger:hover { background: rgba(255,255,255,.03); }
+
+  .dg-tile {
+    width: 38px; height: 38px; flex: none; border-radius: var(--radius-md);
+    display: grid; place-items: center; font-size: 21px;
+    color: var(--brand-primary-700); background: var(--brand-primary-100);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 0 0 1px rgba(16,185,129,.12);
+  }
+  [data-theme="dark"] .dg-tile { color: var(--brand-primary-300); background: rgba(16,185,129,.14); box-shadow: inset 0 0 0 1px rgba(16,185,129,.22); }
+
+  .dg-head-text { display: grid; gap: 3px; flex: 1; min-width: 0; }
+  .dg-title { font-size: 15px; font-weight: var(--weight-black); letter-spacing: -.015em; line-height: 1.1; color: var(--fg1); }
+  .dg-sub   { font-size: 12px; font-weight: var(--weight-semibold); color: var(--fg3); line-height: 1.1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .dg-chevron {
+    flex: none; font-size: 22px; color: var(--fg4); margin-left: 4px;
+    transition: transform var(--dg-dur, 380ms) var(--dg-ease, cubic-bezier(.22,1,.36,1)),
+                color .2s ease;
+  }
+  .dg[data-open="true"] .dg-chevron { transform: rotate(180deg); color: var(--brand-primary); }
+
+  /* grid-template-rows reveal — 0fr (collapsed) → 1fr (open). The grid CHILD
+     (.dg-items) carries no padding/border so it truly collapses to 0; the
+     padded, scrollable content lives in .dg-scroll inside it. */
+  .dg-clip {
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows var(--dg-dur, 380ms) var(--dg-ease, cubic-bezier(.34,1.56,.64,1));
+  }
+  .dg[data-open="true"] .dg-clip { grid-template-rows: 1fr; }
+  @media (prefers-reduced-motion: reduce) {
+    .dg-clip, .dg-chevron, .dg-trigger, .dg-scroll { transition: none !important; }
+  }
+
+  .dg-items { min-height: 0; overflow: hidden; }
+
+  .dg-scroll {
+    padding: 4px 8px 8px;
+    border-top: 1px solid var(--border-hairline);
+    overflow-y: auto; overscroll-behavior: contain;
+    /* bounce-in: drops down + sharpens out of blur as the row opens */
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(var(--dg-blur, 0px));
+    transition: transform var(--dg-dur, 380ms) var(--dg-ease, cubic-bezier(.34,1.56,.64,1)),
+                opacity calc(var(--dg-dur, 380ms) * .7) ease,
+                filter var(--dg-dur, 380ms) var(--dg-ease, cubic-bezier(.34,1.56,.64,1));
+    scrollbar-width: thin; scrollbar-color: var(--slate-300) transparent;
+  }
+  .dg[data-open="true"] .dg-scroll { opacity: 1; transform: none; --dg-blur: 0px; }
+  [data-theme="dark"] .dg-scroll { border-top-color: #2A3A52; scrollbar-color: var(--slate-700) transparent; }
+  .dg-scroll::-webkit-scrollbar { width: 8px; }
+  .dg-scroll::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 4px; border: 2px solid transparent; background-clip: content-box; }
+  [data-theme="dark"] .dg-scroll::-webkit-scrollbar-thumb { background: var(--slate-700); }
+
+  .dg-item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; border: none; background: transparent;
+    padding: 11px 10px; border-radius: var(--radius-md); cursor: pointer;
+    font-family: inherit; color: var(--fg2); text-align: left;
+    transition: background .15s ease, transform .12s cubic-bezier(.22,1,.36,1);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dg-item:hover { background: rgba(16,185,129,.07); }
+  .dg-item:active { transform: scale(.975); }
+  .dg-item:disabled { opacity: .45; cursor: default; }
+  .dg-item:disabled:active { transform: none; }
+  [data-theme="dark"] .dg-item:hover { background: rgba(16,185,129,.12); }
+
+  .dg-item .ic { font-size: 20px; color: var(--fg3); flex: none; width: 22px; text-align: center; }
+  .dg-item:hover .ic { color: var(--brand-primary); }
+  .dg-item-label { flex: 1; font-size: 14px; font-weight: var(--weight-semibold); color: var(--fg1); }
+  .dg-item-val { font-size: 12.5px; font-weight: var(--weight-bold); color: var(--fg3); display: inline-flex; align-items: center; gap: 4px; }
+  .dg-item-val .msym { font-size: 18px; color: var(--fg4); }
+  .dg-dot { width: 9px; height: 9px; border-radius: 999px; flex: none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="../../../tweaks-panel.jsx"></script>
+  <script type="text/babel" src="../jsx/disclosure-group.jsx"></script>
+<script src="../../../preview/_slowmo.js"></script>
+</body>
+</html>

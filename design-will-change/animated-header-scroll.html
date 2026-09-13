@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<!-- @dsCard group="Components" name="Animated Header Scroll" subtitle="Large title collapses into a blurred pinned header on scroll · iOS-style" viewport="560x760" -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Header Scroll — collapsing large title</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; }
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow: hidden;
+    background: #cdd6e3;
+  }
+
+  /* ---------------- Stage ---------------- */
+  .stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(900px 700px at 50% 30%, #e7edf5 0%, #cdd6e3 70%);
+    transition: background 0.4s ease;
+  }
+  .stage.dark {
+    background:
+      radial-gradient(900px 700px at 50% 30%, #0b1322 0%, #020617 72%);
+  }
+
+  /* ---------------- Phone device ---------------- */
+  .device {
+    --p: 0;            /* raw scroll progress 0..1            */
+    --pbar: 0;         /* eased bar reveal                    */
+    --ptitle: 0;       /* eased small-title reveal            */
+    --plarge: 1;       /* eased large-title presence          */
+    --blur: 22px;      /* max header blur                     */
+    --accent: #10B981;
+    --surface: #FFFFFF;
+    --surface-rgb: 255,255,255;
+    --fg1: #0F172A;
+    --fg3: #64748B;
+    --fg4: #94A3B8;
+    --chip: #F1F5F9;
+    --hairline: #E2E8F0;
+    --bezel: #0B0F19;
+
+    position: relative;
+    width: 384px;
+    height: 712px;
+    border-radius: 54px;
+    padding: 13px;
+    background: linear-gradient(155deg, #1c2433, var(--bezel));
+    box-shadow:
+      0 50px 90px -30px rgba(8,15,30,0.55),
+      0 10px 30px -10px rgba(8,15,30,0.4),
+      inset 0 2px 2px rgba(255,255,255,0.16),
+      inset 0 -3px 6px rgba(0,0,0,0.5);
+  }
+  .device.dark {
+    --surface: #0F172A;
+    --surface-rgb: 15,23,42;
+    --fg1: #F1F5F9;
+    --fg3: #94A3B8;
+    --fg4: #64748B;
+    --chip: #1E293B;
+    --hairline: #233143;
+  }
+
+  /* The actual screen — clips everything, hosts the scroller */
+  .screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 42px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: background 0.4s ease;
+  }
+
+  /* Scroll surface */
+  .scroller {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scroller::-webkit-scrollbar { width: 0; height: 0; }
+
+  /* ---- Pinned (collapsed) header — sits on top, blur ramps in ---- */
+  .statusbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 44px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 26px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--fg1);
+    pointer-events: none;
+  }
+  .statusbar .dots { display: flex; align-items: center; gap: 5px; }
+  .statusbar .ico { font-family: 'Material Icons'; font-size: 16px; }
+
+  .pinned {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 30;
+    height: 96px;            /* status bar (44) + bar (52) */
+    border-bottom: 1px solid transparent;
+    border-image: none;
+    background: rgba(var(--surface-rgb), 0);
+    -webkit-backdrop-filter: blur(0px) saturate(160%);
+    backdrop-filter: blur(0px) saturate(160%);
+    will-change: backdrop-filter, background;
+  }
+  /* depth gradient that strengthens as the header solidifies */
+  .pinned::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 100%;
+    height: 26px;
+    background: linear-gradient(to bottom, rgba(var(--surface-rgb), 0.5), rgba(var(--surface-rgb), 0));
+    opacity: var(--pbar);
+    pointer-events: none;
+  }
+  .pinned-bar {
+    position: absolute;
+    left: 0; right: 0;
+    top: 44px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    /* the whole collapsed header rises + fades in as you scroll */
+    opacity: var(--ptitle);
+    transform: translateY(calc((1 - var(--ptitle)) * 14px));
+    pointer-events: none;
+    will-change: opacity, transform;
+  }
+  .pinned-bar.revealed { pointer-events: auto; }
+  .pinned-title {
+    min-width: 0;
+  }
+  .pinned-title .t {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--fg1);
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .pinned-title .s {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg3);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* The hairline only appears with the blur — drawn as an inset box-shadow we fade */
+  .pinned .rule {
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: var(--hairline);
+    opacity: var(--pbar);
+  }
+
+  /* ---- Right component (lives in both headers) ---- */
+  .actions { display: flex; align-items: center; gap: 10px; flex: none; }
+  .icon-btn {
+    width: 38px; height: 38px;
+    border: none;
+    border-radius: 9999px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    background: var(--chip);
+    color: var(--fg1);
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .icon-btn .material-icons { font-size: 21px; }
+  .icon-btn.accent {
+    background: var(--accent);
+    color: #fff;
+    box-shadow:
+      0 8px 20px -6px color-mix(in srgb, var(--accent) 60%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -2px 0 rgba(0,0,0,0.22),
+      inset 0 0 0 1px rgba(255,255,255,0.15);
+    background-image:
+      linear-gradient(to right,  rgba(255,255,255,0.10) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.10) 1px, transparent 1px);
+    background-size: 7px 7px;
+  }
+  .icon-btn:hover { filter: brightness(1.04); transform: translateY(-1px); }
+  .icon-btn:active { transform: scale(0.94); }
+
+  /* ---- Large header (in scroll flow) ---- */
+  .content { padding: 100px 20px 40px; }
+  .large-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    /* transform + opacity moved to children so actions can animate independently */
+  }
+  /* Title text collapses up-left; transform-origin: left so it anchors there */
+  .large-head-title {
+    transform-origin: left bottom;
+    opacity: var(--plarge);
+    transform: scale(calc(0.92 + 0.08 * var(--plarge)))
+               translateY(calc((1 - var(--plarge)) * -6px));
+  }
+  .large-head .eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .large-head h1 {
+    font-size: 34px;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    line-height: 1.0;
+    color: var(--fg1);
+  }
+  .large-head .sub {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg3);
+    margin-top: 9px;
+  }
+  /* Action buttons: independent fade + rise only — no scale, no horizontal movement.
+     transform-origin: top right means the right edge is the fixed anchor. */
+  .large-head .actions {
+    transform-origin: top right;
+    opacity: var(--plarge);
+    transform: translateY(calc((1 - var(--plarge)) * -10px));
+    will-change: opacity, transform;
+  }
+
+  /* ---- Feed cards ---- */
+  .feed { display: flex; flex-direction: column; gap: 12px; }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    padding: 20px;
+    color: #fff;
+    background: var(--accent);
+    box-shadow:
+      0 18px 40px -16px color-mix(in srgb, var(--accent) 65%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.5),
+      inset 0 -2px 0 rgba(0,0,0,0.22),
+      inset 0 0 0 1px rgba(255,255,255,0.15);
+    background-image:
+      linear-gradient(to right,  rgba(255,255,255,0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 22px 22px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.16);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at top right, rgba(255,255,255,0.22) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero .k {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+  }
+  .hero .v { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; margin-top: 8px; line-height: 1; }
+  .hero .row2 { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12.5px; font-weight: 700; }
+  .hero .delta {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: rgba(255,255,255,0.22);
+    padding: 3px 9px; border-radius: 9999px;
+  }
+  .hero .delta .material-icons { font-size: 15px; }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px;
+    border-radius: 18px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .device.dark .row { box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04); }
+  .av {
+    width: 42px; height: 42px; flex: none;
+    border-radius: 13px;
+    display: grid; place-items: center;
+    font-size: 14px; font-weight: 800; letter-spacing: 0.01em;
+    color: #fff;
+  }
+  .av .material-icons { font-size: 21px; }
+  .row .mid { flex: 1; min-width: 0; }
+  .row .name { font-size: 14.5px; font-weight: 700; color: var(--fg1); line-height: 1.2; }
+  .row .meta { font-size: 12px; font-weight: 600; color: var(--fg3); margin-top: 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .end { flex: none; text-align: right; }
+  .row .amt { font-size: 14px; font-weight: 800; color: var(--fg1); }
+  .row .time { font-size: 11px; font-weight: 600; color: var(--fg4); margin-top: 3px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 9px; border-radius: 9999px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.01em;
+  }
+  .pill .material-icons { font-size: 13px; }
+
+  /* home indicator */
+  .home-ind {
+    position: absolute;
+    bottom: 9px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 9999px;
+    background: var(--fg1);
+    opacity: 0.28;
+    z-index: 45;
+    pointer-events: none;
+  }
+
+  /* scroll hint */
+  .scroll-hint {
+    position: absolute;
+    bottom: 28px; left: 50%; transform: translateX(-50%);
+    z-index: 46;
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+    box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--accent) 60%, transparent);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+  .scroll-hint .material-icons { font-size: 15px; animation: nudge 1.4s ease-in-out infinite; }
+  .scroll-hint.hide { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  @keyframes nudge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+
+  /* ---------------- Controls (mirrors aurora.html) ---------------- */
+  .controls {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 18px;
+    padding: 12px 20px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.62);
+    border: 1px solid rgba(255,255,255,0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-size: 11px;
+    color: rgba(255,255,255,0.72);
+  }
+  .ctl { display: flex; align-items: center; gap: 8px; }
+  .ctl label { letter-spacing: 0.05em; text-transform: uppercase; font-weight: 700; }
+  .ctl input[type="range"] { width: 84px; accent-color: #10B981; cursor: pointer; }
+  .ctl input[type="color"] {
+    width: 26px; height: 26px; padding: 0;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 7px; background: none; cursor: pointer;
+  }
+  .seg { display: inline-flex; background: rgba(255,255,255,0.1); border-radius: 9px; padding: 3px; gap: 2px; }
+  .seg button {
+    border: none; background: none; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    padding: 4px 11px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .seg button.active { background: #10B981; color: #fff; }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="device" id="device">
+      <div class="screen">
+
+        <!-- Pinned collapsed header (blur ramps in) -->
+        <div class="pinned" id="pinned">
+          <div class="rule"></div>
+          <div class="pinned-bar">
+            <div class="pinned-title">
+              <div class="t">Pipeline</div>
+              <div class="s">8 deals · $2.4M open</div>
+            </div>
+            <div class="actions">
+              <button class="icon-btn" aria-label="Search"><span class="material-icons">search</span></button>
+              <button class="icon-btn accent" aria-label="Add deal"><span class="material-icons">add</span></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status bar -->
+        <div class="statusbar">
+          <span>9:41</span>
+          <div class="dots">
+            <span class="ico">signal_cellular_alt</span>
+            <span class="ico">wifi</span>
+            <span class="ico">battery_full</span>
+          </div>
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="scroller" id="scroller">
+          <div class="content">
+            <!-- Large header -->
+            <div class="large-head" id="largeHead">
+              <div class="large-head-title">
+                <div class="eyebrow">Sales</div>
+                <h1>Pipeline</h1>
+                <div class="sub">8 deals · $2.4M open</div>
+              </div>
+              <div class="actions">
+                <button class="icon-btn" aria-label="Search"><span class="material-icons">search</span></button>
+                <button class="icon-btn accent" aria-label="Add deal"><span class="material-icons">add</span></button>
+              </div>
+            </div>
+
+            <!-- Feed -->
+            <div class="feed" id="feed"></div>
+          </div>
+        </div>
+
+        <div class="scroll-hint" id="hint"><span class="material-icons">expand_more</span>Scroll to collapse</div>
+        <div class="home-ind"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="ctl"><label for="blur">Blur</label><input type="range" id="blur" min="0" max="40" step="1" value="22"></div>
+    <div class="ctl"><label for="dist">Collapse</label><input type="range" id="dist" min="40" max="160" step="2" value="92"></div>
+    <div class="ctl">
+      <label>Theme</label>
+      <div class="seg" id="themeSeg">
+        <button class="active" data-theme="light">Light</button>
+        <button data-theme="dark">Dark</button>
+      </div>
+    </div>
+    <div class="ctl"><label for="accent">Accent</label><input type="color" id="accent" value="#10B981"></div>
+  </div>
+
+  <script>
+  (function () {
+    var device   = document.getElementById('device');
+    var stage    = document.getElementById('stage');
+    var scroller = document.getElementById('scroller');
+    var hint     = document.getElementById('hint');
+
+    var collapseDist = 92;
+
+    var clamp  = function (v, a, b) { return Math.min(Math.max(v, a), b); };
+    var smooth = function (t) { return t * t * (3 - 2 * t); };
+
+    // ---- The collapse math: one scroll handler, drives CSS custom props ----
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var p = clamp(scroller.scrollTop / collapseDist, 0, 1);
+
+      var pbar   = smooth(p);                                   // bar bg + blur + rule
+      var ptitle = smooth(clamp((p - 0.42) / 0.58, 0, 1));      // small title slides up
+      var plarge = 1 - smooth(clamp(p / 0.62, 0, 1));           // large title fades + scales
+
+      device.style.setProperty('--p', p.toFixed(4));
+      device.style.setProperty('--pbar', pbar.toFixed(4));
+      device.style.setProperty('--ptitle', ptitle.toFixed(4));
+      device.style.setProperty('--plarge', plarge.toFixed(4));
+
+      // background + backdrop blur applied imperatively (calc inside backdrop-filter
+      // is unreliable across engines, so we set the resolved values here)
+      var maxBlur = parseFloat(device.style.getPropertyValue('--blur')) || 22;
+      var pinned = document.getElementById('pinned');
+      pinned.style.backdropFilter = 'blur(' + (pbar * maxBlur).toFixed(1) + 'px) saturate(160%)';
+      pinned.style.webkitBackdropFilter = 'blur(' + (pbar * maxBlur).toFixed(1) + 'px) saturate(160%)';
+      var isDark = device.classList.contains('dark');
+      var rgb = isDark ? '15,23,42' : '255,255,255';
+      pinned.style.background = 'rgba(' + rgb + ',' + (pbar * 0.78).toFixed(3) + ')';
+
+      if (p > 0.06) hint.classList.add('hide'); else hint.classList.remove('hide');
+
+      // collapsed header only accepts clicks once it has risen into view
+      document.getElementById('pinned').querySelector('.pinned-bar')
+        .classList.toggle('revealed', ptitle > 0.5);
+    }
+    function onScroll() {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }
+    scroller.addEventListener('scroll', onScroll, { passive: true });
+
+    // ---- Demo feed content ----
+    var feed = [
+      { kind: 'hero' },
+      { ic: 'trending_up', c: '#10B981', name: 'Northwind Traders', meta: 'Moved to Negotiation', amt: '$84.0k', time: '2h', pill: ['Hot', '#FFF7ED', '#F97316', 'local_fire_department'] },
+      { in: 'AC', c: '#6366F1', name: 'Acme Corp · Renewal', meta: 'Proposal sent to Dana W.', amt: '$42.0k', time: '4h' },
+      { ic: 'check_circle', c: '#10B981', name: 'Globex Inc', meta: 'Deal won — onboarding queued', amt: '$120k', time: 'Today', pill: ['Won', '#ECFDF5', '#059669', 'verified'] },
+      { in: 'LR', c: '#0EA5E9', name: 'Lumen Retail', meta: 'Discovery call booked', amt: '$28.5k', time: 'Yest.' },
+      { ic: 'schedule', c: '#EAB308', name: 'Vertex Systems', meta: 'Awaiting signature · 3d', amt: '$67.0k', time: '1d', pill: ['Stalled', '#FEFCE8', '#A16207', 'hourglass_top'] },
+      { in: 'PD', c: '#EC4899', name: 'Pinnacle Design', meta: 'New lead assigned to you', amt: '$15.0k', time: '1d' },
+      { in: 'OS', c: '#8B5CF6', name: 'Orbit Software', meta: 'Demo completed · follow up', amt: '$96.0k', time: '2d' },
+      { in: 'BH', c: '#14B8A6', name: 'Beacon Health', meta: 'Contract under review', amt: '$210k', time: '3d' },
+      { in: 'QF', c: '#F97316', name: 'Quanta Foods', meta: 'Re-engaged after 30 days', amt: '$33.0k', time: '4d' }
+    ];
+
+    function avatar(it) {
+      if (it.ic) return '<div class="av" style="background:' + it.c + '"><span class="material-icons">' + it.ic + '</span></div>';
+      return '<div class="av" style="background:' + it.c + '">' + it.in + '</div>';
+    }
+    function pill(p) {
+      return '<span class="pill" style="background:' + p[1] + ';color:' + p[2] + '">'
+        + '<span class="material-icons">' + p[3] + '</span>' + p[0] + '</span>';
+    }
+
+    var html = '';
+    feed.forEach(function (it) {
+      if (it.kind === 'hero') {
+        html += '<div class="hero">'
+          + '<div class="k">Pipeline this month</div>'
+          + '<div class="v">$2.41M</div>'
+          + '<div class="row2"><span class="delta"><span class="material-icons">arrow_upward</span>12.5%</span>'
+          + '<span style="opacity:.88">vs. $2.14M last month</span></div>'
+          + '</div>';
+        return;
+      }
+      html += '<div class="row">'
+        + avatar(it)
+        + '<div class="mid"><div class="name">' + it.name + '</div><div class="meta">' + it.meta + '</div></div>'
+        + '<div class="end"><div class="amt">' + it.amt + '</div>'
+        + (it.pill ? '<div style="margin-top:5px">' + pill(it.pill) + '</div>' : '<div class="time">' + it.time + '</div>')
+        + '</div></div>';
+    });
+    document.getElementById('feed').innerHTML = html;
+
+    // ---- Controls ----
+    function setTheme(t) {
+      device.classList.toggle('dark', t === 'dark');
+      stage.classList.toggle('dark', t === 'dark');
+      update();
+    }
+    document.getElementById('themeSeg').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      this.querySelectorAll('button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      setTheme(b.dataset.theme);
+    });
+    document.getElementById('blur').addEventListener('input', function (e) {
+      device.style.setProperty('--blur', e.target.value + 'px'); update();
+    });
+    document.getElementById('dist').addEventListener('input', function (e) {
+      collapseDist = parseFloat(e.target.value); update();
+    });
+    document.getElementById('accent').addEventListener('input', function (e) {
+      device.style.setProperty('--accent', e.target.value);
+    });
+
+    device.style.setProperty('--blur', '22px');
+    update();
+  })();
+  </script>
+<script src="../../../preview/_slowmo.js"></script>
+</body>
+</html>
