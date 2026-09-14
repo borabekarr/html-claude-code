@@ -1,0 +1,513 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="Tooltip Open Close Animation" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+:root{
+  --duration-fast:var(--duration-140); --duration-base:var(--duration-200); --duration-slow:var(--duration-slower);
+  --ease-out:var(--ease-out); --ease-spring:var(--ease-spring-firm);
+  --gap-icon-text:6px; --pad-card:16px;
+  /* JS-driven resting defaults (props: inDuration/outDuration/openDelay), overwritten via
+     componentDidMount->sync() from the DC props panel; kept as component-owned literals
+     per the tooltip's own asymmetric-timing design, not DS tokens. */
+  --tt-in-dur:150ms; /* motion-sweep: kept */ --tt-out-dur:50ms; /* motion-sweep: kept */ --tt-scale:.98; --tt-delay:80ms; /* motion-sweep: kept */
+  --tt-in-ease:var(--ease-out); --tt-out-ease:var(--ease-out);
+  --tt-bg:#0F172A; --tt-fg:#F1F5F9;
+}
+html.dark{ --tt-bg:#FFFFFF; --tt-fg:#0F172A; }
+body{ margin:0; background:#F1F5F9; }
+html.dark body{ background:#0B1220; }
+a{ color:var(--brand-primary-600); text-decoration:none; }
+a:hover{ color:var(--brand-primary-700); }
+
+/* ── Tooltip mechanics (transitions.dev recipe, Deha-skinned) ────────── */
+.t-tt-wrap{ position:relative; display:inline-block; }
+.t-tt{
+  position:absolute; bottom:calc(100% + 8px); left:50%;
+  transform:translate(-50%,0) scale(var(--tt-scale));
+  transform-origin:50% 100%;
+  padding:8px 12px; border-radius:8px;
+  background:var(--tt-bg); color:var(--tt-fg);
+  font-family:'Montserrat'; font-size:12px; font-weight:700; line-height:1.35;
+  white-space:nowrap; z-index:40;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 2px 6px 0 rgba(0,0,0,.05), 0 4px 42px 0 rgba(0,0,0,.06);
+  opacity:0; pointer-events:none;
+  transition:opacity var(--tt-out-dur) var(--tt-out-ease), transform var(--tt-out-dur) var(--tt-out-ease);
+}
+html.dark .t-tt{ box-shadow:0 0 0 1px rgba(255,255,255,.10), 0 2px 6px rgba(0,0,0,.4), 0 4px 42px rgba(0,0,0,.5); }
+.t-tt-wrap:hover .t-tt,
+.t-tt-wrap:focus-within .t-tt,
+.t-tt-trigger:focus-visible + .t-tt,
+.t-tt-wrap.is-open .t-tt{
+  opacity:1; transform:translate(-50%,0) scale(1);
+  transition-duration:var(--tt-in-dur);
+  transition-timing-function:var(--tt-in-ease);
+  transition-delay:var(--tt-delay);
+}
+/* placements */
+.t-tt--bottom{ bottom:auto; top:calc(100% + 8px); transform-origin:50% 0; }
+.t-tt--left{ bottom:auto; top:50%; left:auto; right:calc(100% + 8px);
+  transform:translate(0,-50%) scale(var(--tt-scale)); transform-origin:100% 50%; }
+.t-tt--right{ bottom:auto; top:50%; left:calc(100% + 8px);
+  transform:translate(0,-50%) scale(var(--tt-scale)); transform-origin:0 50%; }
+.t-tt-wrap:hover .t-tt--left, .t-tt-wrap:focus-within .t-tt--left,
+.t-tt-wrap:hover .t-tt--right, .t-tt-wrap:focus-within .t-tt--right,
+.t-tt-wrap.is-open .t-tt--left, .t-tt-wrap.is-open .t-tt--right{ transform:translate(0,-50%) scale(1); }
+/* tones */
+.t-tt--dark{ --tt-bg:#0F172A; --tt-fg:#F1F5F9; }
+html.dark .t-tt--dark{ --tt-bg:#FFFFFF; --tt-fg:#0F172A; }
+html.dark .t-tt{ box-shadow:0 0 0 1px rgba(15,23,42,.10), 0 2px 6px rgba(0,0,0,.35), 0 4px 42px rgba(0,0,0,.4); }
+.t-tt--brand{ --tt-bg:#10B981; --tt-fg:#ffffff;
+  background-image:linear-gradient(rgba(255,255,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.10) 1px,transparent 1px);
+  background-size:7px 7px; text-shadow:0 1px 2px rgba(0,0,0,.2);
+  box-shadow:0 8px 22px -8px rgba(16,185,129,.55), inset 0 1px 0 rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.15); }
+.t-tt--danger{ --tt-bg:#EF4444; --tt-fg:#ffffff;
+  box-shadow:0 8px 22px -8px rgba(239,68,68,.55), inset 0 1px 0 rgba(255,255,255,.35); }
+/* rich card tooltip — pointer-events on so it can be reached */
+.t-tt--rich{ white-space:normal; width:264px; padding:0; border-radius:16px; background:transparent; box-shadow:none; }
+.t-tt-wrap:hover .t-tt--rich, .t-tt-wrap:focus-within .t-tt--rich, .t-tt-wrap.is-open .t-tt--rich{ pointer-events:auto; }
+/* arrow */
+.t-tt--arrow::after{ content:''; position:absolute; width:8px; height:8px; background:var(--tt-bg);
+  left:50%; bottom:-3px; transform:translateX(-50%) rotate(45deg);
+  box-shadow:2px 2px 4px rgba(0,0,0,.04); }
+.t-tt--arrow.t-tt--bottom::after{ bottom:auto; top:-3px; box-shadow:-2px -2px 4px rgba(0,0,0,.04); }
+/* triggers */
+.t-tt-trigger{ font-family:'Montserrat'; cursor:pointer; }
+.t-tt-trigger:focus-visible{ outline:2px solid var(--brand-primary); outline-offset:2px; }
+.tt-icon-btn{ display:inline-grid; place-items:center; width:44px; height:44px; border:none;
+  border-radius:14px; background:var(--card-bg); color:var(--fg2);
+  box-shadow:inset 0 0 0 1px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.7), inset 0 -2px 0 rgba(15,23,42,.10);
+  transition:transform var(--duration-base) var(--ease-out), color var(--duration-base); }
+.tt-icon-btn:hover{ transform:translateY(-1px); color:var(--brand-primary-600); }
+.tt-icon-btn:active{ transform:scale(.95); }
+html.dark .tt-icon-btn{ color:#CBD5E1; box-shadow:inset 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.06), inset 0 -2px 0 rgba(0,0,0,.3); }
+.tt-underline{ border:none; background:none; padding:0; color:var(--fg1); font-size:14px; font-weight:800;
+  border-bottom:1.5px dashed var(--slate-300); }
+html.dark .tt-underline{ color:#F1F5F9; border-color:#475569; }
+.tt-dis{ opacity:.5; cursor:not-allowed; }
+@media (prefers-reduced-motion: reduce){ .t-tt{ transition:none !important; } }
+/* small rich-card action buttons + the compact trigger variants need a 44px tap
+   target without enlarging the visible chip (scoped to this component's triggers,
+   not a rewrite of the shared .btn-glass/.tt-underline rules) */
+.tt-hit44, .t-tt-trigger.btn-glass, .tt-underline{ position:relative; }
+.tt-hit44::after, .t-tt-trigger.btn-glass::after, .tt-underline::after{ content:''; position:absolute; inset:50% auto auto 50%; width:44px; height:44px; transform:translate(-50%,-50%); }
+</style>
+</helmet>
+
+<div style="min-height:100%; padding:32px; box-sizing:border-box; font-family:'Montserrat'; background:#F1F5F9;">
+<div style="max-width:940px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
+
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <span class="label">Deha · Components</span>
+      <h1 class="h1" style="margin:0;">Tooltip — open / close animation</h1>
+      <p class="body" style="margin:0; max-width:560px;">Asymmetric timing: 150ms ease-out in after an 80ms intent delay, 50ms out with no delay. The wrapper is the hover target, so the pointer can drift onto the tooltip without flicker.</p>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <span class="t-tt-wrap">
+        <button class="t-tt-trigger tt-icon-btn" type="button" onClick="{{ toggleTheme }}" aria-describedby="tt-theme">
+          <span class="material-icons" style="font-size:20px;">dark_mode</span>
+        </button>
+        <span class="t-tt t-tt--arrow t-tt--dark" id="tt-theme" role="tooltip">Toggle dark mode</span>
+      </span>
+      <span class="t-tt-wrap">
+        <button class="t-tt-trigger tt-icon-btn" type="button" onClick="{{ toggleSlow }}" aria-describedby="tt-slow">
+          <span class="material-icons" style="font-size:20px;">slow_motion_video</span>
+        </button>
+        <span class="t-tt t-tt--arrow t-tt--dark" id="tt-slow" role="tooltip">Slow motion 4×</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="pills-row" role="tablist" style="gap:8px;">
+    <button class="{{ tabTriggers }}" type="button" onClick="{{ goTriggers }}">Triggers</button>
+    <button class="{{ tabPlacement }}" type="button" onClick="{{ goPlacement }}">Placement</button>
+    <button class="{{ tabTones }}" type="button" onClick="{{ goTones }}">Tones</button>
+    <button class="{{ tabRich }}" type="button" onClick="{{ goRich }}">Rich card</button>
+    <button class="{{ tabInContext }}" type="button" onClick="{{ goInContext }}">In context</button>
+    <button class="{{ tabStates }}" type="button" onClick="{{ goStates }}">States &amp; timing</button>
+  </div>
+
+  <!-- TRIGGERS -->
+  <sc-if value="{{ isTriggers }}" hint-placeholder-val="{{ true }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:26px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">Trigger surfaces</span>
+        <span class="body" style="font-size:13px;">Any element can carry a tooltip. Keep the trigger's own styling; only positioning and timing come from the tooltip.</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px;">
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
+          <span class="label">Icon button</span>
+          <div style="display:flex; gap:10px;">
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger tt-icon-btn" type="button" aria-describedby="tt-a1"><span class="material-icons" style="font-size:20px;">bolt</span></button>
+              <span class="t-tt t-tt--arrow" id="tt-a1" role="tooltip">Run automation</span>
+            </span>
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger tt-icon-btn" type="button" aria-describedby="tt-a2"><span class="material-icons" style="font-size:20px;">insights</span></button>
+              <span class="t-tt t-tt--arrow" id="tt-a2" role="tooltip">Pipeline forecast</span>
+            </span>
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger tt-icon-btn" type="button" aria-describedby="tt-a3"><span class="material-icons" style="font-size:20px;">archive</span></button>
+              <span class="t-tt t-tt--arrow" id="tt-a3" role="tooltip">Archive lead</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
+          <span class="label">Pill / tag</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="t-tt-wrap">
+              <span class="t-tt-trigger badge gci" tabindex="0" aria-describedby="tt-b1">GCI $42K</span>
+              <span class="t-tt t-tt--arrow t-tt--brand" id="tt-b1" role="tooltip">Gross commission income</span>
+            </span>
+            <span class="t-tt-wrap">
+              <span class="t-tt-trigger badge tag" tabindex="0" aria-describedby="tt-b2"><span class="material-icons">sell</span>Hot lead</span>
+              <span class="t-tt t-tt--arrow" id="tt-b2" role="tooltip">Scored 92 in the last 24h</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
+          <span class="label">Buttons</span>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger btn-primary" type="button" aria-describedby="tt-c1"><span class="material-icons btn-mi">send</span>Send offer</button>
+              <span class="t-tt t-tt--arrow t-tt--dark" id="tt-c1" role="tooltip">Sends to 3 recipients</span>
+            </span>
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger btn-glass" type="button" aria-describedby="tt-c2">Preview</button>
+              <span class="t-tt t-tt--arrow" id="tt-c2" role="tooltip">Opens read-only view</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
+          <span class="label">Inline text</span>
+          <span class="body" style="font-size:14px;">Deal closes on
+            <span class="t-tt-wrap">
+              <button class="t-tt-trigger tt-underline" type="button" aria-describedby="tt-d1">Mar 14</button>
+              <span class="t-tt t-tt--arrow" id="tt-d1" role="tooltip">Contingency ends Mar 09</span>
+            </span>.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- PLACEMENT -->
+  <sc-if value="{{ isPlacement }}" hint-placeholder-val="{{ false }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">Placement</span>
+        <span class="body" style="font-size:13px;">Transform-origin follows the placement, so every tooltip scales up out of its trigger edge.</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:16px; padding:44px 60px; place-items:center;">
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-p1">Top</button>
+          <span class="t-tt t-tt--arrow" id="tt-p1" role="tooltip">Default placement</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-p2">Bottom</button>
+          <span class="t-tt t-tt--arrow t-tt--bottom" id="tt-p2" role="tooltip">Below the trigger</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-p3">Left</button>
+          <span class="t-tt t-tt--left" id="tt-p3" role="tooltip">Left of trigger</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-p4">Right</button>
+          <span class="t-tt t-tt--right" id="tt-p4" role="tooltip">Right of trigger</span>
+        </span>
+      </div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <span class="mono">bottom: calc(100% + 8px)</span>
+        <span class="mono">transform-origin: 50% 100%</span>
+        <span class="mono">scale(0.98) → scale(1)</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- TONES -->
+  <sc-if value="{{ isTones }}" hint-placeholder-val="{{ false }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">Tones</span>
+        <span class="body" style="font-size:13px;">Default is navy on light mode and flips to white on dark. Emerald for confirmations, red for blocking reasons.</span>
+      </div>
+      <div style="display:flex; gap:14px; flex-wrap:wrap; padding:36px 0 8px;">
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-glass" type="button" aria-describedby="tt-t1">Default</button>
+          <span class="t-tt t-tt--arrow" id="tt-t1" role="tooltip">Navy on light, white on dark</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-glass" type="button" aria-describedby="tt-t3">Emerald</button>
+          <span class="t-tt t-tt--arrow t-tt--brand" id="tt-t3" role="tooltip">Saved to pipeline</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-glass" type="button" aria-describedby="tt-t4">Danger</button>
+          <span class="t-tt t-tt--arrow t-tt--danger" id="tt-t4" role="tooltip">Contract expired</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- RICH -->
+  <sc-if value="{{ isRich }}" hint-placeholder-val="{{ false }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">Rich tooltip</span>
+        <span class="body" style="font-size:13px;">An inner card in the tooltip slot. Pointer events turn on while open so the pills and button inside stay clickable — the wrapper keeps hover alive on the way over.</span>
+      </div>
+      <div style="display:flex; gap:20px; flex-wrap:wrap; padding:180px 0 8px;">
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-r1"><span class="material-icons btn-mi">person</span>Dana Whitfield</button>
+          <span class="t-tt t-tt--rich" id="tt-r1" role="tooltip">
+            <span class="card-inner" style="display:flex; flex-direction:column; gap:12px; padding:16px; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 4px 42px rgba(0,0,0,.10);">
+              <span style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <span class="h4" style="font-size:14px;">Dana Whitfield</span>
+                <span class="badge success"><span class="material-icons">verified</span></span>
+              </span>
+              <span class="body" style="font-size:12px; display:block;">Buyer, 3 active tours. Last contact 2 days ago.</span>
+              <span style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span class="badge tag">Pre-approved</span>
+                <span class="badge tag">$820K</span>
+                <span class="badge gci">GCI $24K</span>
+              </span>
+              <span style="display:flex; gap:8px;">
+                <button class="btn-primary tt-hit44" type="button" style="padding:8px 14px; font-size:12px;">Open deal</button>
+                <button class="btn-text tt-hit44" type="button" style="font-size:12px;">Log call</button>
+              </span>
+            </span>
+          </span>
+        </span>
+
+        <span class="t-tt-wrap">
+          <span class="t-tt-trigger badge tag" tabindex="0" aria-describedby="tt-r2" style="padding:6px 10px;"><span class="material-icons">help</span>What is GCI?</span>
+          <span class="t-tt t-tt--rich t-tt--bottom" id="tt-r2" role="tooltip">
+            <span class="card-inner" style="display:flex; flex-direction:column; gap:10px; padding:16px; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 4px 42px rgba(0,0,0,.10);">
+              <span class="h4" style="font-size:14px;">Gross commission income</span>
+              <span class="body" style="font-size:12px; display:block;">The full commission on a closed deal, before splits and brokerage fees.</span>
+              <span class="pills-row">
+                <span class="pill-tab active">Forecast</span>
+                <span class="pill-tab">Actual</span>
+              </span>
+            </span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- IN CONTEXT -->
+  <sc-if value="{{ isInContext }}" hint-placeholder-val="{{ false }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:22px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">In context</span>
+        <span class="body" style="font-size:13px;">Three places the tooltip earns its keep: a truncated field, a disabled action, and a metric that needs a definition.</span>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 16px; border-radius:16px; background:var(--bg-chip);">
+        <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+          <span class="badge col-tag progress"><span class="material-icons">trending_up</span>In progress<span class="count">4</span></span>
+          <span class="t-tt-wrap" style="min-width:0; max-width:220px;">
+            <span class="t-tt-trigger" tabindex="0" aria-describedby="tt-x1" style="display:block; font-size:13px; font-weight:800; color:var(--fg1); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">1420 Beaumont Terrace, Unit 12B</span>
+            <span class="t-tt t-tt--arrow t-tt--dark" id="tt-x1" role="tooltip">1420 Beaumont Terrace, Unit 12B</span>
+          </span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="t-tt-wrap">
+            <span class="t-tt-trigger pill-priority" tabindex="0" aria-describedby="tt-x2"><span class="dot" style="background:#EAB308;"></span>Medium</span>
+            <span class="t-tt t-tt--arrow" id="tt-x2" role="tooltip">Follow up within 48h</span>
+          </span>
+          <span class="t-tt-wrap">
+            <span class="t-tt-trigger tt-dis btn-task" aria-describedby="tt-x3" style="--fbtn:#0F172A;"><span class="material-icons">lock</span>Close deal</span>
+            <span class="t-tt t-tt--arrow t-tt--danger t-tt--left" id="tt-x3" role="tooltip">Needs signed disclosure</span>
+          </span>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px;">
+        <div style="display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:20px; background:var(--bg-chip);">
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span class="micro-label" style="margin:0;">Conversion</span>
+            <span class="t-tt-wrap">
+              <span class="t-tt-trigger material-icons" tabindex="0" aria-describedby="tt-x4" style="font-size:15px; color:var(--fg4);">info</span>
+              <span class="t-tt t-tt--arrow" id="tt-x4" role="tooltip">Closed ÷ qualified leads, 30d</span>
+            </span>
+          </span>
+          <span class="display-2">18.4%</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:20px; background:var(--bg-chip);">
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span class="micro-label" style="margin:0;">Avg. cycle</span>
+            <span class="t-tt-wrap">
+              <span class="t-tt-trigger material-icons" tabindex="0" aria-describedby="tt-x5" style="font-size:15px; color:var(--fg4);">info</span>
+              <span class="t-tt t-tt--arrow" id="tt-x5" role="tooltip">First tour to signed contract</span>
+            </span>
+          </span>
+          <span class="display-2">31d</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:20px; background:var(--bg-chip);">
+          <span style="display:flex; align-items:center; gap:6px;">
+            <span class="micro-label" style="margin:0;">Pipeline</span>
+            <span class="t-tt-wrap">
+              <span class="t-tt-trigger material-icons" tabindex="0" aria-describedby="tt-x6" style="font-size:15px; color:var(--fg4);">info</span>
+              <span class="t-tt t-tt--arrow t-tt--left" id="tt-x6" role="tooltip">Weighted by stage probability</span>
+            </span>
+          </span>
+          <span class="display-2">$1.2M</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- STATES & TIMING -->
+  <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+  <div class="shell">
+    <div class="card-inner" style="padding:28px; display:flex; flex-direction:column; gap:24px;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <span class="micro-label">States &amp; timing</span>
+        <span class="body" style="font-size:13px;">The delay lives only in the hover rule, so leaving snaps it back to 0 and the close plays immediately.</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px;">
+        <div style="padding:14px; border-radius:16px; background:var(--bg-chip); display:flex; flex-direction:column; gap:6px;">
+          <span class="label">Rest</span>
+          <span class="mono">opacity 0 · scale .98</span>
+          <span class="mono">pointer-events none</span>
+        </div>
+        <div style="padding:14px; border-radius:16px; background:var(--bg-chip); display:flex; flex-direction:column; gap:6px;">
+          <span class="label">Intent delay</span>
+          <span class="mono">80ms</span>
+          <span class="mono">hover rule only</span>
+        </div>
+        <div style="padding:14px; border-radius:16px; background:var(--bg-chip); display:flex; flex-direction:column; gap:6px;">
+          <span class="label">Opening</span>
+          <span class="mono">150ms ease-out</span>
+          <span class="mono">opacity + scale</span>
+        </div>
+        <div style="padding:14px; border-radius:16px; background:var(--bg-chip); display:flex; flex-direction:column; gap:6px;">
+          <span class="label">Closing</span>
+          <span class="mono">50ms · delay 0</span>
+          <span class="mono">no wait on leave</span>
+        </div>
+        <div style="padding:14px; border-radius:16px; background:var(--bg-chip); display:flex; flex-direction:column; gap:6px;">
+          <span class="label">Reduced motion</span>
+          <span class="mono">transition: none</span>
+          <span class="mono">instant toggle</span>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:28px; flex-wrap:wrap; padding:56px 0 8px;">
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-s1">Hover me</button>
+          <span class="t-tt t-tt--arrow" id="tt-s1" role="tooltip">Pointer trigger</span>
+        </span>
+        <span class="t-tt-wrap">
+          <button class="t-tt-trigger btn-inverse" type="button" aria-describedby="tt-s2">Tab to me</button>
+          <span class="t-tt t-tt--arrow" id="tt-s2" role="tooltip">focus-visible trigger</span>
+        </span>
+        <span class="{{ forcedWrapClass }}">
+          <button class="t-tt-trigger btn-inverse" type="button" onClick="{{ toggleForced }}" aria-describedby="tt-s3">Pinned open</button>
+          <span class="t-tt t-tt--arrow t-tt--dark" id="tt-s3" role="tooltip">Held open with .is-open</span>
+        </span>
+        <span class="t-tt-wrap">
+          <span class="t-tt-trigger tt-dis btn-inverse" aria-describedby="tt-s4">Disabled</span>
+          <span class="t-tt t-tt--arrow t-tt--danger" id="tt-s4" role="tooltip">Why it is disabled</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;inDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:150,&quot;min&quot;:0,&quot;max&quot;:600,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Timing&quot;},&quot;outDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:50,&quot;min&quot;:0,&quot;max&quot;:400,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Timing&quot;},&quot;openDelay&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:80,&quot;min&quot;:0,&quot;max&quot;:600,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Timing&quot;},&quot;restScale&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:0.98,&quot;min&quot;:0.8,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'triggers', dark: false, slow: false, forced: false };
+
+  componentDidMount() {
+    this.sync();
+    this.onKeyDown = (e) => { if (e.key === 'Escape' && this.state.forced) this.setState({ forced: false }); };
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+  componentDidUpdate() { this.sync(); }
+  componentWillUnmount() { document.removeEventListener('keydown', this.onKeyDown); }
+
+  sync() {
+    const r = document.documentElement, p = this.props;
+    r.classList.toggle('dark', !!this.state.dark);
+    r.setAttribute('data-theme', this.state.dark ? 'dark' : 'light');
+    r.setAttribute('data-anim-slow', this.state.slow ? 'true' : 'false');
+    const set = (k, v) => { if (v !== undefined && v !== null && v !== '') r.style.setProperty(k, v); };
+    set('--tt-in-dur', (p.inDuration ?? 150) + 'ms');
+    set('--tt-out-dur', (p.outDuration ?? 50) + 'ms');
+    set('--tt-delay', (p.openDelay ?? 80) + 'ms');
+    set('--tt-scale', String(p.restScale ?? 0.98));
+  }
+
+  pill(name) { return 'pill-tab' + (this.state.tab === name ? ' active' : ''); }
+
+  renderVals() {
+    const go = t => () => this.setState({ tab: t });
+    return {
+      isTriggers: this.state.tab === 'triggers',
+      isPlacement: this.state.tab === 'placement',
+      isTones: this.state.tab === 'tones',
+      isRich: this.state.tab === 'rich',
+      isInContext: this.state.tab === 'context',
+      isStates: this.state.tab === 'states',
+      tabTriggers: this.pill('triggers'),
+      tabPlacement: this.pill('placement'),
+      tabTones: this.pill('tones'),
+      tabRich: this.pill('rich'),
+      tabInContext: this.pill('context'),
+      tabStates: this.pill('states'),
+      goTriggers: go('triggers'),
+      goPlacement: go('placement'),
+      goTones: go('tones'),
+      goRich: go('rich'),
+      goInContext: go('context'),
+      goStates: go('states'),
+      forcedWrapClass: 't-tt-wrap' + (this.state.forced ? ' is-open' : ''),
+      toggleForced: () => this.setState(s => ({ forced: !s.forced })),
+      toggleTheme: () => this.setState(s => ({ dark: !s.dark })),
+      toggleSlow: () => this.setState(s => ({ slow: !s.slow }))
+    };
+  }
+}
+</script>
+</body>
+</html>

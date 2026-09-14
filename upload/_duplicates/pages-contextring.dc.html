@@ -1,0 +1,49 @@
+<!-- @dsCard group="Merge - ai-chat" name="pages__ContextRing" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_metric-circle.css">
+
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+<div class="ring-wrap" style="width:{{ px }}px;height:{{ px }}px">
+  <div class="halo" style="background:radial-gradient(circle at 50% 58%, {{ c1 }}, transparent 62%)"></div>
+  <svg class="mc-ring" viewBox="0 0 100 100" style="width:{{ px }}px;height:{{ px }}px;transform:rotate(-90deg)">
+    <defs>
+      <linearGradient id="{{ gid }}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="{{ c0 }}"></stop>
+        <stop offset="100%" stop-color="{{ c1 }}"></stop>
+      </linearGradient>
+    </defs>
+    <circle class="track" cx="50" cy="50" r="40" style="stroke-width:{{ sw }}"></circle>
+    <circle class="prog" cx="50" cy="50" r="40" stroke="{{ grad }}" stroke-dasharray="251.327" stroke-dashoffset="{{ offset }}" style="stroke-width:{{ sw }}"></circle>
+  </svg>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:80,&quot;height&quot;:80},&quot;pct&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:42,&quot;min&quot;:0,&quot;max&quot;:100,&quot;step&quot;:1,&quot;tsType&quot;:&quot;number&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:40,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const pct = Math.max(0, Math.min(100, Number(this.props.pct ?? 0)));
+    const px = Number(this.props.size ?? 40);
+    const gid = "ctxgrad-" + (this._id || (this._id = Math.random().toString(36).slice(2, 8)));
+    let c0 = "#0FB57C", c1 = "#3DF0A6";
+    if (pct >= 85) { c0 = "#DC2626"; c1 = "#FB7185"; }
+    else if (pct >= 60) { c0 = "#CA8A04"; c1 = "#FACC15"; }
+    return {
+      px, gid, c0, c1,
+      grad: "url(#" + gid + ")",
+      sw: px <= 22 ? 14 : 11,
+      offset: 251.327 * (1 - pct / 100)
+    };
+  }
+}
+</script>
+</body>
+</html>

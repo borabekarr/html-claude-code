@@ -1,0 +1,411 @@
+<!-- @dsCard group="Merge - buttons" name="Family Receive Button" subtitle="-> Buttons" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: var(--shell-bg); }
+  a { color: var(--brand-primary); text-decoration: none; }
+  a:hover { color: var(--brand-primary-700); }
+
+  .fr-sheet {
+    position: relative; box-sizing: border-box; width: 302px; max-width: 100%;
+    height: 62px; padding: 0; border: none; overflow: hidden; cursor: pointer;
+    border-radius: 31px; color: #fff; font-family: var(--font-display);
+    background-color: var(--fr-accent);
+    background-image:
+      radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%),
+      linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+    background-size: cover, 14px 14px, 14px 14px;
+    box-shadow:
+      0 12px 30px -12px var(--fr-glow),
+      inset 0 1px 0 rgba(255,255,255,0.45),
+      inset 0 -2px 0 rgba(0,0,0,0.22),
+      inset 0 0 0 1px rgba(255,255,255,0.14);
+    /* collapse (exit): quick, no overshoot. nearest DS curve --ease-confetti(.34,.84,.36,1) for original .32,.72,0,1, delta 0.38 */
+    transition:
+      height var(--duration-420) var(--ease-confetti),
+      width var(--duration-420) var(--ease-confetti),
+      background-color var(--duration-slower) var(--ease-confetti),
+      box-shadow var(--duration-380) var(--ease-confetti),
+      transform var(--duration-200) var(--ease-out);
+  }
+  .fr-sheet:hover[data-phase="idle"] { transform: translateY(-1px); }
+  .fr-sheet:active[data-phase="idle"] { transform: scale(0.975); }
+  .fr-sheet[data-phase="open"], .fr-sheet[data-phase="loading"] {
+    height: 268px; width: 452px; border-radius: 42px; cursor: default;
+    /* expand (enter): longer, gentle settle. nearest DS curve --ease-press-calm(.23,1,.32,1) for original .22,1.02,.28,1, delta 0.046 */
+    transition:
+      height var(--duration-560) var(--ease-press-calm),
+      width var(--duration-560) var(--ease-press-calm),
+      background-color var(--duration-420) var(--ease-out),
+      box-shadow var(--duration-560) var(--ease-out),
+      transform var(--duration-200) var(--ease-out);
+    background-color: #F1F5F9;
+    background-image: none;
+    box-shadow: 0 4px 8px rgba(15,23,42,.10), inset 0 0 0 1px #E2E8F0;
+  }
+  .fr-sheet[data-phase="done"] { background-color: var(--brand-primary); cursor: default; }
+  .fr-sheet:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 3px; }
+
+  /* collapsed trigger face */
+  .fr-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    gap: 10px; font-size: 16px; font-weight: 800; letter-spacing: .01em;
+    text-shadow: 0 1px 2px rgba(0,0,0,.22);
+    /* returning to the pill: wait for the collapse, then settle in */
+    transition: opacity var(--duration-slow) var(--ease-out) var(--duration-200), transform var(--duration-420) var(--ease-spring-firm) var(--duration-180); }
+  .fr-sheet[data-phase="open"] .fr-face,
+  .fr-sheet[data-phase="loading"] .fr-face { opacity: 0; transform: scale(.94) translateY(-4px); pointer-events: none;
+    transition: opacity var(--duration-140) var(--ease-accel), transform var(--duration-200) var(--ease-accel); }
+  .fr-sheet[data-phase="done"] .fr-face-idle { opacity: 0; transform: scale(.9); }
+  .fr-face-done { opacity: 0; transform: scale(.86); }
+  .fr-sheet[data-phase="done"] .fr-face-done { opacity: 1; transform: none; }
+  .fr-face .material-icons { font-size: 20px; }
+  .fr-face-count { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 7px;
+    border-radius: 9999px; background: rgba(255,255,255,.92); color: rgba(15,23,42,.86);
+    font-size: 11px; font-weight: 900; text-shadow: none; font-variant-numeric: tabular-nums; }
+
+  /* expanded panel */
+  .fr-panel { position: absolute; inset: 10px; width: auto; box-sizing: border-box; padding: 18px 22px 18px;
+    border-radius: 32px; background: #FFFFFF; border: 1px solid #E2E8F0;
+    box-shadow: 0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), inset 0 0 0 1px rgba(15,23,42,0.03);
+    display: flex; flex-direction: column; gap: 10px; color: var(--fg1);
+    opacity: 0; transform: translateY(10px) scale(.99); pointer-events: none;
+    /* exit: leave before the sheet finishes shrinking. nearest DS curve --ease-press-calm(.23,1,.32,1) for original .22,1.02,.28,1, delta 0.046 */
+    transition: opacity var(--duration-140) var(--ease-accel), transform var(--duration-200) var(--ease-accel); }
+  .fr-sheet[data-phase="open"] .fr-panel,
+  .fr-sheet[data-phase="loading"] .fr-panel { opacity: 1; transform: none; pointer-events: auto;
+    transition: opacity var(--duration-280) var(--ease-out) var(--duration-140), transform var(--duration-560) var(--ease-press-calm) var(--duration-140); }
+  .fr-sheet[data-phase="open"] .fr-panel > *,
+  .fr-sheet[data-phase="loading"] .fr-panel > * {
+    animation: fr-row-in var(--duration-480) var(--ease-press-calm) both; }
+  .fr-panel > *:nth-child(2) { animation-delay: 150ms; } /* motion-sweep: kept */
+  .fr-panel > *:nth-child(3) { animation-delay: 195ms; } /* motion-sweep: kept */
+  .fr-panel > *:nth-child(4) { animation-delay: 235ms; } /* motion-sweep: kept */
+  .fr-panel > *:nth-child(5) { animation-delay: 270ms; } /* motion-sweep: kept */
+  .fr-panel > *:nth-child(6) { animation-delay: 300ms; } /* motion-sweep: kept */
+  .fr-panel > .fr-x { animation: none !important; }
+  @keyframes fr-row-in { from { opacity: 0; transform: translateY(8px); } }
+  .fr-head { display: flex; align-items: center; gap: 12px; }
+  .fr-tile { width: 32px; height: 32px; border-radius: 100px; }
+  .fr-title { font-size: 17px; font-weight: 900; letter-spacing: var(--tracking-tight); margin: 0; }
+  .fr-from { font-size: 11px; font-weight: 700; color: var(--fg4); text-transform: uppercase; letter-spacing: .1em; margin: 3px 0 0; }
+  .fr-x { position: absolute; top: 14px; right: 16px; z-index: 4; width: 28px; height: 28px; flex: none; border: none; border-radius: 9999px;
+    background: transparent; color: var(--fg4); display: grid; place-items: center; cursor: pointer;
+    transition: background var(--duration-180) var(--ease-standard), color var(--duration-180) var(--ease-standard), transform var(--duration-180) var(--ease-out); }
+  .fr-x::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .fr-x:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+  .fr-x:hover { background: var(--slate-100); color: var(--fg1); }
+  }
+  .fr-x .material-icons { font-size: 18px; line-height: 1; }
+  .fr-head { padding-right: 34px; }
+  .fr-tags .badge { box-sizing: border-box; display: inline-flex; width: fit-content; flex: 0 0 auto;
+    height: 26px; padding: 0 12px; border-radius: 100px; }
+  .fr-tags .badge .material-icons { font-size: 15px; }
+  .fr-x:active { transform: scale(.9); }
+  .fr-desc { font-size: 13px; line-height: 1.5; font-weight: 600; color: var(--fg3); margin: 2px 0 0; text-wrap: pretty; }
+
+  .fr-people { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+  .fr-avatars { display: flex; }
+  .fr-av { width: 30px; height: 30px; margin-left: -8px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 11px; font-weight: 900; color: #fff; box-shadow: 0 0 0 2px var(--card-bg), inset 0 -2px 4px rgba(0,0,0,.18); }
+  .fr-av:first-child { margin-left: 0; }
+  .fr-sheet[data-phase="open"] .fr-av, .fr-sheet[data-phase="loading"] .fr-av {
+    animation: fr-av-in var(--duration-expand) var(--ease-check-pop) both; animation-delay: calc(var(--i) * var(--duration-50) + 330ms); /* motion-sweep: kept */ }
+  @keyframes fr-av-in { from { opacity: 0; transform: translateY(6px) scale(.6); } }
+  .fr-people-txt { font-size: 12px; font-weight: 700; color: var(--fg4); }
+
+  .fr-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fr-actions { display: flex; gap: 10px; align-items: center; }
+  .fr-actions { margin-top: auto; }
+  .fr-actions .btn-discuss { height: 36px; flex: 1; justify-content: center; border-radius: 9999px; font-size: 12px; }
+  .fr-actions .fr-confirm { height: 36px; flex: 1.4; font-size: 12px; padding: 0 18px; border-radius: 9999px;
+    background: var(--fr-accent); box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 6px 18px -8px var(--fr-glow); }
+  .fr-actions .fr-confirm:hover { box-shadow: 0 10px 24px -8px var(--fr-glow), inset 0 1px 0 rgba(255,255,255,.3); }
+  .fr-actions .fr-confirm.is-loading, .fr-actions .fr-confirm.is-done { flex: 0 0 88px; }
+  .fr-confirm::before { display: none; }
+  /* .btn-apply::after carries a decorative rainbow underglow we don't want here;
+     replace it with a plain 44px hit layer instead of disabling it outright
+     (disabling it drops the tap target below 44px). */
+  .fr-confirm::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px;
+    transform: translate(-50%,-50%); background: none; filter: none; opacity: 0; animation: none; z-index: auto; pointer-events: none; }
+
+  /* page chrome */
+  .fr-page { min-height: 100%; box-sizing: border-box; padding: 44px 28px 52px;
+    display: flex; flex-direction: column; align-items: center; gap: 26px;
+    font-family: var(--font-display); color: var(--fg1); }
+  .fr-eyebrow { font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--fg4); }
+  .fr-h1 { font-size: 26px; font-weight: 800; letter-spacing: var(--tracking-tight); margin: 6px 0 0; }
+  .fr-pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .fr-pills .pill-tab { cursor: pointer; gap: 6px; transition: background var(--duration-200) var(--ease-standard), color var(--duration-200) var(--ease-standard), transform var(--duration-base) var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) {
+  .fr-pills .pill-tab:hover { transform: translateY(-1px); }
+  }
+  .fr-pills .pill-tab:active { transform: scale(.95); }
+  .fr-pills .pill-tab .material-icons { font-size: 15px; margin-right: 2px; }
+  .fr-stage { width: 100%; max-width: 480px; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+  .fr-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .fr-note { font-size: 12px; font-weight: 700; color: var(--fg4); }
+  .fr-foot .pills-seg button { position: relative; }
+  .fr-foot .pills-seg button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .fr-foot .pills-seg button:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fr-sheet, .fr-face, .fr-panel, .fr-panel > *, .fr-x, .fr-av, .fr-pills .pill-tab {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-delay: 0ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+<div class="fr-page" style="--fr-accent: {{ accent }}; --fr-glow: {{ glow }}; --fr-tint: {{ tint }}">
+  <div style="text-align:center">
+    <div class="fr-eyebrow">Deha · animated components</div>
+    <h1 class="fr-h1">Family Receive Button</h1>
+  </div>
+
+  <div class="fr-pills">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+      <button type="button" class="{{ v.pillClass }}" onClick="{{ v.select }}">
+        <span class="material-icons">{{ v.icon }}</span>{{ v.pill }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div class="fr-stage">
+    <div class="fr-sheet" data-phase="{{ phase }}" role="button" tabindex="0" onClick="{{ onSheetClick }}" onKeyDown="{{ onSheetKey }}">
+      <div class="fr-face fr-face-idle">
+        <span class="material-icons">{{ triggerIcon }}</span>{{ triggerLabel }}
+        <sc-if value="{{ triggerCount }}" hint-placeholder-val="{{ true }}">
+          <span class="fr-face-count">{{ triggerCount }}</span>
+        </sc-if>
+      </div>
+      <div class="fr-face fr-face-done">
+        <span class="material-icons">check_circle</span>{{ doneLabel }}
+      </div>
+
+      <div class="fr-panel">
+        <button type="button" class="fr-x" onClick="{{ onCancel }}" aria-label="Close"><span class="material-icons">close</span></button>
+        <div class="fr-head">
+          <div class="icon-badge icon-badge--lg fr-tile" style="--icon-c: var(--fr-accent)"><span class="material-icons">{{ icon }}</span></div>
+          <div>
+            <h2 class="fr-title">{{ title }}</h2>
+            <p class="fr-from">{{ from }}</p>
+          </div>
+        </div>
+
+        <p class="fr-desc">{{ description }}</p>
+
+        <div class="fr-tags">
+          <sc-for list="{{ tags }}" as="t" hint-placeholder-count="2">
+            <span class="{{ t.cls }}"><span class="material-icons">{{ t.icon }}</span>{{ t.label }}</span>
+          </sc-for>
+        </div>
+
+        <div class="fr-people">
+          <div class="fr-avatars">
+            <sc-for list="{{ members }}" as="m" hint-placeholder-count="4">
+              <span class="fr-av" style="background: {{ m.color }}; --i: {{ m.i }}">{{ m.initials }}</span>
+            </sc-for>
+          </div>
+          <span class="fr-people-txt">{{ peopleNote }}</span>
+        </div>
+
+        <div class="fr-actions">
+          <button type="button" class="btn-discuss" onClick="{{ onCancel }}">Cancel</button>
+          <button type="button" class="btn-green btn-apply fr-confirm {{ confirmStateClass }}" onClick="{{ onConfirm }}">
+            <span class="btn-apply-label">
+              <span class="material-icons btn-apply-icon">{{ confirmIcon }}</span>{{ confirmLabel }}
+            </span>
+            <span class="btn-apply-spinner">
+              <svg class="btn-apply-spin-svg" viewBox="0 0 32 32">
+                <circle class="btn-apply-spin-track" cx="16" cy="16" r="11"></circle>
+                <circle class="btn-apply-spin-arc" cx="16" cy="16" r="11"></circle>
+              </svg>
+            </span>
+            <span class="btn-apply-check">
+              <span class="material-icons btn-apply-check-ic">check</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fr-foot">
+    <div class="pills-seg">
+      <div class="pills-seg-pill" style="left: {{ segLeft }}; width: {{ segWidth }}"></div>
+      <sc-for list="{{ phases }}" as="p" hint-placeholder-count="4">
+        <button type="button" class="{{ p.cls }}" ref="{{ p.ref }}" onClick="{{ p.select }}">{{ p.label }}</button>
+      </sc-for>
+    </div>
+    <span class="fr-note">{{ stateNote }}</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:620},&quot;autoResetMs&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1900,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:600,&quot;max&quot;:5000,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const VARIANTS = [
+  {
+    key: 'pool', pill: 'Money', icon: 'savings', accent: '#10B981', glow: 'rgba(16,185,129,.55)', tint: '#ECFDF5',
+    triggerIcon: 'arrow_downward', triggerLabel: 'Receive $240.00', triggerCount: null,
+    title: 'Confirm transfer', from: 'Yıldız family pool',
+    description: '$240.00 from the family pool lands in your account instantly. The pool balance updates for everyone.',
+    tags: [{ cls: 'badge gci', icon: 'bolt', label: 'Instant' }, { cls: 'badge tag', icon: 'lock', label: 'Face ID verified' }],
+    peopleNote: '4 members notified', confirmIcon: 'fingerprint', confirmLabel: 'Receive', doneLabel: 'Received $240.00',
+  },
+  {
+    key: 'album', pill: 'Photos', icon: 'photo_library', accent: '#0F172A', glow: 'rgba(15,23,42,.45)', tint: '#F1F5F9',
+    triggerIcon: 'download', triggerLabel: 'Accept photos', triggerCount: '24',
+    title: 'Shared album', from: 'Elif · Summer 2026',
+    description: '24 photos and 3 videos are waiting. They sync to your library and stay shared with the family.',
+    tags: [{ cls: 'badge tag', icon: 'sync', label: 'Syncs to all devices' }, { cls: 'badge tag', icon: 'sd_storage', label: '1.2 GB' }],
+    peopleNote: 'Shared with 4 people', confirmIcon: 'library_add', confirmLabel: 'Add', doneLabel: 'Added to library',
+  },
+  {
+    key: 'plan', pill: 'Invite', icon: 'family_restroom', accent: '#F97316', glow: 'rgba(249,115,22,.5)', tint: '#FFF7ED',
+    triggerIcon: 'group_add', triggerLabel: 'Join family plan', triggerCount: null,
+    title: 'Family invitation', from: 'Kerem invited you',
+    description: 'Up to 6 members on one bill, with shared storage and purchases. You can leave the plan at any time.',
+    tags: [{ cls: 'badge tag', icon: 'people', label: '6 seats · 2 free' }, { cls: 'badge gci', icon: 'schedule', label: 'Free until Oct 1' }],
+    peopleNote: '4 members in this plan', confirmIcon: 'check', confirmLabel: 'Accept', doneLabel: 'You joined',
+  },
+  {
+    key: 'chores', pill: 'Tasks', icon: 'task_alt', accent: '#EAB308', glow: 'rgba(234,179,8,.5)', tint: '#FEFCE8',
+    triggerIcon: 'add_task', triggerLabel: 'Claim chores', triggerCount: '3',
+    title: 'Claim tasks', from: 'This week’s board',
+    description: 'Three unclaimed chores move to your list. Points land on the family streak once they are done.',
+    tags: [{ cls: 'badge gci', icon: 'star', label: '+30 points' }, { cls: 'badge time', icon: 'schedule', label: 'Due Sunday' }],
+    peopleNote: '2 members already claimed', confirmIcon: 'playlist_add_check', confirmLabel: 'Claim', doneLabel: 'Claimed 3 chores',
+  },
+  {
+    key: 'leave', pill: 'Leave', icon: 'logout', accent: '#EF4444', glow: 'rgba(239,68,68,.5)', tint: '#FEF2F2',
+    triggerIcon: 'exit_to_app', triggerLabel: 'Leave family', triggerCount: null,
+    title: 'Leave family?', from: 'Yıldız family',
+    description: 'You lose access to shared storage, albums and the pool balance. Rejoining needs a new invite.',
+    tags: [{ cls: 'badge danger', icon: 'warning', label: 'Irreversible' }],
+    peopleNote: '4 members stay', confirmIcon: 'logout', confirmLabel: 'Leave', doneLabel: 'You left the family',
+  },
+];
+
+const MEMBERS = [
+  { initials: 'EY', color: '#10B981' },
+  { initials: 'KY', color: '#F97316' },
+  { initials: 'SY', color: '#0F172A' },
+  { initials: 'MY', color: '#64748B' },
+];
+
+const PHASES = [
+  { key: 'idle', label: 'Idle' },
+  { key: 'open', label: 'Open' },
+  { key: 'loading', label: 'Working' },
+  { key: 'done', label: 'Done' },
+];
+
+const NOTES = {
+  idle: 'Collapsed pill — hover lifts, press scales to 0.975.',
+  open: 'Pill morphs into the confirm card; avatars stagger in.',
+  loading: 'Confirm compresses to a spinner pill; card stays put.',
+  done: 'Card collapses back to a green pill, then resets.',
+};
+
+class Component extends DCLogic {
+  state = { vi: 0, phase: 'idle', seg: null };
+  timers = [];
+  segRefs = [];
+
+  measureSeg = () => {
+    const i = PHASES.findIndex(p => p.key === this.state.phase);
+    const el = this.segRefs[i < 0 ? 0 : i];
+    if (!el || !el.offsetWidth) return;
+    const seg = { left: el.offsetLeft + 'px', width: el.offsetWidth + 'px' };
+    if (!this.state.seg || this.state.seg.left !== seg.left || this.state.seg.width !== seg.width) this.setState({ seg });
+  };
+
+  componentDidMount() {
+    this.measureSeg();
+    requestAnimationFrame(this.measureSeg);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.measureSeg());
+    [120, 400, 1200].forEach(t => this.timers.push(setTimeout(this.measureSeg, t)));
+    window.addEventListener('resize', this.measureSeg);
+    if (window.ResizeObserver && this.segRefs[0] && this.segRefs[0].parentElement) {
+      this.ro = new ResizeObserver(this.measureSeg);
+      this.ro.observe(this.segRefs[0].parentElement);
+      this.segRefs.forEach(el => el && this.ro.observe(el));
+    }
+  }
+  componentDidUpdate() { this.measureSeg(); }
+
+  componentWillUnmount() {
+    this.timers.forEach(clearTimeout);
+    if (this.ro) this.ro.disconnect();
+    window.removeEventListener('resize', this.measureSeg);
+  }
+
+  clear() { this.timers.forEach(clearTimeout); this.timers = []; }
+
+  set(phase) { this.clear(); this.setState({ phase }); }
+
+  confirm = (e) => {
+    if (e) e.stopPropagation();
+    this.clear();
+    this.setState({ phase: 'loading' });
+    this.timers.push(setTimeout(() => this.setState({ phase: 'done' }), 1300));
+    this.timers.push(setTimeout(() => this.setState({ phase: 'idle' }), 1300 + (this.props.autoResetMs ?? 1900)));
+  };
+
+  renderVals() {
+    const v = VARIANTS[this.state.vi] || VARIANTS[0];
+    const phase = this.state.phase;
+    const segIdx = PHASES.findIndex(p => p.key === phase);
+    const segW = 100 / PHASES.length;
+    return {
+      ...v,
+      phase,
+      variants: VARIANTS.map((x, i) => ({
+        pill: x.pill, icon: x.icon,
+        pillClass: 'pill-tab' + (i === this.state.vi ? ' active' : ''),
+        select: () => { this.clear(); this.setState({ vi: i, phase: 'idle' }); },
+      })),
+      members: MEMBERS.map((m, i) => ({ ...m, i })),
+      phases: PHASES.map((p, i) => ({
+        label: p.label,
+        cls: phase === p.key ? 'active' : '',
+        ref: (el) => { this.segRefs[i] = el; },
+        select: () => (p.key === 'loading' || p.key === 'done') ? this.confirm() : this.set(p.key),
+      })),
+      segLeft: (this.state.seg ? this.state.seg.left : '3px'),
+      segWidth: (this.state.seg ? this.state.seg.width : segW + '%'),
+      stateNote: NOTES[phase],
+      confirmStateClass: phase === 'loading' ? 'is-loading' : (phase === 'done' ? 'is-done' : ''),
+      onSheetClick: () => { if (phase === 'idle') this.set('open'); },
+      onSheetKey: (e) => { if ((e.key === 'Enter' || e.key === ' ') && phase === 'idle') { e.preventDefault(); this.set('open'); } },
+      onCancel: (e) => { if (e) e.stopPropagation(); this.set('idle'); },
+      onConfirm: this.confirm,
+    };
+  }
+}
+</script>
+</body>
+</html>

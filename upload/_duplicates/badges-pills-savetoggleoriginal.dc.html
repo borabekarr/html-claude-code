@@ -1,0 +1,132 @@
+<!-- @dsCard group="Merge - buttons" name="badges-pills__SaveToggleOriginal" subtitle="-> Buttons" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+
+<style>
+@keyframes wo-idle-in { 0%{opacity:0; transform:translateY(15px)} 100%{opacity:1; transform:translateY(0)} }
+@keyframes wo-load-in { 0%{opacity:0; transform:scale(.8); filter:blur(4px)} 100%{opacity:1; transform:scale(1); filter:blur(0)} }
+@keyframes wo-check-in { 0%{opacity:0; transform:scale(.72); filter:blur(3px)} 70%{opacity:1; filter:blur(0)} 100%{opacity:1; transform:scale(1.06); filter:blur(0)} }
+@keyframes wo-check-settle { 0%{transform:scale(1.06)} 100%{transform:scale(1)} }
+@keyframes wo-saved-text { 0%{opacity:0; transform:translateX(-10px)} 100%{opacity:1; transform:translateX(0)} }
+@keyframes wo-spin { 100%{transform:rotate(360deg)} }
+.wo-save-toggle { position: relative; }
+.wo-save-toggle::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.wo-save-toggle:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .wo-save-toggle, .wo-save-toggle * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+}
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+<button type="button" class="wo-save-toggle" onClick="{{ onClick }}" aria-pressed="{{ isSaved }}" aria-label="{{ aria }}" style="position:relative; z-index:0; display:flex; align-items:center; justify-content:center; overflow:hidden; box-sizing:border-box; border-radius:9999px; user-select:none; cursor:pointer; padding:0; width:{{ w }}px; height:{{ h }}px; background-color:{{ bg }}; background-image:linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px); background-size:{{ tex }}; border:{{ borderWidth }} solid {{ borderColor }}; box-shadow:{{ shadow }}; font-family:'Montserrat'; text-shadow:{{ shade }}; transition:width var(--duration-560) var(--ease-card-pop), height var(--duration-560) var(--ease-card-pop), background-color var(--duration-200) var(--ease-linear), border-color var(--duration-200) var(--ease-linear), transform var(--duration-fast) var(--ease-press-calm);" style-active="transform:scale(0.97)" style-focus="outline:none">
+  <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}">
+    <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:{{ gapIdle }}px; font-family:'Montserrat'; font-weight:900; letter-spacing:-0.02em; font-size:{{ textSize }}px; color:{{ idleColor }}; animation:wo-idle-in var(--duration-380) var(--ease-out) both;">
+      <span class="material-symbols-outlined" style="font-size:{{ idleIcon }}px; line-height:1; font-variation-settings:'FILL' 0, 'wght' 600, 'opsz' 24;">bookmark</span>
+      {{ idleText }}
+    </span>
+  </sc-if>
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+    <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; animation:wo-load-in var(--duration-slower) var(--ease-out) both;">
+      <svg viewBox="0 0 26 26" style="width:{{ spinner }}px; height:{{ spinner }}px; animation:wo-spin var(--duration-700) var(--ease-linear) infinite;">
+        <circle cx="13" cy="13" r="10" stroke="rgba(255,255,255,0.32)" stroke-width="3" fill="none"></circle>
+        <path d="M13 3 A10 10 0 0 1 23 13" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none"></path>
+      </svg>
+    </span>
+  </sc-if>
+  <sc-if value="{{ showCheck }}" hint-placeholder-val="{{ false }}">
+    <span style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:{{ gap }}px; padding:0 {{ padX }}px; animation:{{ checkAnim }};">
+      <span class="material-symbols-outlined" style="font-size:{{ iconSize }}px; line-height:1; font-variation-settings:'FILL' 1, 'wght' 500, 'opsz' 40; color:{{ checkColor }}; transition:color var(--duration-200) var(--ease-linear);">check_circle</span>
+      <sc-if value="{{ isSaved }}" hint-placeholder-val="{{ false }}">
+        <span style="font-family:'Montserrat'; font-weight:900; letter-spacing:-0.02em; white-space:nowrap; font-size:{{ textSize }}px; color:#0F172A; animation:wo-saved-text var(--duration-320) var(--ease-out) 100ms both;">{{ savedText }}</span> <!-- motion-sweep: kept (delay literal) -->
+      </sc-if>
+    </span>
+  </sc-if>
+</button>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:140},&quot;size&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sm&quot;,&quot;md&quot;,&quot;lg&quot;],&quot;default&quot;:&quot;md&quot;,&quot;tsType&quot;:&quot;'sm'|'md'|'lg'&quot;},&quot;idleText&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Save&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;savedText&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Saved&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;loadingDuration&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1200,&quot;min&quot;:200,&quot;max&quot;:3000,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;successDuration&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1000,&quot;min&quot;:200,&quot;max&quot;:3000,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+const WO_SIZES = {
+  sm: { height: 38, circleWidth: 38, idleWidth: 96,  savedWidth: 104, text: 13, icon: 17, spinner: 21, gap: 6, padding: 12 },
+  md: { height: 42, circleWidth: 42, idleWidth: 108, savedWidth: 116, text: 15, icon: 20, spinner: 24, gap: 8, padding: 14 },
+  lg: { height: 50, circleWidth: 50, idleWidth: 126, savedWidth: 136, text: 17, icon: 22, spinner: 28, gap: 10, padding: 16 },
+};
+
+class Component extends DCLogic {
+  state = { status: 'idle' };
+  timers = [];
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+
+  handleClick() {
+    const { status } = this.state;
+    const loadingDuration = this.props.loadingDuration ?? 1200;
+    const successDuration = this.props.successDuration ?? 1000;
+    if (status === 'idle') {
+      this.setState({ status: 'loading' });
+      this.timers.push(setTimeout(() => {
+        this.setState({ status: 'success' });
+        this.timers.push(setTimeout(() => this.setState({ status: 'saved' }), successDuration));
+      }, loadingDuration));
+    } else if (status === 'saved') {
+      this.setState({ status: 'idle' });
+    }
+  }
+
+  renderVals() {
+    const cfg = WO_SIZES[this.props.size ?? 'md'] ?? WO_SIZES.md;
+    const status = this.state.status;
+    const isCircle = status === 'loading' || status === 'success';
+    const isSaved = status === 'saved';
+    const stableWidth = Math.max(cfg.idleWidth, cfg.savedWidth);
+
+    const bg = isCircle ? '#10B981' : isSaved ? '#FFFFFF' : '#0F172A';
+    const idleText = this.props.idleText ?? 'Save';
+    const savedText = this.props.savedText ?? 'Saved';
+
+    return {
+      onClick: () => this.handleClick(),
+      isIdle: status === 'idle',
+      isLoading: status === 'loading',
+      showCheck: status === 'success' || isSaved,
+      isSaved,
+      w: isCircle ? cfg.circleWidth : stableWidth,
+      h: cfg.height,
+      bg,
+      borderWidth: isSaved ? '2px' : '0',
+      borderColor: isSaved ? '#E2E8F0' : 'transparent',
+      shadow: isCircle
+        ? '0 10px 30px -10px rgba(16,185,129,0.5), inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.22)'
+        : isSaved
+          ? 'inset 0 -2px 5px rgba(0,0,0,0.05), 0 1px 2px rgba(15,23,42,0.05)'
+          : 'inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 5px rgba(0,0,0,0.35), 0 6px 18px -8px rgba(15,23,42,0.45)',
+      tex: isCircle ? '14px 14px' : '0 0',
+      idleColor: '#FFFFFF',
+      checkColor: status === 'success' ? '#FFFFFF' : '#10B981',
+      checkAnim: status === 'success'
+        ? 'wo-check-in var(--duration-420) var(--ease-out) both'
+        : 'wo-check-settle var(--duration-340) var(--ease-spring-tight) both',
+      gap: isSaved ? cfg.gap : 0,
+      padX: isSaved ? cfg.padding : 0,
+      gapIdle: Math.round(cfg.gap * 0.7),
+      idleIcon: cfg.icon - 2,
+      textSize: cfg.text,
+      iconSize: cfg.icon,
+      spinner: cfg.spinner,
+      shade: isSaved ? 'none' : '0 1px 2px rgba(0,0,0,0.25)',
+      idleText, savedText,
+      aria: isSaved ? savedText : idleText,
+    };
+  }
+}
+</script>
+</body>
+</html>

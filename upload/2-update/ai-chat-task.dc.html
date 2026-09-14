@@ -1,0 +1,440 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Task" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: #F8FAFC; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes act-spin { to { transform: rotate(360deg); } }
+  @keyframes act-rise {
+    from { opacity: 0; transform: translateY(-8px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes act-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.34); }
+    60% { box-shadow: 0 0 0 7px rgba(249,115,22,0); }
+  }
+  @keyframes act-dot {
+    0%, 100% { opacity: 0.25; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-2px); }
+  }
+  .act-row { animation: act-rise calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-out) both; }
+  @media (hover: hover) and (pointer: fine) {
+    .act-trigger:hover .act-chev { color: #10B981; }
+  }
+  .act-trigger { position: relative; }
+  .act-trigger:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .act-actions .btn-task, .act-actions .btn-task-icon-wrap { position: relative; }
+  .act-actions .btn-task::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .act-actions .btn-task:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .pill-priority { position: relative; }
+  .pill-priority::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .pill-priority:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .act-actions .btn-task {
+    transition: transform var(--duration-base) var(--ease-out),
+                filter var(--duration-base) var(--ease-standard),
+                box-shadow var(--duration-240) var(--ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .act-row, .act-chev, [style*="act-dot"] { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .act-actions .btn-task:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.45),
+        inset 0 -2px 0 rgba(15,23,42,0.18),
+        0 10px 26px -6px var(--fbtn, #0F172A),
+        0 0 0 4px color-mix(in srgb, var(--fbtn, #0F172A) 16%, transparent);
+    }
+  }
+  .act-actions .btn-task:active { transform: translateY(0) scale(0.98); }
+  .act-actions .btn-discuss {
+    transition: transform var(--duration-base) var(--ease-out),
+                background var(--duration-base) var(--ease-standard),
+                box-shadow var(--duration-240) var(--ease-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .act-actions .btn-discuss:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -6px rgba(100,116,139,0.35), 0 0 0 4px rgba(100,116,139,0.12);
+    }
+    .pill-tab.active:hover { background: #059669 !important; color: #fff !important; border-color: transparent !important; }
+  }
+
+</style>
+</helmet>
+
+<div style="min-height: 100%; padding: 28px; box-sizing: border-box; font-family: var(--font-display); background: radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 46%, #FFFFFF 100%);">
+  <div style="max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span class="pills-label" style="margin: 0;">Deha DS · AI Elements</span>
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <h1 style="font-size: 28px; font-weight: 900; letter-spacing: -0.02em; color: #0F172A; margin: 0;">ai-chat-task</h1>
+        <span class="badge tag" style="align-self: center;"><span class="material-icons">bolt</span> collapsible · streaming</span>
+      </div>
+      <p style="font-size: 13px; font-weight: 500; color: #64748B; line-height: 1.55; margin: 0; max-width: 60ch; text-wrap: pretty;">A task block for agent chat: one collapsible trigger with live status, a stream of work items, and file references. Switch usage area and state with the pills below.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <span class="pills-label" style="margin: 0;">Usage area</span>
+        <div class="pills-row">
+          <sc-for list="{{ variantPills }}" as="p" hint-placeholder-count="6">
+            <button type="button" class="pill-tab {{ p.cls }}" onClick="{{ p.onClick }}" style="gap: 6px; cursor: pointer; font-family: var(--font-display); transition: transform var(--duration-140) var(--ease-out), background var(--duration-180) var(--ease-standard), color var(--duration-180) var(--ease-standard), border-color var(--duration-180) var(--ease-standard);" style-hover="background: #F1F5F9; color: #0F172A; border-color: #94A3B8;" style-active="transform: scale(0.96);">
+              <span class="material-icons" style="font-size: 14px;">{{ p.icon }}</span>
+              {{ p.label }}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span class="pills-label" style="margin: 0;">State</span>
+          <div class="pills-row">
+            <sc-for list="{{ statePills }}" as="s" hint-placeholder-count="4">
+              <button type="button" class="pill-priority" onClick="{{ s.onClick }}" style="cursor: pointer; font-family: var(--font-display); opacity: {{ s.opacity }}; border-color: {{ s.border }}; color: {{ s.fg }}; transition: opacity var(--duration-180) var(--ease-standard), border-color var(--duration-180) var(--ease-standard), color var(--duration-180) var(--ease-standard), transform var(--duration-140) var(--ease-out);" style-hover="opacity: 1; color: #0F172A; background: #F8FAFC;" style-active="transform: scale(0.96);">
+                <span class="dot" style="background: {{ s.color }};"></span>
+                {{ s.label }}
+              </button>
+            </sc-for>
+          </div>
+        </div>
+        <div class="act-actions" style="display: flex; flex-direction: column; gap: 8px;">
+          <span class="pills-label" style="margin: 0;">Transition</span>
+          <button type="button" class="btn-task" onClick="{{ replay }}" style="--fbtn: #10B981; cursor: pointer;">
+            <span class="material-icons btn-task-icon">play_arrow</span>
+            Replay stream
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: transparent;">
+      <div style="background: transparent;">
+
+        <div class="act-trigger" role="button" tabIndex="0" onClick="{{ toggle }}" style="display: flex; align-items: center; gap: 12px; padding: 8px 10px 8px 0; margin-left: -4px; border-radius: 12px; cursor: pointer; user-select: none; transition: background var(--duration-base) var(--ease-fade);" style-hover="background: rgba(15,23,42,0.035);">
+          <span class="material-symbols-outlined" style="width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 19px; color: #fff; background: {{ accent }}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(15,23,42,0.18), inset 0 0 0 1px rgba(15,23,42,0.08); animation: {{ headAnim }};">{{ headIcon }}</span>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+            <span style="font-size: 15px; font-weight: 800; color: #0F172A; letter-spacing: -0.01em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ title }}</span>
+            <span style="font-size: 11.5px; font-weight: 600; color: #94A3B8;">{{ subtitle }}</span>
+          </div>
+          <span class="badge col-tag {{ statusClass }}" style="flex: none; background: {{ statusBg }};">
+            <span class="material-icons">{{ statusIcon }}</span>
+            {{ statusLabel }}
+            <span class="count">{{ progressLabel }}</span>
+          </span>
+          <span class="act-chev material-icons" style="flex: none; font-size: 20px; color: #94A3B8; transform: {{ chevron }}; transition: transform var(--duration-slower) var(--ease-slide-bounce), color var(--duration-base) var(--ease-standard);">expand_more</span>
+        </div>
+
+        <div style="display: grid; grid-template-rows: {{ rows }}; transition: grid-template-rows var(--duration-420) var(--ease-out), opacity var(--duration-slower) var(--ease-fade); opacity: {{ bodyOpacity }};">
+          <div style="overflow: hidden; min-height: 0;">
+            <div style="padding: 6px 0 4px 16px; margin-left: 16px; border-left: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 2px;">
+
+              <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+                <div class="act-row" style="display: flex; gap: 11px; padding: 7px 0; animation-delay: {{ it.delay }}; opacity: {{ it.dim }};">
+                  <span style="flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center; border-radius: 999px; background: {{ it.markBg }}; color: {{ it.markFg }}; border: 1px solid {{ it.markBorder }};">
+                    <span class="material-icons" style="font-size: 13px; animation: {{ it.markAnim }};">{{ it.markIcon }}</span>
+                  </span>
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px;">
+                    <span style="font-size: 13px; font-weight: 600; line-height: 1.45; color: {{ it.fg }}; text-wrap: pretty;">{{ it.text }}</span>
+                    <sc-if value="{{ it.hasFiles }}" hint-placeholder-val="{{ true }}">
+                      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                        <sc-for list="{{ it.files }}" as="f" hint-placeholder-count="2">
+                          <span class="badge tag" style="cursor: pointer; transition: background var(--duration-180) var(--ease-standard), border-color var(--duration-180) var(--ease-standard), color var(--duration-180) var(--ease-standard);" style-hover="background: #ECFDF5; border-color: #A7F3D0; color: #047857;">
+                            <span class="material-icons">{{ f.icon }}</span>
+                            {{ f.name }}
+                          </span>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ it.hasNote }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; line-height: 1.6; color: {{ it.noteFg }}; background: {{ it.noteBg }}; border: 1px solid {{ it.noteBorder }}; border-radius: 10px; padding: 8px 10px; white-space: pre-wrap;">{{ it.note }}</span>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-for>
+
+              <sc-if value="{{ streaming }}" hint-placeholder-val="{{ false }}">
+                <div style="display: flex; align-items: center; gap: 6px; padding: 8px 0 0 31px;">
+                  <span style="width: 5px; height: 5px; border-radius: 999px; background: #F97316; animation: act-dot 1.1s ease-in-out infinite;"></span>
+                  <span style="width: 5px; height: 5px; border-radius: 999px; background: #F97316; animation: act-dot 1.1s ease-in-out 0.14s infinite;"></span>
+                  <span style="width: 5px; height: 5px; border-radius: 999px; background: #F97316; animation: act-dot 1.1s ease-in-out 0.28s infinite;"></span>
+                  <span style="font-size: 11px; font-weight: 700; color: #94A3B8; margin-left: 4px;">{{ streamNote }}</span>
+                </div>
+              </sc-if>
+
+              <div class="act-actions" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; padding: 10px 14px 22px 0;">
+                <sc-for list="{{ actions }}" as="a" hint-placeholder-count="3">
+                  <button type="button" class="btn-task" style="--fbtn: {{ a.color }}; cursor: pointer;">
+                    <span class="material-icons btn-task-icon">{{ a.icon }}</span>
+                    {{ a.label }}
+                  </button>
+                </sc-for>
+                <button type="button" class="btn-discuss" style="cursor: pointer;">
+                  <span class="material-icons" style="font-size: 16px;">more_horiz</span>
+                  More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px;">
+      <span class="material-icons" style="font-size: 16px; color: #94A3B8; margin-top: 1px;">info</span>
+      <span style="font-size: 12px; font-weight: 600; color: #64748B; line-height: 1.5; text-wrap: pretty;">{{ usageNote }}</span>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:820,&quot;height&quot;:880}}">
+class Component extends DCLogic {
+  state = { variant: 'search', status: 'done', step: null, open: true };
+
+  VARIANTS = {
+    search: {
+      label: 'Web search', icon: 'travel_explore', headIcon: 'travel_explore',
+      title: 'Searching the web for pricing sources',
+      subtitle: '4 steps · 6 sources · 3.2s',
+      usage: 'Retrieval: shows which queries ran and which sources the answer is grounded in. Sources render as file/link tags the user can open.',
+      actions: [{ label: 'Cite sources', icon: 'link', color: '#10B981' }, { label: 'Refine query', icon: 'tune', color: '#3B82F6' }],
+      items: [
+        { text: 'Parsed the request into three search intents', files: [] },
+        { text: 'Ran query "enterprise crm pricing 2026" across 3 engines', files: [{ name: 'serp-results.json', icon: 'data_object' }] },
+        { text: 'Read and de-duplicated the six highest-ranked sources', files: [{ name: 'deha.io/pricing', icon: 'public' }, { name: 'g2-report.pdf', icon: 'picture_as_pdf' }] },
+        { text: 'Extracted price tiers into a comparison table', files: [{ name: 'tiers.csv', icon: 'table_view' }] }
+      ]
+    },
+    files: {
+      label: 'Codebase', icon: 'folder_open', headIcon: 'folder_open',
+      title: 'Reading the pipeline module',
+      subtitle: '4 steps · 5 files touched',
+      usage: 'Code agents: each row is one file operation. Tags carry the real path, so the row doubles as navigation into the diff.',
+      actions: [{ label: 'Review diff', icon: 'difference', color: '#3B82F6' }, { label: 'Apply', icon: 'task_alt', color: '#10B981' }],
+      items: [
+        { text: 'Scanned the repository for pipeline entry points', files: [{ name: 'src/pipeline/index.ts', icon: 'code' }] },
+        { text: 'Read the stage reducer and its tests', files: [{ name: 'stages.ts', icon: 'code' }, { name: 'stages.test.ts', icon: 'science' }] },
+        { text: 'Found two places where stage order is hard-coded', files: [{ name: 'board.tsx', icon: 'code' }] },
+        { text: 'Drafted a patch extracting order into a config constant', files: [{ name: 'pipeline.config.ts', icon: 'settings' }] }
+      ]
+    },
+    plan: {
+      label: 'Planning', icon: 'checklist', headIcon: 'neurology',
+      title: 'Planning the Q3 outreach sequence',
+      subtitle: '5 steps · reasoning trace',
+      usage: 'Reasoning: a plan the user can watch form. Keep it collapsed by default in chat and let the status pill carry the summary.',
+      actions: [{ label: 'Approve plan', icon: 'task_alt', color: '#10B981' }, { label: 'Reschedule', icon: 'schedule', color: '#F59E0B' }],
+      items: [
+        { text: 'Segment 1,240 leads by last-contact recency', files: [] },
+        { text: 'Score each segment on close probability', files: [{ name: 'scoring.md', icon: 'description' }] },
+        { text: 'Assign channel per segment — call, email, or nurture', files: [] },
+        { text: 'Draft three message variants per channel', files: [] },
+        { text: 'Queue the sequence for Monday 09:00', files: [] }
+      ]
+    },
+    terminal: {
+      label: 'Commands', icon: 'terminal', headIcon: 'terminal',
+      title: 'Running the migration',
+      subtitle: '3 commands · 18s',
+      usage: 'Tool execution: pair each command with its trimmed output. Long logs stay inside the collapsed body so the transcript keeps its rhythm.',
+      actions: [{ label: 'Open logs', icon: 'article', color: '#3B82F6' }, { label: 'Re-run', icon: 'refresh', color: '#10B981' }],
+      items: [
+        { text: 'Installed dependencies', note: '$ pnpm install\n+ 42 packages in 6.1s', files: [] },
+        { text: 'Applied 3 pending migrations', note: '$ pnpm db:migrate\n✔ 20260812_add_stage_order\n✔ 20260814_backfill_stages\n✔ 20260901_index_stage', files: [] },
+        { text: 'Verified schema against the snapshot', files: [{ name: 'schema.snap.sql', icon: 'storage' }] }
+      ]
+    },
+    upload: {
+      label: 'Documents', icon: 'upload_file', headIcon: 'upload_file',
+      title: 'Processing 3 uploaded documents',
+      subtitle: '4 steps · 128 pages',
+      usage: 'Ingestion: the task becomes the progress surface for a long upload. The counter in the status pill updates as pages complete.',
+      actions: [{ label: 'Summarize', icon: 'summarize', color: '#10B981' }, { label: 'Discuss', icon: 'chat', color: '#3B82F6' }],
+      items: [
+        { text: 'Received three files and checked their types', files: [{ name: 'lease-2026.pdf', icon: 'picture_as_pdf' }, { name: 'valuation.xlsx', icon: 'table_view' }, { name: 'photos.zip', icon: 'folder_zip' }] },
+        { text: 'Ran OCR on 128 scanned pages', files: [] },
+        { text: 'Extracted parties, dates, and rent escalation clauses', files: [{ name: 'entities.json', icon: 'data_object' }] },
+        { text: 'Indexed the documents for follow-up questions', files: [] }
+      ]
+    },
+    error: {
+      label: 'Failure', icon: 'error_outline', headIcon: 'error_outline',
+      title: 'Syncing the CRM contacts',
+      subtitle: 'stopped at step 3 of 4',
+      usage: 'Failure: the task stops on the failing row, keeps everything already done visible, and offers recovery in the footer instead of a toast.',
+      forceStatus: 'error',
+      actions: [{ label: 'Retry step', icon: 'refresh', color: '#EF4444' }, { label: 'Skip step', icon: 'skip_next', color: '#F59E0B' }],
+      items: [
+        { text: 'Authenticated with the CRM workspace', files: [] },
+        { text: 'Pulled 1,240 contact records', files: [{ name: 'contacts.json', icon: 'data_object' }] },
+        { text: 'Write rejected — field "stage" is read-only on 12 records', note: 'HTTP 422 · field_readonly\nrecords: 12 of 1240', files: [] },
+        { text: 'Reconcile and re-run the failed batch', files: [] }
+      ]
+    }
+  };
+
+  STATES = [
+    { key: 'queued', label: 'Queued', color: '#94A3B8' },
+    { key: 'running', label: 'Working', color: '#F97316' },
+    { key: 'done', label: 'Completed', color: '#10B981' },
+    { key: 'error', label: 'Failed', color: '#EF4444' }
+  ];
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  stop() { clearInterval(this._t); this._t = null; }
+
+  play() {
+    this.stop();
+    const total = this.def().items.length;
+    this.setState({ status: 'running', step: 0, open: true });
+    this._t = setInterval(() => {
+      this.setState((s) => {
+        const next = (s.step ?? 0) + 1;
+        if (next >= total) { this.stop(); return { step: null, status: 'done' }; }
+        return { step: next };
+      });
+    }, 900);
+  }
+
+  def() { return this.VARIANTS[this.state.variant] || this.VARIANTS.search; }
+
+  setVariant(key) {
+    this.stop();
+    const forced = this.VARIANTS[key].forceStatus;
+    this.setState({ variant: key, status: forced || 'done', step: null, open: true });
+  }
+
+  setStatus(key) {
+    this.stop();
+    if (key === 'running') { this.play(); return; }
+    this.setState({ status: key, step: null });
+  }
+
+  renderVals() {
+    const d = this.def();
+    const st = this.state.status;
+    const step = this.state.step;
+    const open = this.state.open;
+    const total = d.items.length;
+    const errIndex = st === 'error' ? Math.max(0, total - 2) : -1;
+
+    const STATUS = {
+      queued: { cls: 'todo', icon: 'schedule', label: 'Queued', accent: '#64748B', head: 'schedule' },
+      running: { cls: 'progress', icon: 'bolt', label: 'Working', accent: '#F97316', head: d.headIcon },
+      done: { cls: 'done', icon: 'task_alt', label: 'Completed', accent: '#10B981', head: d.headIcon },
+      error: { cls: 'done', icon: 'error', label: 'Failed', accent: '#EF4444', head: 'error_outline' }
+    };
+    const s = STATUS[st];
+
+    const doneCount = st === 'done' ? total : st === 'queued' ? 0 : st === 'error' ? errIndex : (step ?? 0);
+
+    const items = d.items.map((it, i) => {
+      let phase = 'todo';
+      if (st === 'done') phase = 'done';
+      else if (st === 'queued') phase = 'todo';
+      else if (st === 'error') phase = i < errIndex ? 'done' : i === errIndex ? 'error' : 'todo';
+      else phase = i < (step ?? 0) ? 'done' : i === step ? 'active' : 'todo';
+
+      const mark = {
+        done: { icon: 'check', bg: '#ECFDF5', fg: '#059669', border: '#A7F3D0', anim: 'none', dim: '1', fg2: '#334155' },
+        active: { icon: 'progress_activity', bg: '#FFF7ED', fg: '#EA580C', border: '#FED7AA', anim: 'act-spin 900ms linear infinite', dim: '1', fg2: '#0F172A' }, /* motion-sweep: kept, JS string literal cannot reference CSS var(--duration-900) */
+        error: { icon: 'close', bg: '#FEF2F2', fg: '#DC2626', border: '#FECACA', anim: 'none', dim: '1', fg2: '#B91C1C' },
+        todo: { icon: 'radio_button_unchecked', bg: '#F8FAFC', fg: '#CBD5E1', border: '#E2E8F0', anim: 'none', dim: '0.55', fg2: '#64748B' }
+      }[phase];
+
+      return {
+        text: it.text,
+        files: it.files || [],
+        hasFiles: !!(it.files && it.files.length) && phase !== 'todo',
+        hasNote: !!it.note && (phase === 'done' || phase === 'error'),
+        note: it.note || '',
+        noteFg: phase === 'error' ? '#B91C1C' : '#475569',
+        noteBg: phase === 'error' ? '#FEF2F2' : '#F8FAFC',
+        noteBorder: phase === 'error' ? '#FECACA' : '#E2E8F0',
+        markIcon: mark.icon, markBg: mark.bg, markFg: mark.fg, markBorder: mark.border, markAnim: mark.anim,
+        dim: mark.dim, fg: mark.fg2,
+        delay: (i * 70) + 'ms'
+      };
+    });
+
+    return {
+      items,
+      title: d.title,
+      subtitle: d.subtitle,
+      usageNote: d.usage,
+      actions: d.actions,
+      accent: s.accent,
+      headIcon: s.head,
+      headAnim: st === 'running' ? 'act-pulse 1.6s ease-out infinite' : 'none',
+      statusClass: s.cls,
+      statusBg: s.accent,
+      statusIcon: s.icon,
+      statusLabel: s.label,
+      progressLabel: doneCount + '/' + total,
+      streaming: st === 'running',
+      streamNote: 'streaming step ' + ((step ?? 0) + 1) + ' of ' + total,
+      open,
+      rows: open ? '1fr' : '0fr',
+      bodyOpacity: open ? 1 : 0,
+      chevron: open ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggle: () => this.setState((p) => ({ open: !p.open })),
+      replay: () => this.play(),
+      variantPills: Object.keys(this.VARIANTS).map((k) => ({
+        label: this.VARIANTS[k].label,
+        icon: this.VARIANTS[k].icon,
+        cls: k === this.state.variant ? 'active' : '',
+        hover: k === this.state.variant
+          ? 'background: #059669; color: #fff;'
+          : 'background: #F1F5F9; color: #0F172A; border-color: #94A3B8;',
+        onClick: () => this.setVariant(k)
+      })),
+      statePills: this.STATES.map((x) => ({
+        label: x.label,
+        color: x.color,
+        opacity: x.key === st ? 1 : 0.62,
+        border: x.key === st ? x.color : '#CBD5E1',
+        fg: x.key === st ? '#0F172A' : '#64748B',
+        hover: 'opacity: 1; color: #0F172A; border-color: ' + x.color + '; background: #F8FAFC;',
+        onClick: () => this.setStatus(x.key)
+      }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

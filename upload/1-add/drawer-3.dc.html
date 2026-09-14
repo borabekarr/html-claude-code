@@ -1,0 +1,430 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="Drawer 3" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_metric-circle.css">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#EEF2F7; font-family:'Montserrat',system-ui,sans-serif; }
+  a { color:#10B981; text-decoration:none; }
+  a:hover { color:#047857; }
+  @keyframes dw-fade-in { from { opacity:0 } to { opacity:1 } }
+  @keyframes dw-slide-in { from { transform:translateX(104%) } to { transform:translateX(0) } }
+  @keyframes dw-slide-out { from { transform:translateX(0) } to { transform:translateX(104%) } }
+  @keyframes dw-fade-out { from { opacity:1 } to { opacity:0 } }
+  @keyframes dw-rise { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
+  @keyframes dw-shimmer { from { background-position:-320px 0 } to { background-position:320px 0 } }
+  @keyframes dw-pop { 0% { transform:scale(.4); opacity:0 } 60% { transform:scale(1.12) } 100% { transform:scale(1); opacity:1 } }
+  :root {
+    --dw-ease-exit: var(--ease-exit-soft); /* nearest DS ease token to the panel's original exit curve (see token-map.md); distance 0.26 across all 44 _ds ease tokens, closest match */
+    --dw-stagger-90: 90ms; /* motion-sweep: kept -- component-local stagger delay, no _ds tier match */
+    --dw-stagger-210: 210ms; /* motion-sweep: kept -- component-local stagger delay, no _ds tier match */
+    --dw-stagger-270: 270ms; /* motion-sweep: kept -- component-local stagger delay, no _ds tier match */
+    --dw-stagger-330: 330ms; /* motion-sweep: kept -- component-local stagger delay, no _ds tier match */
+    --dw-shimmer-dur: 1.2s; /* motion-sweep: kept -- component-local skeleton shimmer loop, no _ds tier match */
+  }
+  /* Exit asymmetry: the panel/scrim exit already ran one tier faster than
+     enter before this pass (pre-existing, kept); now token-wrapped, see
+     token-map.md for the duration tiers. */
+  .dw-scrim { position:absolute; inset:0; background:rgba(15,23,42,.42); backdrop-filter:blur(3px); animation:dw-fade-in var(--duration-260) var(--ease-out) both; }
+  .dw-scrim.is-closing { animation:dw-fade-out var(--duration-slow) var(--ease-standard) both; }
+  .dw-panel { animation:dw-slide-in var(--duration-420) var(--ease-out) both; }
+  .dw-panel.is-closing { animation:dw-slide-out var(--duration-260) var(--dw-ease-exit) both; }
+  .dw-stagger > * { animation:dw-rise var(--duration-380) var(--ease-out) both; }
+  .dw-stagger > *:nth-child(1) { animation-delay:var(--dw-stagger-90) }
+  .dw-stagger > *:nth-child(2) { animation-delay:var(--duration-150) }
+  .dw-stagger > *:nth-child(3) { animation-delay:var(--dw-stagger-210) }
+  .dw-stagger > *:nth-child(4) { animation-delay:var(--dw-stagger-270) }
+  .dw-stagger > *:nth-child(5) { animation-delay:var(--dw-stagger-330) }
+  .dw-sk { background:linear-gradient(90deg,#E9EEF4 0%,#F6F9FC 40%,#E9EEF4 80%); background-size:320px 100%; animation:dw-shimmer var(--dw-shimmer-dur) linear infinite; border-radius:var(--radius-sm); }
+  .dw-x { position:relative; width:34px; height:34px; display:grid; place-items:center; border-radius:var(--radius-circle); border:none; cursor:pointer; background:#F1F5F9; color:#475569; transition:background var(--duration-base) var(--ease-standard), transform var(--duration-base) var(--ease-out); }
+  .dw-x::after { content:""; position:absolute; inset:50% auto auto 50%; width:44px; height:44px; transform:translate(-50%,-50%); }
+  .dw-x:focus-visible { outline:2px solid var(--brand-primary); outline-offset:2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .dw-x:hover { background:#E2E8F0; transform:rotate(90deg); }
+    .dw-row:hover { background:#F8FAFC; }
+    .dw-item:hover { transform:translateY(-1px); border-color:#CBD5E1; box-shadow:0 8px 20px -10px rgba(15,23,42,.25); }
+  }
+  .dw-x:active { transform:rotate(90deg) scale(.92); }
+  .dw-row { display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); padding:11px var(--space-4); border-radius:var(--radius-xs); transition:background var(--duration-base) var(--ease-standard); }
+  .dw-item { position:relative; display:flex; align-items:center; gap:var(--space-3); padding:var(--space-2) var(--space-3); border-radius:var(--radius-lg); border:1px solid #E2E8F0; background:#fff; cursor:pointer; transition:transform var(--duration-200) var(--ease-out), box-shadow var(--duration-200) var(--ease-standard), border-color var(--duration-200) var(--ease-standard); }
+  .dw-item::after { content:""; position:absolute; inset:50% auto auto 50%; width:44px; height:44px; transform:translate(-50%,-50%); }
+  .dw-item:focus-visible { outline:2px solid var(--brand-primary); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .dw-scrim, .dw-panel, .dw-stagger > *, .dw-sk, .dw-x, .dw-row, .dw-item { animation:none; transition:none; }
+  }
+  /* 44px hit layers for shared-DS buttons whose rendered box is < 44px in this
+     component's instance (component-scoped ::after, not an edit to _ds/). */
+  .pills-seg button, .shell .btn-primary { position: relative; }
+  .pills-seg button::after, .shell .btn-primary::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+  .dw-pop-icon { animation: dw-pop var(--duration-420) var(--ease-out) both; }
+  @media (prefers-reduced-motion: reduce) {
+    .dw-pop-icon { animation: none; }
+  }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="min-height:100vh; padding:40px 32px 64px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:22px;">
+
+  <div style="width:100%; max-width:1080px; display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+    <div>
+      <div class="label" style="margin-bottom:6px;">Deha · Components</div>
+      <div style="font-size:28px; font-weight:900; letter-spacing:-0.02em; color:#0F172A;">Drawer 3</div>
+      <div style="font-size:13px; font-weight:600; color:#64748B; margin-top:6px; max-width:520px; text-wrap:pretty;">Right-anchored overlay panel. Pick a usage area with the pills, then open the drawer to see its states, transitions and motion.</div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <div class="pills-seg" ref="{{ segRef }}">
+        <div class="pills-seg-pill" style="left:{{ segLeft }}; width:{{ segWidth }};"></div>
+        <button type="button" class="{{ stateCls0 }}" onClick="{{ setStateDefault }}">Default</button>
+        <button type="button" class="{{ stateCls1 }}" onClick="{{ setStateLoading }}">Loading</button>
+        <button type="button" class="{{ stateCls2 }}" onClick="{{ setStateEmpty }}">Empty</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="width:100%; max-width:1080px; display:flex; gap:8px; flex-wrap:wrap;">
+    <button type="button" class="{{ pillCls0 }}" onClick="{{ pick0 }}">Contact</button>
+    <button type="button" class="{{ pillCls1 }}" onClick="{{ pick1 }}">Task detail</button>
+    <button type="button" class="{{ pillCls2 }}" onClick="{{ pick2 }}">Filters</button>
+    <button type="button" class="{{ pillCls3 }}" onClick="{{ pick3 }}">Notifications</button>
+    <button type="button" class="{{ pillCls4 }}" onClick="{{ pick4 }}">Checkout</button>
+  </div>
+
+  <div class="shell" style="width:100%; max-width:1080px;">
+    <div style="position:relative; overflow:hidden; border-radius:20px; background:#fff; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, rgba(248,250,252,1) 55%, #FFFFFF 100%); height:660px;">
+
+      <div style="padding:28px 30px; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="font-size:20px; font-weight:900; color:#0F172A;">{{ hostTitle }}</div>
+          <button type="button" class="btn-primary" onClick="{{ open }}"><span class="material-icons btn-mi">{{ triggerIcon }}</span>{{ triggerLabel }}</button>
+        </div>
+        <div style="font-size:13px; font-weight:600; color:#64748B; max-width:520px; text-wrap:pretty;">{{ hostBlurb }}</div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:6px; opacity:.85;">
+          <div class="card-inner" style="height:96px;"></div>
+          <div class="card-inner" style="height:96px;"></div>
+          <div class="card-inner" style="height:96px;"></div>
+        </div>
+        <div class="card-inner" style="height:190px;"></div>
+      </div>
+
+      <sc-if value="{{ mounted }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute; inset:0;">
+          <div class="{{ scrimCls }}" onClick="{{ close }}"></div>
+          <div class="{{ panelCls }}" role="dialog" aria-modal="true" aria-labelledby="dw-title" ref="{{ panelRef }}" style="position:absolute; top:0; right:0; bottom:0; width:432px; background:#FFFFFF; border-left:1px solid #E2E8F0; box-shadow:-30px 0 60px -30px rgba(15,23,42,.35); display:flex; flex-direction:column;">
+
+            <div style="padding:20px 22px 16px; border-bottom:1px solid #E2E8F0; display:flex; align-items:flex-start; gap:14px;">
+              <div style="width:44px; height:44px; border-radius:9999px; display:grid; place-items:center; background:#ECFDF5; color:#10B981; flex:none; box-shadow:inset 0 0 0 1px rgba(16,185,129,.18);">
+                <span class="material-icons" aria-hidden="true" style="font-size:22px;">{{ headIcon }}</span>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <div id="dw-title" style="font-size:16px; font-weight:900; color:#0F172A; letter-spacing:-0.01em;">{{ headTitle }}</div>
+                <div style="font-size:12px; font-weight:600; color:#64748B; margin-top:3px;">{{ headSub }}</div>
+              </div>
+              <button type="button" class="dw-x" aria-label="Close" onClick="{{ close }}"><span class="material-icons" aria-hidden="true" style="font-size:19px;">close</span></button>
+            </div>
+
+            <div style="flex:1; overflow-y:auto; padding:18px 22px 22px; display:flex; flex-direction:column; gap:14px;">
+
+              <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                  <div class="dw-sk" style="height:74px; border-radius:20px;"></div>
+                  <div class="dw-sk" style="height:130px; border-radius:20px;"></div>
+                  <div class="dw-sk" style="height:96px; border-radius:20px;"></div>
+                  <div class="dw-sk" style="height:18px; width:60%;"></div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px; padding:56px 20px;">
+                  <div class="dw-pop-icon" style="width:64px; height:64px; border-radius:9999px; display:grid; place-items:center; background:#F1F5F9; color:#94A3B8;">
+                    <span class="material-icons" style="font-size:30px;">inbox</span>
+                  </div>
+                  <div style="font-size:15px; font-weight:800; color:#0F172A;">{{ emptyTitle }}</div>
+                  <div style="font-size:12.5px; font-weight:600; color:#64748B; max-width:250px; text-wrap:pretty;">{{ emptyBody }}</div>
+                  <button type="button" class="btn-glass" style="margin-top:4px;"><span class="material-icons btn-mi">add</span>{{ emptyCta }}</button>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+                <div class="dw-stagger" style="display:flex; flex-direction:column; gap:14px;">
+
+                  <div class="card-accent" style="padding:16px 18px;">
+                    <div style="position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+                      <div>
+                        <div style="font-size:11px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; opacity:.85;">{{ heroLabel }}</div>
+                        <div style="font-size:26px; font-weight:900; letter-spacing:-0.02em; margin-top:4px;">{{ heroValue }}</div>
+                      </div>
+                      <span class="badge success"><span class="material-icons">{{ heroBadgeIcon }}</span>{{ heroBadge }}</span>
+                    </div>
+                  </div>
+
+                  <div class="card-inner" style="padding:6px;">
+                    <sc-for list="{{ rows }}" as="row" hint-placeholder-count="4">
+                      <div class="dw-row">
+                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                          <span class="material-icons" style="font-size:18px; color:#94A3B8;">{{ row.icon }}</span>
+                          <span style="font-size:12.5px; font-weight:700; color:#64748B;">{{ row.k }}</span>
+                        </div>
+                        <span style="font-size:13px; font-weight:800; color:#0F172A; text-align:right;">{{ row.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <div>
+                    <span class="pills-label">{{ tagsLabel }}</span>
+                    <div class="pills-row">
+                      <sc-for list="{{ tags }}" as="tag" hint-placeholder-count="3">
+                        <span class="badge tag"><span class="material-icons">{{ tag.icon }}</span>{{ tag.label }}</span>
+                      </sc-for>
+                    </div>
+                  </div>
+
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                    <span class="pills-label">{{ listLabel }}</span>
+                    <sc-for list="{{ items }}" as="it" hint-placeholder-count="3">
+                      <div class="dw-item">
+                        <div style="width:32px; height:32px; border-radius:9999px; display:grid; place-items:center; flex:none; background:{{ it.bg }}; color:{{ it.fg }};">
+                          <span class="material-icons" style="font-size:17px;">{{ it.icon }}</span>
+                        </div>
+                        <div style="flex:1; min-width:0;">
+                          <div style="font-size:13px; font-weight:800; color:#0F172A;">{{ it.title }}</div>
+                          <div style="font-size:11.5px; font-weight:600; color:#64748B; margin-top:2px;">{{ it.sub }}</div>
+                        </div>
+                        <span class="material-icons" style="font-size:18px; color:#CBD5E1;">chevron_right</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+
+            <div style="padding:14px 22px 18px; border-top:1px solid #E2E8F0; background:#FFFFFF; display:flex; align-items:center; gap:10px;">
+              <button type="button" class="btn-glass" style="flex:1; justify-content:center;" onClick="{{ close }}">Cancel</button>
+              <button type="button" class="{{ ctaCls }}" style="flex:1.4; justify-content:center;" onClick="{{ confirm }}">
+                <span class="material-icons btn-mi">{{ ctaIcon }}</span>{{ ctaLabel }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:900}}">
+const VARIANTS = [
+  {
+    key: 'contact', trigger: 'View contact', triggerIcon: 'person',
+    hostTitle: 'Leads · Pipeline', hostBlurb: 'Row actions open the detail drawer over the table without losing scroll position.',
+    headIcon: 'person', headTitle: 'Mert Yalçın', headSub: 'Hot lead · Kadıköy · added 3d ago',
+    heroLabel: 'Estimated GCI', heroValue: '$45.2K', heroBadge: '+12%', heroBadgeIcon: 'trending_up',
+    rows: [
+      { icon: 'call', k: 'Phone', v: '+90 532 118 44 09' },
+      { icon: 'mail', k: 'Email', v: 'mert@atlas.co' },
+      { icon: 'home_work', k: 'Interest', v: '3+1 · Sea view' },
+      { icon: 'event', k: 'Next touch', v: 'Tue, 12:00' }
+    ],
+    tagsLabel: 'Tags', tags: [ { icon: 'sell', label: 'Satış' }, { icon: 'home_work', label: 'Değerleme' }, { icon: 'volunteer_activism', label: 'Nurture' } ],
+    listLabel: 'Recent activity',
+    items: [
+      { icon: 'call', bg: '#FFF7ED', fg: '#F97316', title: 'Outbound call · 6 min', sub: 'Yesterday 16:20' },
+      { icon: 'description', bg: '#ECFDF5', fg: '#10B981', title: 'Sent listing pack', sub: 'Mon 09:04' },
+      { icon: 'chat', bg: '#EFF6FF', fg: '#3B82F6', title: 'WhatsApp reply', sub: 'Sun 21:11' }
+    ],
+    ctaLabel: 'Log activity', ctaIcon: 'add_task',
+    emptyTitle: 'No contact selected', emptyBody: 'Pick a row in the pipeline to load its detail here.', emptyCta: 'Add contact'
+  },
+  {
+    key: 'task', trigger: 'Open task', triggerIcon: 'task_alt',
+    hostTitle: 'Board · This week', hostBlurb: 'Cards open in a drawer so the board stays visible behind the scrim.',
+    headIcon: 'task_alt', headTitle: 'Prepare valuation deck', headSub: 'In progress · due Thursday',
+    heroLabel: 'Completion', heroValue: '64%', heroBadge: 'On track', heroBadgeIcon: 'bolt',
+    rows: [
+      { icon: 'person', k: 'Assignee', v: 'Elif Demir' },
+      { icon: 'flag', k: 'Priority', v: 'Yüksek' },
+      { icon: 'schedule', k: 'Estimate', v: '4h 30m' },
+      { icon: 'inventory_2', k: 'Column', v: 'In Progress' }
+    ],
+    tagsLabel: 'Labels', tags: [ { icon: 'campaign', label: 'Client-facing' }, { icon: 'insights', label: 'Analysis' } ],
+    listLabel: 'Subtasks',
+    items: [
+      { icon: 'check', bg: '#ECFDF5', fg: '#10B981', title: 'Pull comparable sales', sub: 'Done · Elif' },
+      { icon: 'edit', bg: '#FEFCE8', fg: '#EAB308', title: 'Draft pricing slide', sub: 'In progress' },
+      { icon: 'visibility', bg: '#F1F5F9', fg: '#64748B', title: 'Partner review', sub: 'Blocked on Ali' }
+    ],
+    ctaLabel: 'Mark complete', ctaIcon: 'task_alt',
+    emptyTitle: 'Nothing assigned', emptyBody: 'Subtasks you create will show up in this panel.', emptyCta: 'New subtask'
+  },
+  {
+    key: 'filters', trigger: 'Filters', triggerIcon: 'tune',
+    hostTitle: 'Listings · 248 results', hostBlurb: 'A filter drawer keeps the result grid live while criteria change.',
+    headIcon: 'tune', headTitle: 'Refine results', headSub: '3 filters applied',
+    heroLabel: 'Matching listings', heroValue: '248', heroBadge: '−34', heroBadgeIcon: 'filter_alt',
+    rows: [
+      { icon: 'payments', k: 'Price', v: '₺4.5M – ₺9M' },
+      { icon: 'bed', k: 'Rooms', v: '3+1 and up' },
+      { icon: 'straighten', k: 'Area', v: '120 m² min' },
+      { icon: 'place', k: 'District', v: 'Kadıköy, Üsküdar' }
+    ],
+    tagsLabel: 'Quick filters', tags: [ { icon: 'star', label: 'Featured' }, { icon: 'bolt', label: 'New today' }, { icon: 'sell', label: 'Price cut' } ],
+    listLabel: 'Saved searches',
+    items: [
+      { icon: 'bookmark', bg: '#ECFDF5', fg: '#10B981', title: 'Sea view · Kadıköy', sub: '42 results · alerts on' },
+      { icon: 'bookmark', bg: '#F1F5F9', fg: '#64748B', title: 'Investor stock', sub: '18 results' },
+      { icon: 'bookmark', bg: '#F1F5F9', fg: '#64748B', title: 'Under ₺5M', sub: '76 results' }
+    ],
+    ctaLabel: 'Apply filters', ctaIcon: 'check',
+    emptyTitle: 'No filters yet', emptyBody: 'Add criteria to narrow 1,240 listings down to what matters.', emptyCta: 'Add filter'
+  },
+  {
+    key: 'notifications', trigger: 'Notifications', triggerIcon: 'notifications',
+    hostTitle: 'Workspace', hostBlurb: 'The notification drawer slides over the workspace and dismisses on scrim click or Esc.',
+    headIcon: 'notifications', headTitle: 'Notifications', headSub: '5 new since yesterday',
+    heroLabel: 'Needs attention', heroValue: '3', heroBadge: 'Urgent', heroBadgeIcon: 'priority_high',
+    rows: [
+      { icon: 'mark_email_unread', k: 'Unread', v: '5' },
+      { icon: 'group', k: 'Mentions', v: '2' },
+      { icon: 'event', k: 'Reminders', v: '1 today' },
+      { icon: 'notifications_off', k: 'Muted', v: '2 threads' }
+    ],
+    tagsLabel: 'Channels', tags: [ { icon: 'chat', label: 'Comments' }, { icon: 'campaign', label: 'System' } ],
+    listLabel: 'Today',
+    items: [
+      { icon: 'warning', bg: '#FEF2F2', fg: '#EF4444', title: 'Contract expires in 2 days', sub: 'Bağdat Cad. · 09:41' },
+      { icon: 'chat', bg: '#EFF6FF', fg: '#3B82F6', title: 'Elif mentioned you', sub: 'Valuation deck · 08:12' },
+      { icon: 'task_alt', bg: '#ECFDF5', fg: '#10B981', title: 'Offer accepted', sub: 'Fenerbahçe · 07:55' }
+    ],
+    ctaLabel: 'Mark all read', ctaIcon: 'done_all',
+    emptyTitle: 'You are all caught up', emptyBody: 'New mentions and reminders will land here.', emptyCta: 'Notification settings'
+  },
+  {
+    key: 'checkout', trigger: 'Review order', triggerIcon: 'receipt_long',
+    hostTitle: 'Plan & billing', hostBlurb: 'A summary drawer confirms the charge before the irreversible action.',
+    headIcon: 'receipt_long', headTitle: 'Order summary', headSub: 'Team plan · billed yearly',
+    heroLabel: 'Total due today', heroValue: '₺12,480', heroBadge: 'Save 20%', heroBadgeIcon: 'sell',
+    rows: [
+      { icon: 'group', k: 'Seats', v: '12 agents' },
+      { icon: 'calendar_month', k: 'Term', v: '12 months' },
+      { icon: 'percent', k: 'Discount', v: '−₺3,120' },
+      { icon: 'credit_card', k: 'Card', v: '•••• 4417' }
+    ],
+    tagsLabel: 'Included', tags: [ { icon: 'insights', label: 'Analytics' }, { icon: 'lock', label: 'SSO' }, { icon: 'bolt', label: 'Priority support' } ],
+    listLabel: 'Line items',
+    items: [
+      { icon: 'workspace_premium', bg: '#ECFDF5', fg: '#10B981', title: 'Team plan · 12 seats', sub: '₺13,200 / year' },
+      { icon: 'sell', bg: '#FFF7ED', fg: '#F97316', title: 'Annual discount', sub: '−₺3,120' },
+      { icon: 'receipt', bg: '#F1F5F9', fg: '#64748B', title: 'VAT (20%)', sub: '₺2,400' }
+    ],
+    ctaLabel: 'Confirm & pay', ctaIcon: 'lock',
+    emptyTitle: 'Cart is empty', emptyBody: 'Choose a plan to see the charge breakdown here.', emptyCta: 'Browse plans'
+  }
+];
+
+class Component extends DCLogic {
+  state = { v: 0, mode: 0, open: false, closing: false, confirmed: false, seg: null };
+  segRef = React.createRef();
+  panelRef = React.createRef();
+  _triggerEl = null;
+
+  measureSeg = () => {
+    const el = this.segRef.current;
+    if (!el) return;
+    const btn = el.querySelectorAll('button')[this.state.mode];
+    if (!btn) return;
+    const seg = { left: btn.offsetLeft + 'px', width: btn.offsetWidth + 'px' };
+    const cur = this.state.seg;
+    if (!cur || cur.left !== seg.left || cur.width !== seg.width) this.setState({ seg });
+  };
+
+  componentDidMount() {
+    this._esc = (e) => { if (e.key === 'Escape') this.close(); };
+    window.addEventListener('keydown', this._esc);
+    window.addEventListener('resize', this.measureSeg);
+    this.measureSeg();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(this.measureSeg);
+  }
+  componentDidUpdate() {
+    this.measureSeg();
+    // dialog semantics: move focus into the drawer once it mounts.
+    if (this.state.open && !this.state.closing && this.panelRef.current) {
+      const first = this.panelRef.current.querySelector('button, [href], input, [tabindex]:not([tabindex="-1"])');
+      if (first) first.focus();
+    }
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this._esc);
+    window.removeEventListener('resize', this.measureSeg);
+  }
+
+  close = () => {
+    if (!this.state.open || this.state.closing) return;
+    this.setState({ closing: true });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.setState({ open: false, closing: false, confirmed: false });
+      // dialog semantics: return focus to the element that opened the drawer.
+      if (this._triggerEl && this._triggerEl.focus) this._triggerEl.focus();
+    }, 260);
+  };
+
+  renderVals() {
+    const v = VARIANTS[this.state.v];
+    const mode = this.state.mode;
+    const seg = this.state.seg || { left: '3px', width: '0px' };
+    const out = {
+      segRef: this.segRef,
+      panelRef: this.panelRef,
+      mounted: this.state.open,
+      scrimCls: 'dw-scrim' + (this.state.closing ? ' is-closing' : ''),
+      panelCls: 'dw-panel' + (this.state.closing ? ' is-closing' : ''),
+      open: (e) => { this._triggerEl = (e && e.currentTarget) || document.activeElement; this.setState({ open: true, closing: false, confirmed: false }); },
+      close: this.close,
+      confirm: () => { this.setState({ confirmed: true }); setTimeout(this.close, 900); },
+      isLoading: mode === 1,
+      isEmpty: mode === 2,
+      isReady: mode === 0,
+      segLeft: seg.left, segWidth: seg.width,
+      setStateDefault: () => this.setState({ mode: 0 }),
+      setStateLoading: () => this.setState({ mode: 1 }),
+      setStateEmpty: () => this.setState({ mode: 2 }),
+      triggerLabel: v.trigger, triggerIcon: v.triggerIcon,
+      hostTitle: v.hostTitle, hostBlurb: v.hostBlurb,
+      headIcon: v.headIcon, headTitle: v.headTitle, headSub: v.headSub,
+      heroLabel: v.heroLabel, heroValue: v.heroValue, heroBadge: v.heroBadge, heroBadgeIcon: v.heroBadgeIcon,
+      rows: v.rows, tags: v.tags, items: v.items,
+      tagsLabel: v.tagsLabel, listLabel: v.listLabel,
+      emptyTitle: v.emptyTitle, emptyBody: v.emptyBody, emptyCta: v.emptyCta,
+      ctaLabel: this.state.confirmed ? 'Done' : v.ctaLabel,
+      ctaIcon: this.state.confirmed ? 'check' : v.ctaIcon,
+      ctaCls: 'btn-primary'
+    };
+    for (let i = 0; i < 3; i++) out['stateCls' + i] = mode === i ? 'active' : '';
+    VARIANTS.forEach((x, i) => {
+      out['pillCls' + i] = 'pill-tab' + (this.state.v === i ? ' active' : '');
+      out['pick' + i] = () => this.setState({ v: i, open: false, closing: false });
+    });
+    return out;
+  }
+}
+
+</script>
+</body>
+</html>

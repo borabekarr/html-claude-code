@@ -1,0 +1,52 @@
+<!-- @dsCard group="Merge - controls-inputs" name="ListRowNav" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+
+<style>
+  body { margin: 0; background: #FFFFFF; font-family: 'Montserrat', system-ui, sans-serif; }
+  body, button, input, select, textarea { font-family: 'Montserrat', system-ui, sans-serif; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 900; }
+  .material-icons { font-family: 'Material Icons'; }
+  .material-symbols-outlined, .ms { font-family: 'Material Symbols Outlined'; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; text-decoration: underline; }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; line-height: 1; }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="padding: var(--space-10) var(--space-12) 64px; display: flex; flex-direction: column; gap: var(--space-6); color: #0F172A;">
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-size: var(--type-mini); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #94A3B8;">Bora · Navigation</div>
+    <h1 style="margin: 0; font-size: var(--type-h1); font-weight: var(--weight-black); letter-spacing: -0.02em;">ListRowNav</h1>
+    <p style="margin: 0; font-size: var(--type-body-sm); font-weight: var(--weight-medium); color: #64748B;">Settings-style disclosure rows. Value, badge and chevron variants.</p>
+  </div>
+
+  <div style="width: 402px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: var(--radius-lg); box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); overflow: hidden;">
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">notifications</span><span style="font-size: var(--type-body); font-weight: var(--weight-semibold);">Notifications</span><span style="margin-left: auto; font-size: 13px; font-weight: 500; color: #94A3B8;">On</span><span class="ms" style="font-size: 20px; color: #CBD5E1;">chevron_right</span></div>
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">sync</span><span style="font-size: var(--type-body); font-weight: var(--weight-semibold);">Data sync</span><span class="badge tag" style="margin-left: auto;">Hourly</span><span class="ms" style="font-size: 20px; color: #CBD5E1;">chevron_right</span></div>
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">group</span><span style="font-size: var(--type-body); font-weight: var(--weight-semibold);">Team</span><span style="margin-left: auto; display: flex;"><span style="width: 24px; height: 24px; border-radius: 9999px; background: #10B981; color: #FFFFFF; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF;">MK</span><span style="width: 24px; height: 24px; border-radius: 9999px; background: #64748B; color: #FFFFFF; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF; margin-left: -8px;">JT</span><span style="width: 24px; height: 24px; border-radius: 9999px; background: #F97316; color: #FFFFFF; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid #FFFFFF; margin-left: -8px;">AL</span></span><span class="ms" style="font-size: 20px; color: #CBD5E1;">chevron_right</span></div>
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px;"><span class="ms" style="font-size: 20px; color: #64748B;">shield</span><span style="font-size: var(--type-body); font-weight: var(--weight-semibold);">Privacy</span><span class="ms" style="margin-left: auto; font-size: 20px; color: #CBD5E1;">chevron_right</span></div>
+  </div>
+
+  <div style="width: 402px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: var(--radius-lg); box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); overflow: hidden;">
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E2E8F0; background: #F8FAFC;"><span class="ms" style="font-size: 20px; color: #059669;">bolt</span><span style="font-size: 14px; font-weight: 700; color: #047857;">Automations</span><span class="badge success" style="margin-left: auto;">3 active</span><span class="ms" style="font-size: 20px; color: #A7F3D0;">chevron_right</span></div>
+    <div style="height: 52px; padding: 0 var(--space-4); display: flex; align-items: center; gap: 12px; opacity: 0.45;"><span class="ms" style="font-size: 20px; color: #64748B;">lock</span><span style="font-size: var(--type-body); font-weight: var(--weight-semibold);">Billing</span><span style="margin-left: auto; font-size: var(--type-meta); font-weight: var(--weight-semibold); color: #94A3B8;">Admin only</span></div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

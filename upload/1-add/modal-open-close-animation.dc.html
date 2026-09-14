@@ -1,0 +1,349 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="Modal Open Close Animation" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  /* Transitions.dev — Modal open / close */
+  .t-scrim {
+    position: absolute; inset: 0;
+    background: rgba(15,23,42,0.42);
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--modal-open-dur, 250ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out)),
+                backdrop-filter var(--modal-open-dur, 250ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out));
+  }
+  .t-scrim.is-open { opacity: 1; pointer-events: auto; }
+  .t-scrim.is-closing {
+    opacity: 0; pointer-events: none;
+    transition: opacity var(--modal-close-dur, 150ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out));
+  }
+  .t-scrim.blurred.is-open { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+
+  .t-modal {
+    transform-origin: center;
+    transform: scale(var(--modal-scale, .96));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--modal-open-dur, 250ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out)),
+      opacity   var(--modal-open-dur, 250ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out));
+    will-change: transform, opacity;
+  }
+  .t-modal.is-open { transform: scale(1); opacity: 1; pointer-events: auto; }
+  .t-modal.is-closing {
+    transform: scale(var(--modal-scale-close, .96));
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      transform var(--modal-close-dur, 150ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out)),
+      opacity   var(--modal-close-dur, 150ms /* motion-sweep: kept */) var(--modal-ease, var(--ease-out));
+  }
+  .t-modal.reduced, .t-scrim.reduced { transition: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    .t-modal, .t-scrim { transition: none !important; }
+  }
+  @keyframes tmField { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .t-modal.is-open .t-stagger > * { animation: tmField 320ms /* motion-sweep: kept */ var(--ease-out) both; }
+  .t-modal.is-open .t-stagger > *:nth-child(2) { animation-delay: 40ms; /* motion-sweep: kept */ }
+  .t-modal.is-open .t-stagger > *:nth-child(3) { animation-delay: 80ms; /* motion-sweep: kept */ }
+  .t-modal.is-open .t-stagger > *:nth-child(4) { animation-delay: 120ms; /* motion-sweep: kept */ }
+  @media (hover: hover) and (pointer: fine) {
+    .t-modal-close:hover { background: var(--slate-200); color: var(--fg1); }
+  }
+  .t-modal-close:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .t-modal-close, .btn-primary, .btn-glass, .btn-inverse, .btn-delete { position: relative; }
+  .t-modal-close::after, .btn-primary::after, .btn-glass::after, .btn-inverse::after, .btn-delete::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="--modal-open-dur: 250ms /* motion-sweep: kept */; --modal-close-dur: 150ms /* motion-sweep: kept */; --modal-ease: var(--ease-out); --modal-scale: .96; --modal-scale-close: .96; font-family: var(--font-display); background: #FFFFFF; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.06) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); padding: 28px; min-height: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--fg4);">Deha · Motion</span>
+      <span style="font-size: 28px; font-weight: 900; letter-spacing: -.02em; color: var(--fg1); line-height: 1.15;">Modal open / close</span>
+      <span style="font-size: 13px; font-weight: 500; color: var(--fg3); max-width: 52ch; text-wrap: pretty;">Scale-and-fade entrance, faster exit. Pick a usage area below — every variant shares one transition contract.</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="badge tag" style="font-family: ui-monospace, Menlo, monospace; font-size: 11px;">state: {{ stateLabel }}</span>
+    </div>
+  </div>
+
+  <div class="pills-row" role="tablist" style="gap: 8px;">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+      <button type="button" role="tab" class="{{ v.cls }}" onClick="{{ v.select }}">{{ v.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+    <button type="button" class="btn-primary" onClick="{{ open }}">
+      <span class="material-icons btn-mi">open_in_full</span>Open modal
+    </button>
+    <button type="button" class="btn-glass" onClick="{{ replay }}">
+      <span class="material-icons btn-mi">replay</span>Replay close → open
+    </button>
+    <span style="font-size: 12px; font-weight: 600; color: var(--fg4);">{{ timingLabel }}</span>
+  </div>
+
+  <div style="position: relative; flex: 1; min-height: 460px; border-radius: 28px; background: var(--shell-bg); padding: 10px; box-shadow: 0 10px 30px rgba(15,23,42,0.12), 0 2px 8px rgba(15,23,42,0.06); overflow: hidden;">
+    <div style="position: absolute; inset: 10px; border-radius: 20px; background: var(--card-bg, #fff); background-image: var(--bg-section-grid); background-size: var(--bg-section-grid-size); box-shadow: inset 0 0 0 1px rgba(15,23,42,.06);"></div>
+
+    <div class="{{ scrimCls }}" onClick="{{ close }}" style="border-radius: 20px; margin: 10px;"></div>
+
+    <div style="position: absolute; inset: 0; display: grid; place-items: center; padding: 32px; pointer-events: none;">
+      <div class="{{ modalCls }}" role="dialog" aria-modal="true" aria-labelledby="t-modal-title" style="width: 100%; max-width: 420px; background: var(--card-bg, #fff); border-radius: 24px; box-shadow: 0 24px 60px -20px rgba(15,23,42,.35), inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(15,23,42,.08); overflow: hidden;">
+
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 20px 0 20px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="{{ iconWrapCls }}" style="display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: {{ iconBg }}; color: {{ iconFg }};">
+              <span class="material-icons" style="font-size: 20px;">{{ icon }}</span>
+            </span>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              <span id="t-modal-title" style="font-size: 16px; font-weight: 800; color: var(--fg1);">{{ title }}</span>
+              <span style="font-size: 12px; font-weight: 600; color: var(--fg3);">{{ subtitle }}</span>
+            </div>
+          </div>
+          <button type="button" class="t-modal-close" onClick="{{ close }}" aria-label="Close" style="border: none; background: var(--bg-chip); color: var(--fg3); width: 30px; height: 30px; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; flex: none;">
+            <span class="material-icons" style="font-size: 17px;">close</span>
+          </button>
+        </div>
+
+        <div class="t-stagger" style="display: flex; flex-direction: column; gap: 14px; padding: 18px 20px 20px 20px;">
+
+          <sc-if value="{{ isConfirm }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="border-radius: 20px; padding: 14px; background: var(--slate-50); box-shadow: inset 0 0 0 1px var(--border-hairline);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                  <span style="font-size: 15px; font-weight: 800; color: var(--fg1);">Marina Bay · Unit 14B</span>
+                  <span class="badge gci">$18.4K GCI</span>
+                </div>
+                <div class="pills-row" style="margin-top: 10px;">
+                  <span class="badge tag"><span class="material-icons">person</span>Ayşe Demir</span>
+                  <span class="badge tag"><span class="material-icons">schedule</span>Today 16:30</span>
+                  <span class="badge success"><span class="material-icons">bolt</span>Hot</span>
+                </div>
+              </div>
+              <span style="font-size: 13px; font-weight: 500; color: var(--fg2); text-wrap: pretty;">The lead moves to Ayşe's pipeline and she is notified immediately. You stay as the deal's co-owner.</span>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+              <button type="button" class="btn-discuss" onClick="{{ close }}">Cancel</button>
+              <button type="button" class="btn-primary" onClick="{{ close }}"><span class="material-icons btn-mi">check</span>Assign lead</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDetail }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div class="card-accent" style="padding: 16px; border-radius: 20px;">
+                <span style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; opacity: .85;">Pipeline value</span>
+                <span style="display: block; font-size: 30px; font-weight: 900; letter-spacing: -.02em; line-height: 1; margin-top: 6px;">$1.24M</span>
+                <span style="display: block; font-size: 12px; font-weight: 600; opacity: .9; margin-top: 6px;">8 active deals · 3 closing this month</span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="border-radius: 16px; padding: 12px; background: var(--slate-50); box-shadow: inset 0 0 0 1px var(--border-hairline);">
+                  <span style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--fg4);">Win rate</span>
+                  <span style="display: block; font-size: 20px; font-weight: 900; color: var(--fg1); margin-top: 4px;">62%</span>
+                </div>
+                <div style="border-radius: 16px; padding: 12px; background: var(--slate-50); box-shadow: inset 0 0 0 1px var(--border-hairline);">
+                  <span style="display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--fg4);">Avg. cycle</span>
+                  <span style="display: block; font-size: 20px; font-weight: 900; color: var(--fg1); margin-top: 4px;">34d</span>
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+              <button type="button" class="btn-text" onClick="{{ close }}">Close</button>
+              <button type="button" class="btn-inverse" onClick="{{ close }}"><span class="material-icons btn-mi">north_east</span>Open pipeline</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isForm }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <label style="display: flex; flex-direction: column; gap: 6px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--fg4);">Task title</span>
+                <input value="Call back the Marina Bay buyer" style="font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--fg1); padding: 11px 13px; border-radius: 14px; border: none; background: var(--slate-50); box-shadow: inset 0 0 0 1px var(--border-hairline);" />
+              </label>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--fg4);">Priority</span>
+                <div class="pills-row">
+                  <span class="pill-priority"><span class="dot" style="background: var(--semantic-danger);"></span>High</span>
+                  <span class="pill-priority"><span class="dot" style="background: var(--semantic-warning);"></span>Medium</span>
+                  <span class="pill-priority"><span class="dot" style="background: var(--brand-primary);"></span>Low</span>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span class="badge col-tag todo"><span class="material-icons">inbox</span>To do<span class="count">7</span></span>
+                <span class="badge time"><span class="material-icons">timer</span>Due 2d</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+              <button type="button" class="btn-discuss" onClick="{{ close }}">Discard</button>
+              <button type="button" class="btn-primary" onClick="{{ close }}"><span class="material-icons btn-mi">add_task</span>Create task</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isDanger }}">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="border-radius: 20px; padding: 14px; background: var(--semantic-danger-bg); box-shadow: inset 0 0 0 1px rgba(239,68,68,.22);">
+                <span style="display: block; font-size: 13px; font-weight: 700; color: var(--semantic-danger);">This removes 3 linked tasks and 12 notes.</span>
+                <span style="display: block; font-size: 12px; font-weight: 600; color: var(--fg3); margin-top: 4px;">Deleted records stay recoverable for 30 days.</span>
+              </div>
+              <div class="pills-row">
+                <span class="badge danger"><span class="material-icons">warning</span>Irreversible after 30d</span>
+                <span class="badge tag"><span class="material-icons">folder</span>Marina Bay</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; align-items: center;">
+              <button type="button" class="btn-discuss" onClick="{{ close }}">Keep deal</button>
+              <button type="button" class="btn-delete" onClick="{{ close }}"><span class="material-icons btn-mi">delete</span>Delete deal</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isSuccess }}">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 4px 0 8px;">
+              <span style="display: grid; place-items: center; width: 64px; height: 64px; border-radius: 9999px; background: var(--brand-primary); color: #fff; box-shadow: var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22);">
+                <span class="material-icons" style="font-size: 34px;">emoji_events</span>
+              </span>
+              <span style="font-size: 24px; font-weight: 900; letter-spacing: -.02em; color: var(--fg1);">Deal closed</span>
+              <span style="font-size: 13px; font-weight: 500; color: var(--fg3); max-width: 30ch; text-wrap: pretty;">Marina Bay · Unit 14B is signed. Your Q3 target is now 94% complete.</span>
+              <div class="pills-row" style="justify-content: center; margin-top: 4px;">
+                <span class="badge gci">+$18.4K GCI</span>
+                <span class="badge success"><span class="material-icons">local_fire_department</span>7-day streak</span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+              <button type="button" class="btn-primary" onClick="{{ close }}"><span class="material-icons btn-mi">share</span>Share with team</button>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+
+    <div style="position: absolute; left: 20px; bottom: 20px; display: flex; align-items: center; gap: 8px; pointer-events: none;">
+      <span class="badge tag" style="font-family: ui-monospace, Menlo, monospace;">.t-modal{{ activeClassSuffix }}</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;openDur&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:250,&quot;min&quot;:80,&quot;max&quot;:900,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Timing&quot;},&quot;closeDur&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:150,&quot;min&quot;:60,&quot;max&quot;:600,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Timing&quot;},&quot;openScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.96,&quot;min&quot;:0.7,&quot;max&quot;:1.05,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;closeScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.96,&quot;min&quot;:0.7,&quot;max&quot;:1.05,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;ease&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;var(--ease-out)&quot;,&quot;options&quot;:[&quot;var(--ease-out)&quot;,&quot;var(--ease-spring)&quot;,&quot;ease-in-out&quot;,&quot;linear&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;scrimBlur&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const VARIANTS = [
+  { key: 'confirm', label: 'Confirm', icon: 'help_outline', iconBg: 'var(--brand-primary-50)', iconFg: 'var(--brand-primary-600)', title: 'Assign this lead?', subtitle: 'Ownership transfers instantly' },
+  { key: 'detail',  label: 'Detail sheet', icon: 'insights', iconBg: 'var(--slate-100)', iconFg: 'var(--fg2)', title: 'Pipeline overview', subtitle: 'Q3 · Istanbul region' },
+  { key: 'form',    label: 'Form', icon: 'edit_note', iconBg: 'var(--slate-100)', iconFg: 'var(--fg2)', title: 'New task', subtitle: 'Added to your board' },
+  { key: 'danger',  label: 'Destructive', icon: 'report', iconBg: 'var(--semantic-danger-bg)', iconFg: 'var(--semantic-danger)', title: 'Delete this deal?', subtitle: 'Marina Bay · Unit 14B' },
+  { key: 'success', label: 'Celebration', icon: 'celebration', iconBg: 'var(--brand-primary-50)', iconFg: 'var(--brand-primary-600)', title: 'Congratulations', subtitle: 'Signed 12 minutes ago' }
+];
+
+class Component extends DCLogic {
+  state = { variant: 'confirm', phase: 'closed' };
+  rootRef = React.createRef();
+
+  componentDidMount() {
+    this.applyVars();
+    this.onKey = (e) => { if (e.key === 'Escape') this.close(); };
+    window.addEventListener('keydown', this.onKey);
+    this.t = setTimeout(() => this.open(), 320);
+  }
+  componentDidUpdate() { this.applyVars(); }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKey);
+    clearTimeout(this.t); clearTimeout(this.t2); clearTimeout(this.t3);
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+
+  applyVars() {
+    const el = this.rootRef.current; if (!el) return;
+    const p = this.props;
+    el.style.setProperty('--modal-open-dur', (p.openDur ?? 250) + 'ms');
+    el.style.setProperty('--modal-close-dur', (p.closeDur ?? 150) + 'ms');
+    el.style.setProperty('--modal-scale', String(p.openScale ?? 0.96));
+    el.style.setProperty('--modal-scale-close', String(p.closeScale ?? 0.96));
+    el.style.setProperty('--modal-ease', p.ease ?? 'var(--ease-out)');
+  }
+
+  open = () => {
+    clearTimeout(this.t2);
+    clearTimeout(this.t3);
+    if (this.raf) cancelAnimationFrame(this.raf);
+    this.triggerEl = document.activeElement;
+    if (document.visibilityState === 'hidden') { this.setState({ phase: 'open' }); return; }
+    const promote = () => { if (this.state.phase === 'mounted') this.setState({ phase: 'open' }); };
+    this.setState({ phase: 'mounted' }, () => {
+      this.raf = requestAnimationFrame(() => { this.raf = requestAnimationFrame(promote); });
+      this.t3 = setTimeout(promote, 60);
+    });
+  };
+
+  close = () => {
+    if (this.state.phase === 'closed' || this.state.phase === 'closing') return;
+    this.setState({ phase: 'closing' });
+    clearTimeout(this.t2);
+    this.t2 = setTimeout(() => {
+      this.setState({ phase: 'closed' });
+      if (this.triggerEl && typeof this.triggerEl.focus === 'function') this.triggerEl.focus();
+    }, (this.props.closeDur ?? 150) + 30);
+  };
+
+  replay = () => {
+    if (this.state.phase === 'open') {
+      this.close();
+      setTimeout(this.open, (this.props.closeDur ?? 150) + 120);
+    } else this.open();
+  };
+
+  pick = (key) => () => {
+    if (this.state.phase === 'open') {
+      this.close();
+      setTimeout(() => { this.setState({ variant: key }); this.open(); }, (this.props.closeDur ?? 150) + 100);
+    } else {
+      this.setState({ variant: key });
+      this.open();
+    }
+  };
+
+  renderVals() {
+    const { variant, phase } = this.state;
+    const v = VARIANTS.find(x => x.key === variant) || VARIANTS[0];
+    const reduced = this.props.reducedMotion ? ' reduced' : '';
+    const stateCls = phase === 'open' ? ' is-open' : phase === 'closing' ? ' is-closing' : '';
+    return {
+      rootRef: this.rootRef,
+      open: this.open, close: this.close, replay: this.replay,
+      variants: VARIANTS.map(x => ({
+        label: x.label,
+        cls: 'pill-tab' + (x.key === variant ? ' active' : ''),
+        select: this.pick(x.key)
+      })),
+      modalCls: 't-modal' + stateCls + reduced,
+      scrimCls: 't-scrim' + stateCls + reduced + (this.props.scrimBlur === false ? '' : ' blurred'),
+      activeClassSuffix: stateCls.replace(' ', '.') || '',
+      stateLabel: phase === 'mounted' ? 'opening' : phase,
+      timingLabel: 'open ' + (this.props.openDur ?? 250) + 'ms · close ' + (this.props.closeDur ?? 150) + 'ms · scale ' + (this.props.openScale ?? 0.96),
+      icon: v.icon, iconBg: v.iconBg, iconFg: v.iconFg, title: v.title, subtitle: v.subtitle,
+      isConfirm: variant === 'confirm', isDetail: variant === 'detail', isForm: variant === 'form',
+      isDanger: variant === 'danger', isSuccess: variant === 'success'
+    };
+  }
+}
+</script>
+</body>
+</html>

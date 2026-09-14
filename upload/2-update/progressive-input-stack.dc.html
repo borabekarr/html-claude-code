@@ -1,0 +1,370 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Progressive Input Stack" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+@keyframes pisEnterA { from { opacity: 0; transform: translateY(16px) scale(1.14); } to { opacity: 1; transform: none; } }
+@keyframes pisEnterB { from { opacity: 0; transform: translateY(16px) scale(1.14); } to { opacity: 1; transform: none; } }
+@keyframes pisRiseA { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes pisRiseB { from { opacity: 0; transform: translateY(10px); filter: blur(4px); } to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes pisShakeA { 12%,88%{transform:translateX(-3px)} 34%,66%{transform:translateX(5px)} 50%{transform:translateX(-5px)} 100%{transform:none} }
+@keyframes pisShakeB { 12%,88%{transform:translateX(-3px)} 34%,66%{transform:translateX(5px)} 50%{transform:translateX(-5px)} 100%{transform:none} }
+@keyframes pisPop { 0%{transform:scale(.7);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+.pis-input::placeholder { color: var(--fg4); font-weight: 600; }
+.pis-input:focus { outline: none; }
+.pis-input:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+.pis-pill { cursor: pointer; border: 1px solid var(--border-hairline); transition: background var(--duration-fast) var(--ease-fade), color var(--duration-fast) var(--ease-fade), transform var(--duration-fast) var(--ease-fade), box-shadow var(--duration-fast) var(--ease-fade); position: relative; }
+.pis-pill::after, .pis-ghost::after, .card-accent .btn-inverse::after, .pis-toggle-track::after, .pis-choice::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+.pis-ghost, .card-accent .btn-inverse, .pis-toggle-track, .pis-choice { position: relative; }
+.pis-pill:focus-visible, .pis-ghost:focus-visible, .pis-toggle-track:focus-visible, .pis-choice:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset);
+}
+@media (hover: hover) and (pointer: fine) {
+  .pis-pill:hover { transform: translateY(-1px); }
+  .pis-ghost:hover { background: var(--slate-200); }
+}
+a { color: var(--brand-primary-600); }
+a:hover { color: var(--brand-primary-700); }
+@media (prefers-reduced-motion: reduce) {
+  .pis-pill, .pis-ghost, .pis-toggle-track { transition: none !important; }
+  [style*="pisEnter"], [style*="pisRise"], [style*="pisShake"], [style*="pisPop"] { animation: none !important; }
+}
+</style>
+</helmet>
+
+<div style="min-height:100%;background:var(--bg-app);padding:48px 40px 64px;font-family:var(--font-display);display:flex;flex-direction:column;align-items:center;gap:32px">
+
+  <div style="width:100%;max-width:960px;display:flex;flex-direction:column;gap:10px">
+    <span class="micro-label">Deha · Component</span>
+    <h1 class="h1" style="margin:0">Progressive Input Stack</h1>
+    <p class="body" style="margin:0;max-width:56ch;text-wrap:pretty">One field at a time. Completed fields stay on screen as a receding stack, so context is never lost while the form stays a single row tall.</p>
+  </div>
+
+  <div style="width:100%;max-width:960px;display:flex;flex-wrap:wrap;gap:8px">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+      <button class="pis-pill" style="{{ v.pillStyle }}" onClick="{{ v.select }}">
+        <span class="material-icons" style="font-size:16px">{{ v.icon }}</span>
+        {{ v.label }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="width:100%;max-width:960px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start">
+
+    <div style="position:relative;border-radius:var(--radius-2xl);background:var(--shell-bg);background-image:var(--bg-section-grid);background-size:var(--bg-section-grid-size);padding:56px 40px;display:flex;justify-content:center">
+      <div style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:32px">
+
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span class="micro-label" style="color:var(--slate-600)">{{ variantLabel }}</span>
+          <span style="font-size:var(--type-body-sm);font-weight:700;color:var(--slate-600)">{{ progressText }}</span>
+        </div>
+
+        <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+          <div class="card-accent" style="padding:24px;display:flex;flex-direction:column;gap:14px;animation:pisPop var(--duration-200) var(--ease-out-soft) both">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="material-icons" style="font-size:22px">check_circle</span>
+              <span style="font-size:var(--type-h4);font-weight:800">{{ doneTitle }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ summary }}" as="row" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;gap:12px;font-size:var(--type-body-sm);font-weight:600;border-top:1px solid rgba(255,255,255,.25);padding-top:8px">
+                  <span style="opacity:.85">{{ row.label }}</span>
+                  <span style="font-weight:800;text-align:right">{{ row.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <button class="btn-inverse" style="align-self:flex-start;margin-top:4px;padding:8px 14px;font-size:var(--type-body-sm)" onClick="{{ reset }}">
+              <span class="material-icons" style="font-size:16px">refresh</span>
+              Run again
+            </button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isActive }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:28px">
+
+            <div style="position:relative;height:60px;width:100%">
+              <sc-for list="{{ cards }}" as="card" hint-placeholder-count="2">
+                <div style="{{ card.outerStyle }}">
+                 <div style="{{ card.shakeStyle }}">
+                  <div style="{{ card.innerStyle }}">
+                    <sc-if value="{{ card.isText }}" hint-placeholder-val="{{ true }}">
+                      <input class="pis-input" style="{{ card.inputStyle }}" value="{{ card.value }}" placeholder="{{ card.placeholder }}" onChange="{{ card.onInput }}" onKeyDown="{{ card.onKey }}" disabled="{{ card.locked }}" ref="{{ card.inputRef }}">
+                    </sc-if>
+                    <sc-if value="{{ card.isToggle }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;width:100%;align-items:center;gap:16px">
+                        <span style="flex:1;min-width:0;font-size:var(--type-h5);font-weight:700;color:var(--fg3)">{{ card.label }}</span>
+                        <button class="pis-toggle-track" style="{{ card.trackStyle }}" onClick="{{ card.onToggle }}" role="switch" aria-checked="{{ card.toggleValue }}">
+                          <span style="{{ card.knobStyle }}"></span>
+                        </button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ card.isChoice }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;width:100%;align-items:center;gap:8px;overflow:hidden">
+                        <sc-for list="{{ card.options }}" as="opt" hint-placeholder-count="3">
+                          <button class="pill pis-choice" style="{{ opt.style }}" onClick="{{ opt.pick }}">{{ opt.label }}</button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                 </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px">
+              <sc-if value="{{ canGoBack }}" hint-placeholder-val="{{ false }}">
+                <button class="pis-ghost" style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:none;border-radius:var(--radius-circle);background:var(--slate-200);color:var(--fg2);cursor:pointer;animation:pisPop var(--duration-150) var(--ease-out-native) both;transition:background var(--duration-fast) var(--ease-fade)" onClick="{{ back }}">
+                  <span class="material-icons" style="font-size:22px">arrow_back</span>
+                </button>
+              </sc-if>
+              <button class="btn-primary" style="{{ nextStyle }}" onClick="{{ next }}">
+                <span style="{{ nextInnerStyle }}">
+                  <sc-if value="{{ isLast }}" hint-placeholder-val="{{ false }}">
+                    <span class="material-icons" style="font-size:18px">check</span>
+                  </sc-if>
+                  {{ nextLabel }}
+                  <sc-if value="{{ notLast }}" hint-placeholder-val="{{ true }}">
+                    <span class="material-icons" style="font-size:18px">arrow_forward</span>
+                  </sc-if>
+                </span>
+              </button>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <div class="card-glass" style="padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--bg-card-solid)">
+      <span class="micro-label">State</span>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ stateRows }}" as="row" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <span style="font-size:var(--type-body-sm);font-weight:600;color:var(--fg3)">{{ row.label }}</span>
+            <span class="pill" style="{{ row.style }}">{{ row.value }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="height:1px;background:var(--border-hairline)"></div>
+      <span class="micro-label">Behaviour</span>
+      <p class="body" style="margin:0;font-size:var(--type-body-sm);line-height:var(--leading-relaxed)">Each committed field sinks 12px and scales down 5%, dimming to 50%. The active card enters at 1.14× and settles in 200ms. Empty required fields shake and block advance. Enter key advances.</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:760}}">
+const VARIANTS = [
+  { id: 'invite', label: 'Invite a friend', icon: 'person_add', done: 'Invite sent',
+    steps: [
+      { id: 'name', label: 'Name', type: 'text', placeholder: "Friend's name", required: true },
+      { id: 'email', label: 'Email', type: 'text', placeholder: "Friend's email", required: true },
+      { id: 'reminder', label: 'Send a reminder in 5 days', type: 'toggle' } ] },
+  { id: 'lead', label: 'Add a lead', icon: 'trending_up', done: 'Lead added to pipeline',
+    steps: [
+      { id: 'company', label: 'Company', type: 'text', placeholder: 'Company name', required: true },
+      { id: 'contact', label: 'Contact', type: 'text', placeholder: 'Primary contact', required: true },
+      { id: 'value', label: 'Deal value', type: 'text', placeholder: '$ Deal value' },
+      { id: 'priority', label: 'Priority', type: 'choice', options: ['Low', 'Medium', 'Hot'] } ] },
+  { id: 'task', label: 'Create a task', icon: 'task_alt', done: 'Task created',
+    steps: [
+      { id: 'title', label: 'Task', type: 'text', placeholder: 'What needs doing?', required: true },
+      { id: 'due', label: 'Due', type: 'choice', options: ['Today', 'Tomorrow', 'Next week'] },
+      { id: 'notify', label: 'Notify the team', type: 'toggle' } ] },
+  { id: 'demo', label: 'Book a demo', icon: 'event', done: 'Demo requested',
+    steps: [
+      { id: 'name', label: 'Name', type: 'text', placeholder: 'Your name', required: true },
+      { id: 'work', label: 'Work email', type: 'text', placeholder: 'you@company.com', required: true },
+      { id: 'size', label: 'Team size', type: 'choice', options: ['1–10', '11–50', '50+'] },
+      { id: 'notes', label: 'Notes', type: 'text', placeholder: 'Anything we should know?' },
+      { id: 'calendar', label: 'Add to my calendar', type: 'toggle' } ] },
+];
+
+/* nearest DS curve to the original bezier(.2,.9,.25,1) by Euclidean
+   distance over (x1,y1,x2,y2) is --ease-out-soft (bezier(.16,1,.3,1)),
+   distance ~0.119 -- kept as the token replacement (frontend-pass Step 21) */
+const EASE = 'var(--ease-out-soft)';
+const SPRING = `transform var(--duration-200) ${EASE}, opacity var(--duration-140) var(--ease-linear), box-shadow var(--duration-base) ${EASE}`;
+
+class Component extends DCLogic {
+  state = { vi: 0, step: 0, data: this.blank(0), done: false, error: 0, exiting: null, adv: 0 };
+  focusTop = () => { if (this._input) this._input.focus(); };
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._x); }
+
+  blank(vi) {
+    const d = {};
+    VARIANTS[vi].steps.forEach(s => {
+      d[s.id] = s.type === 'toggle' ? false : (s.type === 'choice' ? s.options[0] : '');
+    });
+    return d;
+  }
+  pick(vi) {
+    clearTimeout(this._x);
+    this.setState(s => ({ vi, step: 0, data: this.blank(vi), done: false, error: 0, exiting: null, adv: s.adv + 1 }), this.focusTop);
+  }
+  set(id, v) { this.setState(s => ({ data: { ...s.data, [id]: v } })); }
+  next() {
+    const v = VARIANTS[this.state.vi], st = v.steps[this.state.step];
+    if (st.required && !String(this.state.data[st.id] || '').trim()) {
+      this.setState(s => ({ error: s.error + 1 }));
+      clearTimeout(this._t); this._t = setTimeout(() => this.setState({ error: 0 }), 400);
+      return;
+    }
+    if (this.state.step < v.steps.length - 1) this.setState(s => ({ step: s.step + 1, error: 0, exiting: null, adv: s.adv + 1 }), this.focusTop);
+    else this.setState({ done: true });
+  }
+  back() {
+    if (this.state.step === 0) return;
+    clearTimeout(this._x);
+    this.setState(s => ({ step: s.step - 1, error: 0, exiting: s.step, adv: s.adv + 1 }), this.focusTop);
+    this._x = setTimeout(() => this.setState({ exiting: null }), 220);
+  }
+
+  renderVals() {
+    const { vi, step, data, done, error, exiting, adv } = this.state;
+    const v = VARIANTS[vi];
+    const steps = v.steps;
+    const cur = steps[step];
+
+    const variants = VARIANTS.map((x, i) => ({
+      label: x.label, icon: x.icon,
+      select: () => this.pick(i),
+      pillStyle: {
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '9px 16px', borderRadius: 'var(--radius-pill)',
+        fontFamily: 'var(--font-display)', fontSize: 'var(--type-body-sm)', fontWeight: 700,
+        background: i === vi ? 'var(--brand-primary)' : 'var(--bg-card-solid)',
+        color: i === vi ? '#fff' : 'var(--fg2)',
+        borderColor: i === vi ? 'transparent' : 'var(--border-hairline)',
+        boxShadow: i === vi ? 'var(--shadow-emerald-glow-sm)' : 'var(--shadow-glass-sm)',
+      },
+    }));
+
+    const last = exiting !== null ? Math.max(step, exiting) : step;
+    const cards = steps.slice(0, last + 1).map((s, i) => {
+      const isExiting = i === exiting && i > step;
+      const pos = step - i, isTop = i === step;
+      const val = data[s.id];
+      const off = isExiting
+        ? { transform: 'translateY(16px) scale(1.14)', opacity: 0 }
+        : { transform: `translateY(${-pos * 12}px) scale(${1 - pos * 0.05})`, opacity: pos === 0 ? 1 : Math.max(0.18, 0.5 - (pos - 1) * 0.14) };
+      return {
+        isText: s.type === 'text', isToggle: s.type === 'toggle', isChoice: s.type === 'choice',
+        isTop, locked: !isTop, label: s.label, placeholder: s.placeholder, value: s.type === 'text' ? val : '',
+        toggleValue: s.type === 'toggle' ? val : false,
+        inputRef: isTop && s.type === 'text' ? (el => { this._input = el; }) : null,
+        outerStyle: {
+          position: 'absolute', inset: 0,
+          transform: off.transform, opacity: off.opacity,
+          zIndex: isExiting ? 0 : steps.length - Math.max(pos, 0),
+          pointerEvents: isTop ? 'auto' : 'none',
+          transition: SPRING, willChange: 'transform, opacity',
+          animation: isTop && adv ? `${adv % 2 ? 'pisEnterA' : 'pisEnterB'} var(--duration-200) ${EASE} both` : 'none',
+        },
+        shakeStyle: {
+          height: '100%',
+          animation: isTop && error ? `${error % 2 ? 'pisShakeA' : 'pisShakeB'} var(--duration-240) var(--ease-shake)` : 'none',
+        },
+        innerStyle: {
+          display: 'flex', alignItems: 'center', height: 60, padding: '0 18px',
+          borderRadius: '22px',
+          background: 'var(--bg-card-solid)',
+          border: `1px solid ${isTop && error ? 'var(--semantic-danger)' : 'var(--border-hairline)'}`,
+          boxShadow: isTop ? 'var(--shadow-glass)' : 'var(--shadow-glass-sm)',
+          transition: `border-color var(--duration-fast) var(--ease-fade), box-shadow var(--duration-base) ${EASE}`,
+        },
+        inputStyle: {
+          width: '100%', border: 'none', background: 'transparent',
+          fontFamily: 'var(--font-display)', fontSize: 'var(--type-h5)', fontWeight: 700,
+          color: 'var(--fg1)', letterSpacing: 'var(--tracking-tight)',
+        },
+        onInput: e => this.set(s.id, e.target.value),
+        onKey: e => { if (e.key === 'Enter') this.next(); },
+        onToggle: () => this.set(s.id, !val),
+        trackStyle: {
+          position: 'relative', display: 'flex', alignItems: 'center', flexShrink: 0,
+          width: 48, height: 28, padding: 3, border: 'none', cursor: 'pointer',
+          borderRadius: 'var(--radius-circle)',
+          background: val ? 'var(--brand-primary)' : 'var(--slate-200)',
+          boxShadow: val ? 'var(--shadow-emerald-glow-sm)' : 'var(--shadow-recessed)',
+          transition: 'background var(--duration-140) var(--ease-fade), box-shadow var(--duration-140) var(--ease-fade)',
+        },
+        knobStyle: {
+          width: 22, height: 22, borderRadius: 'var(--radius-circle)', background: '#fff',
+          boxShadow: '0 1px 3px rgba(0,0,0,.25)',
+          transform: `translateX(${val ? 20 : 0}px)`,
+          transition: `transform var(--duration-180) ${EASE}`,
+        },
+        options: (s.options || []).map(o => ({
+          label: o,
+          pick: () => this.set(s.id, o),
+          style: {
+            cursor: 'pointer', border: 'none', padding: '7px 14px',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'var(--type-meta)',
+            background: val === o ? 'var(--brand-primary)' : 'var(--bg-chip)',
+            color: val === o ? '#fff' : 'var(--fg2)',
+            transition: 'background var(--duration-fast) var(--ease-fade), color var(--duration-fast) var(--ease-fade), transform var(--duration-fast) var(--ease-fade)',
+            transform: val === o ? 'scale(1.02)' : 'none',
+          },
+        })),
+      };
+    });
+
+    const isLast = step === steps.length - 1;
+    const filled = cur && (cur.type !== 'text' || String(data[cur.id] || '').trim().length > 0);
+
+    return {
+      variants, cards, variantLabel: v.label,
+      progressText: done ? 'Complete' : `Step ${step + 1} of ${steps.length}`,
+      isDone: done, isActive: !done, doneTitle: v.done,
+      canGoBack: step > 0, isLast, notLast: !isLast,
+      nextLabel: isLast ? 'Done' : 'Next',
+      nextStyle: {
+        marginLeft: 'auto', height: 48, padding: '0 22px', borderRadius: 'var(--radius-circle)',
+        opacity: cur && cur.required && !filled ? 0.55 : 1,
+        transition: 'opacity var(--duration-fast) var(--ease-fade), filter var(--duration-fast) var(--ease-fade), transform var(--duration-fast) var(--ease-fade)',
+      },
+      nextInnerStyle: {
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        animation: `${isLast ? 'pisRiseA' : 'pisRiseB'} var(--duration-150) var(--ease-out-native) both`,
+      },
+      next: () => this.next(),
+      back: () => this.back(),
+      reset: () => this.pick(vi),
+      summary: steps.map(s => ({
+        label: s.label,
+        value: s.type === 'toggle' ? (data[s.id] ? 'On' : 'Off') : (String(data[s.id] || '').trim() || '—'),
+      })),
+      stateRows: [
+        { label: 'Variant', value: v.label },
+        { label: 'Active step', value: done ? 'submitted' : cur.id },
+        { label: 'Stacked', value: `${step} behind` },
+        { label: 'Validity', value: error ? 'blocked' : (filled || done ? 'ready' : 'empty') },
+      ].map(r => ({ ...r, style: {
+        background: r.label === 'Validity' && error ? 'var(--semantic-danger-bg)' : 'var(--bg-chip)',
+        color: r.label === 'Validity' && error ? 'var(--semantic-danger)' : 'var(--fg2)',
+      } })),
+    };
+  }
+}
+</script>
+</body>
+</html>

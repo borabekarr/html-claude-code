@@ -1,0 +1,369 @@
+<!-- @dsCard group="Merge - cards" name="OfferBox" subtitle="-> Cards" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #0B0F17; }
+  :root { --gap-icon-text: 8px; }
+  @keyframes obRise { from { opacity: 0; transform: translateY(22px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes obSheet { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: none; } }
+  @keyframes obFlip { from { opacity: 0; transform: translateY(-65%); } to { opacity: 1; transform: none; } }
+  @keyframes obDrift { from { background-position: 0 0, 0 0; } to { background-position: 120px 120px, -120px 120px; } }
+  @keyframes obSweep { from { left: -180px; } to { left: 110%; } }
+  @keyframes obSpin { to { transform: rotate(360deg); } }
+  @keyframes obPop { 0% { transform: scale(0); } 60% { transform: scale(1.14); } 100% { transform: scale(1); } }
+  @keyframes obPulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+  .ob-rise { animation: obRise calc(var(--duration-entrance) * var(--anim-mult,1)) var(--ease-brand-entrance) both; } /* motion-sweep: kept -- doc comment: 600ms nearest to source 560ms; ease nearest to source .16,1.14,.3,1 */
+  .ob-sheet-in { animation: obSheet calc(var(--duration-entrance) * var(--anim-mult,1)) var(--ease-brand-entrance) both; } /* motion-sweep: kept -- doc comment: 600ms nearest to source 620ms; ease nearest to source .16,1.14,.3,1 */
+  .ob-grid { animation: obDrift calc(24000ms * var(--anim-mult,1)) linear infinite; } /* motion-sweep: kept -- 24s decorative background drift, no matching DS duration tier */
+  .ob-sweep { animation: obSweep calc(4200ms * var(--anim-mult,1)) linear infinite; } /* motion-sweep: kept -- 4.2s decorative sheen sweep, no matching DS duration tier */
+  .ob-digit { display: inline-block; animation: obFlip calc(var(--duration-slow) * var(--anim-mult,1)) var(--ease-out); } /* motion-sweep: kept -- doc comment: 220ms nearest to source 260ms; ease exact match */
+  .ob-spin { animation: obSpin calc(var(--duration-entrance) * var(--anim-mult,1)) linear infinite; } /* motion-sweep: kept -- doc comment: 600ms nearest DS tier to source 700ms spinner */
+  .ob-pop { animation: obPop calc(var(--duration-entrance) * var(--anim-mult,1)) var(--ease-brand-entrance) both; } /* motion-sweep: kept -- doc comment: 600ms nearest to source 560ms; ease nearest to source .16,1.5,.3,1 */
+  .ob-live { animation: obPulse calc(1500ms * var(--anim-mult,1)) var(--ease-in-out) infinite; } /* motion-sweep: kept -- 1.5s decorative live-badge pulse, no matching DS duration tier */
+  .ob-cta { transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-slow), filter var(--duration-slow); } /* motion-sweep: kept -- doc comment: 160/220/220ms nearest to source 180/220/200ms */
+</style>
+<style>
+@media (hover: hover) and (pointer: fine) {
+  .ob-cta:hover { transform: translateY(-2px); filter: brightness(1.04); }
+  .ob-x:hover { background: rgba(255,255,255,.26); transform: scale(1.08) rotate(90deg); }
+  .ob-tile:hover { transform: translateY(-3px); }
+}
+.ob-cta:active { transform: scale(.975); }
+.ob-x { transition: background var(--duration-base), transform var(--duration-fast) var(--ease-out); position: relative; } /* motion-sweep: kept -- doc comment: 160/120ms nearest to source 160/140ms */
+.ob-x::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); } /* 44px hit layer, visible box stays 34px */
+.ob-x:active { transform: scale(.9); }
+.ob-x:focus-visible { outline: 2px solid var(--brand-primary, #10B981); outline-offset: 2px; }
+.ob-tile { transition: transform var(--duration-slow) var(--ease-out), box-shadow var(--duration-slow); } /* motion-sweep: kept -- doc comment: 220ms nearest to source 260ms */
+@media (prefers-reduced-motion: reduce) {
+  .ob-rise, .ob-sheet-in, .ob-grid, .ob-sweep, .ob-digit, .ob-spin, .ob-pop, .ob-live,
+  .ob-cta, .ob-x, .ob-tile { animation: none !important; transition: none !important; }
+}
+</style>
+</helmet>
+
+<div style="min-height: 100%; box-sizing: border-box; padding: 34px 24px 56px; display: flex; flex-direction: column; align-items: center; gap: 26px; font-family: var(--font-display); background: #0B0F17; background-image: radial-gradient(120% 70% at 50% 0%, rgba(37,140,220,.14) 0%, transparent 60%);">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+    <span style="font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #64748B;">Deha DS · Offer Box</span>
+    <div class="pills-row" style="justify-content: center;">
+      <button type="button" class="pill-tab" onClick="{{ pickModal }}" style="{{ tabModal }}" data-om-tab="modal">Modal</button>
+      <button type="button" class="pill-tab" onClick="{{ pickBanner }}" style="{{ tabBanner }}">Inline banner</button>
+      <button type="button" class="pill-tab" onClick="{{ pickCompact }}" style="{{ tabCompact }}">Compact upsell</button>
+      <button type="button" class="pill-tab" onClick="{{ pickSheet }}" style="{{ tabSheet }}">Mobile sheet</button>
+      <button type="button" class="pill-tab" onClick="{{ pickGrid }}" style="{{ tabGrid }}">Plan grid</button>
+    </div>
+    <div class="pills-row" style="justify-content: center;">
+      <span class="pills-label" style="margin: 0 4px 0 0; align-self: center;">State</span>
+      <button type="button" class="pill-tab" onClick="{{ setIdle }}" style="{{ stIdle }}">Idle</button>
+      <button type="button" class="pill-tab" onClick="{{ setLoading }}" style="{{ stLoading }}">Loading</button>
+      <button type="button" class="pill-tab" onClick="{{ setClaimed }}" style="{{ stClaimed }}">Claimed</button>
+      <button type="button" class="pill-tab" onClick="{{ setExpired }}" style="{{ stExpired }}">Expired</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ MODAL ══════════════ -->
+  <sc-if value="{{ isModal }}" hint-placeholder-val="{{ true }}">
+    <div class="ob-rise" style="position: relative; width: 100%; max-width: 470px; border-radius: 30px; padding: 8px; background: #14161C; box-shadow: 0 40px 90px -28px rgba(0,0,0,.75), inset 0 0 0 1px rgba(255,255,255,.05);">
+      <div style="position: relative; border-radius: 24px; overflow: hidden; background: #05070B;">
+
+        <div style="position: relative; height: 240px; background: #0B1220;">
+          <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="offer-hero" placeholder="Drop the offer hero image or video still" shape="rect" hint-size="100%,240px"></x-import>
+          <button type="button" class="ob-x" onClick="{{ onClose }}" aria-label="Dismiss offer" style="position: absolute; top: 14px; right: 14px; z-index: 4; width: 34px; height: 34px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: #fff; background: rgba(255,255,255,.16); backdrop-filter: blur(8px);">
+            <span class="material-icons" style="font-size: 19px;">close</span>
+          </button>
+        </div>
+
+        <div style="position: relative; padding: 22px 22px 24px; background-color: #071A45; background-image: radial-gradient(120% 130% at 0% 0%, #2FA6E6 0%, #1A6FC4 26%, #0C3079 58%, #061436 100%);">
+          <div class="ob-grid" aria-hidden="true" style="position: absolute; inset: -30% -20%; pointer-events: none; opacity: .5; transform: perspective(520px) rotateX(58deg) rotate(45deg); background-image: linear-gradient(to right, rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.16) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(80% 80% at 50% 40%, #000 0%, transparent 78%); -webkit-mask-image: radial-gradient(80% 80% at 50% 40%, #000 0%, transparent 78%);"></div>
+          <div aria-hidden="true" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">
+            <div class="ob-sweep" style="position: absolute; top: 0; bottom: 0; left: -180px; width: 180px; transform: skewX(-16deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);"></div>
+          </div>
+
+          <div style="position: relative; display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: inline-flex; align-items: center; gap: 12px; align-self: flex-start; padding: 6px 16px 6px 6px; border-radius: 20px; background: rgba(4,7,12,.72); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+              <span style="display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 14px; font-size: 12.5px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.3); background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(100deg, #FF3FA4 0%, #F0439E 55%, #D93FB8 100%); background-size: 7px 7px, 7px 7px, cover; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(60,0,35,.25), inset 0 0 0 1px rgba(0,0,0,.08);"><span class="material-icons" style="font-size: 15px; margin-right: 5px;">timer</span>{{ pillLabel }}</span>
+              <span style="display: inline-flex; align-items: baseline; gap: 8px; color: #F8FAFC; font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums;">
+                <span><span class="ob-digit" key="{{ hh }}">{{ hh }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 12.5px; margin-left: 3px;">h</span></span>
+                <span><span class="ob-digit" key="{{ mm }}">{{ mm }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 12.5px; margin-left: 3px;">m</span></span>
+                <span><span class="ob-digit" key="{{ ss }}">{{ ss }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 12.5px; margin-left: 3px;">s</span></span>
+              </span>
+            </div>
+
+            <h2 style="margin: 0; font-size: 33px; line-height: 1.06; font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; text-wrap: balance;">
+              <span style="display: block; color: #7DD3FC;">{{ titleTop }}</span>
+              <span style="display: block; color: #FFFFFF;">{{ titleBottom }}</span>
+            </h2>
+
+            <p style="margin: 0; max-width: 40ch; color: #B4C6DE; font-size: 15px; font-weight: 500; line-height: 1.5; text-wrap: pretty;">{{ body }}</p>
+
+            <button type="button" class="btn-cta" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyle }}">{{ ctaContent }}</button>
+
+            <sc-if value="{{ isClaimed }}">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(4,7,12,.5); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+                <span class="ob-pop" style="width: 34px; height: 34px; border-radius: 9999px; display: grid; place-items: center; background: linear-gradient(160deg, #34D399, #10B981); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,40,30,.22);">
+                  <span class="material-icons" style="font-size: 20px; color: #fff;">check</span>
+                </span>
+                <span style="font-size: 13px; font-weight: 700; color: #D9E6F5;">Unlocked — 11 unlimited days added to your workspace.</span>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ INLINE BANNER ══════════════ -->
+  <sc-if value="{{ isBanner }}">
+    <div class="ob-rise" style="position: relative; width: 100%; max-width: 940px; overflow: hidden; border-radius: 24px; padding: 26px 28px; background-color: #071A45; background-image: radial-gradient(110% 190% at 0% 0%, #2FA6E6 0%, #1A6FC4 26%, #0C3079 58%, #061436 100%); box-shadow: 0 30px 70px -30px rgba(6,20,54,.9), inset 0 0 0 1px rgba(255,255,255,.07);">
+      <div class="ob-grid" aria-hidden="true" style="position: absolute; inset: -40% -20%; pointer-events: none; opacity: .45; transform: perspective(520px) rotateX(60deg) rotate(45deg); background-image: linear-gradient(to right, rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.16) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(70% 90% at 30% 40%, #000 0%, transparent 80%); -webkit-mask-image: radial-gradient(70% 90% at 30% 40%, #000 0%, transparent 80%);"></div>
+      <div style="position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 26px; align-items: center;">
+        <div style="display: flex; flex-direction: column; gap: 13px; min-width: 0;">
+          <div style="display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; padding: 5px 14px 5px 5px; border-radius: 18px; background: rgba(4,7,12,.7); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+            <span style="display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 13px; font-size: 11.5px; font-weight: 900; color: #fff; background-image: linear-gradient(100deg, #FF3FA4, #D93FB8); box-shadow: inset 0 1px 0 rgba(255,255,255,.45); display: inline-flex; align-items: center;"><span class="material-icons" style="font-size: 14px; margin-right: 5px;">timer</span>{{ pillLabel }}</span>
+            <span style="color: #F8FAFC; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums;"><span class="ob-digit" key="{{ hh }}">{{ hh }}</span>h {{ mm }}m {{ ss }}s</span>
+          </div>
+          <h2 style="margin: 0; font-size: 27px; line-height: 1.08; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em;">
+            <span style="color: #7DD3FC;">{{ titleTop }} </span><span style="color: #fff;">{{ titleBottom }}</span>
+          </h2>
+          <p style="margin: 0; max-width: 56ch; color: #B4C6DE; font-size: 14px; font-weight: 500; line-height: 1.5;">{{ body }}</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; align-items: stretch;">
+          <button type="button" class="btn-cta" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleSm }}">{{ ctaContent }}</button>
+          <button type="button" onClick="{{ onClose }}" style="border: none; background: transparent; color: #93A9C6; font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer; padding: 4px;">Not now</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ COMPACT UPSELL ══════════════ -->
+  <sc-if value="{{ isCompact }}">
+    <div class="ob-rise" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 300px)); gap: 20px; justify-content: center; width: 100%; max-width: 940px;">
+      <div class="ob-tile" style="position: relative; overflow: hidden; border-radius: 20px; padding: 18px; background-color: #071A45; background-image: radial-gradient(130% 130% at 0% 0%, #2FA6E6 0%, #1A6FC4 28%, #0C3079 60%, #061436 100%); box-shadow: 0 24px 50px -26px rgba(6,20,54,.9), inset 0 0 0 1px rgba(255,255,255,.07);">
+        <div class="ob-grid" aria-hidden="true" style="position: absolute; inset: -40%; pointer-events: none; opacity: .42; transform: perspective(420px) rotateX(60deg) rotate(45deg); background-image: linear-gradient(to right, rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.16) 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%); -webkit-mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%);"></div>
+        <div style="position: relative; display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 4px 11px 4px 4px; border-radius: 16px; background: rgba(4,7,12,.7);">
+            <span style="padding: 4px 9px; border-radius: 12px; font-size: 10.5px; font-weight: 900; color: #fff; background-image: linear-gradient(100deg, #FF3FA4, #D93FB8); display: inline-flex; align-items: center;"><span class="material-icons" style="font-size: 13px; margin-right: 5px;">timer</span>{{ pillLabel }}</span>
+            <span style="color: #F8FAFC; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums;">{{ hh }}h {{ mm }}m {{ ss }}s</span>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; line-height: 1.1; font-weight: 900; text-transform: uppercase; color: #fff;"><span style="color: #7DD3FC;">54% off</span> 11-day unlimited</h3>
+          <p style="margin: 0; color: #B4C6DE; font-size: 13px; font-weight: 500; line-height: 1.45;">Seedance 2.0 in 4K, then 7 extra days on 2.5.</p>
+          <button type="button" class="btn-cta" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleSm }}">{{ ctaContent }}</button>
+        </div>
+      </div>
+      <div class="ob-tile" style="position: relative; overflow: hidden; border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-card-solid, #1E293B); box-shadow: 0 24px 50px -30px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.07);">
+        <span class="badge tag" style="align-self: flex-start;"><span class="material-icons">sell</span> Compare</span>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 900; color: var(--fg1, #F1F5F9);">Standard plan</h3>
+        <p style="margin: 0; color: var(--fg3, #94A3B8); font-size: 13px; font-weight: 500; line-height: 1.45;">Unlimited 1080p renders, no 4K, no bonus days.</p>
+        <button type="button" class="btn-glass" style="margin-top: auto; justify-content: center;">Keep current plan</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ MOBILE SHEET ══════════════ -->
+  <sc-if value="{{ isSheet }}">
+    <div class="ob-rise" style="position: relative; width: 330px; height: 660px; border-radius: 52px; padding: 11px; background: linear-gradient(155deg, #2b313c 0%, #11141b 60%, #05070b 100%); box-shadow: 0 40px 90px -20px rgba(0,0,0,.7), inset 0 1px 1px rgba(255,255,255,.16);">
+      <div style="position: relative; width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: #0F172A;">
+        <div style="position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 104px; height: 26px; border-radius: 14px; background: #05070b; z-index: 6;"></div>
+        <div style="position: absolute; inset: 0; padding: 58px 18px 0; display: flex; flex-direction: column; gap: 12px; filter: blur(3px) saturate(.9);">
+          <div style="height: 22px; width: 60%; border-radius: 7px; background: rgba(255,255,255,.08);"></div>
+          <div style="height: 12px; width: 38%; border-radius: 6px; background: rgba(255,255,255,.06);"></div>
+          <div style="height: 86px; border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+          <div style="display: flex; gap: 12px;"><div style="flex: 1; height: 64px; border-radius: 16px; background: rgba(255,255,255,.05);"></div><div style="flex: 1; height: 64px; border-radius: 16px; background: rgba(255,255,255,.05);"></div></div>
+        </div>
+        <div style="position: absolute; inset: 0; background: rgba(4,7,11,.55); backdrop-filter: blur(2px);"></div>
+        <div class="ob-sheet-in" style="position: absolute; left: 0; right: 0; bottom: 0; overflow: hidden; border-radius: 34px 34px 42px 42px; padding: 14px 20px 26px; background-color: #071A45; background-image: radial-gradient(130% 110% at 0% 0%, #2FA6E6 0%, #1A6FC4 26%, #0C3079 58%, #061436 100%); box-shadow: 0 -22px 50px -10px rgba(4,7,11,.5);">
+          <div class="ob-grid" aria-hidden="true" style="position: absolute; inset: -40%; pointer-events: none; opacity: .45; transform: perspective(460px) rotateX(60deg) rotate(45deg); background-image: linear-gradient(to right, rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.16) 1px, transparent 1px); background-size: 52px 52px; mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%); -webkit-mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%);"></div>
+          <div style="position: relative; display: flex; flex-direction: column; gap: 14px; align-items: stretch;">
+            <div style="width: 42px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.28); align-self: center;"></div>
+            <div style="display: inline-flex; align-items: center; gap: 9px; align-self: flex-start; padding: 5px 12px 5px 5px; border-radius: 18px; background: rgba(4,7,12,.72);">
+              <span style="padding: 5px 10px; border-radius: 13px; font-size: 11px; font-weight: 900; color: #fff; background-image: linear-gradient(100deg, #FF3FA4, #D93FB8); display: inline-flex; align-items: center;"><span class="material-icons" style="font-size: 14px; margin-right: 5px;">timer</span>{{ pillLabel }}</span>
+              <span style="color: #F8FAFC; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums;">{{ hh }}h {{ mm }}m {{ ss }}s</span>
+            </div>
+            <h2 style="margin: 0; font-size: 26px; line-height: 1.08; font-weight: 900; text-transform: uppercase;">
+              <span style="display: block; color: #7DD3FC;">{{ titleTop }}</span>
+              <span style="display: block; color: #fff;">{{ titleBottom }}</span>
+            </h2>
+            <p style="margin: 0; color: #B4C6DE; font-size: 13.5px; font-weight: 500; line-height: 1.45;">{{ body }}</p>
+            <button type="button" class="btn-cta" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleSm }}">{{ ctaContent }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ PLAN GRID ══════════════ -->
+  <sc-if value="{{ isGrid }}">
+    <div class="ob-rise" style="width: 100%; max-width: 940px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+      <sc-for list="{{ plans }}" as="plan" hint-placeholder-count="3">
+        <div class="ob-tile" style="{{ plan.wrapStyle }}">
+          <div class="ob-grid" aria-hidden="true" style="{{ plan.gridStyle }}"></div>
+          <div style="position: relative; display: flex; flex-direction: column; gap: 10px; height: 100%;">
+            <span style="{{ plan.tagStyle }}"><span class="material-icons" style="font-size: 13px; margin-right: 5px;">{{ plan.icon }}</span>{{ plan.tag }}</span>
+            <h3 style="margin: 0; font-size: 19px; font-weight: 900; text-transform: uppercase; color: {{ plan.titleColor }};">{{ plan.name }}</h3>
+            <div style="display: flex; align-items: baseline; gap: 7px;">
+              <span style="font-size: 30px; font-weight: 900; letter-spacing: -.02em; color: {{ plan.titleColor }};">{{ plan.price }}</span>
+              <span style="font-size: 12.5px; font-weight: 700; color: {{ plan.metaColor }}; text-decoration: line-through;">{{ plan.was }}</span>
+            </div>
+            <p style="margin: 0; font-size: 13px; font-weight: 500; line-height: 1.45; color: {{ plan.metaColor }};">{{ plan.note }}</p>
+            <button type="button" class="btn-cta" onClick="{{ onCta }}" style="{{ plan.ctaStyle }}">{{ plan.cta }}</button>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pillLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Offer expires in&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;titleTop&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;11-day unlimited seedance&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;titleBottom&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Seedance 2.0 4K with 54% off&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;body&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Get 4 days of unlimited Seedance 2.0 in 4K, then get 7 extra unlimited days on Seedance 2.5&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { variant: 'modal', phase: 'idle', left: 42 * 60 + 25 };
+
+  componentDidMount() {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    this.timer = setInterval(() => {
+      if (this.state.phase === 'expired') return;
+      this.setState(s => {
+        const left = s.left - 1;
+        if (left <= 0) return { left: 0, phase: 'expired' };
+        return { left };
+      });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  pick(variant) { return () => this.setState({ variant }); }
+  setPhase(phase) {
+    return () => this.setState(phase === 'expired'
+      ? { phase, left: 0 }
+      : { phase, left: this.state.left > 0 ? this.state.left : 42 * 60 + 25 });
+  }
+
+  cta() {
+    if (this.state.phase !== 'idle') return;
+    this.setState({ phase: 'loading' });
+    clearTimeout(this.ctaT);
+    this.ctaT = setTimeout(() => this.setState({ phase: 'claimed' }), 1800);
+  }
+
+  tabStyle(on) {
+    return on
+      ? 'background: #1A6FC4; color: #fff; border-color: transparent; font-weight: 800; box-shadow: inset 0 -2px 5px rgba(0,0,0,.28), 0 4px 14px -4px rgba(26,111,196,.8); cursor: pointer;'
+      : 'background: #131A26; color: #94A3B8; border-color: #26303F; cursor: pointer;';
+  }
+
+  /* Deha .btn-cta, driven by its --accent / --ctaglow tokens. */
+  ctaBase(big) {
+    const p = this.state.phase;
+    const size = big ? 'height: 56px; font-size: 16.5px; padding: 0 26px;' : 'height: 46px; font-size: 14px; padding: 0 20px;';
+    const common = `width: 100%; box-sizing: border-box; ${size} font-weight: 900; letter-spacing: -.005em;`;
+    if (p === 'expired') {
+      return common + '--accent: rgba(4,7,12,.55); --ctaglow: rgba(0,0,0,0); color: #7D8FA8; text-shadow: none; cursor: not-allowed;';
+    }
+    if (p === 'claimed') {
+      return common + '--accent: #10B981; --ctaglow: rgba(16,185,129,.6); color: #04231A; text-shadow: none; cursor: default;';
+    }
+    return common + '--accent: #E4FF3A; --ctaglow: rgba(214,249,46,.6); color: #12200B; text-shadow: none;'
+      + (p === 'loading' ? ' filter: saturate(.9); cursor: progress;' : '');
+  }
+
+  ctaChildren() {
+    const p = this.state.phase;
+    const h = React.createElement;
+    const ic = (name, style) => h('span', { className: 'material-icons', style: Object.assign({ fontSize: 20 }, style) }, name);
+    if (p === 'loading') {
+      return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 11 } }, [
+        h('span', { key: 's', className: 'ob-spin', style: { width: 17, height: 17, borderRadius: 9999, border: '2.5px solid rgba(18,32,11,.25)', borderTopColor: '#12200B', display: 'inline-block' } }),
+        'Securing your discount',
+      ]);
+    }
+    if (p === 'claimed') {
+      return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 9 } }, [ic('check_circle', { key: 'i' }), 'Offer applied']);
+    }
+    if (p === 'expired') {
+      return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 9 } }, [ic('lock_clock', { key: 'i', fontSize: 19 }), 'Offer expired']);
+    }
+    return h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 9 } }, [ic('bolt', { key: 'i', fontSize: 20 }), 'Get 11-day unlimited with 54% OFF']);
+  }
+
+  planCard(accent) {
+    const on = accent === 'blue';
+    return {
+      wrapStyle: 'position: relative; overflow: hidden; border-radius: 20px; padding: 18px; box-shadow: 0 24px 50px -28px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.07); ' + (on
+        ? 'background-color: #071A45; background-image: radial-gradient(130% 130% at 0% 0%, #2FA6E6 0%, #1A6FC4 28%, #0C3079 60%, #061436 100%);'
+        : 'background: #151A24;'),
+      gridStyle: on
+        ? 'position: absolute; inset: -40%; pointer-events: none; opacity: .42; transform: perspective(420px) rotateX(60deg) rotate(45deg); background-image: linear-gradient(to right, rgba(255,255,255,.16) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.16) 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%); -webkit-mask-image: radial-gradient(75% 75% at 50% 40%, #000 0%, transparent 80%);'
+        : 'display: none;',
+      titleColor: on ? '#FFFFFF' : '#E2E8F0',
+      metaColor: on ? '#B4C6DE' : '#94A3B8',
+    };
+  }
+
+  renderVals() {
+    const { variant, phase, left } = this.state;
+    const pad = n => String(n).padStart(2, '0');
+    const hh = Math.floor(left / 3600);
+    const base = this.planCard('blue');
+    const alt = this.planCard('dark');
+    const plans = [
+      Object.assign({}, alt, { icon: 'schedule', tag: 'Starter', tagStyle: 'align-self: flex-start; display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 900; color: #94A3B8; background: rgba(255,255,255,.06);', name: '3-day pass', price: '$9', was: '$14', note: '1080p unlimited renders for 3 days.', cta: 'Choose starter', ctaStyle: 'width: 100%; box-sizing: border-box; margin-top: auto; --accent: rgba(255,255,255,.09); --ctaglow: rgba(0,0,0,0); color: #E2E8F0; text-shadow: none; height: 44px; font-size: 13.5px;' }),
+      Object.assign({}, base, { icon: 'local_fire_department', tag: 'Best value · 54% off', tagStyle: 'align-self: flex-start; display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 900; color: #fff; background-image: linear-gradient(100deg, #FF3FA4, #D93FB8);', name: '11-day unlimited', price: '$29', was: '$63', note: '4 days of 4K Seedance 2.0, then 7 days on 2.5.', cta: 'Get 54% off', ctaStyle: this.ctaBase(false) + 'margin-top: auto;' }),
+      Object.assign({}, alt, { icon: 'groups', tag: 'Team', tagStyle: 'align-self: flex-start; display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 900; color: #94A3B8; background: rgba(255,255,255,.06);', name: '30-day studio', price: '$79', was: '$120', note: '5 seats, 4K unlimited, priority queue.', cta: 'Choose studio', ctaStyle: 'width: 100%; box-sizing: border-box; margin-top: auto; --accent: rgba(255,255,255,.09); --ctaglow: rgba(0,0,0,0); color: #E2E8F0; text-shadow: none; height: 44px; font-size: 13.5px;' }),
+    ];
+
+    return {
+      hh: pad(hh), mm: pad(Math.floor((left % 3600) / 60)), ss: pad(left % 60),
+      pillLabel: phase === 'expired' ? 'Offer ended' : (this.props.pillLabel ?? 'Offer expires in'),
+      titleTop: this.props.titleTop ?? '11-day unlimited seedance',
+      titleBottom: this.props.titleBottom ?? 'Seedance 2.0 4K with 54% off',
+      body: this.props.body ?? 'Get 4 days of unlimited Seedance 2.0 in 4K, then get 7 extra unlimited days on Seedance 2.5',
+      isModal: variant === 'modal', isBanner: variant === 'banner', isCompact: variant === 'compact',
+      isSheet: variant === 'sheet', isGrid: variant === 'grid',
+      pickModal: this.pick('modal'), pickBanner: this.pick('banner'), pickCompact: this.pick('compact'),
+      pickSheet: this.pick('sheet'), pickGrid: this.pick('grid'),
+      tabModal: this.tabStyle(variant === 'modal'), tabBanner: this.tabStyle(variant === 'banner'),
+      tabCompact: this.tabStyle(variant === 'compact'), tabSheet: this.tabStyle(variant === 'sheet'),
+      tabGrid: this.tabStyle(variant === 'grid'),
+      setIdle: this.setPhase('idle'), setLoading: this.setPhase('loading'),
+      setClaimed: this.setPhase('claimed'), setExpired: this.setPhase('expired'),
+      stIdle: this.tabStyle(phase === 'idle'), stLoading: this.tabStyle(phase === 'loading'),
+      stClaimed: this.tabStyle(phase === 'claimed'), stExpired: this.tabStyle(phase === 'expired'),
+      isClaimed: phase === 'claimed',
+      ctaDisabled: phase !== 'idle',
+      ctaStyle: this.ctaBase(true), ctaStyleSm: this.ctaBase(false),
+      ctaContent: this.ctaChildren(),
+      onCta: () => this.cta(),
+      onClose: () => this.setPhase('expired')(),
+      plans,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

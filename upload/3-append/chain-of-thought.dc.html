@@ -1,0 +1,336 @@
+<!-- @dsCard group="Merge - ai-chat" name="Chain of Thought" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  html, body { margin: 0; background: #FFFFFF; font-family: 'Montserrat', system-ui, sans-serif; }
+  a { color: var(--brand-primary-600); text-decoration: none; }
+
+  /* header line — solid lead, shimmering tail while the model works */
+  .sot-head { font-size: 15px; font-weight: 600; letter-spacing: -.012em; line-height: 1.4;
+    color: var(--fg1); display: flex; flex-wrap: wrap; gap: 0 5px; align-items: baseline; }
+  .sot-caret { align-self: center; margin-left: 1px; display: grid; place-items: center;
+    width: 22px; height: 22px; border-radius: 7px; color: var(--fg4); flex-shrink: 0;
+    transition: transform calc(var(--duration-slower) * var(--anim-mult,1)) var(--ease-out); }
+  .sot-caret .material-icons { font-size: 17px; }
+  .sot-caret.is-open { transform: rotate(180deg); }
+  .sot-head-tail { color: var(--fg4); }
+  .sot-head.is-live .sot-head-tail {
+    background: linear-gradient(100deg, var(--fg4) 18%, var(--fg2) 40%, var(--fg4) 62%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text;
+    color: transparent; animation: sot-shimmer calc(var(--duration-2200) * var(--anim-mult,1)) var(--ease-linear) infinite; }
+  @keyframes sot-shimmer { to { background-position: -300% 0; } }
+
+  /* rail */
+  .sot-list { position: relative; display: flex; flex-direction: column; --bg-page: #FFFFFF; }
+  .sot-rail { position: absolute; left: 7px; top: 12px; bottom: 10px; width: 1.5px;
+    border-radius: 2px; background: var(--border-hairline); }
+  .sot-block { position: relative; display: grid; grid-template-columns: 15px 1fr; gap: 12px;
+    padding: 7px 0; animation: sot-in calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-out) both; }
+  @keyframes sot-in { from { opacity: 0; transform: translateY(8px); filter: blur(2px); } to { opacity: 1; transform: none; filter: blur(0); } }
+
+  .sot-mark { position: relative; z-index: 1; height: 21px; display: grid; place-items: center;
+    color: var(--fg4); }
+  .sot-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--slate-400, #94A3B8);
+    box-shadow: 0 0 0 4px #fff; }
+  .sot-mark .material-icons { font-size: 16px; background: #fff; border-radius: 50%; }
+  .sot-block.is-live .sot-dot { background: var(--brand-primary-500, #10B981);
+    animation: sot-pulse calc(var(--duration-1800) * var(--anim-mult,1)) var(--ease-out-native) infinite; }
+  @keyframes sot-pulse {
+    0% { box-shadow: 0 0 0 4px #fff, 0 0 0 0 rgba(16,185,129,.30); }
+    70%,100% { box-shadow: 0 0 0 4px #fff, 0 0 0 8px rgba(16,185,129,0); } }
+  .sot-block.is-error .sot-dot { background: var(--semantic-danger, #EF4444); }
+
+  .sot-text { font-size: 13.5px; font-weight: 500; line-height: 1.55; color: var(--fg2);
+    margin: 0; text-wrap: pretty; letter-spacing: -.004em; }
+  .sot-act { font-size: 13.5px; font-weight: 500; line-height: 1.5; color: var(--fg2);
+    padding-top: 1px; letter-spacing: -.004em; }
+  .sot-err { font-size: 13px; font-weight: 500; line-height: 1.5; color: var(--sem-danger-text, #B91C1C); }
+
+  /* source chips */
+  .sot-srcs { display: flex; flex-wrap: wrap; gap: 6px; padding: 1px 0; }
+  .sot-src { display: inline-flex; align-items: center; gap: 7px; padding: 4px 10px 4px 5px;
+    border-radius: 9999px; background: var(--bg-chip, #F1F5F9); color: var(--fg2);
+    font-size: 12px; font-weight: 500; letter-spacing: -.004em; text-decoration: none;
+    transition: background calc(var(--duration-180) * var(--anim-mult,1)) var(--ease-out); }
+  .sot-fav { width: 17px; height: 17px; border-radius: 50%; flex-shrink: 0; display: grid;
+    place-items: center; background: #fff; color: var(--fg3);
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,.08); }
+  .sot-fav .material-icons { font-size: 10px; }
+
+  /* fade-clipped viewport */
+  .sot-clip { display: grid; grid-template-rows: 0fr; opacity: 0;
+    transition: grid-template-rows calc(var(--duration-expand) * var(--anim-mult,1)) var(--ease-out),
+      opacity calc(var(--duration-slower) * var(--anim-mult,1)) var(--ease-out) calc(var(--duration-60) * var(--anim-mult,1)); }
+  .sot-clip > .sot-list { overflow: hidden; min-height: 0; }
+  .sot-clip.is-open { grid-template-rows: 1fr; opacity: 1; }
+  .sot-clip.is-open .sot-block { animation: sot-in calc(var(--duration-expand) * var(--anim-mult,1)) var(--ease-out) both; }
+  .sot-clip.is-open .sot-block:nth-child(2) { animation-delay: 40ms; /* motion-sweep: kept */ }
+  .sot-clip.is-open .sot-block:nth-child(3) { animation-delay: 90ms; /* motion-sweep: kept */ }
+  .sot-clip.is-open .sot-block:nth-child(4) { animation-delay: 140ms; /* motion-sweep: kept */ }
+  .sot-clip.is-open .sot-block:nth-child(5) { animation-delay: 190ms; /* motion-sweep: kept */ }
+  .sot-clip.is-open .sot-block:nth-child(6) { animation-delay: 240ms; /* motion-sweep: kept */ }
+  .sot-clip.is-open .sot-block:nth-child(n+7) { animation-delay: 290ms; /* motion-sweep: kept */ }
+
+  .sot-more { position: relative; display: inline-flex; align-items: center; gap: 5px; border: none; cursor: pointer;
+    background: transparent; padding: 0; font-family: 'Montserrat'; font-size: 12px;
+    font-weight: 600; color: var(--fg3); letter-spacing: -.004em; }
+  .sot-more::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .sot-more:focus-visible, .pill-tab:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .sot-more .material-icons { font-size: 15px; transition: transform calc(var(--duration-320) * var(--anim-mult,1)) var(--ease-out); }
+  .sot-more.is-open .material-icons { transform: rotate(180deg); }
+
+  .sot-meta { font-size: 12px; font-weight: 500; color: var(--fg4); letter-spacing: -.004em; }
+
+  html.dark .sot-list { --bg-page: #0B1120; }
+  html.dark .sot-dot { box-shadow: 0 0 0 4px var(--bg-page, #0B1120); }
+  html.dark .sot-mark .material-icons { background: transparent; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: var(--brand-primary-700); }
+    .sot-src:hover { background: var(--slate-200, #E2E8F0); color: var(--fg1); }
+    .sot-more:hover { color: var(--fg1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sot-block, .sot-dot, .sot-head-tail, .sot-clip, .sot-caret, .sot-src, .sot-more .material-icons { animation: none !important; transition: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; padding: 36px 28px 56px; display: flex; flex-direction: column; align-items: center; gap: 28px; background: #FFFFFF;">
+
+  <div style="width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 6px;">
+    <span class="label">Component</span>
+    <h1 class="h1" style="margin: 0;">Stream of Thought</h1>
+    <p class="body" style="margin: 4px 0 0; max-width: 540px; text-wrap: pretty;">Reasoning shown as it happens — a shimmering activity line, then the model's own prose on a thin rail, with tool calls and the sources they touched. Sits flush on the chat background; no card.</p>
+  </div>
+
+  <div style="width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 12px;">
+    <div class="pills-row">
+      <sc-for list="{{ pills }}" as="p" hint-placeholder-count="5">
+        <button class="pill-tab {{ p.cls }}" onClick="{{ p.onSelect }}" style="cursor: pointer; font-family: 'Montserrat';">{{ p.label }}</button>
+      </sc-for>
+    </div>
+    <span class="sot-meta">{{ note }}</span>
+  </div>
+
+  <div style="width: 100%; max-width: 600px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px;">
+
+    <div class="sot-head {{ liveCls }}" onClick="{{ toggle }}" style="cursor: pointer; user-select: none;">
+      <span>{{ headLead }}</span>
+      <span class="sot-head-tail">{{ headTail }}</span>
+      <span class="sot-caret {{ openCls }}"><span class="material-icons">expand_more</span></span>
+    </div>
+
+    <div class="sot-clip {{ clipCls }}">
+      <div class="sot-list">
+        <div class="sot-rail"></div>
+        <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="4">
+          <div class="sot-block {{ b.cls }}">
+            <div class="sot-mark">
+              <sc-if value="{{ b.isDot }}" hint-placeholder-val="{{ true }}">
+                <span class="sot-dot"></span>
+              </sc-if>
+              <sc-if value="{{ b.isIcon }}" hint-placeholder-val="{{ false }}">
+                <span class="material-icons">{{ b.icon }}</span>
+              </sc-if>
+            </div>
+            <div style="min-width: 0; display: flex; flex-direction: column; gap: 8px;">
+              <sc-if value="{{ b.isThought }}" hint-placeholder-val="{{ true }}">
+                <p class="sot-text">{{ b.text }}</p>
+              </sc-if>
+              <sc-if value="{{ b.isAction }}" hint-placeholder-val="{{ false }}">
+                <div class="sot-act">{{ b.text }}</div>
+              </sc-if>
+              <sc-if value="{{ b.hasSources }}" hint-placeholder-val="{{ false }}">
+                <div class="sot-srcs">
+                  <sc-for list="{{ b.sources }}" as="s" hint-placeholder-count="3">
+                    <span class="sot-src"><span class="sot-fav"><span class="material-icons">{{ s.icon }}</span></span>{{ s.label }}</span>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ b.hasError }}" hint-placeholder-val="{{ false }}">
+                <div class="sot-err">{{ b.error }}</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 14px; padding-top: 1px;">
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+        <button class="sot-more is-open" onClick="{{ toggle }}">
+          <span class="material-icons">expand_more</span> Hide all reasoning
+        </button>
+      </sc-if>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ false }}">
+        <span class="sot-meta">{{ footNote }}</span>
+      </sc-if>
+      <div style="flex: 1;"></div>
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <button class="sot-more" onClick="{{ retry }}"><span class="material-icons">refresh</span> Retry</button>
+      </sc-if>
+      <button class="sot-more" onClick="{{ replay }}"><span class="material-icons">restart_alt</span> Replay</button>
+    </div>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { variant: 'research', open: false, shown: 1 };
+
+  variants() {
+    return {
+      research: {
+        label: 'Deep research',
+        note: 'Long-running research: prose reasoning interleaved with tool calls and the sources each one touched.',
+        head: ['Searching whether hot dogs', 'are sandwiches...'],
+        done: 'Searched 3 sources · 12s',
+        blocks: [
+          { kind: 'thought', text: "I need to look at the research on whether a taco is considered a sandwich. This could involve things like dictionary definitions, legal cases, food classification, rulings, and potential tax regulations. Some past legal cases, like Panera vs. Qdoba and various tax definitions, might offer insight. I'll use web search to find up-to-date sources." },
+          { kind: 'action', icon: 'language', text: 'Conducting deep research on the taco-sandwich debate',
+            sources: [{ icon: 'account_balance', label: 'www.usda.gov' }, { icon: 'menu_book', label: 'www.merriam-webster.com' }, { icon: 'gavel', label: 'casetext.com' }] },
+          { kind: 'thought', text: "I need to double-check if the USDA really classifies burritos as sandwiches. The FSIS policy book has separate standards for sandwiches and burritos, so I'll make sure to refer to the correct source. The policy book used to be available online, but it's now archived, so I'll search for it." },
+          { kind: 'thought', text: "Merriam-Webster defines a sandwich as something with filling between two slices or a split roll, although some argue that tacos use tortillas, which aren't bread. I need to structure this analysis by considering definitions, legal cases, and cultural taxonomy. The outcome depends on the frame — a regulatory answer and a culinary answer will not agree." },
+          { kind: 'action', icon: 'description', text: 'Reading the archived FSIS Food Standards and Labeling Policy Book',
+            sources: [{ icon: 'account_balance', label: 'fsis.usda.gov' }] },
+          { kind: 'thought', text: "The policy book treats a burrito as a distinct product class rather than a sandwich, which undercuts the popular claim. I'll lead with the regulatory reading, then note where the culinary and legal framings diverge." }
+        ]
+      },
+      live: {
+        label: 'Live thinking',
+        note: 'Default in-thread state: the header shimmers while the newest thought streams in under an active dot.',
+        head: ['Working through the pipeline', 'question...'],
+        done: 'Thought for 8s',
+        stream: true,
+        blocks: [
+          { kind: 'thought', text: "The ask is quarterly pipeline health for the Istanbul team, so I should start from the open deals rather than closed revenue. Headcount changed this quarter, which means raw totals will mislead." },
+          { kind: 'action', icon: 'search', text: 'Querying 142 open deals across four stages' },
+          { kind: 'thought', text: "Two agents joined in July, so I'll normalise GCI per agent before comparing against Q2. Otherwise the growth reads as performance when some of it is just added capacity." },
+          { kind: 'action', icon: 'insights', text: 'Comparing normalised GCI against Q2' },
+          { kind: 'thought', text: "Three findings stand out: stage-two stall time, a concentration risk in one agent's book, and faster close times on referral leads. I'll rank them by revenue impact before writing the summary." }
+        ]
+      },
+      sources: {
+        label: 'Sources only',
+        note: 'Short verification runs where the value is which sources were consulted, not the prose.',
+        head: ['Checking the profiles for', 'Bhide Svelte...'],
+        done: 'Searched 6 sources · 4.1s',
+        blocks: [
+          { kind: 'action', icon: 'language', text: 'Searching for public profiles',
+            sources: [{ icon: 'alternate_email', label: 'x.com' }, { icon: 'photo_camera', label: 'instagram.com' }, { icon: 'code', label: 'github.com' }] },
+          { kind: 'thought', text: 'Same handle and avatar appear on all three profiles, so I am treating them as one person.' },
+          { kind: 'action', icon: 'language', text: 'Searching for recent work',
+            sources: [{ icon: 'code', label: 'github.com' }, { icon: 'brush', label: 'dribbble.com' }, { icon: 'article', label: 'svelte.dev/blog' }] }
+        ]
+      },
+      error: {
+        label: 'Tool failure',
+        note: 'A tool call fails: the rail stops at the failed step and the run can be retried in place.',
+        head: ['Comparing against last', "quarter's benchmark..."],
+        done: 'Stopped after 30s',
+        isError: true,
+        blocks: [
+          { kind: 'thought', text: 'Pipeline health for the Istanbul team, benchmarked against Q2. I need the benchmark service for the comparison baseline.' },
+          { kind: 'action', icon: 'search', text: 'Pulling 142 deal records' },
+          { kind: 'action', icon: 'cloud_off', text: 'Fetching the Q2 benchmark', error: 'Benchmark service timed out after 30s. Nothing was written.' }
+        ]
+      }
+    };
+  }
+
+  componentDidMount() { this.run(); }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  run() {
+    clearInterval(this.timer);
+    const v = this.variants()[this.state.variant];
+    if (!v.stream) { this.setState({ shown: v.blocks.length }); return; }
+    this.setState({ shown: 1 });
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        const n = v.blocks.length;
+        if (s.shown >= n) { clearInterval(this.timer); return { shown: n }; }
+        return { shown: s.shown + 1 };
+      });
+    }, 1900);
+  }
+
+  select(id) {
+    clearInterval(this.timer);
+    this.setState({ variant: id, open: false }, () => this.run());
+  }
+
+  renderVals() {
+    const all = this.variants();
+    const id = this.state.variant;
+    const v = all[id];
+    const streaming = !!v.stream && this.state.shown < v.blocks.length;
+    const errored = !!v.isError;
+
+    const blocks = v.blocks.slice(0, v.stream ? this.state.shown : v.blocks.length).map((b, i, arr) => {
+      const isAction = b.kind === 'action';
+      const live = streaming && i === arr.length - 1;
+      const hasError = !!b.error;
+      return {
+        cls: hasError ? 'is-error' : (live ? 'is-live' : ''),
+        isDot: !isAction || hasError,
+        isIcon: isAction && !hasError,
+        icon: b.icon || 'language',
+        isThought: !isAction,
+        isAction,
+        text: b.text,
+        hasSources: !!b.sources,
+        sources: b.sources || [],
+        hasError,
+        error: b.error || ''
+      };
+    });
+
+    const pills = Object.keys(all).map(k => ({
+      label: all[k].label,
+      cls: k === id ? 'active' : '',
+      onSelect: () => this.select(k)
+    }));
+
+    return {
+      pills,
+      note: v.note,
+      headLead: v.head[0],
+      headTail: v.head[1],
+      liveCls: streaming ? 'is-live' : '',
+      blocks,
+      clipCls: this.state.open ? 'is-open' : 'is-shut',
+      open: this.state.open,
+      openCls: this.state.open ? 'is-open' : '',
+      footNote: streaming ? 'Thinking…' : v.done,
+      isError: errored,
+      toggle: () => this.setState(s => ({ open: !s.open })),
+      replay: () => this.select(id),
+      retry: () => this.select(id)
+    };
+  }
+}
+</script>
+</body>
+</html>

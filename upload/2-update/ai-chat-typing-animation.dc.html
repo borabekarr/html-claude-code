@@ -1,0 +1,357 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Typing Animation" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #F8FAFC; }
+  @keyframes tanBlink { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+  @keyframes tanRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes tanDots { 0%,80%,100% { transform: translateY(0); opacity:.4; } 40% { transform: translateY(-4px); opacity:1; } }
+  @keyframes tanPanel { from { opacity: 0; transform: translateY(10px) scale(.995); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .pills-seg button { position: relative; }
+  .pills-seg button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .pills-seg button:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  @media (prefers-reduced-motion: reduce) {
+    [style*="tanBlink"], [style*="tanRise"], [style*="tanDots"], [style*="tanPanel"] { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } /* motion-sweep: kept */
+  }
+</style>
+</helmet>
+
+<div style="min-height:100%; padding:40px 28px 56px; font-family:'Montserrat',sans-serif; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%);">
+  <div style="max-width:860px; margin:0 auto; display:flex; flex-direction:column; gap:22px;">
+
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <span class="micro-label">Deha · Components</span>
+        <h1 class="h1" style="margin:0;">AI Typing Animation</h1>
+        <p class="body" style="margin:0; max-width:52ch; color:#64748B;">Character-by-character reveal for streamed AI output. One engine, six surfaces — switch with the pills.</p>
+      </div>
+      <span class="badge gci" style="margin-top:26px;">
+        <span class="material-icons" style="font-size:14px;">bolt</span>
+        v1.0
+      </span>
+    </div>
+
+    <div class="pills-row" role="tablist">
+      <button class="pill-tab {{ tabChat }}" onClick="{{ goChat }}" type="button">Chat reply</button>
+      <button class="pill-tab {{ tabHero }}" onClick="{{ goHero }}" type="button">Hero headline</button>
+      <button class="pill-tab {{ tabInline }}" onClick="{{ goInline }}" type="button">Inline suggestion</button>
+      <button class="pill-tab {{ tabStatus }}" onClick="{{ goStatus }}" type="button">Agent status</button>
+      <button class="pill-tab {{ tabTerm }}" onClick="{{ goTerm }}" type="button">Terminal</button>
+      <button class="pill-tab {{ tabSum }}" onClick="{{ goSum }}" type="button">Summary card</button>
+    </div>
+
+    <div>
+      <div style="min-height:240px; display:flex; flex-direction:column; justify-content:center; padding:4px 0;">
+
+        <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; gap:12px; align-items:flex-start; animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <div style="width:34px; height:34px; border-radius:50%; flex-shrink:0; background:#10B981; display:grid; place-items:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22), 0 6px 18px -8px rgba(16,185,129,.8);">
+              <span class="material-icons" style="font-size:18px; color:#fff;">auto_awesome</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px; flex:1;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:13px; font-weight:800; color:#0F172A;">Deha Assistant</span>
+                <span class="badge tag">Pipeline</span>
+              </div>
+              <sc-if value="{{ showThinking }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; align-items:center; gap:5px; height:20px;">
+                  <span style="width:6px; height:6px; border-radius:50%; background:#94A3B8; animation:tanDots 1.1s ease-in-out infinite;"></span>
+                  <span style="width:6px; height:6px; border-radius:50%; background:#94A3B8; animation:tanDots 1.1s ease-in-out .15s infinite;"></span>
+                  <span style="width:6px; height:6px; border-radius:50%; background:#94A3B8; animation:tanDots 1.1s ease-in-out .3s infinite;"></span>
+                </div>
+              </sc-if>
+              <p style="margin:0; font-size:15px; line-height:1.55; font-weight:500; color:#334155; text-wrap:pretty;">{{ out0 }}<sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:15px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></p>
+              <p style="margin:0; font-size:15px; line-height:1.55; font-weight:500; color:#334155; text-wrap:pretty;">{{ out1 }}<sc-if value="{{ caret1 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:15px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></p>
+              <sc-if value="{{ tagsIn }}" hint-placeholder-val="{{ false }}">
+                <div class="pills-row" style="animation:tanRise var(--duration-400) var(--ease-bounce-glow) both;">
+                  <span class="badge time"><span class="material-icons">schedule</span>6 days idle</span>
+                  <span class="badge gci">$42K GCI</span>
+                  <span class="badge tag"><span class="material-icons">place</span>Oakwood</span>
+                </div>
+                <div style="display:flex; gap:8px; margin-top:2px; animation:tanRise var(--duration-400) var(--ease-bounce-glow) .08s both;">
+                  <button class="mb-ai-btn" type="button"><span class="material-icons mb-gradient-icon">edit_note</span><span class="mb-gradient-text">Draft follow-up</span></button>
+                  <button class="mb-btn" type="button"><span class="material-icons">call</span>Call Marcus</button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isHero }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center; padding:12px 8px; animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <span class="micro-label">Deha for teams</span>
+            <h2 style="margin:10px 0 0; font-size:38px; font-weight:900; letter-spacing:-0.02em; line-height:1.15; color:#0F172A;">AI that handles<br>
+              <span class="mb-gradient-text">{{ out0 }}</span><sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:3px; height:34px; margin-left:3px; vertical-align:-5px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if>
+            </h2>
+            <p class="body" style="margin:14px auto 0; max-width:40ch; color:#64748B;">Every lead followed up, every note written, every deal moved forward.</p>
+            <button class="btn-primary" style="margin-top:20px;" type="button">Start free trial</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isInline }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:12px; animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <span class="micro-label">Compose · smart completion</span>
+            <div class="card-inner" style="padding:16px 16px 12px;">
+              <p style="margin:0; font-size:15px; line-height:1.55; font-weight:500; color:#0F172A;">Send Marcus a follow-up about <span style="color:#94A3B8; font-weight:500;">{{ out0 }}</span><sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:15px; margin-left:1px; vertical-align:-2px; background:#0F172A; animation:tanBlink 1s step-end infinite;"></span></sc-if></p>
+              <div class="mb-toolbar" style="margin-top:16px;">
+                <div class="mb-tools-left">
+                  <span class="badge tag"><span class="material-icons">auto_awesome</span>Suggested</span>
+                </div>
+                <div class="mb-tools-right">
+                  <sc-if value="{{ tagsIn }}" hint-placeholder-val="{{ false }}">
+                    <span class="hint" style="animation:tanRise .35s ease both;"><kbd>Tab</kbd> to accept</span>
+                  </sc-if>
+                  <button class="mb-send" type="button"><span class="material-icons">arrow_upward</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isStatus }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:14px; animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="material-icons mb-gradient-icon">motion_photos_on</span>
+              <span class="mb-gradient-text" style="font-size:13px; font-weight:800;">Agent working</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#334155;">
+                <span class="material-icons" style="font-size:16px; color:#10B981;">check_circle</span>
+                <span>{{ out0 }}<sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:14px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#334155;">
+                <span class="material-icons" style="font-size:16px; color:#10B981;">check_circle</span>
+                <span>{{ out1 }}<sc-if value="{{ caret1 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:14px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; color:#334155;">
+                <span class="material-icons" style="font-size:16px; color:#94A3B8;">radio_button_unchecked</span>
+                <span>{{ out2 }}<sc-if value="{{ caret2 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:14px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></span>
+              </div>
+            </div>
+            <sc-if value="{{ tagsIn }}" hint-placeholder-val="{{ false }}">
+              <div class="pills-row" style="animation:tanRise var(--duration-400) var(--ease-bounce-glow) both;">
+                <span class="badge success"><span class="material-icons">done_all</span>3 tasks queued</span>
+                <span class="badge tag">12.4s</span>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTerm }}" hint-placeholder-val="{{ false }}">
+          <div style="animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <div style="background:#0F172A; border-radius:16px; padding:18px 18px 20px; box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 0 1px rgba(255,255,255,.05);">
+              <div style="display:flex; align-items:center; gap:7px; margin-bottom:14px;">
+                <span style="width:9px; height:9px; border-radius:50%; background:#EF4444;"></span>
+                <span style="width:9px; height:9px; border-radius:50%; background:#FACC15;"></span>
+                <span style="width:9px; height:9px; border-radius:50%; background:#10B981;"></span>
+                <span style="margin-left:8px; font-size:11px; font-weight:700; color:#64748B; letter-spacing:.06em;">deha-cli</span>
+              </div>
+              <div style="font-family:'JetBrains Mono',ui-monospace,monospace; font-size:13px; line-height:1.7; color:#CBD5E1;">
+                <div><span style="color:#10B981;">$ </span>{{ out0 }}<sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:7px; height:14px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></div>
+                <div style="color:#94A3B8;">{{ out1 }}<sc-if value="{{ caret1 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:7px; height:14px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></div>
+                <div style="color:#6EE7B7;">{{ out2 }}<sc-if value="{{ caret2 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:7px; height:14px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSum }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:12px; animation:tanPanel var(--duration-380) var(--ease-out) both;">
+            <span class="micro-label">Daily digest · generated</span>
+            <div class="card-inner">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <span class="card-name">Tuesday, pipeline summary</span>
+                <span class="badge success"><span class="material-icons">auto_awesome</span>AI</span>
+              </div>
+              <p style="margin:10px 0 0; font-size:13.5px; line-height:1.6; font-weight:500; color:#475569; text-wrap:pretty;">{{ out0 }}<sc-if value="{{ caret0 }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block; width:2px; height:14px; margin-left:2px; vertical-align:-2px; background:#10B981; animation:tanBlink 1s step-end infinite;"></span></sc-if></p>
+              <sc-if value="{{ tagsIn }}" hint-placeholder-val="{{ false }}">
+                <div class="pills-row" style="margin-top:14px; animation:tanRise var(--duration-400) var(--ease-bounce-glow) both;">
+                  <span class="badge col-tag progress"><span class="material-icons">trending_up</span>Warm<span class="count">7</span></span>
+                  <span class="badge col-tag done"><span class="material-icons">check</span>Closed<span class="count">2</span></span>
+                  <span class="badge tag">Updated 9:02</span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="pill-priority">
+          <span class="dot" style="background:{{ stateDot }};"></span>
+          {{ stateLabel }}
+        </span>
+        <span class="pills-label" style="margin:0;">{{ progressLabel }}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="pills-seg">
+          <span class="pills-seg-pill" style="{{ segStyle }}"></span>
+          <button class="{{ segHalf }}" onClick="{{ setHalf }}" type="button" style="width:60px; padding:8px 0;">0.5×</button>
+          <button class="{{ segOne }}" onClick="{{ setOne }}" type="button" style="width:60px; padding:8px 0;">1×</button>
+          <button class="{{ segTwo }}" onClick="{{ setTwo }}" type="button" style="width:60px; padding:8px 0;">2×</button>
+        </div>
+        <button class="mb-btn" onClick="{{ toggleCursor }}" type="button"><span class="material-icons">text_fields</span>{{ cursorLabel }}</button>
+        <button class="mb-btn" onClick="{{ replay }}" type="button"><span class="material-icons">replay</span>Replay</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:940,&quot;height&quot;:700},&quot;startVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;chat&quot;,&quot;hero&quot;,&quot;inline&quot;,&quot;status&quot;,&quot;term&quot;,&quot;sum&quot;],&quot;default&quot;:&quot;chat&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showCursor&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;speed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.5,&quot;max&quot;:2,&quot;step&quot;:0.5,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;}}">
+const VARIANTS = {
+  chat: { thinking: 900, lines: [
+    "Reviewing the 14 active leads in your pipeline\u2026",
+    "Marcus Webb has gone quiet for six days and carries the highest GCI at risk. I'd send a walkthrough recap today."
+  ], tags: true },
+  hero: { rotate: ["your pipeline.", "every follow-up.", "the busywork.", "closing day."] },
+  inline: { lines: ["the Oakwood listing walkthrough on Thursday"], tags: true },
+  status: { lines: [
+    "Pulled 14 leads from the CRM",
+    "Scored follow-up urgency",
+    "Drafting three outreach messages"
+  ], tags: true },
+  term: { lines: [
+    "deha pipeline sync --since 24h",
+    "\u2192 14 leads updated, 3 flagged idle",
+    "\u2713 sync complete in 12.4s"
+  ] },
+  sum: { lines: [
+    "Nine leads moved forward today. Two closed at $86K combined GCI, and three need a follow-up before Friday. Oakwood remains your strongest source."
+  ], tags: true }
+};
+
+const PER = 26, GAP = 420, HOLD = 1400, TAIL = 220;
+
+function derive(c, e) {
+  const out = ['', '', ''];
+  if (c.rotate) {
+    let total = 0;
+    const segs = c.rotate.map(w => {
+      const type = w.length * PER, del = type / 2;
+      const seg = { w: w, type: type, hold: HOLD, del: del, tail: TAIL, len: type + HOLD + del + TAIL, at: total };
+      total += seg.len;
+      return seg;
+    });
+    let t = e % total;
+    for (const s of segs) {
+      if (t >= s.len) { t -= s.len; continue; }
+      if (t < s.type) out[0] = s.w.slice(0, Math.floor(t / PER));
+      else if (t < s.type + s.hold) out[0] = s.w;
+      else if (t < s.type + s.hold + s.del) out[0] = s.w.slice(0, Math.max(0, Math.ceil(s.w.length * (1 - (t - s.type - s.hold) / s.del))));
+      else out[0] = '';
+      break;
+    }
+    return { out: out, li: 0, phase: 'typing', thinking: false };
+  }
+  let t = e - (c.thinking || 0);
+  if (t < 0) return { out: out, li: 0, phase: 'typing', thinking: true };
+  const n = c.lines.length;
+  for (let i = 0; i < n; i++) {
+    const full = c.lines[i], dur = full.length * PER;
+    if (t < dur) { out[i] = full.slice(0, Math.floor(t / PER)); return { out: out, li: i, phase: 'typing', thinking: false }; }
+    out[i] = full;
+    t -= dur;
+    if (i < n - 1) {
+      if (t < GAP) return { out: out, li: i + 1, phase: 'typing', thinking: false };
+      t -= GAP;
+    }
+  }
+  return { out: out, li: n - 1, phase: 'done', thinking: false };
+}
+
+class Component extends DCLogic {
+  state = { v: 'chat', sp: 1, cur: true, e: 0 };
+
+  pump() {
+    const now = Date.now();
+    const dt = Math.min(1500, now - this.last);
+    if (dt < 20) return;
+    this.last = now;
+    const st = this.state;
+    if (derive(VARIANTS[st.v], this.e).phase === 'done' && !VARIANTS[st.v].rotate) return;
+    this.e += dt * (this.props.speed || st.sp);
+    this.setState({ e: this.e });
+  }
+  arm() {
+    if (this.armed) return;
+    this.armed = true;
+    this.e = this.state.e || 0;
+    this.last = Date.now();
+    const loop = () => { this.raf = requestAnimationFrame(loop); this.pump(); };
+    this.raf = requestAnimationFrame(loop);
+    this.timer = setInterval(() => this.pump(), 80);
+  }
+  componentDidMount() {
+    const v = this.props.startVariant;
+    if (v && VARIANTS[v] && v !== this.state.v) this.restart(v);
+    this.arm();
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); clearInterval(this.timer); this.armed = false; }
+
+  restart(v) { this.e = 0; this.last = Date.now(); this.setState({ v: v, e: 0 }); }
+  go(v) { return () => { if (v !== this.state.v) this.restart(v); }; }
+  tab(v) { return this.state.v === v ? 'pill-tab active' : 'pill-tab'; }
+  seg(n) { return this.state.sp === n ? 'active' : ''; }
+
+  renderVals() {
+    this.arm();
+    const s = this.state, c = VARIANTS[s.v];
+    const d = derive(c, s.e);
+    const cursorOn = this.props.showCursor ?? s.cur;
+    const caret = (i) => cursorOn && d.phase === 'typing' && !d.thinking && d.li === i;
+    const total = c.rotate ? 1 : c.lines.length;
+    return {
+      isChat: s.v === 'chat', isHero: s.v === 'hero', isInline: s.v === 'inline',
+      isStatus: s.v === 'status', isTerm: s.v === 'term', isSum: s.v === 'sum',
+      tabChat: this.tab('chat'), tabHero: this.tab('hero'), tabInline: this.tab('inline'),
+      tabStatus: this.tab('status'), tabTerm: this.tab('term'), tabSum: this.tab('sum'),
+      out0: d.out[0], out1: d.out[1], out2: d.out[2],
+      caret0: caret(0), caret1: caret(1), caret2: caret(2),
+      showThinking: d.thinking,
+      tagsIn: !!c.tags && d.phase === 'done',
+      mbState: d.phase === 'typing' && !c.rotate ? 'generating' : '',
+      stateLabel: d.thinking ? 'Thinking' : (d.phase === 'typing' ? 'Typing' : 'Done'),
+      stateDot: d.phase === 'done' ? '#10B981' : (d.thinking ? '#94A3B8' : '#EAB308'),
+      progressLabel: c.rotate ? 'Looping · ' + c.rotate.length + ' phrases' : Math.min(d.li + 1, total) + ' / ' + total + ' lines',
+      segHalf: this.seg(0.5), segOne: this.seg(1), segTwo: this.seg(2),
+      segStyle: { left: (3 + 60 * (s.sp === 0.5 ? 0 : s.sp === 1 ? 1 : 2)) + 'px', width: '60px' },
+      setHalf: () => this.setState({ sp: 0.5 }), setOne: () => this.setState({ sp: 1 }), setTwo: () => this.setState({ sp: 2 }),
+      cursorLabel: cursorOn ? 'Cursor on' : 'Cursor off',
+      toggleCursor: () => this.setState({ cur: !s.cur }),
+      replay: () => this.restart(s.v),
+      goChat: this.go('chat'), goHero: this.go('hero'), goInline: this.go('inline'),
+      goStatus: this.go('status'), goTerm: this.go('term'), goSum: this.go('sum')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

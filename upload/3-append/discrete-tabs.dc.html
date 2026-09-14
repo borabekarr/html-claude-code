@@ -1,0 +1,191 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Discrete Tabs" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  body { margin: 0; background: #F1F5F9; font-family: 'Montserrat', system-ui, sans-serif; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes dtShine { from { background-position: 0 0; } to { background-position: 520px 0; } }
+  @keyframes dtPanel { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<style>
+  /* discrete-tabs-v2 component-region rules (plan: claude-design-frontend-pass Step 11).
+     --dt-ease maps to the nearest DS ease token (--ease-confetti); the tab
+     capsule's one remaining local value is the width-expand duration
+     (--dt-duration-520, motion-sweep: kept), which has no matching _ds tier
+     and is single-component so it is not promoted to _ds/. */
+  .dt-page { min-height: 100%; padding: var(--space-10) var(--space-6) 72px; display: flex; flex-direction: column; align-items: center; gap: var(--space-8); background: #F1F5F9; font-family: 'Montserrat', system-ui, sans-serif; }
+  .dt-eyebrow { font-size: var(--type-mini); font-weight: var(--weight-bold); text-transform: uppercase; letter-spacing: 0.12em; color: #94A3B8; font-family: 'Montserrat', system-ui, sans-serif; }
+  .dt-hero { width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: var(--space-3); }
+  .dt-shell-inner { background: #FFFFFF; border-radius: var(--radius-xl); padding: var(--space-5) var(--space-5) 24px; display: flex; flex-direction: column; align-items: center; gap: var(--space-5); }
+  .dt-tabs-row { display: flex; align-items: center; gap: var(--space-2); min-height: 64px; }
+  .dt-tab {
+    --dt-ease: var(--ease-confetti); /* nearest DS ease token to the tab capsule's original curve (see token-map.md); distance 0.38 across all 44 _ds ease tokens, closest match */
+    --dt-duration-520: 520ms; /* motion-sweep: kept -- component-local, no _ds tier match */
+    height: 48px; min-width: 48px; padding: 0; border-radius: var(--radius-circle); display: flex; align-items: center; cursor: pointer; font-family: 'Montserrat', sans-serif;
+    transition: background var(--duration-420) var(--dt-ease), border-color var(--duration-420) var(--dt-ease), color var(--duration-420) var(--dt-ease), box-shadow var(--duration-420) var(--dt-ease), padding var(--duration-480) var(--dt-ease), transform var(--duration-slow) var(--dt-ease);
+  }
+  .dt-tab:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-tab:hover { transform: translateY(-2px); }
+  }
+  .dt-tab:active { transform: scale(0.97); }
+  .dt-tab-icon { font-size: 22px; width: 48px; flex: none; display: grid; place-items: center; transition: color var(--duration-420) var(--dt-ease); }
+  .dt-tab-label-wrap { display: flex; overflow: hidden; transition: width var(--dt-duration-520) var(--dt-ease); }
+  .dt-tab-label { flex: none; overflow: hidden; white-space: nowrap; font-size: var(--type-body); font-weight: var(--weight-extrabold); letter-spacing: -0.01em; padding-right: var(--space-4); background-size: 520px 100%; background-repeat: repeat-x; -webkit-background-clip: text; background-clip: text; transition: opacity var(--duration-slower) var(--dt-ease); }
+  .dt-panel {
+    width: 100%; border-radius: var(--radius-md); border: 1px solid #E2E8F0; background: #F8FAFC; padding: var(--space-5); min-height: 176px; box-sizing: border-box; display: flex; flex-direction: column; gap: var(--space-3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+    transition: background var(--duration-320) var(--ease-standard), border-color var(--duration-320) var(--ease-standard);
+  }
+  /* Direction-aware switching: the panel slides in from the side the newly-selected
+     tab was on relative to the previous tab, one duration tier faster than the tab's
+     own expand transition (enter-only; there is no separate panel "exit" state). */
+  .dt-panel[data-dir="right"] { animation: dtPanelSlideRight var(--duration-320) var(--ease-standard) both; }
+  .dt-panel[data-dir="left"] { animation: dtPanelSlideLeft var(--duration-320) var(--ease-standard) both; }
+  @keyframes dtPanelSlideRight { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: none; } }
+  @keyframes dtPanelSlideLeft { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+  .dt-panel-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .dt-panel-desc { margin: 0; font-family: 'Montserrat', system-ui, sans-serif; font-size: var(--type-body-sm); font-weight: var(--weight-medium); color: var(--fg2); line-height: 1.55; text-wrap: pretty; }
+  .dt-panel-actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
+  .dt-panel-actions button { position: relative; }
+  .dt-panel-actions button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+  @media (prefers-reduced-motion: reduce) {
+    .dt-tab, .dt-tab-icon, .dt-tab-label-wrap, .dt-tab-label, .dt-panel { transition: none; animation: none; }
+  }
+</style>
+<div class="dt-page">
+
+  <div class="dt-hero">
+    <span class="dt-eyebrow">Deha · Component</span>
+    <h1 class="h1" style="margin: 0; font-size: var(--type-display-2);">Discrete Tabs</h1>
+    <p style="margin: 0; max-width: 56ch; font-family: 'Montserrat', system-ui, sans-serif; font-size: var(--type-body); font-weight: var(--weight-medium); color: var(--fg2); line-height: 1.55; text-wrap: pretty;">Separate capsules instead of one segmented track. Only the active tab carries its label: it springs open, the neighbours slide aside, and a shine keeps sweeping the label while it stays open.</p>
+  </div>
+
+  <div style="width: 100%; max-width: 880px; display: flex; flex-direction: column; gap: var(--space-4);">
+    <div class="shell">
+      <div class="dt-shell-inner">
+        <div class="dt-tabs-row" role="tablist" aria-label="Discrete tabs">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button type="button" class="dt-tab" role="tab" onClick="{{ t.onClick }}" aria-selected="{{ t.active }}" aria-pressed="{{ t.active }}" style="border: 1px solid {{ t.border }}; background: {{ t.bg }}; color: {{ t.fg }}; box-shadow: {{ t.shadow }};">
+              <span class="material-icons dt-tab-icon" aria-hidden="true">{{ t.icon }}</span>
+              <div class="dt-tab-label-wrap" style="width: {{ t.w }};">
+                <span class="dt-tab-label" style="opacity: {{ t.labelOpacity }}; background-image: {{ t.textBg }}; -webkit-text-fill-color: {{ t.textFill }}; animation: {{ t.shine }};">{{ t.label }}</span>
+              </div>
+            </button>
+          </sc-for>
+        </div>
+
+        <div class="dt-panel" role="tabpanel" data-dir="{{ panel.dirClass }}">
+          <div class="dt-panel-head">
+            <span class="h4" style="font-size: 15px;">{{ panel.title }}</span>
+            <span class="badge tag">{{ panel.meta }}</span>
+          </div>
+          <p class="dt-panel-desc">{{ panel.desc }}</p>
+          <div class="pills-row" style="margin-top: 4px;">
+            <sc-for list="{{ panel.tags }}" as="tag" hint-placeholder-count="2">
+              <span class="badge tag"><span class="material-icons">{{ tag.icon }}</span> {{ tag.label }}</span>
+            </sc-for>
+          </div>
+          <div class="dt-panel-actions">
+            <button type="button" class="btn-primary" style="padding: 10px 18px; font-size: 13px;">{{ panel.cta }}</button>
+            <button type="button" class="pill-priority" style="cursor: pointer; padding: 10px 18px;">Later</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;semantic&quot;,&quot;brand&quot;],&quot;default&quot;:&quot;semantic&quot;,&quot;tsType&quot;:&quot;'semantic' | 'brand'&quot;}}">
+const TABS = [
+  { id: 'inbox', icon: 'mail', label: 'Inbox', color: '#3B82F6', soft: '#EFF6FF', ring: '#BFDBFE', glow: 'rgba(59,130,246,0.55)',
+    title: 'Inbox · 12 unread', meta: 'Live', desc: 'Buyer replies and portal enquiries land here first. Two threads have been waiting longer than a day.',
+    tags: [{ icon: 'mail', label: '12 unread' }, { icon: 'schedule', label: '2 overdue' }], cta: 'Open inbox' },
+  { id: 'planner', icon: 'calendar_month', label: 'Planner', color: '#059669', soft: '#ECFDF5', ring: '#A7F3D0', glow: 'rgba(16,185,129,0.65)',
+    title: 'Planner · Thursday', meta: '4 events', desc: 'Two valuations, one listing photo shoot and a contract signing. The afternoon is still open.',
+    tags: [{ icon: 'home_work', label: 'Valuation ×2' }, { icon: 'sell', label: 'Signing 16:00' }], cta: 'Open planner' },
+  { id: 'alerts', icon: 'notifications', label: 'Alerts', color: '#EF4444', soft: '#FEF2F2', ring: '#FECACA', glow: 'rgba(239,68,68,0.55)',
+    title: 'Alerts · 3 urgent', meta: 'Needs action', desc: 'A price drop on a watched listing, one expiring exclusivity, and a lead that went cold after four days.',
+    tags: [{ icon: 'warning', label: 'Exclusivity' }, { icon: 'trending_down', label: 'Price drop' }], cta: 'Review alerts' }
+];
+
+const BRAND = { color: '#059669', soft: '#ECFDF5', ring: '#A7F3D0', glow: 'rgba(16,185,129,0.65)' };
+
+class Component extends DCLogic {
+  state = { active: 'inbox', widths: {}, dir: 'right' };
+
+  componentDidMount() {
+    const measure = () => {
+      const c = document.createElement('canvas').getContext('2d');
+      c.font = "800 17px Montserrat, system-ui, sans-serif";
+      const widths = {};
+      TABS.forEach(t => { widths[t.id] = Math.ceil(c.measureText(t.label).width) + 16; });
+      this.setState({ widths });
+    };
+    measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+  }
+
+  select(id) {
+    // direction-aware switching: slide the panel toward the side the newly
+    // selected tab sits on relative to the previously active tab.
+    const fromIdx = TABS.findIndex(t => t.id === this.state.active);
+    const toIdx = TABS.findIndex(t => t.id === id);
+    this.setState({ active: id, dir: toIdx >= fromIdx ? 'right' : 'left' });
+  }
+
+  renderVals() {
+    const brandOnly = (this.props.accentMode ?? 'semantic') === 'brand';
+    const active = TABS.find(t => t.id === this.state.active) || TABS[0];
+
+    return {
+      tabs: TABS.map(t => {
+        const isActive = t.id === this.state.active;
+        const ac = brandOnly ? BRAND : t;
+        return {
+          icon: t.icon,
+          label: t.label,
+          active: isActive,
+          w: isActive ? ((this.state.widths[t.id] || 0) + 'px') : '0px',
+          labelOpacity: isActive ? 1 : 0,
+          shine: isActive ? 'dtShine 2600ms linear 300ms infinite' : 'none', // motion-sweep: kept -- component-local shine loop, no _ds tier match
+          textBg: isActive
+            ? 'linear-gradient(100deg, ' + ac.color + ' 0%, ' + ac.color + ' 40%, rgba(255,255,255,0.92) 50%, ' + ac.color + ' 60%, ' + ac.color + ' 100%)'
+            : 'none',
+          textFill: isActive ? 'transparent' : 'currentColor',
+          fg: isActive ? ac.color : '#334155',
+          bg: isActive ? ac.soft : '#FFFFFF',
+          border: isActive ? ac.soft : '#CBD5E1',
+          shadow: isActive
+            ? 'inset 0 -2px 5px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.7)'
+            : 'inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04)',
+          onClick: () => this.select(t.id)
+        };
+      }),
+      panel: { ...active, dirClass: this.state.dir }
+    };
+  }
+}
+</script>
+</body>
+</html>

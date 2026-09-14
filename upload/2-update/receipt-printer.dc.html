@@ -1,0 +1,444 @@
+<!-- @dsCard group="Merge - animations" name="Receipt Printer" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+body { margin: 0; }
+.mono, .meta, code, pre, kbd { font-family: 'Montserrat', system-ui, sans-serif !important; letter-spacing: 0.01em; }
+a { color: #10B981; text-decoration: none; }
+a:hover { color: #047857; }
+@keyframes rp-spin { to { transform: rotate(360deg); } }
+@keyframes rp-blink { 0%,45% { opacity: 1; } 55%,100% { opacity: 0.25; } }
+@keyframes rp-rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rp-shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+@keyframes rp-feed-stepped {
+  0%   { transform: translateY(-100%); }
+  7.5% { transform: translateY(-91%); }
+  10.5%{ transform: translateY(-91%); }
+  18%  { transform: translateY(-81%); }
+  21%  { transform: translateY(-81%); }
+  28.5%{ transform: translateY(-70%); }
+  31.5%{ transform: translateY(-70%); }
+  39%  { transform: translateY(-58%); }
+  42%  { transform: translateY(-58%); }
+  49.5%{ transform: translateY(-45%); }
+  52.5%{ transform: translateY(-45%); }
+  60%  { transform: translateY(-32%); }
+  63%  { transform: translateY(-32%); }
+  70.5%{ transform: translateY(-20%); }
+  73.5%{ transform: translateY(-20%); }
+  81%  { transform: translateY(-10%); }
+  84%  { transform: translateY(-10%); }
+  91.5%{ transform: translateY(-3%); }
+  94.5%{ transform: translateY(-3%); }
+  100% { transform: translateY(0%); }
+}
+@keyframes rp-feed-smooth {
+  from { transform: translateY(-100%); }
+  to   { transform: translateY(0%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rp-spin-icon { animation: none !important; }
+  .rp-progress-fill { transition: none !important; }
+  .rp-feed-window { transition: none !important; }
+  .rp-paper { transition: none !important; animation: none !important; }
+  .rp-state-btn { transition: none !important; }
+}
+.rp-state-btn { position: relative; }
+.rp-state-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.rp-state-btn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100%; padding: 40px; box-sizing: border-box; font-family: 'Montserrat', system-ui, sans-serif; background: #F8FAFC; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%);">
+
+  <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 22px;">
+    <span class="micro-label">Deha · Components</span>
+    <h1 class="h1" style="margin: 0;">Receipt Printer</h1>
+    <p class="body" style="margin: 0; max-width: 560px; text-wrap: pretty;">A tactile confirmation surface. The machine processes, feeds the paper line by line, and hands back a printed record of whatever just happened.</p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px;">
+    <span class="pills-label" style="margin: 0;">Usage area</span>
+    <div class="pills-row">
+      <sc-for list="{{ variantTabs }}" as="tab" hint-placeholder-count="5">
+        <button type="button" class="{{ tab.cls }}" onClick="{{ tab.onClick }}" style="cursor: pointer; gap: 6px;">
+          <span class="material-icons" style="font-size: 14px;">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: flex-start; gap: 40px; flex-wrap: wrap;">
+
+    <div style="position: relative; display: flex; flex-direction: column; align-items: center; width: 380px; flex-shrink: 0;">
+
+      <div style="position: relative; width: 100%; box-sizing: border-box; border-radius: 28px; padding: 14px 14px 34px; background: linear-gradient(180deg, #4B5563 0%, #374151 52%, #1F2937 100%); border: 1px solid #1E293B; box-shadow: 0 22px 40px -22px rgba(15,23,42,0.65), 0 6px 14px -8px rgba(15,23,42,0.35), inset 0 1px 0 rgba(255,255,255,0.16), inset 0 -1px 0 rgba(15,23,42,0.6); overflow: hidden;">
+
+        <div style="position: absolute; inset: 0; pointer-events: none; opacity: 0.14; mix-blend-mode: overlay; background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 10px 10px;"></div>
+
+        <div style="position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; height: 40px; padding: 2px 6px 0;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-icons" style="font-size: 18px; color: #10B981;">receipt_long</span>
+            <span style="font-size: 11px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.72);">Deha POS</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.45);">{{ lampLabel }}</span>
+        </div>
+
+        <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+          <span class="material-icons" style="font-size: 15px; color: rgba(255,255,255,0.32);">contactless</span>
+          <span style="font-size: 8.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.30);">Tap · Insert · Swipe</span>
+          <span class="material-icons" style="font-size: 15px; color: rgba(255,255,255,0.32);">credit_card</span>
+        </div>
+
+        <div style="position: relative; z-index: 1; border-radius: 14px; padding: 14px 16px; background: #0F172A; border: 1px solid #020617; box-shadow: inset 0 2px 10px rgba(2,6,23,0.9), inset 0 0 24px 4px rgba(2,6,23,0.55); overflow: hidden;">
+          <div style="display: flex; align-items: center; gap: 9px; min-width: 0;">
+            <sc-if value="{{ isSpinning }}" hint-placeholder-val="{{ true }}">
+              <span class="material-icons rp-spin-icon" style="font-size: 18px; color: #94A3B8; animation: rp-spin 0.9s linear infinite;">autorenew</span>
+            </sc-if>
+            <sc-if value="{{ isComplete }}">
+              <span class="material-icons" style="font-size: 18px; color: var(--brand-primary);">check_circle</span>
+            </sc-if>
+            <sc-if value="{{ isFailed }}">
+              <span class="material-icons" style="font-size: 18px; color: var(--semantic-danger);">error</span>
+            </sc-if>
+            <span style="font-size: 12px; font-weight: 700; color: {{ statusColor }}; letter-spacing: 0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ statusLabel }}</span>
+          </div>
+
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-top: 14px;">
+            <div style="min-width: 0;">
+              <div style="font-size: 14px; font-weight: 800; color: #F1F5F9; line-height: 1.2;">{{ v.title }}</div>
+              <div style="font-size: 11px; font-weight: 600; color: #64748B; margin-top: 3px;">{{ v.subtitle }}</div>
+            </div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #475569;">{{ v.totalLabel }}</div>
+              <div style="font-size: 20px; font-weight: 900; color: {{ statusColor }}; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-top: 2px;">{{ v.total }}</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; height: 3px; border-radius: 9999px; background: #1E293B; overflow: hidden;">
+            <div class="rp-progress-fill" style="height: 100%; width: {{ progress }}; border-radius: 9999px; background: {{ statusColor }}; transition: width var(--duration-560) var(--ease-out);"></div>
+          </div>
+        </div>
+
+        <div style="position: relative; z-index: 1; margin: 12px 4px 0; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 8px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.26);">Deha Terminal · T2</span>
+          <span style="width: 66px; height: 4px; border-radius: 9999px; background: rgba(2,6,23,0.65); box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);"></span>
+        </div>
+
+        <div style="position: absolute; left: 20px; right: 20px; bottom: 11px; z-index: 4; height: 9px; border-radius: 5px; background: #020617; border: 1px solid #0F172A; box-shadow: inset 0 2px 5px rgba(0,0,0,0.95);"></div>
+        <div style="position: absolute; left: 22px; right: 22px; bottom: 8px; z-index: 5; height: 4px; pointer-events: none; background-image: repeating-linear-gradient(90deg, rgba(226,232,240,0.55) 0 2px, transparent 2px 5px);"></div>
+      </div>
+
+      <div class="rp-feed-window" style="position: relative; z-index: 5; margin-top: -16px; width: calc(100% - 44px); height: {{ windowHeight }}; min-height: 120px; overflow: hidden; padding: 0 4px; transition: height var(--duration-320) var(--ease-out);">
+        <sc-if value="{{ paperVisible }}" hint-placeholder-val="{{ true }}">
+          <div style="position: absolute; left: 8px; right: 8px; top: 0; z-index: 3; height: 8px; background: rgba(15,23,42,0.6); filter: blur(6px); pointer-events: none;"></div>
+        </sc-if>
+
+        <div ref="{{ paperRef }}" class="rp-paper" style="position: relative; opacity: {{ paperOpacity }}; transform: {{ paperTransform }}; animation: {{ paperAnimation }}; transition: opacity var(--duration-180) var(--ease-fade);">
+          <article style="position: relative; background: #FDFDF8; color: #0F172A; padding: 24px 20px 28px; font-family: 'Montserrat', system-ui, sans-serif; letter-spacing: 0.01em; box-shadow: 0 10px 26px rgba(15,23,42,0.18), inset 0 0 40px rgba(120,113,108,0.07); background-image: linear-gradient(rgba(15,23,42,0.018) 1px, transparent 1px); background-size: 100% 3px; -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 7px repeat-x, linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat; mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 7px repeat-x, linear-gradient(#000 0 0) top / 100% calc(100% - 7px) no-repeat;">
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;">
+              <span class="material-icons" style="font-size: 22px; color: var(--brand-primary);">{{ v.icon }}</span>
+              <div style="font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.22em; text-transform: uppercase;">{{ v.merchant }}</div>
+              <div style="font-size: 10px; letter-spacing: 0.06em; color: #64748B;">{{ v.merchantSub }}</div>
+            </div>
+
+            <div style="margin: 18px 0; border-top: 1px dashed #CBD5E1;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <sc-for list="{{ v.items }}" as="item" hint-placeholder-count="2">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;">
+                  <div style="min-width: 0;">
+                    <div style="font-size: 12px; font-weight: 700; color: #0F172A;">{{ item.label }}</div>
+                    <div style="font-size: 10px; color: #94A3B8; margin-top: 2px;">{{ item.note }}</div>
+                  </div>
+                  <div style="font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ item.value }}</div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="margin: 18px 0; border-top: 1px dashed #CBD5E1;"></div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <sc-for list="{{ v.rows }}" as="row" hint-placeholder-count="2">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 11px; color: #64748B;">
+                  <span>{{ row.label }}</span>
+                  <span style="font-variant-numeric: tabular-nums; color: #334155; font-weight: 600;">{{ row.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; padding-top: 12px; border-top: 2px solid #0F172A;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase;">{{ v.totalLabel }}</span>
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 900; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;">{{ v.total }}</span>
+            </div>
+
+            <div style="display: flex; justify-content: center; margin-top: 16px;">
+              <span class="badge success" style="font-family: 'Montserrat', sans-serif;"><span class="material-icons">{{ v.stampIcon }}</span> {{ v.stamp }}</span>
+            </div>
+
+            <div style="margin: 18px 0 14px; border-top: 1px dashed #CBD5E1;"></div>
+
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 10px; color: #64748B;">
+              <sc-for list="{{ v.meta }}" as="m" hint-placeholder-count="3">
+                <span style="text-transform: uppercase; letter-spacing: 0.10em;">{{ m.label }}</span>
+                <span style="text-align: right; color: #334155; font-weight: 600;">{{ m.value }}</span>
+              </sc-for>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 7px; margin-top: 22px;">
+              <div style="width: 78%; height: 40px; background-image: repeating-linear-gradient(90deg, #0F172A 0 2px, transparent 2px 4px, #0F172A 4px 5px, transparent 5px 9px, #0F172A 9px 12px, transparent 12px 14px);"></div>
+              <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.34em; color: #334155;">{{ v.code }}</div>
+              <div style="margin-top: 10px; font-size: 9.5px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #94A3B8;">Thank you · Keep this receipt</div>
+              <div style="font-size: 9px; font-weight: 600; letter-spacing: 0.08em; color: #CBD5E1;">Deha POS v2.4 · No signature required</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 18px; width: 320px; flex-shrink: 0;">
+
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 12px;">
+        <span class="pills-label" style="margin: 0;">State</span>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{ stageSteps }}" as="s" hint-placeholder-count="3">
+            <button type="button" class="rp-state-btn" onClick="{{ s.onClick }}" style="display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 12px; border: 1px solid {{ s.border }}; background: {{ s.bg }}; cursor: pointer; text-align: left; font-family: 'Montserrat', sans-serif; transition: background var(--duration-200) var(--ease-fade), border-color var(--duration-200) var(--ease-fade), transform var(--duration-140) var(--ease-out);" style-hover="transform: translateX(2px);" style-active="transform: scale(0.98);">
+              <span class="material-icons" style="font-size: 16px; color: {{ s.color }};">{{ s.icon }}</span>
+              <span style="flex: 1; font-size: 12px; font-weight: 800; color: {{ s.color }};">{{ s.label }}</span>
+              <span style="font-size: 10px; font-weight: 700; color: #94A3B8; font-variant-numeric: tabular-nums;">{{ s.time }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 12px;">
+        <span class="pills-label" style="margin: 0;">Feed motion</span>
+        <div class="pills-row">
+          <button type="button" class="{{ feedStepped.cls }}" onClick="{{ feedStepped.onClick }}" style="cursor: pointer;">Stepped</button>
+          <button type="button" class="{{ feedSmooth.cls }}" onClick="{{ feedSmooth.onClick }}" style="cursor: pointer;">Smooth</button>
+        </div>
+        <p class="meta" style="margin: 0; font-size: 11px; line-height: 1.45; color: #94A3B8;">Stepped advances the paper one line at a time on a linear cadence. Smooth eases the whole roll out in a single pass.</p>
+        <div style="display: flex; gap: 10px; margin-top: 2px;">
+          <button type="button" class="btn-primary" onClick="{{ replay }}" style="flex: 1; justify-content: center;">
+            <span class="material-icons" style="font-size: 16px;">replay</span> Replay
+          </button>
+        </div>
+      </div>
+
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 10px;">
+        <span class="pills-label" style="margin: 0;">Anatomy</span>
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="5">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+              <span style="font-family: 'Montserrat', sans-serif; font-size: 10.5px; font-weight: 700; color: #10B981;">{{ a.name }}</span>
+              <span style="font-size: 10.5px; color: #94A3B8; text-align: right;">{{ a.desc }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;checkout&quot;,&quot;payout&quot;,&quot;standup&quot;,&quot;viewing&quot;,&quot;declined&quot;],&quot;default&quot;:&quot;checkout&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;feedMotion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;stepped&quot;,&quot;smooth&quot;],&quot;default&quot;:&quot;stepped&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const VARIANTS = {
+  checkout: {
+    label: 'Checkout', icon: 'shopping_bag',
+    title: 'Pro plan', subtitle: 'Annual subscription',
+    totalLabel: 'Total', total: '£230.40',
+    merchant: 'Deha Studio', merchantSub: 'billing@deha.co · London',
+    icon2: 'shopping_bag',
+    items: [{ label: 'Pro plan', note: 'Annual subscription', value: '£192.00' }],
+    rows: [{ label: 'Subtotal', value: '£192.00' }, { label: 'Tax (20%)', value: '£38.40' }],
+    stamp: 'Paid in full', stampIcon: 'verified',
+    meta: [{ label: 'Order', value: 'ORD-2048' }, { label: 'Paid with', value: 'Visa •••• 4242' }, { label: 'Date', value: '11 AUG 2026 · 14:32' }],
+    code: 'ORD 2048',
+    statusFlow: ['Processing your order', 'Printing your receipt', 'Order complete']
+  },
+  payout: {
+    label: 'Commission payout', icon: 'payments',
+    title: 'GCI payout', subtitle: '24 Maple Avenue · closed',
+    totalLabel: 'Net', total: '$12,450',
+    merchant: 'Deha Realty', merchantSub: 'Payout statement · Q3 2026',
+    items: [
+      { label: 'Sale commission', note: '3% of $520,000', value: '$15,600' },
+      { label: 'Brokerage split', note: '80 / 20 tier', value: '-$3,120' }
+    ],
+    rows: [{ label: 'Gross GCI', value: '$15,600' }, { label: 'Deductions', value: '-$3,150' }],
+    stamp: 'Released to agent', stampIcon: 'account_balance',
+    meta: [{ label: 'Agent', value: 'M. Yılmaz' }, { label: 'Deal', value: 'DL-7741' }, { label: 'Settled', value: '11 AUG 2026' }],
+    code: 'DL 7741',
+    statusFlow: ['Reconciling the split', 'Printing your statement', 'Payout released']
+  },
+  standup: {
+    label: 'Daily digest', icon: 'task_alt',
+    title: 'Daily digest', subtitle: 'Tuesday · 8 tasks closed',
+    totalLabel: 'Closed', total: '8 / 11',
+    merchant: 'Deha Workspace', merchantSub: 'Team digest · 11 Aug 2026',
+    items: [
+      { label: 'Shipped', note: 'Moved to Done', value: '8' },
+      { label: 'Carried over', note: 'Still In Progress', value: '3' }
+    ],
+    rows: [{ label: 'Review queue', value: '2' }, { label: 'Avg. cycle time', value: '1.4d' }],
+    stamp: 'Day closed', stampIcon: 'task_alt',
+    meta: [{ label: 'Board', value: 'Pipeline · Q3' }, { label: 'Members', value: '6 active' }, { label: 'Generated', value: '18:00 local' }],
+    code: 'DAY 0811',
+    statusFlow: ['Collecting today\u2019s activity', 'Printing your digest', 'Digest ready']
+  },
+  viewing: {
+    label: 'Booking', icon: 'event_available',
+    title: 'Viewing confirmed', subtitle: '14 Bellevue Road · Flat 3',
+    totalLabel: 'Slot', total: '15:30',
+    merchant: 'Deha Realty', merchantSub: 'Viewing confirmation',
+    items: [
+      { label: 'Property', note: '14 Bellevue Rd, Flat 3', value: '2 bed' },
+      { label: 'Attendees', note: 'Buyer + agent', value: '2' }
+    ],
+    rows: [{ label: 'Date', value: 'Thu 13 Aug' }, { label: 'Duration', value: '30 min' }],
+    stamp: 'Calendar synced', stampIcon: 'event_available',
+    meta: [{ label: 'Agent', value: 'M. Yılmaz' }, { label: 'Ref', value: 'VW-3312' }, { label: 'Contact', value: '+44 20 7946 0102' }],
+    code: 'VW 3312',
+    statusFlow: ['Holding the slot', 'Printing your confirmation', 'Viewing confirmed']
+  },
+  declined: {
+    label: 'Declined', icon: 'error', failing: true,
+    title: 'Pro plan', subtitle: 'Annual subscription',
+    totalLabel: 'Due', total: '£230.40',
+    merchant: 'Deha Studio', merchantSub: 'billing@deha.co · London',
+    items: [{ label: 'Pro plan', note: 'Annual subscription', value: '£192.00' }],
+    rows: [{ label: 'Subtotal', value: '£192.00' }, { label: 'Tax (20%)', value: '£38.40' }],
+    stamp: 'Not captured', stampIcon: 'block',
+    meta: [{ label: 'Order', value: 'ORD-2049' }, { label: 'Card', value: 'Visa •••• 1131' }, { label: 'Code', value: 'do_not_honor' }],
+    code: 'ORD 2049',
+    statusFlow: ['Authorising your card', '', 'Card declined']
+  }
+};
+
+const ORDER = ['checkout', 'payout', 'standup', 'viewing', 'declined'];
+
+class Component extends DCLogic {
+  state = {
+    variant: this.props.variant || 'checkout',
+    feed: this.props.feedMotion || 'stepped',
+    stage: 'processing',
+    run: 0,
+    paperH: 480
+  };
+
+  paperRef = React.createRef();
+
+  measure() {
+    const el = this.paperRef.current;
+    if (!el) return;
+    const h = Math.ceil(el.getBoundingClientRect().height);
+    if (h && Math.abs(h - this.state.paperH) > 1) this.setState({ paperH: h });
+  }
+
+  componentDidMount() { this.start(this.state.variant); this.measure(); }
+  componentDidUpdate() { this.measure(); }
+  componentWillUnmount() { this.clear(); }
+
+  clear() { (this._t || []).forEach(clearTimeout); this._t = []; }
+
+  start(variant) {
+    this.clear();
+    const failing = VARIANTS[variant].failing;
+    this.setState(s => ({ variant, stage: 'processing', run: s.run + 1 }));
+    this._t.push(setTimeout(() => this.setState({ stage: failing ? 'failed' : 'printing' }), 1500));
+    if (!failing) this._t.push(setTimeout(() => this.setState({ stage: 'complete' }), 3500));
+  }
+
+  setStage(stage) { this.clear(); this.setState(s => ({ stage, run: s.run + 1 })); }
+
+  renderVals() {
+    const { variant, feed, stage } = this.state;
+    const v = VARIANTS[variant];
+    const failed = stage === 'failed';
+    const complete = stage === 'complete';
+    const printing = stage === 'printing';
+    const accent = failed ? '#EF4444' : complete ? '#10B981' : '#94A3B8';
+    const dur = feed === 'stepped' ? 'var(--duration-1900) var(--ease-linear)' : 'var(--duration-1800) var(--ease-standard)'; /* original 1.5s custom quint-ish curve mapped to nearest DS duration/ease tokens by Euclidean distance (duration +300 ms, ease dist ~0.37); no closer tier/curve exists */
+
+    const paperH = this.state.paperH;
+
+    return {
+      v,
+      paperRef: this.paperRef,
+      windowHeight: (paperH + 18) + 'px',
+      variantTabs: ORDER.map(id => ({
+        id, label: VARIANTS[id].label, icon: VARIANTS[id].icon,
+        cls: 'pill-tab' + (id === variant ? ' active' : ''),
+        onClick: () => this.start(id)
+      })),
+      isSpinning: stage === 'processing' || printing,
+      isComplete: complete,
+      isFailed: failed,
+      statusColor: failed ? '#F87171' : complete ? '#34D399' : '#CBD5E1',
+      statusLabel: failed ? v.statusFlow[2] : printing ? v.statusFlow[1] : complete ? v.statusFlow[2] : v.statusFlow[0],
+      lampColor: failed ? '#EF4444' : complete ? '#10B981' : '#EAB308',
+      lampLabel: failed ? 'Error' : complete ? 'Ready' : printing ? 'Printing' : 'Processing',
+      progress: stage === 'processing' ? '22%' : printing ? '72%' : '100%',
+      paperVisible: printing || complete,
+      paperOpacity: printing || complete ? 1 : 0,
+      paperTransform: printing || complete ? 'translateY(0%)' : 'translateY(-100%)',
+      paperAnimation: printing ? 'rp-feed-' + feed + ' ' + dur + ' forwards' : 'none',
+      stageSteps: [
+        { key: 'processing', label: 'Processing', icon: 'sync', time: '0.0s' },
+        { key: 'printing', label: 'Printing', icon: 'print', time: '1.5s' },
+        { key: 'complete', label: 'Complete', icon: 'check_circle', time: '3.5s' },
+        { key: 'failed', label: 'Declined', icon: 'error', time: '1.5s' }
+      ].map(s => {
+        const on = s.key === stage;
+        const danger = s.key === 'failed';
+        return {
+          ...s,
+          onClick: () => this.setStage(s.key),
+          bg: on ? (danger ? '#FEF2F2' : '#ECFDF5') : 'transparent',
+          border: on ? (danger ? '#FECACA' : '#A7F3D0') : '#E2E8F0',
+          color: on ? (danger ? '#EF4444' : '#047857') : '#64748B'
+        };
+      }),
+      feedStepped: { cls: 'pill-tab' + (feed === 'stepped' ? ' active' : ''), onClick: () => this.setState({ feed: 'stepped' }) },
+      feedSmooth: { cls: 'pill-tab' + (feed === 'smooth' ? ' active' : ''), onClick: () => this.setState({ feed: 'smooth' }) },
+      replay: () => this.start(this.state.variant),
+      keypad: ['1','2','3','4','5','6','7','8','9','*','0','#'].map(l => ({ label: l, color: (l === '*' || l === '#') ? 'rgba(255,255,255,0.45)' : 'rgba(241,245,249,0.82)' })),
+      anatomy: [
+        { name: 'Machine', desc: 'Plastic shell + slot lip' },
+        { name: 'Screen', desc: 'Recessed status display' },
+        { name: 'Status', desc: 'Spinner → check morph' },
+        { name: 'Output', desc: 'Masked feed window' },
+        { name: 'Paper', desc: 'Torn-edge mono receipt' }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

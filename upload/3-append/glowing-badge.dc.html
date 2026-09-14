@@ -1,0 +1,573 @@
+<!-- @dsCard group="Merge - pills-chips-badges" name="Glowing Badge" subtitle="-> Pills, chips & badges" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_animated-list.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+a { color: var(--brand-primary-600); text-decoration: none; }
+a:hover { color: var(--brand-primary-700); }
+@keyframes gb-ping { 0% { transform: scale(1); opacity: .75 } 50% { transform: scale(2.6); opacity: 0 } 100% { transform: scale(1); opacity: .75 } }
+@keyframes gb-breathe { 0%,100% { opacity: var(--gb-glow, .6) } 50% { opacity: calc(var(--gb-glow, .6) * 1.55) } }
+@keyframes gb-in { from { opacity: 0; transform: translateY(6px) scale(.94) } to { opacity: 1; transform: none } }
+@keyframes gb-sheen { 0% { transform: translateX(-140%) } 100% { transform: translateX(240%) } }
+
+/* ---- glowing-badge component ---- */
+.gb { position: relative; display: inline-flex; vertical-align: middle; font-family: 'Montserrat', sans-serif;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out), filter calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  animation: gb-in calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out) both; }
+.gb:active { transform: translateY(0) scale(.97); transition-timing-function: var(--ease-press-calm); }
+.gb-glow { position: absolute; inset: 0; border-radius: 9999px; filter: blur(7px); opacity: var(--gb-glow, .6);
+  transition: opacity calc(var(--duration-240) * var(--anim-mult, 1)), filter calc(var(--duration-240) * var(--anim-mult, 1));
+  animation: gb-breathe calc(3200ms * var(--anim-mult, 1)) ease-in-out infinite; /* motion-sweep: kept — no DS token for slow ambient breathe loop */ }
+@media (hover: hover) and (pointer: fine) {
+  .gb:hover { transform: translateY(-1.5px) scale(1.035); }
+  .gb:hover .gb-glow { opacity: 1; filter: blur(10px); }
+}
+
+.gb-body { position: relative; display: inline-flex; align-items: center; gap: 6px; border-radius: 9999px;
+  padding: 4px 11px; font-size: 11px; font-weight: 900; line-height: 1.45; letter-spacing: .05em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; border: none; cursor: default; font-family: inherit;
+  text-shadow: 0 1px 2px rgba(0,0,0,.22);
+  box-shadow: inset 0 -2px 0 rgba(15,23,42,.18), inset 0 0 0 1px rgba(15,23,42,.06);
+  background-image:
+    linear-gradient(rgba(255,255,255,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.10) 1px, transparent 1px);
+  background-size: 7px 7px;
+  transition: box-shadow calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out); }
+
+.gb-body:focus-visible { outline: 2px solid var(--brand-primary-600); outline-offset: 3px; }
+.gb-body .material-icons { font-size: 13px; }
+.gb-dotwrap { position: relative; display: flex; width: 6px; height: 6px; flex: 0 0 6px; }
+.gb-ring { position: absolute; inset: 0; border-radius: 9999px; opacity: .75; }
+.gb-ping { animation: gb-ping calc(2000ms * var(--anim-mult, 1)) var(--ease-week-slide) infinite; /* motion-sweep: kept — no DS duration token for slow ping loop; ease matched to --ease-week-slide, exact curve equivalent, delta 0 */ }
+.gb-dot { position: relative; width: 6px; height: 6px; border-radius: 9999px; }
+.gb-lg .gb-body { padding: 6px 14px; font-size: 13px; }
+.gb-lg .gb-dotwrap, .gb-lg .gb-dot { width: 8px; height: 8px; flex-basis: 8px; }
+.gb-sm .gb-body { padding: 2px 8px; font-size: 9.5px; letter-spacing: .06em; }
+.gb-hidden { display: none; }
+.gb-static { animation: none; }
+.gb-static .gb-glow { animation: none; }
+.gb-disabled { opacity: .4; filter: grayscale(.7); pointer-events: none; }
+.gb-disabled .gb-glow { display: none; }
+
+.gb-success .gb-body { background-color: #10B981; color: #FFFFFF; }
+.gb-success .gb-glow { background: #10B981; }
+.gb-success .gb-ring, .gb-success .gb-dot { background: #ECFDF5; }
+.gb-warning .gb-body { background-color: #FBBF24; color: #854D0E; text-shadow: none; }
+.gb-warning .gb-glow { background: #FBBF24; }
+.gb-warning .gb-ring, .gb-warning .gb-dot { background: #854D0E; }
+.gb-error .gb-body { background-color: #EF4444; color: #FFFFFF; }
+.gb-error .gb-glow { background: #EF4444; }
+.gb-error .gb-ring, .gb-error .gb-dot { background: #FEF2F2; }
+.gb-info .gb-body { background-color: #F97316; color: #FFFFFF; }
+.gb-info .gb-glow { background: #F97316; }
+.gb-info .gb-ring, .gb-info .gb-dot { background: #FFF7ED; }
+.gb-default .gb-body { background-color: #0F172A; color: #F1F5F9; }
+.gb-default .gb-glow { background: rgba(15,23,42,.55); }
+.gb-default .gb-ring, .gb-default .gb-dot { background: #94A3B8; }
+.gb-neutral .gb-body { background-color: #F1F5F9; color: #334155; text-shadow: none;
+  box-shadow: inset 0 -1px 0 rgba(15,23,42,.06), inset 0 0 0 1px rgba(15,23,42,.10); background-image: none; }
+.gb-neutral .gb-glow { background: rgba(100,116,139,.4); }
+.gb-neutral .gb-ring, .gb-neutral .gb-dot { background: #64748B; }
+
+.gb-sec-title { font-size: 20px; font-weight: 900; letter-spacing: -.02em; color: var(--fg1); margin: 0; }
+.gb-sec-sub { font-size: 13px; font-weight: 500; color: var(--fg3); margin: 4px 0 0; max-width: 62ch; text-wrap: pretty; }
+.gb-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--fg4); }
+.gb-cell { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 4px 0 14px;
+  background: none; border: none; box-shadow: none; }
+.gb-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--fg3);
+  background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 4px 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gb, .gb-glow, .gb-body, .gb-ping { animation: none !important; transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+}
+</style>
+</helmet>
+
+<div style="min-height: 100%; background: #F8FAFC; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); padding: 40px 36px 64px; font-family: 'Montserrat', sans-serif; --gb-glow: {{ glowOpacity }};">
+
+  <div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px;">
+
+    <header style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <h1 style="font-size: 28px; font-weight: 900; letter-spacing: -.02em; color: var(--fg1); margin: 0;">Glowing Badge</h1>
+        <span class="gb gb-success">
+          <span class="gb-glow"></span>
+          <span class="gb-body">
+            <sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>
+            New
+          </span>
+        </span>
+      </div>
+      <p class="gb-sec-sub" style="font-size: 14px;">A status badge with a pulsing glow dot. Six variants, three sizes, and states for hover, focus, active and disabled — built on the Deha pill, card and button primitives.</p>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-top: 4px;">
+        <div class="pills-row">
+          <button class="pill-tab" style="{{ tabStyleVariants }}" onClick="{{ goVariants }}">Variants</button>
+          <button class="pill-tab" style="{{ tabStyleStates }}" onClick="{{ goStates }}">States</button>
+          <button class="pill-tab" style="{{ tabStyleCards }}" onClick="{{ goCards }}">In cards</button>
+          <button class="pill-tab" style="{{ tabStyleActions }}" onClick="{{ goActions }}">On buttons</button>
+          <button class="pill-tab" style="{{ tabStyleLists }}" onClick="{{ goLists }}">In lists</button>
+          <button class="pill-tab" style="{{ tabStyleNav }}" onClick="{{ goNav }}">In nav</button>
+        </div>
+        <div style="flex: 1"></div>
+        <div class="pills-row">
+          <button class="pill-tab" style="{{ toggleStylePulse }}" onClick="{{ togglePulse }}">pulse</button>
+          <button class="pill-tab" style="{{ toggleStyleDot }}" onClick="{{ toggleDot }}">dot</button>
+        </div>
+      </div>
+    </header>
+
+    <sc-if value="{{ isVariants }}" hint-placeholder-val="{{ true }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">Variants</h2>
+          <p class="gb-sec-sub">Each variant maps to a Deha semantic color. The glow is the badge fill blurred behind it, so color stays in one place.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;">
+          <div class="gb-cell">
+            <span class="gb-label">success</span>
+            <span class="gb gb-success">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>Live</span>
+            </span>
+            <span class="gb-code">#10B981</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">neutral</span>
+            <span class="gb gb-neutral">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>Ghost</span>
+            </span>
+            <span class="gb-code">#F1F5F9</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">info</span>
+            <span class="gb gb-info">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>In progress</span>
+            </span>
+            <span class="gb-code">#F97316</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">warning</span>
+            <span class="gb gb-warning">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>Pending</span>
+            </span>
+            <span class="gb-code">#FBBF24</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">error</span>
+            <span class="gb gb-error">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>Offline</span>
+            </span>
+            <span class="gb-code">#EF4444</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">default</span>
+            <span class="gb gb-default">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><sc-if value="{{ dot }}" hint-placeholder-val="{{ true }}"><span class="gb-dotwrap"><sc-if value="{{ pulse }}" hint-placeholder-val="{{ true }}"><span class="gb-ring gb-ping"></span></sc-if><span class="gb-dot"></span></span></sc-if>Draft</span>
+            </span>
+            <span class="gb-code">#0F172A</span>
+          </div>
+        </div>
+
+        <div class="gb-cell" style="flex-direction: row; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <span class="gb-label" style="width: 100%;">sizes — sm / md / lg</span>
+          <span class="gb gb-success gb-sm">
+            <span class="gb-glow"></span>
+            <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Live</span>
+          </span>
+          <span class="gb gb-success">
+            <span class="gb-glow"></span>
+            <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Live</span>
+          </span>
+          <span class="gb gb-success gb-lg">
+            <span class="gb-glow"></span>
+            <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Live</span>
+          </span>
+          <span style="flex: 1"></span>
+          <span class="gb gb-info">
+            <span class="gb-glow"></span>
+            <span class="gb-body"><span class="material-icons">bolt</span>With icon</span>
+          </span>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">States &amp; transitions</h2>
+          <p class="gb-sec-sub">Rest breathes the glow on a 3.2s loop. Hover lifts 1.5px and blooms the glow to full; the fill color does not change. Active presses to 0.97. Focus draws an emerald ring. Disabled drops the glow entirely.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px;">
+          <div class="gb-cell">
+            <span class="gb-label">rest</span>
+            <span class="gb gb-success">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Live</span>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">Glow breathes 0.85 → 1.0 opacity.</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">hover / active</span>
+            <span class="gb gb-success">
+              <span class="gb-glow"></span>
+              <button class="gb-body" style="cursor: pointer;"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Hover me</button>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">220ms ease-out lift, blur 7 → 10px.</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">focus-visible</span>
+            <span class="gb gb-info">
+              <span class="gb-glow"></span>
+              <button class="gb-body" style="cursor: pointer;"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Tab to me</button>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">2px emerald ring, 3px offset.</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">static (pulse off)</span>
+            <span class="gb gb-warning gb-static">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-dot"></span></span>Pending</span>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">No ring, fixed glow — for dense tables.</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">no dot</span>
+            <span class="gb gb-error">
+              <span class="gb-glow"></span>
+              <span class="gb-body">Offline</span>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">Label-only, glow retained.</span>
+          </div>
+          <div class="gb-cell">
+            <span class="gb-label">disabled</span>
+            <span class="gb gb-success gb-disabled">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-dot"></span></span>Live</span>
+            </span>
+            <span class="gb-sec-sub" style="font-size: 12px;">40% opacity, desaturated, inert.</span>
+          </div>
+        </div>
+        <div class="gb-cell" style="flex-direction: row; align-items: center; gap: 16px; flex-wrap: wrap;">
+          <span class="gb-label">live state change</span>
+          <span style="flex: 1"></span>
+          <span class="gb {{ liveVariant }}">
+            <span class="gb-glow"></span>
+            <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>{{ liveLabel }}</span>
+          </span>
+          <button class="btn-primary" style="padding: 8px 16px; font-size: 12px;" onClick="{{ cycleLive }}">Advance state</button>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isCards }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">In cards</h2>
+          <p class="gb-sec-sub">Top-right of an inner card, the badge reads as record status. Inside an accent card it sits on emerald, so the neutral variant carries it.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px;">
+          <div class="card-inner" style="padding: 18px;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+              <div>
+                <div style="font-size: 15px; font-weight: 800; color: var(--fg1);">Kadıköy 3+1 listing</div>
+                <div style="font-size: 12px; font-weight: 600; color: var(--fg3); margin-top: 2px;">Updated 4 minutes ago</div>
+              </div>
+              <span class="gb gb-success">
+                <span class="gb-glow"></span>
+                <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Live</span>
+              </span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 16px;">
+              <span style="font-size: 30px; font-weight: 900; letter-spacing: -.02em; color: var(--fg1);">₺4.2M</span>
+              <span class="badge success" style="align-self: center;">+8.4%</span>
+            </div>
+            <div style="display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap;">
+              <span class="badge tag">Sea view</span>
+              <span class="badge tag">Elevator</span>
+              <span class="badge tag">Parking</span>
+            </div>
+          </div>
+
+          <div class="card-accent" style="padding: 18px;">
+            <div style="position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+              <div>
+                <div style="font-size: 15px; font-weight: 800;">Pipeline health</div>
+                <div style="font-size: 12px; font-weight: 600; opacity: .85; margin-top: 2px;">Q3 · 42 deals</div>
+              </div>
+              <span class="gb gb-neutral">
+                <span class="gb-glow"></span>
+                <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Syncing</span>
+              </span>
+            </div>
+            <div style="position: relative; font-size: 30px; font-weight: 900; letter-spacing: -.02em; margin-top: 16px;">86%</div>
+            <div style="position: relative; font-size: 12px; font-weight: 600; opacity: .85;">of target closed</div>
+          </div>
+
+          <div class="card-inner" style="padding: 18px; display: flex; flex-direction: column; gap: 12px;">
+            <span class="gb-label">multiple states in one card</span>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--fg2);">Valuation report</span>
+                <span class="gb gb-warning">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Pending</span>
+                </span>
+              </div>
+              <div style="height: 1px; background: var(--border-hairline);"></div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--fg2);">Bank appraisal</span>
+                <span class="gb gb-error">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>Blocked</span>
+                </span>
+              </div>
+              <div style="height: 1px; background: var(--border-hairline);"></div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--fg2);">Contract draft</span>
+                <span class="gb gb-default gb-static">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body"><span class="gb-dotwrap"><span class="gb-dot"></span></span>Draft</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isActions }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">On buttons</h2>
+          <p class="gb-sec-sub">Inside a filled button use the neutral variant — a second glow on emerald competes with the button's own. Anchored to a corner it works as a notification marker.</p>
+        </div>
+        <div class="gb-cell" style="flex-direction: row; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <button class="btn-primary">
+            Publish listing
+            <span class="gb gb-neutral gb-sm" style="margin-left: 2px;">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>2</span>
+            </span>
+          </button>
+
+          <button class="btn-inverse" style="border: 1px solid var(--border-hairline);">
+            Review queue
+            <span class="gb gb-warning gb-sm">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>7</span>
+            </span>
+          </button>
+
+          <div style="position: relative; display: inline-flex;">
+            <button class="btn-inverse" style="border: 1px solid var(--border-hairline); color: var(--fg2);">
+              <span class="material-icons" style="font-size: 18px;">notifications</span>
+              Alerts
+            </button>
+            <span class="gb gb-error gb-sm" style="position: absolute; top: -8px; right: -10px;">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>3</span>
+            </span>
+          </div>
+
+          <button class="pill-tab" style="padding: 8px 14px;">
+            Beta features
+            <span class="gb gb-info gb-sm" style="margin-left: 8px;">
+              <span class="gb-glow"></span>
+              <span class="gb-body">New</span>
+            </span>
+          </button>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isLists }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">In lists and tables</h2>
+          <p class="gb-sec-sub">One badge per row, right-aligned in a fixed column. Only the row that is genuinely active pulses; everything else uses the static form so the list stays calm.</p>
+        </div>
+        <div class="card-inner" style="padding: 8px;">
+          <sc-for list="{{ rows }}" as="row" hint-placeholder-count="5">
+            <div style="display: grid; grid-template-columns: 1fr auto 130px; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px;" style-hover="background:#F8FAFC">
+              <div>
+                <div style="font-size: 13px; font-weight: 800; color: var(--fg1);">{{ row.name }}</div>
+                <div style="font-size: 11px; font-weight: 600; color: var(--fg4); margin-top: 2px;">{{ row.meta }}</div>
+              </div>
+              <span class="badge tag">{{ row.tag }}</span>
+              <div style="display: flex; justify-content: flex-end;">
+                <span class="gb {{ row.variant }} {{ row.motion }}">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring {{ row.ring }}"></span><span class="gb-dot"></span></span>{{ row.status }}</span>
+                </span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ isNav }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <h2 class="gb-sec-title">In navigation</h2>
+          <p class="gb-sec-sub">As a system-status marker in an app bar, and as a "new" flag on sidebar items. At this size the label goes to 9.5px and the pulse stays on — it is the only motion in the chrome.</p>
+        </div>
+        <div class="card-inner" style="padding: 0; overflow: hidden;">
+          <div style="display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-bottom: 1px solid var(--border-hairline);">
+            <span style="font-size: 15px; font-weight: 900; letter-spacing: -.01em; color: var(--fg1);">Deha</span>
+            <div style="display: flex; gap: 4px;">
+              <span class="pill-tab active" style="font-size: 12px;">Dashboard</span>
+              <span class="pill-tab" style="font-size: 12px;">Listings</span>
+              <span class="pill-tab" style="font-size: 12px;">Pipeline</span>
+            </div>
+            <span style="flex: 1"></span>
+            <span class="gb gb-success gb-sm">
+              <span class="gb-glow"></span>
+              <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>All systems live</span>
+            </span>
+          </div>
+          <div style="display: grid; grid-template-columns: 220px 1fr;">
+            <nav style="display: flex; flex-direction: column; gap: 2px; padding: 12px; border-right: 1px solid var(--border-hairline); background: #F8FAFC;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: var(--fg2);">Overview</div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: var(--fg2); background: #fff; box-shadow: inset 0 0 0 1px rgba(15,23,42,.06);">
+                Automations
+                <span class="gb gb-info gb-sm">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body">New</span>
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: var(--fg2);">
+                Approvals
+                <span class="gb gb-error gb-sm">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body"><span class="gb-dotwrap"><span class="gb-ring gb-ping"></span><span class="gb-dot"></span></span>3</span>
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 12px; font-size: 13px; font-weight: 700; color: var(--fg4);">
+                Reports
+                <span class="gb gb-neutral gb-sm gb-disabled">
+                  <span class="gb-glow"></span>
+                  <span class="gb-body">Soon</span>
+                </span>
+              </div>
+            </nav>
+            <div style="padding: 24px; display: flex; flex-direction: column; gap: 10px;">
+              <span class="gb-label">content area</span>
+              <div style="height: 10px; width: 60%; border-radius: 9999px; background: #E2E8F0;"></div>
+              <div style="height: 10px; width: 82%; border-radius: 9999px; background: #EEF2F7;"></div>
+              <div style="height: 10px; width: 44%; border-radius: 9999px; background: #EEF2F7;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:900},&quot;pulse&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Badge&quot;},&quot;dot&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Badge&quot;},&quot;glow&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.85,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Badge&quot;},&quot;defaultSection&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;variants&quot;,&quot;options&quot;:[&quot;variants&quot;,&quot;states&quot;,&quot;cards&quot;,&quot;actions&quot;,&quot;lists&quot;,&quot;nav&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Gallery&quot;}}">
+const SECTIONS = ["variants", "states", "cards", "actions", "lists", "nav"];
+const LIVE = [
+  { v: "gb-info", label: "Connecting" },
+  { v: "gb-success", label: "Live" },
+  { v: "gb-warning", label: "Degraded" },
+  { v: "gb-error", label: "Offline" },
+];
+const ROWS = [
+  { name: "Bebek villa · 6+2", meta: "Owner: A. Yılmaz", tag: "Premium", status: "Live", variant: "gb-success", pulse: true },
+  { name: "Levent office floor", meta: "Owner: Deha Holding", tag: "Commercial", status: "In progress", variant: "gb-info", pulse: true },
+  { name: "Ataşehir 2+1", meta: "Owner: M. Demir", tag: "Resale", status: "Pending", variant: "gb-warning", pulse: false },
+  { name: "Beşiktaş studio", meta: "Owner: S. Kaya", tag: "Rental", status: "Offline", variant: "gb-error", pulse: false },
+  { name: "Sarıyer plot", meta: "Unassigned", tag: "Land", status: "Draft", variant: "gb-default", pulse: false },
+];
+
+class Component extends DCLogic {
+  state = { section: null, pulse: null, dot: null, live: 1 };
+
+  get section() { return this.state.section ?? (this.props.defaultSection || "variants"); }
+  get pulse() { return this.state.pulse ?? (this.props.pulse !== false); }
+  get dot() { return this.state.dot ?? (this.props.dot !== false); }
+
+  tab(name) {
+    const on = this.section === name;
+    return on
+      ? "background:#10B981;color:#fff;border-color:transparent;font-weight:900;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.15),inset 0 -1px 0 rgba(255,255,255,0.15),0 6px 18px -8px rgba(16,185,129,0.9);cursor:pointer"
+      : "cursor:pointer";
+  }
+  toggle(on) {
+    return on
+      ? "background:#0F172A;color:#fff;border-color:transparent;font-weight:900;cursor:pointer"
+      : "cursor:pointer;opacity:0.75";
+  }
+
+  renderVals() {
+    const s = this.section;
+    const live = LIVE[this.state.live % LIVE.length];
+    return {
+      pulse: this.pulse,
+      dot: this.dot,
+      glowOpacity: String(this.props.glow ?? 0.85),
+      isVariants: s === "variants",
+      isStates: s === "states",
+      isCards: s === "cards",
+      isActions: s === "actions",
+      isLists: s === "lists",
+      isNav: s === "nav",
+      tabStyleVariants: this.tab("variants"),
+      tabStyleStates: this.tab("states"),
+      tabStyleCards: this.tab("cards"),
+      tabStyleActions: this.tab("actions"),
+      tabStyleLists: this.tab("lists"),
+      tabStyleNav: this.tab("nav"),
+      toggleStylePulse: this.toggle(this.pulse),
+      toggleStyleDot: this.toggle(this.dot),
+      goVariants: () => this.setState({ section: "variants" }),
+      goStates: () => this.setState({ section: "states" }),
+      goCards: () => this.setState({ section: "cards" }),
+      goActions: () => this.setState({ section: "actions" }),
+      goLists: () => this.setState({ section: "lists" }),
+      goNav: () => this.setState({ section: "nav" }),
+      togglePulse: () => this.setState({ pulse: !this.pulse }),
+      toggleDot: () => this.setState({ dot: !this.dot }),
+      cycleLive: () => this.setState(st => ({ live: st.live + 1 })),
+      liveLabel: live.label,
+      liveVariant: live.v,
+      rows: ROWS.map(r => ({
+        ...r,
+        motion: r.pulse ? "" : "gb-static",
+        ring: r.pulse ? "gb-ping" : "gb-hidden",
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

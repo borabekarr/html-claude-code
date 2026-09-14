@@ -1,0 +1,290 @@
+<!-- @dsCard group="Merge - pills-chips-badges" name="AI Chat Inline Citation" subtitle="-> Pills, chips & badges" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+body { margin:0; background:#F8FAFC; font-family:'Montserrat',sans-serif; }
+a { color:#059669; text-decoration:none; }
+a:hover { color:#047857; text-decoration:underline; }
+[data-cite-line] > .sc-host { display:inline-block !important; vertical-align:baseline; width:auto !important; }
+@keyframes tokIn { from { opacity:0; filter:blur(3px); transform:translateY(3px); } to { opacity:1; filter:blur(0); transform:translateY(0); } }
+@keyframes panelIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes shim { 0% { background-position:-200% 0; } 100% { background-position:200% 0; } }
+@keyframes caret { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+@keyframes rowIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* focus-visible + 44px hit layers for this component's instance of the
+   shared .mb-btn/.mb-ai-btn/.pill-tab controls (local override -- the
+   generated _ai-message-box.css data-ds copy above is never edited; scoped
+   here so it applies to this document without touching the shared sheet). */
+.mb-btn, .mb-ai-btn { position: relative; }
+.mb-btn:focus-visible, .mb-ai-btn:focus-visible {
+  outline: 2px solid var(--brand-primary, #10B981);
+  outline-offset: 2px;
+}
+.mb-btn::after, .mb-ai-btn::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-btn, .mb-ai-btn,
+  [style*="panelIn"], [style*="tokIn"], [style*="rowIn"],
+  [style*="animation:shim"], [style*="animation:caret"] {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+</style>
+</helmet>
+<div style="min-height:100vh; padding:18px 32px 220px; background:#F8FAFC; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%);">
+<div style="max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:18px;">
+
+  <div style="display:flex; flex-direction:column; gap:8px;">
+    <span class="micro-label">Deha · AI components</span>
+    <h1 class="h1" style="margin:0;">ai-chat-inline-citation</h1>
+    <p class="body" style="margin:0; max-width:620px; text-wrap:pretty;">An inline source chip that expands into a carousel card of the evidence behind a generated sentence. Click any chip to open, arrow or dots to move between sources.</p>
+  </div>
+
+  <div class="pills-row" style="gap:8px;">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+      <button type="button" class="{{ t.cls }}" onClick="{{ t.on }}" style="cursor:pointer; transition:transform var(--duration-fast) var(--ease-out);" style-active="transform:scale(.94);">{{ t.name }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex; flex-direction:column; gap:12px; animation:panelIn var(--duration-320) var(--ease-out) both;">
+      <span class="pills-label">In a chat answer</span>
+      <div>
+        <div style="padding:2px;">
+          <div style="display:flex; align-items:center; gap:9px; margin-bottom:14px;">
+            <span style="display:grid; place-items:center; width:26px; height:26px; border-radius:9px; background:#10B981; color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.2);">
+              <span class="material-icons" style="font-size:15px;">auto_awesome</span>
+            </span>
+            <span style="font-size:12px; font-weight:800; color:#0F172A;">Deha Assistant</span>
+            <span class="badge tag" style="margin-left:auto;"><span class="material-icons">verified</span>3 sources cited</span>
+          </div>
+          <p style="position:relative; z-index:20; margin:0; font-size:15px; font-weight:500; color:#334155; line-height:1.7; text-wrap:pretty;">
+            Mortgage applications in the metro area rose for a fourth straight week, with the 30-year fixed rate settling near 6.1%<span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ 1 }}" label="reuters.com" sources="{{ setA }}" hint-size="auto,18px"></dc-import>.</span> Local inventory is still tight — about 2.4 months of supply, well under the balanced-market benchmark<span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ 2 }}" label="nar.realtor" sources="{{ setB }}" hint-size="auto,18px"></dc-import>.</span> Sellers in the eastern districts are holding list prices, but time-on-market has widened by nine days since June<span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ 3 }}" label="citylab" sources="{{ setC }}" hint-size="auto,18px"></dc-import>.</span>
+          </p>
+          <div class="mb-toolbar" style="position:relative; z-index:1;">
+            <div class="mb-tools-left">
+              <button type="button" class="mb-btn"><span class="material-icons">content_copy</span>Copy</button>
+              <button type="button" class="mb-btn"><span class="material-icons">bookmark_border</span>Save</button>
+            </div>
+            <div class="mb-tools-right">
+              <button type="button" class="mb-ai-btn"><span class="material-icons mb-gradient-icon">fact_check</span><span class="mb-gradient-text">Verify all</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; font-weight:600; color:#64748B;">Chips are numbered in reading order and carry the publisher name so the sentence stays scannable without opening anything.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isStream }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:12px; animation:panelIn var(--duration-320) var(--ease-out) both;">
+      <span class="pills-label">While the answer streams</span>
+      <div class="mb-shell">
+        <div class="mb generating" style="padding:18px;">
+          <sc-if value="{{ streamOn }}" hint-placeholder-val="{{ true }}">
+            <p style="position:relative; z-index:20; margin:0; font-size:15px; font-weight:500; color:#334155; line-height:1.7; text-wrap:pretty;">
+              <sc-for list="{{ streamTokens }}" as="w" hint-placeholder-count="18">
+                <span style="animation:tokIn var(--duration-420) var(--ease-out) both; animation-delay:{{ w.delay }};">{{ w.text }} </span>
+              </sc-for>
+              <span style="display:inline-block; animation:tokIn var(--duration-420) var(--ease-slide-bounce) both; animation-delay:2.3s;">
+                <span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ 1 }}" label="ecb.europa.eu" sources="{{ setB }}" hint-size="auto,18px"></dc-import></span>
+              </span>
+              <span style="display:inline-block; width:2px; height:15px; margin-left:3px; vertical-align:-2px; background:#10B981; animation:caret var(--duration-900) step-end infinite;"></span>
+            </p>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+              <div class="skel-bar w1" style="opacity:1; animation:shim 1.6s /* motion-sweep: kept */ linear infinite;"></div>
+              <div class="skel-bar w2" style="opacity:1; animation:shim 1.6s /* motion-sweep: kept */ linear infinite;"></div>
+            </div>
+          </sc-if>
+          <div class="mb-toolbar" style="position:relative; z-index:1;">
+            <div class="mb-tools-left">
+              <span style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:800; color:#059669;">
+                <span class="material-icons" style="font-size:15px;">travel_explore</span>Retrieving sources…
+              </span>
+            </div>
+            <div class="mb-tools-right">
+              <button type="button" class="mb-btn" onClick="{{ replay }}"><span class="material-icons">replay</span>Replay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; font-weight:600; color:#64748B;">The chip pops in on the token it belongs to, so nothing in the sentence reflows twice.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isPanel }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:12px; animation:panelIn var(--duration-320) var(--ease-out) both;">
+      <span class="pills-label">Collapsed into a source rail</span>
+      <div class="mb-shell">
+        <div class="mb" style="padding:18px;">
+          <p style="position:relative; z-index:20; margin:0 0 14px; font-size:15px; font-weight:500; color:#334155; line-height:1.7; text-wrap:pretty;">
+            Three brokerages revised their year-end forecasts upward this month<span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" mode="stack" sources="{{ setAll }}" hint-size="auto,22px"></dc-import></span>, though none expect rate cuts before the second quarter.
+          </p>
+          <div style="display:flex; flex-direction:column; gap:8px; padding-top:14px; border-top:1px solid #E2E8F0;">
+            <span class="pills-label" style="margin:0;">Sources used</span>
+            <sc-for list="{{ setAll }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex; align-items:center; gap:10px; padding:9px 11px; border:1px solid #E2E8F0; border-radius:14px; background:#F8FAFC; animation:rowIn var(--duration-360) var(--ease-out) both; animation-delay:{{ s.delay }}; transition:border-color var(--duration-base), background var(--duration-base), transform var(--duration-140) var(--ease-out);" style-hover="border-color:#A7F3D0; background:#ECFDF5; transform:translateX(2px);">
+                <span style="display:grid; place-items:center; width:22px; height:22px; border-radius:7px; background:#0F172A; color:#fff; font-size:11px; font-weight:900;">{{ s.initial }}</span>
+                <span style="display:flex; flex-direction:column; gap:1px; min-width:0;">
+                  <span style="font-size:12.5px; font-weight:800; color:#0F172A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ s.title }}</span>
+                  <span style="font-size:11px; font-weight:600; color:#94A3B8;">{{ s.url }}</span>
+                </span>
+                <span class="badge tag" style="margin-left:auto; flex-shrink:0;">{{ s.tag }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; font-weight:600; color:#64748B;">For dense answers, one stacked chip replaces a run of numbers and the full list lives under the message.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isData }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:12px; animation:panelIn var(--duration-320) var(--ease-out) both;">
+      <span class="pills-label">Attached to generated data</span>
+      <div class="mb-shell">
+        <div class="mb" style="padding:6px 4px;">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex; align-items:center; gap:12px; padding:14px 14px; border-bottom:1px solid #F1F5F9;">
+              <span style="display:flex; flex-direction:column; gap:2px;">
+                <span style="font-size:12px; font-weight:700; color:#64748B;">{{ r.label }}</span>
+                <span style="font-size:22px; font-weight:900; letter-spacing:-.02em; color:#0F172A;">{{ r.value }}</span>
+              </span>
+              <span style="margin-left:auto; display:inline-flex; align-items:center; gap:8px;">
+                <span class="badge tag">{{ r.delta }}</span>
+                <span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ r.n }}" label="{{ r.label2 }}" sources="{{ r.sources }}" hint-size="auto,18px"></dc-import></span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; font-weight:600; color:#64748B;">Every generated number keeps its own chip, so a figure can be traced without leaving the table.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; flex-direction:column; gap:12px; animation:panelIn var(--duration-320) var(--ease-out) both;">
+      <span class="pills-label">States</span>
+      <div class="mb-shell">
+        <div class="mb" style="padding:18px; display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:800; color:#94A3B8; width:86px;">DEFAULT</span>
+            <span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" n="{{ 1 }}" label="reuters.com" sources="{{ setA }}" hint-size="auto,18px"></dc-import></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:800; color:#94A3B8; width:86px;">HOVER</span>
+            <span style="display:inline-flex; align-items:center; gap:4px; padding:1px 7px 1px 5px; border-radius:9999px; border:1px solid #6EE7B7; background:#D1FAE5; color:#047857; font-size:11px; font-weight:800; line-height:1.5; transform:translateY(-1px); box-shadow:0 2px 8px -2px rgba(16,185,129,.45);">
+              <span style="display:inline-grid; place-items:center; width:14px; height:14px; border-radius:9999px; background:#10B981; color:#fff; font-size:9px; font-weight:900;">1</span>reuters.com
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:800; color:#94A3B8; width:86px;">LOADING</span>
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:2px 10px; border-radius:9999px; border:1px solid #E2E8F0; background:linear-gradient(90deg,#F1F5F9 0%,#E2E8F0 50%,#F1F5F9 100%); background-size:200% 100%; animation:shim 1.6s /* motion-sweep: kept */ linear infinite;">
+              <span style="display:inline-block; width:12px; height:12px; border-radius:9999px; background:#CBD5E1;"></span>
+              <span style="display:inline-block; width:54px; height:7px; border-radius:9999px; background:#CBD5E1;"></span>
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:800; color:#94A3B8; width:86px;">UNVERIFIED</span>
+            <span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" mode="unverified" sources="{{ setC }}" hint-size="auto,18px"></dc-import></span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+            <span style="font-size:11px; font-weight:800; color:#94A3B8; width:86px;">STACKED</span>
+            <span data-cite-line style="display:inline-block; vertical-align:baseline; white-space:nowrap;"><dc-import name="CitationChip" style="display:inline-block; vertical-align:baseline;" mode="stack" sources="{{ setAll }}" hint-size="auto,22px"></dc-import></span>
+          </div>
+        </div>
+      </div>
+      <p style="margin:0; font-size:12px; font-weight:600; color:#64748B;">Open state, carousel transition and focus ring live on the chip itself — click any default chip above to see them.</p>
+    </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:900}}">
+const SETS = {
+  A: [
+    { site: 'reuters.com', tag: 'news', title: '30-year fixed holds near 6.1% for fourth week', quote: 'Applications for home purchase loans climbed 3.2%, the longest run of gains since early spring.', url: 'reuters.com/markets/rates/mortgage-weekly' },
+    { site: 'freddiemac.com', tag: 'primary', title: 'Primary Mortgage Market Survey', quote: 'The 30-year fixed-rate mortgage averaged 6.09% this week, down from 6.14%.', url: 'freddiemac.com/pmms' },
+    { site: 'wsj.com', tag: 'analysis', title: 'Buyers return as rates flatten', quote: 'Lenders report the steadiest pipeline in nine months, though refinancing remains subdued.', url: 'wsj.com/economy/housing/rates-flatten' }
+  ],
+  B: [
+    { site: 'nar.realtor', tag: 'primary', title: 'Existing-home sales and months of supply', quote: 'Unsold inventory sits at a 2.4-month supply at the current sales pace, versus 4.0 in a balanced market.', url: 'nar.realtor/research/existing-home-sales' },
+    { site: 'ecb.europa.eu', tag: 'report', title: 'Housing supply constraints in metro areas', quote: 'Permitting delays account for roughly a third of the shortfall in new listings.', url: 'ecb.europa.eu/pub/housing-supply' },
+    { site: 'zillow.com', tag: 'dataset', title: 'Metro inventory index, August', quote: 'Active listings fell 6.8% year over year across the twenty largest metros.', url: 'zillow.com/research/inventory' }
+  ],
+  C: [
+    { site: 'citylab', tag: 'analysis', title: 'Days on market widen in eastern districts', quote: 'Median time to contract stretched to 41 days from 32 in June, while list prices barely moved.', url: 'bloomberg.com/citylab/days-on-market' },
+    { site: 'localmls.org', tag: 'dataset', title: 'District-level MLS extract', quote: 'Eastern districts 4–7 show the largest divergence between list price and closing price.', url: 'localmls.org/extracts/august' }
+  ]
+};
+class Component extends DCLogic {
+  state = { variant: 'chat', streamOn: true };
+  componentDidMount() { this._t = []; }
+  componentWillUnmount() { (this._t || []).forEach(clearTimeout); }
+  renderVals() {
+    const v = this.state.variant;
+    const tabs = [
+      ['chat', 'Chat answer'], ['stream', 'Streaming'], ['panel', 'Source rail'],
+      ['data', 'Generated data'], ['states', 'States']
+    ].map(([id, name]) => ({
+      name,
+      cls: 'pill-tab' + (v === id ? ' active' : ''),
+      on: () => this.setState({ variant: id, streamOn: true })
+    }));
+    const words = 'Euro-area lenders tightened credit standards again in the third quarter, the survey shows'.split(' ');
+    const withMeta = (arr) => arr.map((s, i) => Object.assign({}, s, {
+      initial: s.site[0].toUpperCase(), delay: (i * 70) + 'ms'
+    }));
+    return {
+      tabs,
+      isChat: v === 'chat', isStream: v === 'stream', isPanel: v === 'panel',
+      isData: v === 'data', isStates: v === 'states',
+      setA: SETS.A, setB: SETS.B, setC: SETS.C,
+      setAll: withMeta([SETS.A[0], SETS.B[0], SETS.C[0]]),
+      streamOn: this.state.streamOn,
+      streamTokens: words.map((text, i) => ({ text, delay: (i * 110) + 'ms' })),
+      replay: () => {
+        this.setState({ streamOn: false });
+        const t = setTimeout(() => this.setState({ streamOn: true }), 60);
+        (this._t = this._t || []).push(t);
+      },
+      rows: [
+        { label: 'Median sale price', label2: 'freddiemac', value: '$612,400', delta: '+2.1% MoM', n: 1, sources: SETS.A },
+        { label: 'Months of supply', label2: 'nar.realtor', value: '2.4', delta: '−0.3 MoM', n: 2, sources: SETS.B },
+        { label: 'Days on market', label2: 'citylab', value: '41', delta: '+9 since June', n: 3, sources: SETS.C }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
