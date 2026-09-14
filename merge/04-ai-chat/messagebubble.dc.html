@@ -1,0 +1,63 @@
+<!-- @dsCard group="Merge - ai-chat" name="MessageBubble" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+
+<style>
+  body { margin: 0; background: #FFFFFF; font-family: 'Montserrat', system-ui, sans-serif; }
+  body, button, input, select, textarea { font-family: 'Montserrat', system-ui, sans-serif; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 900; }
+  .material-icons { font-family: 'Material Icons'; }
+  .material-symbols-outlined, .ms { font-family: 'Material Symbols Outlined'; }
+  a { color: #059669; text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: #047857; text-decoration: underline; }
+  }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; line-height: 1; }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="padding: 40px 48px 64px; display: flex; flex-direction: column; gap: 24px; color: #0F172A;">
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #94A3B8;">Bora · Messaging</div>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">MessageBubble</h1>
+    <p style="margin: 0; font-size: 13px; font-weight: 500; color: #64748B;">Incoming, outgoing, read receipt, attachment, audio, typing.</p>
+  </div>
+
+  <div style="width: 402px; box-sizing: border-box; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+    <div style="align-self: center; padding: 4px 12px; border-radius: 9999px; background: #E2E8F0; font-size: 10px; font-weight: 700; color: #64748B; letter-spacing: 0.04em;">TODAY</div>
+    <div style="align-self: flex-start; max-width: 78%; padding: 11px 15px; border-radius: 20px 20px 20px 6px; background: #FFFFFF; border: 1px solid #E2E8F0; font-size: 13px; font-weight: 500; line-height: 1.5; color: #0F172A;">Sending the revised proposal now — the discount is approved through Friday.</div>
+    <div style="align-self: flex-end; max-width: 78%; padding: 11px 15px; border-radius: 20px 20px 6px 20px; background: #10B981; font-size: 13px; font-weight: 600; line-height: 1.5; color: #FFFFFF; box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 2px 8px -2px rgba(16,185,129,0.5);">Perfect. I'll get it in front of their CFO this afternoon.</div>
+    <div style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: #94A3B8;"><span class="ms" style="font-size: 13px; color: #10B981;">done_all</span>Read 14:22</div>
+    <div style="align-self: flex-start; max-width: 78%; padding: 10px; border-radius: 20px 20px 20px 6px; background: #FFFFFF; border: 1px solid #E2E8F0; display: flex; align-items: center; gap: 10px;">
+      <span style="width: 38px; height: 38px; border-radius: 10px; background: #FEF2F2; display: flex; align-items: center; justify-content: center;"><span class="ms" style="font-size: 20px; color: #EF4444;">picture_as_pdf</span></span>
+      <div style="display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 12px; font-weight: 700;">Proposal_v3.pdf</span><span style="font-size: 10px; font-weight: 500; color: #94A3B8;">1.8 MB</span></div>
+    </div>
+    <div style="align-self: flex-end; max-width: 78%; padding: 11px 15px; border-radius: 20px 20px 6px 20px; background: #10B981; display: flex; align-items: center; gap: 10px;">
+      <span class="ms" style="font-size: 22px; color: #FFFFFF;">play_arrow</span>
+      <span style="display: flex; align-items: center; gap: 2px; height: 22px;"><span style="width: 2px; height: 8px; border-radius: 2px; background: rgba(255,255,255,0.7);"></span><span style="width: 2px; height: 16px; border-radius: 2px; background: rgba(255,255,255,0.7);"></span><span style="width: 2px; height: 22px; border-radius: 2px; background: #FFFFFF;"></span><span style="width: 2px; height: 12px; border-radius: 2px; background: rgba(255,255,255,0.7);"></span><span style="width: 2px; height: 18px; border-radius: 2px; background: rgba(255,255,255,0.7);"></span><span style="width: 2px; height: 9px; border-radius: 2px; background: rgba(255,255,255,0.5);"></span><span style="width: 2px; height: 14px; border-radius: 2px; background: rgba(255,255,255,0.5);"></span><span style="width: 2px; height: 6px; border-radius: 2px; background: rgba(255,255,255,0.5);"></span></span>
+      <span style="font-size: 11px; font-weight: 700; color: #FFFFFF;">0:14</span>
+    </div>
+    <div style="align-self: flex-start; padding: 12px 16px; border-radius: 20px 20px 20px 6px; background: #FFFFFF; border: 1px solid #E2E8F0; display: flex; gap: 4px;">
+      <span style="width: 7px; height: 7px; border-radius: 9999px; background: #CBD5E1;"></span>
+      <span style="width: 7px; height: 7px; border-radius: 9999px; background: #94A3B8;"></span>
+      <span style="width: 7px; height: 7px; border-radius: 9999px; background: #CBD5E1;"></span>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

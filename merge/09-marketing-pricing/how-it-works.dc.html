@@ -1,0 +1,363 @@
+<!-- @dsCard group="Merge - marketing-pricing" name="How It Works" subtitle="-> new: Marketing & pricing" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../styles.css">
+
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: var(--bg-app); }
+  a { color: var(--brand-primary); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: var(--brand-primary-700); }
+  }
+  @keyframes hiw-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes hiw-orb { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-8px,6px) scale(1.06); } }
+  [role="tab"]:focus-visible,
+  .hiw-cta-btn:focus-visible,
+  .hiw-auto-btn:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+  }
+  [role="tab"],
+  .hiw-auto-btn,
+  .hiw-cta-btn {
+    position: relative;
+  }
+  [role="tab"]::after,
+  .hiw-auto-btn::after,
+  .hiw-cta-btn::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hiw-panel, .hiw-orb, .hiw-bar {
+      animation: none !important;
+    }
+    [style*="transition"] {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css"><script src="../../_ds_bundle.js"></script></helmet>
+<div style="min-height: 100vh; padding: 56px 24px 72px; background: var(--bg-app); background-image: var(--bg-section-grid); background-size: 24px 24px; font-family: var(--font-display);">
+  <div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center;">
+      <span class="micro-label" style="display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: var(--radius-pill); color: var(--brand-primary-700); background: var(--brand-primary-50); border: 1px solid var(--brand-primary-100); box-shadow: var(--shadow-glass-sm);">
+        <span class="material-icons" style="font-size: 14px; color: var(--brand-primary);">auto_awesome</span>How It Works
+      </span>
+      <h2 class="h1" style="margin: 0; font-size: 40px; max-width: 620px; text-wrap: pretty;">{{ headline }}</h2>
+      <p class="body" style="margin: 0; max-width: 560px; color: var(--fg3); line-height: var(--leading-relaxed); text-wrap: pretty;">{{ subcopy }}</p>
+    </div>
+
+    <div role="tablist" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 6px; margin: 0 auto; border-radius: 22px; background: var(--bg-chip); backdrop-filter: blur(var(--blur-glass)); border: 1px solid var(--border-hairline); box-shadow: var(--shadow-recessed);">
+      <sc-for list="{{ verticals }}" as="v" hint-placeholder-count="4">
+        <button type="button" role="tab" onClick="{{ v.select }}" style="{{ v.style }}" style-hover="filter: brightness(1.04); color: var(--fg1);" style-active="transform: scale(0.97);">
+          <span class="material-symbols-outlined" style="font-size: 16px;">{{ v.icon }}</span>{{ v.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; align-items: start;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <div style="{{ s.shellStyle }}">
+          <div onClick="{{ s.select }}" onMouseEnter="{{ s.hold }}" onMouseLeave="{{ s.release }}" style="{{ s.cardStyle }}" style-hover="border-color: var(--brand-primary-300);">
+            <div style="display: flex; align-items: flex-start; gap: 14px;">
+              <div style="{{ s.numStyle }}">
+                <sc-if value="{{ s.done }}" hint-placeholder-val="{{ false }}">
+                  <span class="material-icons" style="font-size: 18px;">check</span>
+                </sc-if>
+                <sc-if value="{{ s.showNum }}" hint-placeholder-val="{{ true }}">{{ s.num }}</sc-if>
+              </div>
+              <div style="flex: 1; min-width: 0; padding-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="icon-badge icon-badge--sm" style="--icon-c: {{ s.iconColor }}; width: 24px; height: 24px; border-radius: 100px; flex: 0 0 auto;"><span class="material-icons">{{ s.icon }}</span></span>
+                  <h3 class="h4" style="margin: 0; flex: 1; min-width: 0;">{{ s.title }}</h3>
+                  <span class="badge-event" style="{{ s.chipStyle }}">{{ s.chip }}</span>
+                </div>
+                <div style="{{ s.bodyStyle }}">
+                 <div style="min-height: 0; overflow: hidden;">
+                  <p class="body" style="margin: 12px 0 0; color: var(--fg3); line-height: var(--leading-relaxed);">{{ s.body }}</p>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px;">
+                    <sc-for list="{{ s.tags }}" as="t" hint-placeholder-count="3">
+                      <span class="badge tag" style="box-sizing: border-box; display: inline-flex; width: fit-content; flex: 0 0 auto; height: 26px; padding: 0 12px; border-radius: 100px;">{{ t }}</span>
+                    </sc-for>
+                  </div>
+                 </div>
+                </div>
+              </div>
+            </div>
+            <div style="{{ s.trackStyle }}">
+              <div style="{{ s.fillStyle }}"></div>
+            </div>
+          </div>
+          </div>
+        </sc-for>
+
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+          <button type="button" class="btn-primary hiw-cta-btn" onClick="{{ next }}">
+            {{ ctaLabel }}<span class="material-icons" style="font-size: 18px;">arrow_forward</span>
+          </button>
+          <button type="button" class="hiw-auto-btn" onClick="{{ toggleAuto }}" style="{{ autoBtnStyle }}" style-hover="background: var(--brand-primary-50); color: var(--brand-primary-700);">
+            <span class="material-icons" style="font-size: 16px;">{{ autoIcon }}</span>{{ autoLabel }}
+          </button>
+        </div>
+      </div>
+
+      <div class="card-accent" style="padding: 28px; min-height: 460px; display: flex; flex-direction: column; gap: 22px; position: sticky; top: 24px;">
+        <div class="hiw-orb" style="position: absolute; top: -40px; right: -30px; width: 190px; height: 190px; border-radius: 9999px; background: rgba(255,255,255,0.22); filter: blur(38px); animation: hiw-orb 9s ease-in-out infinite; pointer-events: none;"></div>
+        <div style="position: relative; display: flex; align-items: center; justify-content: space-between;">
+          <span class="micro-label" style="color: rgba(255,255,255,0.8);">{{ panelKicker }}</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: var(--radius-pill); background: rgba(0,0,0,0.2); border: 1px solid var(--border-accent); color: #fff; font-size: var(--type-mini); font-weight: var(--weight-bold);">
+            <span class="material-icons" style="font-size: 13px;">schedule</span>{{ panelTiming }}
+          </span>
+        </div>
+        {{ panel }}
+        <div style="position: relative; margin-top: auto; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: var(--radius-lg); background: rgba(255,255,255,0.12); border: 1px solid var(--border-accent);">
+          <span class="material-icons" style="font-size: 20px;">{{ panelIcon }}</span>
+          <p style="margin: 0; font-size: var(--type-body-sm); font-weight: var(--weight-semibold); color: #fff; line-height: var(--leading-snug);">{{ panelNote }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:940},&quot;autoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;stepDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:6000,&quot;min&quot;:2000,&quot;max&quot;:12000,&quot;step&quot;:500,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Get Started&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#10B981&quot;,&quot;options&quot;:[&quot;#10B981&quot;,&quot;#059669&quot;,&quot;#0F172A&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Style&quot;}}">
+const DATA = {
+  "Real Estate": {
+    icon: "business_center",
+    headline: "From ad click to signed deal, in four steps",
+    subcopy: "Deha her talebi tek akışta toplar, AI ile eşleştirir ve kapanışa kadar takip eder.",
+    steps: [
+      { title: "Capture Leads", chip: "Step 1", body: "Meta ve WhatsApp reklamlarından gelen talepler otomatik olarak tek akışta toplanır.", tags: ["Meta Ads", "WhatsApp", "Web Form"], metric: "142", metricLabel: "NEW LEADS", delta: "+12% vs last month", kicker: "Lead Inbox", timing: "Realtime", note: "Kaynak bazlı CPL tek ekranda: ₺112.5 ortalama.", icon: "filter_list", bars: [42, 58, 51, 74, 66, 88, 96] },
+      { title: "AI Match Portfolio", chip: "Step 2", body: "Alıcı profiline en yakın portföyler saniyeler içinde puanlanır ve sıralanır.", tags: ["AI Scoring", "Hot Lead", "Predicted Value"], metric: "34%", metricLabel: "MATCH RATE", delta: "+6 pts this week", kicker: "AI Matching", timing: "~4s", note: "Hot Lead skoru 80 üzerindeki 18 talep öne alındı.", icon: "auto_awesome", bars: [30, 44, 62, 58, 79, 84, 91] },
+      { title: "Book Appointments", chip: "Step 3", body: "Uygun saatler takvime düşer, hatırlatmalar müşteriye otomatik gider.", tags: ["Calendar", "Reminders", "No-show Alert"], metric: "48", metricLabel: "APPOINTMENTS", delta: "9 bu hafta", kicker: "Scheduling", timing: "24h", note: "Hatırlatma sonrası no-show oranı %31 düştü.", icon: "how_to_reg", bars: [22, 35, 48, 44, 61, 58, 72] },
+      { title: "Close & Track", chip: "Step 4", body: "Kapanan satışlar hedef takibine, komisyona ve leaderboard'a anında işlenir.", tags: ["Revenue", "Goal Tracker", "Leaderboard"], metric: "$1.2M", metricLabel: "EXP. REVENUE", delta: "Top 1% agent", kicker: "Performance", timing: "Daily", note: "Aylık hedefin %78'i tamamlandı — 5g 14s kaldı.", icon: "emoji_events", bars: [40, 52, 66, 71, 83, 90, 100] }
+    ]
+  },
+  "Healthcare": {
+    icon: "how_to_reg",
+    headline: "Every patient inquiry, triaged and scheduled",
+    subcopy: "Randevu talepleri tek yerde toplanır, aciliyete göre sıralanır ve takibi otomatik yürür.",
+    steps: [
+      { title: "Intake Patients", chip: "Step 1", body: "Telefon, form ve WhatsApp üzerinden gelen başvurular tek kayda birleşir.", tags: ["Web Form", "Call Log", "WhatsApp"], metric: "318", metricLabel: "NEW INQUIRIES", delta: "+8% vs last month", kicker: "Patient Inbox", timing: "Realtime", note: "Mükerrer kayıtlar otomatik birleştirildi: 24 kayıt.", icon: "assignment", bars: [38, 46, 55, 62, 70, 81, 92] },
+      { title: "AI Triage", chip: "Step 2", body: "Şikayet metni analiz edilir, aciliyet ve doğru bölüm önerilir.", tags: ["AI Scoring", "Priority", "Routing"], metric: "96%", metricLabel: "ROUTED CORRECTLY", delta: "+4 pts this week", kicker: "Triage Engine", timing: "~2s", note: "Yüksek aciliyetli 12 başvuru öne alındı.", icon: "auto_awesome", bars: [44, 52, 61, 69, 78, 86, 94] },
+      { title: "Schedule Visits", chip: "Step 3", body: "Hekim müsaitliğine göre randevu verilir, hatırlatma SMS'i otomatik gider.", tags: ["Calendar", "Reminders", "Capacity"], metric: "1,204", metricLabel: "VISITS BOOKED", delta: "212 bu hafta", kicker: "Scheduling", timing: "24h", note: "Boş slot oranı %11'e indi.", icon: "schedule", bars: [30, 41, 50, 63, 72, 79, 88] },
+      { title: "Follow Up", chip: "Step 4", body: "Kontrol randevuları ve memnuniyet anketleri planlanmış akışla ilerler.", tags: ["Care Plan", "Survey", "Retention"], metric: "4.8", metricLabel: "SATISFACTION", delta: "+0.3 vs Q1", kicker: "Aftercare", timing: "Weekly", note: "Kontrole dönüş oranı %64.", icon: "check", bars: [48, 55, 60, 68, 74, 85, 97] }
+    ]
+  },
+  "Hotels": {
+    icon: "business_center",
+    headline: "Turn inquiries into booked, upsold stays",
+    subcopy: "Kanal bazlı talepler toplanır, fiyat AI ile önerilir, rezervasyon ve upsell tek akışta yürür.",
+    steps: [
+      { title: "Collect Inquiries", chip: "Step 1", body: "OTA, telefon ve doğrudan web talepleri tek rezervasyon akışında birleşir.", tags: ["OTA Sync", "Direct Web", "Call Log"], metric: "876", metricLabel: "INQUIRIES", delta: "+15% vs last month", kicker: "Booking Inbox", timing: "Realtime", note: "Doğrudan kanal payı %38'e yükseldi.", icon: "filter_list", bars: [34, 45, 52, 61, 73, 82, 95] },
+      { title: "AI Price Suggestion", chip: "Step 2", body: "Doluluk, sezon ve rakip fiyatlarına göre oda başı fiyat önerilir.", tags: ["Dynamic Pricing", "Occupancy", "Predicted Value"], metric: "₺1,380", metricLabel: "AVG. ADR", delta: "+₺140 vs last week", kicker: "Revenue AI", timing: "~3s", note: "Hafta sonu için %12 fiyat artışı öneriliyor.", icon: "auto_awesome", bars: [40, 48, 58, 66, 75, 84, 90] },
+      { title: "Confirm Bookings", chip: "Step 3", body: "Onay, ön ödeme ve check-in bilgileri misafire otomatik iletilir.", tags: ["Payments", "Confirmation", "Check-in"], metric: "92%", metricLabel: "CONFIRM RATE", delta: "+5 pts", kicker: "Reservations", timing: "12h", note: "İptal oranı %7'ye geriledi.", icon: "payments", bars: [36, 44, 57, 65, 71, 80, 89] },
+      { title: "Upsell & Review", chip: "Step 4", body: "Konaklama öncesi upsell teklifleri ve sonrası yorum talebi otomatik gider.", tags: ["Upsell", "Reviews", "Loyalty"], metric: "₺214K", metricLabel: "UPSELL REVENUE", delta: "+22% MoM", kicker: "Guest Journey", timing: "Daily", note: "Oda yükseltmesi kabul oranı %19.", icon: "emoji_events", bars: [42, 50, 61, 70, 78, 88, 100] }
+    ]
+  },
+  "Sales Teams": {
+    icon: "leaderboard",
+    headline: "A pipeline that scores, works and forecasts itself",
+    subcopy: "Pipeline içeri alınır, sıcak fırsatlar puanlanır, kadanslar çalışır ve tahmin güncellenir.",
+    steps: [
+      { title: "Import Pipeline", chip: "Step 1", body: "Mevcut CRM, tablo ve form verileri tek pipeline'a taşınır.", tags: ["CSV Import", "API", "Dedupe"], metric: "5,412", metricLabel: "RECORDS IMPORTED", delta: "0 hata", kicker: "Data Import", timing: "~2m", note: "Mükerrer 340 kayıt otomatik birleştirildi.", icon: "assignment", bars: [28, 40, 49, 58, 68, 79, 90] },
+      { title: "Score Hot Leads", chip: "Step 2", body: "Etkileşim ve firmografiye göre her fırsat puanlanır, sıcak olanlar öne çıkar.", tags: ["AI Scoring", "Hot Lead", "Intent"], metric: "218", metricLabel: "HOT LEADS", delta: "+31 this week", kicker: "Lead Scoring", timing: "~4s", note: "80+ skorlu fırsatlar temsilcilere dağıtıldı.", icon: "auto_awesome", bars: [35, 47, 55, 68, 76, 85, 93] },
+      { title: "Run Cadences", chip: "Step 3", body: "E-posta, arama ve WhatsApp adımları sıralı akışta otomatik ilerler.", tags: ["Sequences", "Tasks", "Reminders"], metric: "34%", metricLabel: "REPLY RATE", delta: "+7 pts", kicker: "Outreach", timing: "Daily", note: "Bugün 96 görev tamamlandı, 12 görev gecikti.", icon: "how_to_reg", bars: [32, 43, 52, 60, 72, 81, 88] },
+      { title: "Forecast Revenue", chip: "Step 4", body: "Kapanma olasılığı ile ciro tahmini güncellenir, hedef takibi canlı işler.", tags: ["Forecast", "Goal Tracker", "Leaderboard"], metric: "$4.6M", metricLabel: "FORECAST Q3", delta: "%78 of target", kicker: "Forecasting", timing: "Hourly", note: "Takım hedefine 5g 14s kaldı.", icon: "bar_chart", bars: [45, 54, 63, 72, 80, 91, 100] }
+    ]
+  }
+};
+
+const DUR = 6000;
+
+class Component extends DCLogic {
+  state = { vertical: "Real Estate", active: 0, progress: 0, auto: true, held: false };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      const auto = this.props.autoplay ?? true;
+      if (!auto || !this.state.auto || this.state.held) return;
+      this.setState(s => {
+        const p = s.progress + 60 / ((this.props.stepDuration ?? DUR));
+        if (p >= 1) {
+          const n = (s.active + 1) % DATA[s.vertical].steps.length;
+          return { active: n, progress: 0 };
+        }
+        return { progress: p };
+      });
+    }, 60);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  go(i) { this.setState({ active: i, progress: 0 }); }
+
+  renderVals() {
+    const accent = this.props.accentColor ?? "#10B981";
+    const v = DATA[this.state.vertical] || DATA["Real Estate"];
+    const steps = v.steps;
+    const active = Math.min(this.state.active, steps.length - 1);
+    const cur = steps[active];
+    const autoOn = (this.props.autoplay ?? true) && this.state.auto;
+
+    const verticals = Object.keys(DATA).map(name => {
+      const on = name === this.state.vertical;
+      return {
+        label: name,
+        icon: DATA[name].icon,
+        select: () => this.setState({ vertical: name, active: 0, progress: 0 }),
+        style: {
+          display: "inline-flex", alignItems: "center", gap: "7px",
+          padding: "10px 16px", cursor: "pointer",
+          borderRadius: "var(--radius-pill)",
+          border: "1px solid " + (on ? "transparent" : "var(--border-hairline)"),
+          fontFamily: "var(--font-display)",
+          fontSize: "var(--type-body-sm)",
+          fontWeight: on ? 800 : 600,
+          letterSpacing: on ? "-0.01em" : "0",
+          color: on ? "#fff" : "var(--fg3)",
+          background: on ? accent : "var(--bg-card-solid)",
+          backgroundImage: on ? "linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)" : "none",
+          backgroundSize: "14px 14px",
+          textShadow: on ? "0 1px 2px rgba(0,0,0,0.18)" : "none",
+          boxShadow: on
+            ? "var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15)"
+            : "var(--shadow-glass-sm)",
+          transition: "background var(--duration-260) var(--ease-out), color var(--duration-200), box-shadow var(--duration-260), transform var(--duration-base), border-color var(--duration-200)"
+        }
+      };
+    });
+
+    const stepVals = steps.map((s, i) => {
+      const on = i === active;
+      const done = i < active;
+      return {
+        num: String(i + 1), title: s.title, body: s.body, chip: s.chip, tags: s.tags,
+        done, showNum: !done,
+        select: () => this.go(i),
+        hold: () => this.setState({ held: true }),
+        release: () => this.setState({ held: false }),
+        icon: s.icon,
+        iconColor: done ? "#10B981" : on ? accent : "#94A3B8",
+        shellStyle: {
+          boxSizing: "border-box", borderRadius: "42px", background: "#F1F5F9",
+          border: "1px solid #E2E8F0", boxShadow: "0 4px 8px rgba(15,23,42,0.10)",
+          padding: "10px", display: "flex"
+        },
+        cardStyle: {
+          position: "relative", overflow: "hidden", cursor: "pointer", flex: 1, minWidth: 0,
+          padding: on ? "18px 22px 20px" : "18px 22px",
+          borderRadius: "32px",
+          background: "#FFFFFF",
+          border: "1px solid " + (on ? accent : "#E2E8F0"),
+          boxShadow: on
+            ? "0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), 0 0 0 3px rgba(16,185,129,0.12)"
+            : "0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), inset 0 0 0 1px rgba(15,23,42,0.03)",
+          transition: "border-color var(--duration-240) var(--ease-out), box-shadow var(--duration-240), padding var(--duration-240)"
+        },
+        numStyle: {
+          flex: "0 0 auto", width: "36px", height: "36px", borderRadius: "var(--radius-circle)",
+          display: "grid", placeItems: "center",
+          fontSize: "var(--type-body-sm)", fontWeight: 900,
+          color: on || done ? "#fff" : "var(--fg4)",
+          background: done ? "#10B981" : on ? accent : "var(--bg-chip)",
+          border: "1px solid " + (on || done ? "transparent" : "var(--border-hairline)"),
+          textShadow: on || done ? "0 1px 2px rgba(0,0,0,0.18)" : "none",
+          boxShadow: on
+            ? "var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22)"
+            : done ? "inset 0 1px 0 rgba(255,255,255,0.4)" : "var(--shadow-recessed)",
+          transition: "background var(--duration-240), color var(--duration-240), box-shadow var(--duration-240), border-color var(--duration-240)"
+        },
+        chipStyle: {
+          boxSizing: "border-box", display: "inline-flex", flex: "0 0 auto", width: "fit-content",
+          height: "26px", padding: "0 13px", borderRadius: "100px",
+          fontSize: "11.5px", fontWeight: 800, letterSpacing: "0.04em", textTransform: "uppercase",
+          backgroundColor: done ? "#10B981" : on ? accent : "#94A3B8",
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
+          backgroundSize: "7px 7px",
+          transition: "background-color var(--duration-240)"
+        },
+        bodyStyle: {
+          display: "grid",
+          gridTemplateRows: on ? "1fr" : "0fr",
+          opacity: on ? 1 : 0,
+          overflow: "hidden",
+          transition: "grid-template-rows var(--duration-320) var(--ease-out), opacity var(--duration-240)"
+        },
+        trackStyle: {
+          position: "absolute", left: 0, right: 0, bottom: 0, height: "3px",
+          background: "var(--bg-chip)", boxShadow: "var(--shadow-recessed)",
+          opacity: on && autoOn ? 1 : 0, transition: "opacity var(--duration-200)"
+        },
+        fillStyle: {
+          height: "100%", width: (on ? this.state.progress * 100 : 0) + "%",
+          background: accent, borderRadius: "0 3px 3px 0",
+          transition: "width var(--duration-instant) linear"
+        }
+      };
+    });
+
+    const h = React.createElement;
+    const panel = h("div", { key: this.state.vertical + active, className: "hiw-panel", style: { position: "relative", display: "flex", flexDirection: "column", gap: "20px", animation: "hiw-in var(--duration-380) var(--ease-out) both" } },
+      h("div", null,
+        h("div", { style: { fontSize: "48px", fontWeight: 900, lineHeight: 1, letterSpacing: "-0.02em", color: "#fff" } }, cur.metric),
+        h("div", { style: { marginTop: "10px", display: "flex", alignItems: "center", gap: "10px" } },
+          h("span", { style: { fontSize: "var(--type-micro)", fontWeight: 700, letterSpacing: "var(--tracking-wider)", color: "rgba(255,255,255,0.75)" } }, cur.metricLabel),
+          h("span", { style: { display: "inline-flex", alignItems: "center", gap: "4px", padding: "3px 8px", borderRadius: "9999px", background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)", fontSize: "var(--type-mini)", fontWeight: 700, color: "#fff" } },
+            h("span", { className: "material-icons", style: { fontSize: "12px" } }, "trending_up"), cur.delta)
+        )
+      ),
+      h("div", { style: { display: "flex", alignItems: "flex-end", gap: "8px", height: "150px", padding: "16px", borderRadius: "var(--radius-lg)", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" } },
+        cur.bars.map((b, i) => h("div", { key: i, className: "hiw-bar", style: { flex: 1, height: b + "%", borderRadius: "6px 6px 3px 3px", background: i === cur.bars.length - 1 ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.4)", transition: "height var(--duration-420) var(--ease-out) calc(var(--duration-40) * " + i + ")" } }))
+      ),
+      h("div", { style: { display: "flex", gap: "8px" } },
+        cur.tags.map(t => h("span", { key: t, style: { padding: "5px 10px", borderRadius: "var(--radius-sm)", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.2)", fontSize: "var(--type-mini)", fontWeight: 700, color: "#fff" } }, t))
+      )
+    );
+
+    return {
+      verticals, steps: stepVals, panel,
+      headline: v.headline, subcopy: v.subcopy,
+      panelKicker: cur.kicker, panelTiming: cur.timing, panelNote: cur.note, panelIcon: cur.icon,
+      ctaLabel: this.props.ctaLabel ?? "Get Started",
+      next: () => this.go((active + 1) % steps.length),
+      toggleAuto: () => this.setState(s => ({ auto: !s.auto, progress: 0 })),
+      autoIcon: autoOn ? "pause" : "play_arrow",
+      autoLabel: autoOn ? "Pause tour" : "Play tour",
+      autoBtnStyle: {
+        display: "inline-flex", alignItems: "center", gap: "6px",
+        padding: "12px 16px", borderRadius: "var(--radius-lg)",
+        background: "var(--card-bg)", border: "1px solid var(--card-border)",
+        color: "var(--fg2)", fontFamily: "var(--font-display)",
+        fontSize: "var(--type-body)", fontWeight: 700, cursor: "pointer",
+        boxShadow: "var(--shadow-glass-sm)",
+        transition: "background var(--duration-200), color var(--duration-200)"
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

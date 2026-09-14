@@ -1,0 +1,523 @@
+<!-- @dsCard group="Merge - navigation-layout" name="Left Side Pane" subtitle="-> new: Navigation & layout" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+@keyframes lspFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes lspTip { from { opacity: 0; transform: translate(-6px, -50%) scale(.94); } to { opacity: 1; transform: translate(0, -50%) scale(1); } }
+@keyframes lspPop { from { opacity: 0; transform: translateY(-8px) scale(.97); } to { opacity: 1; transform: none; } }
+a { color: var(--brand-primary-600); }
+a:hover { color: var(--brand-primary-700); }
+/* 44px hit layer for sub-44px icon buttons (workspace switch/search/collapse toggle) */
+.lsp-hit44 { position: relative; }
+.lsp-hit44::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+@media (prefers-reduced-motion: reduce) {
+  .card-inner, [style*="animation: lspFade"], [style*="animation: lspPop"], [style*="animation: lspTip"] { animation: none !important; }
+}
+</style>
+</helmet>
+
+<div style="min-height: 100%; background: #F8FAFC; font-family: 'Montserrat', system-ui, sans-serif; padding: 32px 32px 48px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px;">
+
+  <div style="display: flex; flex-direction: column; gap: 4px;">
+    <span class="micro-label">Component</span>
+    <h1 class="h1" style="margin: 0;">Left side pane</h1>
+    <p class="body" style="margin: 4px 0 0; max-width: 620px;">App rail plus contextual panel. Switch usage areas with the pills; the rail tooltips, hover, active and collapse transitions are live.</p>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    <div class="pills-row">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+        <button type="button" class="{{ v.cls }}" onClick="{{ v.select }}" style="cursor: pointer;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <span style="width: 1px; height: 22px; background: #E2E8F0;"></span>
+    <button type="button" class="btn-discuss" onClick="{{ toggleCollapse }}" style="cursor: pointer; width: auto; flex: 0 0 auto; align-self: center;">
+      <span class="material-symbols-outlined" style="font-size: 17px;">{{ collapseIcon }}</span>
+      {{ collapseLabel }}
+    </button>
+  </div>
+
+  <div style="display: flex; justify-content: flex-start;">
+    <div style="{{ stageStyle }}">
+
+      <div style="{{ railStyle }}">
+        <div style="width: 34px; height: 34px; display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 20px; letter-spacing: -.06em;">Λ٨</div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 6px;">
+          <sc-for list="{{ apps }}" as="app" hint-placeholder-count="4">
+            <div style="position: relative; display: flex; align-items: center;" onMouseEnter="{{ app.enter }}" onMouseLeave="{{ app.leave }}">
+              <button type="button" class="lsp-hit44" onClick="{{ app.select }}" style="{{ app.tileStyle }}" style-active="transform: scale(.92);">
+                <span class="material-symbols-outlined" style="font-size: 21px; color: rgba(255,255,255,.98); font-variation-settings: 'wght' 500; text-shadow: 0 1px 2px rgba(15,23,42,.25);">{{ app.icon }}</span>
+              </button>
+              <sc-if value="{{ app.tip }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; left: 58px; top: 50%; transform: translateY(-50%); background: #0F172A; color: #fff; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 12px; white-space: nowrap; box-shadow: 0 10px 24px -10px rgba(0,0,0,.7); animation: lspTip var(--duration-180) var(--ease-out) both; pointer-events: none; z-index: 30;">{{ app.label }}</div>
+              </sc-if>
+              <sc-if value="{{ app.isActive }}" hint-placeholder-val="{{ false }}">
+                <span style="position: absolute; left: -12px; top: 50%; width: 3px; height: 22px; border-radius: 0 3px 3px 0; background: #10B981; transform: translateY(-50%); box-shadow: 0 0 14px rgba(16,185,129,.9);"></span>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+
+        <span style="width: 34px; height: 1px; background: rgba(255,255,255,.14); margin-top: 4px;"></span>
+
+        <button type="button" style="width: 44px; height: 44px; border-radius: 14px; border: none; background: transparent; display: grid; place-items: center; cursor: pointer; color: rgba(255,255,255,.55); transition: color var(--duration-180), background var(--duration-180);" style-hover="background: rgba(255,255,255,.08); color: #fff;">
+          <span class="material-symbols-outlined" style="font-size: 22px;">add_to_photos</span>
+        </button>
+
+        <div style="margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+          <button type="button" style="width: 44px; height: 44px; border-radius: 14px; border: none; background: transparent; display: grid; place-items: center; cursor: pointer; color: rgba(255,255,255,.55); transition: color var(--duration-180), background var(--duration-180), transform var(--duration-180);" style-hover="background: rgba(255,255,255,.08); color: #fff; transform: rotate(30deg);">
+            <span class="material-symbols-outlined" style="font-size: 23px;">settings</span>
+          </button>
+          <div style="width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(140deg,#34D399,#0EA5E9); display: grid; place-items: center; color: #05201A; font-weight: 900; font-size: 13px; box-shadow: 0 0 0 2px rgba(255,255,255,.12);">DA</div>
+        </div>
+      </div>
+
+      <div style="{{ panelStyle }}">
+        <div style="{{ panelInnerStyle }}">
+
+          <div style="{{ headerStyle }}">
+            <button type="button" class="lsp-hit44" onClick="{{ toggleWorkspace }}" style="{{ workspaceBtnStyle }}" style-hover="background: #F1F5F9;">
+              <span style="width: 34px; height: 34px; border-radius: 11px; background: #D9F99D; display: grid; place-items: center; box-shadow: inset 0 -2px 0 rgba(0,0,0,.10); flex: 0 0 34px;">
+                <span style="width: 16px; height: 16px; border-radius: 50%; background: linear-gradient(90deg,#0F172A 50%, #84CC16 50%);"></span>
+              </span>
+              <span style="{{ labelStyle }}">Ace Studio</span>
+              <span class="material-symbols-outlined" style="{{ chevronStyle }}">unfold_more</span>
+            </button>
+            <div style="{{ headerActionsStyle }}">
+              <button type="button" class="lsp-hit44" style="{{ searchBtnStyle }}" style-hover="background: #F1F5F9; color: #0F172A;">
+                <span class="material-symbols-outlined" style="font-size: 21px;">search</span>
+              </button>
+              <button type="button" class="lsp-hit44" onClick="{{ toggleCollapse }}" style="width: 34px; height: 34px; border-radius: 11px; border: none; background: transparent; display: grid; place-items: center; cursor: pointer; color: #64748B; transition: background var(--duration-base), color var(--duration-base);" style-hover="background: #F1F5F9; color: #0F172A;">
+                <span class="material-symbols-outlined" style="font-size: 21px;">{{ collapseIcon }}</span>
+              </button>
+            </div>
+          </div>
+
+          <sc-if value="{{ showWorkspaceMenu }}" hint-placeholder-val="{{ false }}">
+            <div class="card-inner" style="margin: 4px 0 8px; padding: 6px; animation: lspPop var(--duration-200) var(--ease-out) both;">
+              <sc-for list="{{ workspaces }}" as="w" hint-placeholder-count="3">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; cursor: pointer; transition: background var(--duration-150);" style-hover="background: #F1F5F9;">
+                  <span style="width: 22px; height: 22px; border-radius: 8px; background: {{ w.color }};"></span>
+                  <span style="font-size: 13px; font-weight: 700; color: #334155;">{{ w.name }}</span>
+                  <span class="badge tag" style="margin-left: auto;">{{ w.plan }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="flex: 1; overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 22px;">
+
+            <div style="display: flex; flex-direction: column; gap: 2px;" key="{{ variant }}">
+              <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+                <button type="button" class="lsp-hit44" onClick="{{ item.select }}" style="{{ item.style }}" style-hover="background: #F1F5F9; color: #0F172A;" style-active="transform: scale(.985);">
+                  <span class="material-symbols-outlined" style="font-size: 21px;">{{ item.icon }}</span>
+                  <span style="{{ item.labelStyle }}">{{ item.label }}</span>
+                  <sc-if value="{{ item.count }}" hint-placeholder-val="{{ false }}">
+                    <span class="badge tag" style="margin-left: auto;">{{ item.count }}</span>
+                  </sc-if>
+                </button>
+              </sc-for>
+            </div>
+
+            <sc-if value="{{ isSessions }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; animation: lspFade var(--duration-260) var(--ease-out) both;">
+                <span class="pills-label" style="margin: 0;">Today</span>
+                <sc-for list="{{ sessions }}" as="s" hint-placeholder-count="3">
+                  <div class="card-inner" style="padding: 12px; cursor: pointer; transition: transform var(--duration-200) var(--ease-out), box-shadow var(--duration-200);" style-hover="transform: translateY(-2px); box-shadow: 0 10px 24px -14px rgba(15,23,42,.45);">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span class="card-name" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ s.title }}</span>
+                      <span style="font-size: 10px; font-weight: 700; color: #94A3B8;">{{ s.time }}</span>
+                    </div>
+                    <div class="pills-row" style="margin-top: 8px; gap: 6px;">
+                      <span class="badge tag"><span class="material-icons">sell</span> {{ s.tag }}</span>
+                      <span class="{{ s.statusCls }}"><span class="material-icons">{{ s.statusIcon }}</span> {{ s.status }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isFilters }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 16px; animation: lspFade var(--duration-260) var(--ease-out) both;">
+                <div>
+                  <span class="pills-label">Priority</span>
+                  <div class="pills-row">
+                    <sc-for list="{{ priorities }}" as="p" hint-placeholder-count="3">
+                      <span class="pill-priority" onClick="{{ p.toggle }}" style="{{ p.style }}"><span class="dot" style="{{ p.dotStyle }}"></span> {{ p.label }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <span class="pills-label">Stage</span>
+                  <div class="pills-row">
+                    <span class="badge col-tag todo"><span class="material-icons">inbox</span> Todo <span class="count">4</span></span>
+                    <span class="badge col-tag progress"><span class="material-icons">bolt</span> Active <span class="count">3</span></span>
+                    <span class="badge col-tag done"><span class="material-icons">task_alt</span> Done <span class="count">7</span></span>
+                  </div>
+                </div>
+                <div>
+                  <span class="pills-label">Applied tags</span>
+                  <div class="pills-row">
+                    <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+                    <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+                    <span class="badge tag"><span class="material-icons">volunteer_activism</span> Nurture</span>
+                  </div>
+                </div>
+                <div class="card-inner" style="padding: 14px;">
+                  <span class="card-name">Pipeline health</span>
+                  <p class="card-desc" style="margin-bottom: 10px;">3 filters narrow 214 records down to 38.</p>
+                  <div class="pills-row">
+                    <span class="badge success"><span class="material-icons">trending_up</span> +12%</span>
+                    <span class="badge gci"><span>$</span> 45K GCI</span>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 14px; animation: lspFade var(--duration-260) var(--ease-out) both;">
+                <div class="card-accent" style="padding: 16px;">
+                  <span class="card-name">Studio Pro</span>
+                  <p class="card-desc card-desc-w" style="margin-bottom: 12px;">Seats 8 of 10 · renews 14 Oct</p>
+                  <button type="button" class="btn-inverse" style="padding: 8px 14px; font-size: 12px;">Manage plan</button>
+                </div>
+                <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; transition: background var(--duration-base);" style-hover="background: #F1F5F9;">
+                    <span class="material-symbols-outlined" style="font-size: 20px; color: #64748B;">{{ t.icon }}</span>
+                    <span style="font-size: 13px; font-weight: 700; color: #334155;">{{ t.label }}</span>
+                    <span onClick="{{ t.toggle }}" style="{{ t.trackStyle }}"><span style="{{ t.knobStyle }}"></span></span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isWorkspace }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; animation: lspFade var(--duration-260) var(--ease-out) both;">
+                <span class="pills-label" style="margin: 0;">Session</span>
+                <div style="border: 1px dashed #E2E8F0; border-radius: 16px; padding: 22px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="font-size: 26px; color: #CBD5E1;">bedtime</span>
+                  <span style="font-size: 13px; font-weight: 700; color: #94A3B8;">No session</span>
+                  <span style="font-size: 11px; font-weight: 600; color: #CBD5E1; line-height: 1.5;">Start one from the top of the pane and it appears here.</span>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+
+          <div style="{{ footerStyle }}">
+            <span style="width: 30px; height: 30px; border-radius: 10px; background: linear-gradient(140deg,#34D399,#0EA5E9); display: grid; place-items: center; color: #05201A; font-weight: 900; font-size: 12px; flex: 0 0 30px;">DA</span>
+            <div style="{{ footerTextStyle }}">
+              <span style="font-size: 12.5px; font-weight: 800; color: #0F172A;">Deha A.</span>
+              <span style="font-size: 10.5px; font-weight: 600; color: #94A3B8;">Owner</span>
+            </div>
+            <span class="material-symbols-outlined" style="{{ footerMoreStyle }}">more_horiz</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1; background: #fff; border-left: 1px solid #EEF2F6; display: grid; place-items: center; min-width: 0;">
+        <span style="font-size: 12px; font-weight: 700; color: #CBD5E1; letter-spacing: .14em; text-transform: uppercase;">Canvas</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    variant: 'workspace',
+    collapsed: false,
+    hoverApp: null,
+    activeApp: 1,
+    activeNav: 0,
+    menu: false,
+    prio: { High: true, Medium: false, Low: false },
+    toggles: { 'Dark mode': false, 'Email digest': true, 'Beta features': false },
+  };
+
+  set(k, v) { this.setState({ [k]: v }); }
+
+  navFor(variant) {
+    if (variant === 'sessions') return [
+      { icon: 'add', label: 'New session' },
+      { icon: 'history', label: 'Recent', count: '12' },
+      { icon: 'bookmark', label: 'Saved', count: '4' },
+    ];
+    if (variant === 'filters') return [
+      { icon: 'filter_alt', label: 'All records', count: '214' },
+      { icon: 'inbox', label: 'My queue', count: '38' },
+    ];
+    if (variant === 'settings') return [
+      { icon: 'person', label: 'Account' },
+      { icon: 'group', label: 'Team' },
+      { icon: 'credit_card', label: 'Billing' },
+      { icon: 'lock', label: 'Security' },
+    ];
+    return [
+      { icon: 'add', label: 'New session' },
+      { icon: 'bar_chart', label: 'Analytics' },
+      { icon: 'assignment', label: 'Briefs' },
+      { icon: 'deployed_code', label: 'Campaign' },
+      { icon: 'imagesmode', label: 'Creatives' },
+      { icon: 'content_copy', label: 'Deliverables' },
+      { icon: 'account_tree', label: 'Plan' },
+    ];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const V = [
+      ['workspace', 'Workspace nav'],
+      ['sessions', 'Session history'],
+      ['filters', 'Filters & tags'],
+      ['settings', 'Settings'],
+    ];
+    const APPS = [
+      { icon: 'home', label: 'Home', g: 'linear-gradient(150deg,#FFE600,#F97316)', glow: 'rgba(250,204,21,.95)' },
+      { icon: 'assignment', label: 'Briefs', g: 'linear-gradient(150deg,#00F0C0,#059669)', glow: 'rgba(16,185,129,.95)' },
+      { icon: 'auto_awesome', label: 'Creatives', g: 'linear-gradient(150deg,#3B82F6,#7C3AED)', glow: 'rgba(99,102,241,.95)' },
+      { icon: 'account_tree', label: 'Plan', g: 'linear-gradient(150deg,#F472B6,#9333EA)', glow: 'rgba(168,85,247,.95)' },
+    ];
+
+    return {
+      variant: s.variant,
+      isWorkspace: !s.collapsed && s.variant === 'workspace',
+      isSessions: !s.collapsed && s.variant === 'sessions',
+      isFilters: !s.collapsed && s.variant === 'filters',
+      isSettings: !s.collapsed && s.variant === 'settings',
+      collapsed: s.collapsed,
+      expanded: !s.collapsed,
+      railStyle: [
+        'flex:0 0 auto', 'background:#0B0B0D', 'display:flex', 'flex-direction:column',
+        'align-items:center', 'gap:18px', 'position:relative', 'z-index:2', 'box-sizing:border-box',
+        'overflow:hidden',
+        'width:' + (s.collapsed ? '0px' : '76px'),
+        'padding:' + (s.collapsed ? '20px 0 18px' : '20px 0 18px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transform: translateX(' + (s.collapsed ? '-16px' : '0') + ')',
+        'transition: width var(--duration-expand) var(--ease-press-calm), opacity ' + (s.collapsed ? 'var(--duration-200)' : 'var(--duration-slower)') +
+          ' ease ' + (s.collapsed ? '0ms' /* motion-sweep: kept */ : 'var(--duration-fast)') + ', transform var(--duration-expand) var(--ease-press-calm)',
+      ].join(';'),
+      stageStyle: [
+        'display:flex', 'border-radius:28px', 'overflow:hidden', 'height:640px', 'width:100%', 'max-width:940px',
+        'background:' + (s.collapsed ? '#FFFFFF' : '#0B0B0D'),
+        'box-shadow: 0 30px 70px -30px rgba(15,23,42,.55), 0 2px 8px rgba(15,23,42,.10)',
+        'transition: background var(--duration-expand) ease',
+      ].join(';'),
+      workspaceBtnStyle: [
+        'display:flex', 'align-items:center', 'background:transparent', 'border:none', 'cursor:pointer',
+        'border-radius:14px', 'box-sizing:border-box',
+        'gap:' + (s.collapsed ? '0px' : '10px'),
+        'padding:' + (s.collapsed ? '5px' : '6px 8px 6px 6px'),
+        'width:' + (s.collapsed ? '100%' : 'auto'),
+        'justify-content:' + (s.collapsed ? 'center' : 'flex-start'),
+        'transition: background var(--duration-180), gap var(--duration-expand) var(--ease-press-calm), padding var(--duration-expand) var(--ease-press-calm)',
+      ].join(';'),
+      footerStyle: [
+        'padding-top:12px', 'border-top:1px solid #F1F5F9', 'display:flex', 'align-items:center',
+        'gap:' + (s.collapsed ? '0px' : '10px'),
+        'justify-content:' + (s.collapsed ? 'center' : 'flex-start'),
+        'transition: gap var(--duration-expand) var(--ease-press-calm)',
+      ].join(';'),
+      labelStyle: [
+        'font-size:17px', 'font-weight:800', 'color:#0F172A', 'white-space:nowrap', 'overflow:hidden',
+        'max-width:' + (s.collapsed ? '0px' : '160px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transition: max-width var(--duration-expand) var(--ease-press-calm), opacity ' + (s.collapsed ? 'var(--duration-base)' : 'var(--duration-320)') +
+          ' ease ' + (s.collapsed ? '0ms' /* motion-sweep: kept */ : 'var(--duration-base)'),
+      ].join(';'),
+      chevronStyle: [
+        'font-size:18px', 'color:#94A3B8', 'overflow:hidden',
+        'max-width:' + (s.collapsed ? '0px' : '18px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transition: max-width var(--duration-expand) var(--ease-press-calm), opacity var(--duration-240) ease',
+      ].join(';'),
+      searchBtnStyle: [
+        'height:34px', 'border-radius:11px', 'border:none', 'background:transparent', 'display:grid',
+        'place-items:center', 'cursor:pointer', 'color:#64748B', 'overflow:hidden', 'padding:0',
+        'width:' + (s.collapsed ? '0px' : '34px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transition: width var(--duration-expand) var(--ease-press-calm), opacity var(--duration-240) ease, background var(--duration-base), color var(--duration-base)',
+      ].join(';'),
+      footerTextStyle: [
+        'display:flex', 'flex-direction:column', 'line-height:1.25', 'overflow:hidden', 'white-space:nowrap',
+        'max-width:' + (s.collapsed ? '0px' : '140px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transition: max-width var(--duration-expand) var(--ease-press-calm), opacity ' + (s.collapsed ? 'var(--duration-base)' : 'var(--duration-320)') +
+          ' ease ' + (s.collapsed ? '0ms' /* motion-sweep: kept */ : 'var(--duration-base)'),
+      ].join(';'),
+      footerMoreStyle: [
+        'margin-left:auto', 'font-size:19px', 'color:#94A3B8', 'overflow:hidden',
+        'max-width:' + (s.collapsed ? '0px' : '19px'),
+        'opacity:' + (s.collapsed ? '0' : '1'),
+        'transition: max-width var(--duration-expand) var(--ease-press-calm), opacity var(--duration-240) ease',
+      ].join(';'),
+      headerStyle: [
+        'display:flex', 'align-items:center', 'gap:' + (s.collapsed ? '6px' : '10px'),
+        'padding-bottom:' + (s.collapsed ? '10px' : '6px'),
+        'flex-direction:' + (s.collapsed ? 'column' : 'row'),
+        'transition: gap var(--duration-expand) var(--ease-press-calm), padding var(--duration-expand) var(--ease-press-calm)',
+      ].join(';'),
+      headerActionsStyle: [
+        'display:flex', 'align-items:center', 'gap:2px',
+        'margin-left:' + (s.collapsed ? '0' : 'auto'),
+      ].join(';'),
+      panelInnerStyle: [
+        'height:100%', 'display:flex', 'flex-direction:column', 'box-sizing:border-box', 'overflow:hidden',
+        'width:' + (s.collapsed ? '76px' : '288px'),
+        'flex:0 0 ' + (s.collapsed ? '76px' : '288px'),
+        'padding:' + (s.collapsed ? '20px 14px' : '20px 18px'),
+        'transition: width var(--duration-expand) var(--ease-press-calm), padding var(--duration-expand) var(--ease-press-calm), flex-basis var(--duration-expand) var(--ease-press-calm)',
+      ].join(';'),
+      collapseIcon: s.collapsed ? 'left_panel_open' : 'left_panel_close',
+      collapseLabel: s.collapsed ? 'Expand pane' : 'Collapse pane',
+      toggleCollapse: () => this.set('collapsed', !s.collapsed),
+      showWorkspaceMenu: s.menu,
+      toggleWorkspace: () => this.set('menu', !s.menu),
+      panelStyle: [
+        'background:#FFFFFF', 'height:100%', 'overflow:hidden', 'flex:0 0 auto',
+        'border-radius:' + (s.collapsed ? '28px 0 0 28px' : '24px 0 0 24px'),
+        'width:' + (s.collapsed ? '76px' : '288px'),
+        'transition: width var(--duration-expand) var(--ease-press-calm), border-radius var(--duration-expand) ease',
+      ].join(';'),
+
+      variants: V.map(([id, label]) => ({
+        label,
+        cls: 'pill-tab' + (s.variant === id ? ' active' : ''),
+        select: () => this.setState({ variant: id, activeNav: 0 }),
+      })),
+
+      apps: APPS.map((a, i) => ({
+        icon: a.icon,
+        label: a.label,
+        tip: s.hoverApp === i,
+        isActive: s.activeApp === i,
+        enter: () => this.set('hoverApp', i),
+        leave: () => this.set('hoverApp', null),
+        select: () => this.set('activeApp', i),
+        tileStyle: [
+          'width:42px', 'height:42px', 'border-radius:13px', 'border:none', 'cursor:pointer',
+          'display:grid', 'place-items:center',
+          'background-image: radial-gradient(ellipse 120% 90% at 28% -10%, rgba(255,255,255,.5) 0%, rgba(255,255,255,.12) 40%, rgba(255,255,255,0) 72%), ' +
+            'linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px), ' + a.g,
+          'background-size: 100% 100%, 7px 7px, 7px 7px, 100% 100%',
+          'box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.14), 0 0 ' +
+            (s.activeApp === i || s.hoverApp === i ? '34px' : '14px') + ' ' + a.glow + ', 0 0 ' +
+            (s.activeApp === i || s.hoverApp === i ? '70px' : '26px') + ' ' + a.glow,
+          'transform: scale(' + (s.hoverApp === i ? 1.06 : 1) + ')',
+          'opacity:' + (s.activeApp === i || s.hoverApp === i ? 1 : 0.9),
+          'transition: transform var(--duration-slow) var(--ease-bounce-soft), box-shadow var(--duration-260) ease, opacity var(--duration-slow) ease',
+        ].join(';'),
+      })),
+
+      navItems: this.navFor(s.variant).map((n, i) => ({
+        icon: n.icon,
+        label: n.label,
+        labelStyle: [
+          'white-space:nowrap', 'overflow:hidden',
+          'max-width:' + (s.collapsed ? '0px' : '200px'),
+          'opacity:' + (s.collapsed ? '0' : '1'),
+          'transition: max-width var(--duration-expand) var(--ease-press-calm), opacity ' + (s.collapsed ? 'var(--duration-150)' : 'var(--duration-slower)') +
+            ' ease ' + (s.collapsed ? '0ms' /* motion-sweep: kept */ : 'var(--duration-180)'),
+        ].join(';'),
+        count: (!s.collapsed && n.count) || false,
+        select: () => this.set('activeNav', i),
+        style: [
+          'display:flex', 'align-items:center', 'width:100%', 'text-align:left', 'box-sizing:border-box',
+          'gap:' + (s.collapsed ? '0px' : '14px'),
+          'justify-content:' + (s.collapsed ? 'center' : 'flex-start'),
+          'padding:' + (s.collapsed ? '12px 0' : '10px 12px'), 'border:none', 'border-radius:14px', 'cursor:pointer',
+          'font-family:inherit', 'font-size:15px', 'font-weight:' + (s.activeNav === i ? 800 : 600),
+          'background:' + (s.activeNav === i ? '#F1F5F9' : 'transparent'),
+          'color:' + (s.activeNav === i ? '#0F172A' : '#64748B'),
+          'transition: background var(--duration-180) ease, color var(--duration-180) ease, gap var(--duration-expand) var(--ease-press-calm), padding var(--duration-expand) var(--ease-press-calm), transform var(--duration-140) var(--ease-out)',
+        ].join(';'),
+      })),
+
+      workspaces: [
+        { name: 'Ace Studio', color: '#D9F99D', plan: 'Pro' },
+        { name: 'Northwind', color: '#BFDBFE', plan: 'Team' },
+        { name: 'Deha Labs', color: '#FBCFE8', plan: 'Free' },
+      ],
+
+      sessions: [
+        { title: 'Q4 launch brief rewrite', time: '09:12', tag: 'Briefs', status: 'Done', statusCls: 'badge success', statusIcon: 'task_alt' },
+        { title: 'Creative variants — banner set', time: '11:40', tag: 'Creatives', status: 'Active', statusCls: 'badge time', statusIcon: 'schedule' },
+        { title: 'Audience overlap audit', time: '14:05', tag: 'Analytics', status: '-34%', statusCls: 'badge danger', statusIcon: 'trending_down' },
+      ],
+
+      priorities: [
+        { label: 'High', color: '#EF4444' },
+        { label: 'Medium', color: '#EAB308' },
+        { label: 'Low', color: '#10B981' },
+      ].map((p) => {
+        const on = s.prio[p.label];
+        return {
+          label: p.label,
+          toggle: () => this.setState({ prio: Object.assign({}, s.prio, { [p.label]: !on }) }),
+          dotStyle: 'background:' + p.color,
+          style: [
+            'cursor:pointer',
+            'background:' + (on ? p.color + '1A' : '#FFFFFF'),
+            'border-color:' + (on ? p.color : '#CBD5E1'),
+            'color:' + (on ? p.color : '#64748B'),
+            'transform: scale(' + (on ? 1.03 : 1) + ')',
+            'transition: background var(--duration-200) var(--ease-out), border-color var(--duration-200) var(--ease-out), color var(--duration-200) var(--ease-out), transform var(--duration-200) var(--ease-out)',
+          ].join(';'),
+        };
+      }),
+
+      toggles: [
+        { label: 'Dark mode', icon: 'dark_mode' },
+        { label: 'Email digest', icon: 'mail' },
+        { label: 'Beta features', icon: 'science' },
+      ].map((t) => {
+        const on = s.toggles[t.label];
+        return {
+          label: t.label,
+          icon: t.icon,
+          toggle: () => this.setState({ toggles: Object.assign({}, s.toggles, { [t.label]: !on }) }),
+          trackStyle: [
+            'margin-left:auto', 'width:42px', 'height:24px', 'border-radius:9999px', 'cursor:pointer',
+            'display:flex', 'align-items:center', 'padding:3px', 'box-sizing:border-box',
+            'background:' + (on ? '#10B981' : '#E2E8F0'),
+            'box-shadow: inset 0 2px 4px rgba(0,0,0,.10)',
+            'transition: background var(--duration-slow) ease',
+          ].join(';'),
+          knobStyle: [
+            'width:18px', 'height:18px', 'border-radius:9999px', 'background:#fff',
+            'box-shadow: 0 1px 3px rgba(0,0,0,.25)',
+            'transform: translateX(' + (on ? '18px' : '0px') + ')',
+            'transition: transform var(--duration-260) var(--ease-bounce-soft)',
+          ].join(';'),
+        };
+      }),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

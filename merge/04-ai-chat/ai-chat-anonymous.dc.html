@@ -1,0 +1,374 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Anonymous" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root { --duration-fast: 120ms; /* motion-sweep: kept */ --duration-base: var(--duration-200); --duration-slow: var(--duration-320); }
+body { margin: 0; background: #F8FAFC; }
+a { color: #10B981; }
+a:hover { color: #059669; }
+.acx-surface { transition: background calc(var(--duration-320) * var(--anim-mult,1)) var(--ease-out), box-shadow calc(var(--duration-320) * var(--anim-mult,1)) var(--ease-out), transform calc(var(--duration-200) * var(--anim-mult,1)) var(--ease-out); }
+.acx-tool { display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 10px; border:none; border-radius:9999px; cursor:pointer; font-family:'Montserrat'; font-size:11.5px; font-weight:700; background:transparent; color:var(--muted); transition: background calc(var(--duration-180) * var(--anim-mult,1)), color calc(var(--duration-180) * var(--anim-mult,1)), transform calc(160ms * var(--anim-mult,1)) var(--ease-spring); /* motion-sweep: kept (160ms transform leg) */ }
+.acx-tool:hover { background:var(--hover); color:var(--txt); }
+.acx-tool:active { transform:scale(0.94); }
+.acx-tool .material-icons { font-size:17px; }
+.acx-tool.is-on { background:rgba(16,185,129,0.15); color:#10B981; }
+.acx-send { display:grid; place-items:center; width:36px; height:36px; border:none; border-radius:9999px; cursor:pointer; transition: transform calc(var(--duration-slow) * var(--anim-mult,1)) var(--ease-spring), opacity calc(var(--duration-200) * var(--anim-mult,1)), background calc(var(--duration-200) * var(--anim-mult,1)); }
+.acx-send:active { transform:scale(0.9); }
+.acx-send:disabled { cursor:not-allowed; opacity:0.35; transform:scale(0.88); }
+.acx-ta { width:100%; border:none; outline:none; resize:none; background:transparent; font-family:'Montserrat'; font-size:15px; font-weight:600; line-height:1.45; color:var(--txt); }
+.acx-ta::placeholder { color:var(--muted); }
+@keyframes acx-bar { 0%,100% { transform:scaleY(0.35); } 50% { transform:scaleY(1); } }
+.acx-bar { width:3px; height:16px; border-radius:2px; background:#EF4444; transform-origin:center; animation: acx-bar calc(760ms * var(--anim-mult,1)) ease-in-out infinite; } /* motion-sweep: kept */
+@keyframes acx-caret { 0%,100% { opacity:1; } 50% { opacity:0; } }
+.acx-caret { display:inline-block; width:8px; height:15px; margin-left:2px; border-radius:2px; background:#10B981; animation: acx-caret calc(900ms * var(--anim-mult,1)) steps(1) infinite; vertical-align:-2px; } /* motion-sweep: kept */
+@keyframes acx-sweep { from { background-position:0% 50%; } to { background-position:200% 50%; } }
+.acx-thinking { background:linear-gradient(90deg,#94A3B8,#10B981,#94A3B8); background-size:200% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation: acx-sweep calc(1600ms * var(--anim-mult,1)) linear infinite; } /* motion-sweep: kept */
+
+/* 44px hit layers (DS rule): .acx-tool/.acx-send render 28-36px in this
+   component; new selectors added here (no edits inside the locked
+   <style data-ds =...> blocks) give each control a centered 44px hit
+   target without resizing the visible control. */
+.acx-tool, .acx-send { position: relative; }
+.acx-tool::after, .acx-send::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%;
+  width: 44px; height: 44px; transform: translate(-50%, -50%);
+}
+
+/* :focus-visible (DS rule): not covered by the shared button/pill ring. */
+.acx-tool:focus-visible, .acx-send:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--brand-primary));
+  outline-offset: var(--focus-ring-offset, 2px);
+}
+
+/* prefers-reduced-motion (DS rule): zero this component's own keyframes. */
+@media (prefers-reduced-motion: reduce) {
+  .acx-bar, .acx-caret, .acx-thinking {
+    animation: none !important;
+  }
+}
+</style>
+</helmet>
+
+<div style="min-height:100vh; box-sizing:border-box; padding:48px 32px 80px; display:flex; flex-direction:column; align-items:center; gap:32px; font-family:'Montserrat'; background:#F8FAFC; background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px); background-size:24px 24px;">
+
+  <div style="display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center; max-width:720px;">
+    <span class="badge tag" style="letter-spacing:0.12em; text-transform:uppercase;"><span class="material-icons">smart_toy</span> Component</span>
+    <h1 class="h1" style="margin:0;">ai-chat-anonymous</h1>
+    <p class="body" style="margin:0; color:var(--fg3); text-wrap:pretty;">A privacy-first composer. Type, attach, pick sources and send — the same surface adapts to every place it ships. Pick a usage area below.</p>
+  </div>
+
+  <div class="pills-row" style="justify-content:center; max-width:820px;">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="6">
+      <span class="{{ tab.cls }}" onClick="{{ tab.go }}" style="cursor:pointer; user-select:none;">{{ tab.label }}</span>
+    </sc-for>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+    <span class="micro-label">{{ variantName }}</span>
+    <span style="font-family:'Montserrat'; font-size:12px; font-weight:600; max-width:520px; text-align:center; color:var(--fg3);">{{ variantDesc }}</span>
+  </div>
+
+  <div style="width:100%; max-width:{{ maxW }}; display:flex; flex-direction:column; gap:14px;">
+
+    <sc-if value="{{ showThread }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="align-self:flex-end; max-width:80%; padding:12px 16px; border-radius:18px 18px 6px 18px; background:#0F172A; color:#fff; font-size:14px; font-weight:600; line-height:1.5;">{{ sentText }}</div>
+        <div style="display:flex; gap:12px; align-items:flex-start;">
+          <div class="icon-badge icon-badge--glow" style="--icon-c:#10B981;"><span class="material-icons">auto_awesome</span></div>
+          <div style="flex:1; padding:14px 16px; border-radius:6px 18px 18px 18px; background:#FFFFFF; border:1px solid #E2E8F0; box-shadow:0 1px 2px rgba(0,0,0,0.05); font-size:14px; font-weight:500; line-height:1.6; color:#334155; min-height:22px;">{{ streamText }}<span class="{{ caretCls }}"></span></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div class="acx-surface" style="{{ surfaceVars }} background:var(--surf); border-radius:22px; box-shadow:var(--surfShadow); padding:{{ pad }}; box-sizing:border-box;">
+
+      <sc-if value="{{ showTopRow }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+          <button class="acx-tool" onClick="{{ addContext }}" style="border:1px solid var(--line); height:28px; font-size:12px; font-weight:700;"><span class="material-icons" style="font-size:17px;">alternate_email</span>Add context</button>
+          <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="0">
+            <span class="db-pop-in" style="display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 6px 0 11px; border-radius:9999px; background:var(--chip); color:var(--txt); font-size:12px; font-weight:700;">
+              <span class="material-icons" style="font-size:15px; color:#10B981;">{{ chip.icon }}</span>{{ chip.label }}
+              <span class="material-icons" onClick="{{ chip.remove }}" style="font-size:15px; color:var(--muted); cursor:pointer;">close</span>
+            </span>
+          </sc-for>
+          <div style="flex:1;"></div>
+          <div onClick="{{ togglePrivate }}" style="{{ privateStyle }} display:inline-flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:9999px; cursor:pointer; font-size:12px; font-weight:700; user-select:none; transition:background calc(var(--duration-200) * var(--anim-mult,1)), color calc(var(--duration-200) * var(--anim-mult,1)), opacity calc(var(--duration-200) * var(--anim-mult,1));">
+            <span class="material-icons" style="font-size:19px;">{{ privateIcon }}</span>{{ privateLabel }}
+          </div>
+        </div>
+      </sc-if>
+
+      <textarea class="acx-ta" rows="{{ rows }}" placeholder="{{ placeholder }}" value="{{ text }}" onChange="{{ onType }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" onKeyDown="{{ onKey }}" disabled="{{ disabled }}"></textarea>
+
+      <sc-if value="{{ showFiles }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;">
+          <sc-for list="{{ files }}" as="f" hint-placeholder-count="2">
+            <span class="db-fade-in" style="display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:14px; background:var(--chip); font-size:12px; font-weight:700; color:var(--txt);">
+              <span class="material-icons" style="font-size:17px; color:var(--muted);">{{ f.icon }}</span>{{ f.name }}
+              <span style="color:var(--muted); font-weight:600;">{{ f.size }}</span>
+            </span>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display:flex; align-items:center; gap:6px; margin-top:{{ footGap }}; flex-wrap:nowrap;">
+        <div style="position:relative;">
+          <button class="{{ attachCls }}" onClick="{{ toggleAttach }}" style="width:30px; padding:0; justify-content:center;"><span class="material-icons">attach_file</span></button>
+          <sc-if value="{{ attachOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="db-pop-in" style="position:absolute; bottom:40px; left:0; z-index:25; min-width:214px; padding:6px; border-radius:16px; background:var(--menu); box-shadow:0 18px 40px -12px rgba(15,23,42,0.45), inset 0 0 0 1px var(--line); transform-origin:bottom left;">
+              <sc-for list="{{ attachOptions }}" as="o" hint-placeholder-count="4">
+                <div onClick="{{ o.pick }}" class="acx-tool" style="display:flex; width:100%; height:34px; justify-content:flex-start; box-sizing:border-box;">
+                  <span class="material-icons" style="font-size:17px;">{{ o.icon }}</span>{{ o.label }}
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <button class="{{ researchCls }}" onClick="{{ toggleResearch }}"><span class="material-icons">travel_explore</span>Research</button>
+
+        <div style="position:relative;">
+          <button class="acx-tool" onClick="{{ toggleMenu }}"><span class="material-icons">language</span>{{ source }}<span class="material-icons" style="font-size:17px;">expand_more</span></button>
+          <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="db-pop-in" style="position:absolute; bottom:44px; left:0; z-index:20; min-width:200px; padding:6px; border-radius:16px; background:var(--menu); box-shadow:0 18px 40px -12px rgba(15,23,42,0.45), inset 0 0 0 1px var(--line); transform-origin:bottom left;">
+              <sc-for list="{{ sources }}" as="s" hint-placeholder-count="3">
+                <div onClick="{{ s.pick }}" class="acx-tool" style="display:flex; width:100%; height:36px; justify-content:flex-start; box-sizing:border-box;">
+                  <span class="material-icons" style="font-size:17px; color:{{ s.tick }};">{{ s.icon }}</span>{{ s.label }}
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <span style="font-size:11.5px; font-weight:700; color:var(--muted); padding:0 6px; white-space:nowrap;">{{ model }}</span>
+        <div style="flex:1;"></div>
+
+        <sc-if value="{{ recording }}" hint-placeholder-val="{{ false }}">
+          <div class="db-fade-in" style="display:flex; align-items:center; gap:3px; height:24px; padding:0 10px;">
+            <span class="acx-bar" style="animation-delay:0ms;"></span><!-- motion-sweep: kept -->
+            <span class="acx-bar" style="animation-delay:120ms;"></span><!-- motion-sweep: kept -->
+            <span class="acx-bar" style="animation-delay:240ms;"></span><!-- motion-sweep: kept -->
+            <span class="acx-bar" style="animation-delay:360ms;"></span><!-- motion-sweep: kept -->
+            <span class="acx-bar" style="animation-delay:80ms;"></span><!-- motion-sweep: kept -->
+          </div>
+        </sc-if>
+
+        <button class="acx-tool" onClick="{{ toggleMic }}" style="width:34px; padding:0; justify-content:center; color:{{ micColor }};"><span class="material-icons">mic</span></button>
+        <button class="acx-send" onClick="{{ send }}" disabled="{{ sendDisabled }}" style="background:{{ sendBg }}; box-shadow:{{ sendShadow }};">
+          <span class="material-icons" style="font-size:19px; color:{{ sendFg }};">{{ sendIcon }}</span>
+        </button>
+      </div>
+    </div>
+
+    <sc-if value="{{ statusText }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; align-items:center; gap:8px; padding-left:6px;">
+        <span class="{{ statusCls }}" style="font-size:12px; font-weight:800; letter-spacing:0.04em;">{{ statusText }}</span>
+      </div>
+    </sc-if>
+
+    <span style="font-family:'Montserrat'; font-weight:600; text-align:center; color:var(--fg4); font-size:11px;">{{ caveat }}</span>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:760}}">
+const VARIANTS = [
+  { id: 'private', label: 'Private mode', name: 'Private mode — default',
+    desc: 'The anonymous surface. Nothing is stored, no memory, no training. Dark treatment signals the off-the-record session.' },
+  { id: 'inapp', label: 'In-app light', name: 'In-app light',
+    desc: 'Embedded in a normal product page on the light glass surface. Same controls, ordinary session.' },
+  { id: 'research', label: 'Research', name: 'Research mode',
+    desc: 'Research toggled on and the source scope open. Send becomes emerald to signal a long-running run.' },
+  { id: 'context', label: 'With context', name: 'Context & attachments',
+    desc: 'Context tags and file chips added before sending. Chips pop in and can be dismissed.' },
+  { id: 'compact', label: 'Compact reply', name: 'Compact reply',
+    desc: 'Single-row inline composer for replies inside a thread. Top row and caveat collapse away.' },
+  { id: 'thread', label: 'Answering', name: 'Sending → answering',
+    desc: 'Live states: send disabled while empty, spinner on submit, streamed answer, stop button.' },
+  { id: 'offline', label: 'Unavailable', name: 'Unavailable',
+    desc: 'Model unreachable. Input locked, controls dimmed, status line explains why.' }
+];
+
+const ALL_SOURCES = [
+  { id: 'all', label: 'All sources', icon: 'language' },
+  { id: 'web', label: 'Web only', icon: 'public' },
+  { id: 'files', label: 'My files', icon: 'folder' },
+  { id: 'none', label: 'No sources', icon: 'block' }
+];
+
+const ATTACH_OPTIONS = [
+  { label: 'Upload from device', icon: 'upload_file', file: 'valuation-report.pdf', size: '1.2 MB' },
+  { label: 'Take a photo', icon: 'photo_camera', file: 'capture-01.jpg', size: '820 KB' },
+  { label: 'From Deha CRM', icon: 'folder_shared', file: 'listing-4812.csv', size: '46 KB' },
+  { label: 'Paste a link', icon: 'link', file: 'deha.com/listings/4812', size: 'URL' }
+];
+
+const ANSWER = 'Private mode keeps this session off the record: no history, no memory, no training. Anything you paste here is dropped when you close the tab.';
+
+class Component extends DCLogic {
+  state = {
+    variant: 'private', text: '', focused: false, menuOpen: false,
+    research: false, privateMode: true, recording: false, attachOpen: false,
+    phase: 'idle', streamText: '', sentText: '', source: 'All sources',
+    chips: [], files: []
+  };
+
+  componentDidMount() { this.applyVariant('private'); }
+  componentWillUnmount() { clearInterval(this._t); clearTimeout(this._d); }
+
+  applyVariant(id) {
+    clearInterval(this._t); clearTimeout(this._d);
+    const base = { variant: id, menuOpen: false, attachOpen: false, recording: false, phase: 'idle', streamText: '', sentText: '', focused: false, source: 'All sources' };
+    if (id === 'private') this.setState({ ...base, privateMode: true, research: false, text: '', chips: [], files: [], source: 'All sources' });
+    else if (id === 'inapp') this.setState({ ...base, privateMode: false, research: false, text: 'Summarise the Q3 pipeline for me', chips: [], files: [] });
+    else if (id === 'research') this.setState({ ...base, privateMode: true, research: true, menuOpen: true, text: 'Compare mortgage rates across the last six months', chips: [], files: [], source: 'Web only' });
+    else if (id === 'context') this.setState({ ...base, privateMode: true, research: false, text: 'Draft a follow-up using these',
+      chips: [{ icon: 'folder_shared', label: 'Deha CRM' }, { icon: 'person', label: 'A. Yılmaz' }],
+      files: [{ icon: 'description', name: 'valuation-report.pdf', size: '1.2 MB' }, { icon: 'image', name: 'listing-04.jpg', size: '380 KB' }] });
+    else if (id === 'compact') this.setState({ ...base, privateMode: false, research: false, text: '', chips: [], files: [] });
+    else if (id === 'thread') { this.setState({ ...base, privateMode: true, text: 'What exactly does private mode keep?', chips: [], files: [] }); this._d = setTimeout(() => this.send(), 500); }
+    else if (id === 'offline') this.setState({ ...base, privateMode: true, text: '', chips: [], files: [] });
+  }
+
+  send = () => {
+    const t = this.state.text.trim();
+    if (!t || this.state.phase !== 'idle') { if (this.state.phase !== 'idle') this.stop(); return; }
+    this.setState({ phase: 'sending', sentText: t, text: '', streamText: '', variant: this.state.variant === 'thread' ? 'thread' : this.state.variant });
+    this._d = setTimeout(() => {
+      this.setState({ phase: 'streaming' });
+      let i = 0;
+      this._t = setInterval(() => {
+        i += 2;
+        this.setState({ streamText: ANSWER.slice(0, i) });
+        if (i >= ANSWER.length) { clearInterval(this._t); this.setState({ phase: 'idle' }); }
+      }, 22);
+    }, 900);
+  };
+
+  stop = () => { clearInterval(this._t); clearTimeout(this._d); this.setState({ phase: 'idle' }); };
+
+  renderVals() {
+    const s = this.state;
+    const v = s.variant;
+    const dark = v !== 'inapp' && v !== 'compact';
+    const compact = v === 'compact';
+    const off = v === 'offline';
+    const busy = s.phase !== 'idle';
+    const hasText = s.text.trim().length > 0;
+
+    const surfaceVars = dark
+      ? '--surf:#0F172A; --txt:#F1F5F9; --muted:#94A3B8; --chip:rgba(255,255,255,0.08); --line:rgba(255,255,255,0.12); --hover:rgba(255,255,255,0.08); --menu:#1E293B; --surfShadow: 0 20px 50px -24px rgba(15,23,42,0.65), inset 0 0 0 1px rgba(255,255,255,0.07);'
+      : '--surf:#FFFFFF; --txt:#0F172A; --muted:#64748B; --chip:#F1F5F9; --line:#E2E8F0; --hover:#F1F5F9; --menu:#FFFFFF; --surfShadow: 0 8px 24px -14px rgba(15,23,42,0.22), inset 0 0 0 1px #E2E8F0;';
+
+    const surfShadow = off
+      ? '0 10px 30px -18px rgba(15,23,42,0.35), inset 0 0 0 1px rgba(239,68,68,0.35)'
+      : s.focused
+        ? (dark ? '0 24px 60px -22px rgba(15,23,42,0.75), inset 0 0 0 1.5px rgba(16,185,129,0.55)' : '0 20px 46px -22px rgba(15,23,42,0.28), inset 0 0 0 1.5px rgba(16,185,129,0.55)')
+        : (dark ? '0 20px 50px -24px rgba(15,23,42,0.65), inset 0 0 0 1px rgba(255,255,255,0.07)' : '0 8px 24px -14px rgba(15,23,42,0.22), inset 0 0 0 1px #E2E8F0');
+
+    const sendActive = hasText && !off;
+    const sendBg = busy ? '#EF4444' : (s.research ? '#10B981' : (dark ? '#FFFFFF' : '#0F172A'));
+    const sendFg = busy ? '#FFFFFF' : (s.research ? '#FFFFFF' : (dark ? '#0F172A' : '#FFFFFF'));
+
+    return {
+      tabs: VARIANTS.map(x => ({
+        label: x.label,
+        cls: 'pill-tab' + (x.id === v ? ' active' : ''),
+        go: () => this.applyVariant(x.id)
+      })),
+      variantName: VARIANTS.find(x => x.id === v).name,
+      variantDesc: VARIANTS.find(x => x.id === v).desc,
+      maxW: compact ? '620px' : '760px',
+      pad: compact ? '6px 10px' : '10px 12px 8px',
+      rows: compact ? 1 : (v === 'context' ? 1 : 2),
+      footGap: compact ? '0px' : '6px',
+
+      surfaceVars, surfShadow,
+      showTopRow: !compact,
+      showFiles: s.files.length > 0,
+      showThread: !!s.sentText,
+      sentText: s.sentText,
+      streamText: s.streamText,
+      caretCls: s.phase === 'streaming' ? 'acx-caret' : '',
+
+      chips: s.chips.map((c, i) => ({ ...c, remove: () => this.setState({ chips: s.chips.filter((_, j) => j !== i) }) })),
+      files: s.files,
+
+      privateStyle: s.privateMode
+        ? 'background:rgba(255,255,255,0.08); color:#F1F5F9;'
+        : 'background:transparent; color:' + (dark ? '#64748B' : '#94A3B8') + '; opacity:0.75;',
+      privateIcon: s.privateMode ? 'visibility_off' : 'visibility',
+      privateLabel: s.privateMode ? 'Private mode' : 'Session saved',
+      togglePrivate: () => this.setState({ privateMode: !s.privateMode }),
+
+      placeholder: off ? 'Model unavailable' : (compact ? 'Reply…' : 'Learn something new…'),
+      text: s.text,
+      disabled: off,
+      onType: e => this.setState({ text: e.target.value }),
+      onFocus: () => this.setState({ focused: true }),
+      onBlur: () => this.setState({ focused: false }),
+      onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+
+      attachOpen: s.attachOpen,
+      attachCls: 'acx-tool' + (s.attachOpen ? ' is-on' : ''),
+      toggleAttach: () => this.setState({ attachOpen: !s.attachOpen, menuOpen: false }),
+      attachOptions: ATTACH_OPTIONS.map(o => ({
+        label: o.label, icon: o.icon,
+        pick: () => this.setState({ attachOpen: false, files: s.files.concat([{ icon: o.icon, name: o.file, size: o.size }]) })
+      })),
+      addContext: () => this.setState({ chips: s.chips.concat([{ icon: 'tag', label: 'Context ' + (s.chips.length + 1) }]) }),
+
+      researchCls: 'acx-tool' + (s.research ? ' is-on' : ''),
+      toggleResearch: () => this.setState({ research: !s.research }),
+
+      menuOpen: s.menuOpen,
+      toggleMenu: () => this.setState({ menuOpen: !s.menuOpen, attachOpen: false }),
+      source: s.source,
+      sources: ALL_SOURCES.map(x => ({
+        label: x.label, icon: x.icon,
+        tick: x.label === s.source ? '#10B981' : 'var(--muted)',
+        pick: () => this.setState({ source: x.label, menuOpen: false })
+      })),
+
+      model: off ? 'GPT-5 · offline' : 'GPT-5',
+      recording: s.recording,
+      micColor: s.recording ? '#EF4444' : 'var(--muted)',
+      toggleMic: () => this.setState({ recording: !s.recording }),
+
+      send: busy ? this.stop : this.send,
+      sendDisabled: !sendActive && !busy,
+      sendIcon: busy ? 'stop' : 'arrow_upward',
+      sendBg, sendFg,
+      sendShadow: busy ? '0 6px 18px -6px rgba(239,68,68,0.6)' : (sendActive ? '0 6px 18px -6px rgba(15,23,42,0.5)' : 'none'),
+
+      statusText: off ? 'Model unreachable — retrying in 20s'
+        : s.phase === 'sending' ? 'Thinking…'
+        : s.phase === 'streaming' ? 'Answering — press stop to cancel'
+        : s.recording ? 'Listening…' : '',
+      statusCls: off ? '' : (s.phase === 'sending' ? 'acx-thinking' : ''),
+      caveat: compact ? '' : 'AI can make mistakes. Private sessions are never stored or used for training.'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!-- @dsCard group="Merge - pills-chips-badges" name="Shiny Badge" subtitle="-> Pills, chips & badges" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: #F8FAFC; font-family: 'Montserrat', sans-serif; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes sbSweep {
+    0%   { transform: translateX(0) skewX(-20deg); }
+    62%  { transform: translateX(560%) skewX(-20deg); }
+    100% { transform: translateX(560%) skewX(-20deg); }
+  }
+  @keyframes sbSpin { to { transform: rotate(360deg); } }
+  @keyframes sbPop {
+    0%   { transform: scale(.72) rotate(-8deg); opacity: 0; }
+    55%  { transform: scale(1.12) rotate(3deg); opacity: 1; }
+    78%  { transform: scale(.97) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes sbRing {
+    0%   { transform: scale(.9); opacity: .75; }
+    100% { transform: scale(1.9); opacity: 0; }
+  }
+  @keyframes sbFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+  @keyframes sbFade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [style*="sbSweep"], [style*="sbSpin"], [style*="sbPop"], [style*="sbRing"], [style*="sbFloat"], [style*="sbFade"] {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:40px 32px 72px;background:#F8FAFC;background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 55%, #FFFFFF 100%);font-family:'Montserrat',sans-serif">
+<div style="max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8">Deha Design System · New component</span>
+      <div style="font-size:28px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Shiny Badge</div>
+      <div style="font-size:13px;font-weight:500;color:#64748B;max-width:520px;text-wrap:pretty">A metallic, self-shimmering pill for awards, tiers and verified status. Built on the system's pill, card and button primitives.</div>
+    </div>
+    <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;white-space:nowrap;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 6px 18px -6px rgba(190,140,30,.75);text-shadow:0 1px 0 rgba(255,255,255,.45);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out),box-shadow 260ms/* motion-sweep: kept */" style-hover="transform:translateY(-2px) scale(1.03);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.5),0 12px 26px -8px rgba(190,140,30,.95)" style-active="transform:translateY(0) scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:44px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+      <span class="material-icons" style="font-size:16px">workspace_premium</span>v1.0
+    </button>
+  </div>
+
+  <div class="pills-row" role="tablist" style="gap:8px">
+    <span class="pill-tab" style="{{ tabStyleA }}" onClick="{{ goA }}" role="tab">Anatomy</span>
+    <span class="pill-tab" style="{{ tabStyleB }}" onClick="{{ goB }}" role="tab">Tones &amp; sizes</span>
+    <span class="pill-tab" style="{{ tabStyleC }}" onClick="{{ goC }}" role="tab">States</span>
+    <span class="pill-tab" style="{{ tabStyleE }}" onClick="{{ goE }}" role="tab">Medal &amp; plaque</span>
+    <span class="pill-tab" style="{{ tabStyleD }}" onClick="{{ goD }}" role="tab">In context</span>
+  </div>
+
+  <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column;gap:16px;animation:sbFade var(--duration-slower) var(--ease-out) both">
+    <div class="card-accent" style="padding:36px 32px;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+      <div style="position:relative;z-index:1;animation:sbFloat 4.5s ease-in-out infinite">
+        <button type="button" style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px 13px 17px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:15px;font-weight:900;letter-spacing:0.01em;color:#3B2A05;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;white-space:nowrap;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 14px 34px -10px rgba(140,95,10,.85);text-shadow:0 1px 0 rgba(255,255,255,.5);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out),box-shadow 260ms/* motion-sweep: kept */" style-hover="transform:translateY(-3px) scale(1.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.5),0 22px 44px -12px rgba(140,95,10,1)" style-active="transform:translateY(0) scale(.97)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.92),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3s var(--ease-standard) infinite;pointer-events:none">
+          <span class="material-icons" style="font-size:19px">workspace_premium</span>{{ heroLabel }}
+        </button>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:4px">
+        <div style="font-size:20px;font-weight:800">{{ heroTitle }}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.45">{{ heroSub }}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div class="card-inner">
+        <div class="card-name">Surface</div>
+        <div class="card-desc">Five-stop metallic gradient at 150°, so the highlight reads as a rolled edge rather than a flat fill.</div>
+        <span class="card-tag">linear-gradient(150deg · 5 stops)</span>
+      </div>
+      <div class="card-inner">
+        <div class="card-name">Edge &amp; depth</div>
+        <div class="card-desc">Inset top highlight, inset bottom shade and a 1px hairline — the same recipe as system pills, in metal.</div>
+        <span class="card-tag">3× inset + colored drop glow</span>
+      </div>
+      <div class="card-inner">
+        <div class="card-name">Shine</div>
+        <div class="card-desc">A skewed white band sweeps across every 3.4s with a long tail pause, then rests off-canvas.</div>
+        <span class="card-tag">::after · sbSweep 3.4s infinite</span>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:12px">
+      <span class="pills-label" style="margin:0">Sits beside existing system pills</span>
+      <div class="pills-row">
+        <span class="pill-priority"><span class="dot" style="background:#EF4444"></span> Yüksek</span>
+        <span class="badge success"><span class="material-icons">trending_up</span> +12%</span>
+        <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 9px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:11px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;white-space:nowrap;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1.5px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:13px">star</span> Top 1%</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isB }}">
+  <div style="display:flex;flex-direction:column;gap:16px;animation:sbFade var(--duration-slower) var(--ease-out) both">
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+      <span class="pills-label" style="margin:0">Tones</span>
+      <div class="pills-row" style="gap:12px">
+        <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 6px 18px -6px rgba(190,140,30,.75);text-shadow:0 1px 0 rgba(255,255,255,.45);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.03)" style-active="transform:scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">emoji_events</span>Gold</button>
+
+        <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#FFFFFF;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(150deg,#A7F3D0 0%,#34D399 26%,#047857 52%,#6EE7B7 74%,#059669 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(2,44,34,.4),inset 0 0 0 1px rgba(4,80,58,.5),0 6px 18px -6px rgba(16,185,129,.85);text-shadow:0 1px 2px rgba(0,0,0,.28);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.03)" style-active="transform:scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">verified</span>Emerald</button>
+
+        <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#1E293B;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFFFFF 0%,#E2E8F0 26%,#94A3B8 52%,#F8FAFC 74%,#CBD5E1 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 0 rgba(51,65,85,.28),inset 0 0 0 1px rgba(100,116,139,.45),0 6px 18px -6px rgba(100,116,139,.7);text-shadow:0 1px 0 rgba(255,255,255,.6);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.03)" style-active="transform:scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">shield</span>Platinum</button>
+
+        <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#FFFFFF;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(150deg,#FECACA 0%,#F87171 26%,#B91C1C 52%,#FCA5A5 74%,#EF4444 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(69,10,10,.4),inset 0 0 0 1px rgba(153,27,27,.5),0 6px 18px -6px rgba(239,68,68,.85);text-shadow:0 1px 2px rgba(0,0,0,.28);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.03)" style-active="transform:scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.8),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">local_fire_department</span>Hot streak</button>
+
+        <button type="button" style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border:none;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#F8FAFC;cursor:pointer;position:relative;overflow:hidden;background:linear-gradient(150deg,#475569 0%,#1E293B 26%,#020617 52%,#334155 74%,#0F172A 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -2px 0 rgba(0,0,0,.5),inset 0 0 0 1px rgba(15,23,42,.9),0 6px 18px -6px rgba(15,23,42,.8);text-shadow:0 1px 2px rgba(0,0,0,.4);transition:transform 260ms/* motion-sweep: kept */ var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.03)" style-active="transform:scale(.96)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">lock</span>Obsidian</button>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+      <span class="pills-label" style="margin:0">Sizes</span>
+      <div class="pills-row" style="gap:12px;align-items:center">
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:9999px;font-family:'Montserrat';font-size:10px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:12px">star</span>xs</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 9px;border-radius:9999px;font-family:'Montserrat';font-size:11.5px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1.5px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.85),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:14px">star</span>sm</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 6px 18px -6px rgba(190,140,30,.6)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">star</span>md</span>
+        <span style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px 13px 17px;border-radius:9999px;font-family:'Montserrat';font-size:15px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 12px 28px -10px rgba(140,95,10,.8)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.92),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:19px">star</span>lg</span>
+      </div>
+      <span class="pills-label" style="margin:8px 0 0">Icon only &amp; number</span>
+      <div class="pills-row" style="gap:12px;align-items:center">
+        <span style="display:inline-grid;place-items:center;width:40px;height:40px;border-radius:9999px;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 6px 18px -6px rgba(190,140,30,.7)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:20px">workspace_premium</span></span>
+        <span style="display:inline-flex;align-items:center;gap:8px;padding:6px 6px 6px 12px;border-radius:9999px;font-family:'Montserrat';font-size:12px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">Level<span style="display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 7px;border-radius:9999px;background:rgba(59,42,5,.9);color:#F7E39C;font-size:11px;font-weight:900;font-variant-numeric:tabular-nums">12</span></span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isC }}">
+  <div style="display:flex;flex-direction:column;gap:16px;animation:sbFade var(--duration-slower) var(--ease-out) both">
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+      <span class="pills-label" style="margin:0">Static states</span>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 6px 18px -6px rgba(190,140,30,.7)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">workspace_premium</span>Default</span>
+          <span class="card-tag" style="margin:0">rest · sweep loops</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.5),0 14px 30px -10px rgba(140,95,10,1);transform:translateY(-2px) scale(1.03)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 1.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">workspace_premium</span>Hover</span>
+          <span class="card-tag" style="margin:0">lift 2px · sweep 3.4s → 1.4s</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#F7E39C 0%,#D8A93F 26%,#A87A22 52%,#F2CE72 74%,#C9962F 100%);box-shadow:inset 0 2px 6px rgba(90,60,0,.45),inset 0 0 0 1px rgba(140,96,10,.55);transform:scale(.96)"><span class="material-icons" style="font-size:16px">workspace_premium</span>Pressed</span>
+          <span class="card-tag" style="margin:0">scale .96 · shadow → inset</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+          <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#94A3B8;background:#F1F5F9;box-shadow:inset 0 -1px 0 rgba(0,0,0,.05),inset 0 0 0 1px #E2E8F0;filter:saturate(0)"><span class="material-icons" style="font-size:16px">lock</span>Locked</span>
+          <span class="card-tag" style="margin:0">no shine · slate-100 fill</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:16px">
+      <span class="pills-label" style="margin:0">Live transition — locked → claiming → earned</span>
+      <div style="display:flex;align-items:center;gap:20px;min-height:96px;padding:20px;border-radius:16px;background:#F8FAFC;box-shadow:inset 0 2px 4px rgba(0,0,0,0.06)">
+        <div style="position:relative;display:grid;place-items:center;min-width:220px">
+          <sc-if value="{{ isLocked }}">
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#94A3B8;background:#F1F5F9;box-shadow:inset 0 -1px 0 rgba(0,0,0,.05),inset 0 0 0 1px #E2E8F0"><span class="material-icons" style="font-size:16px">lock</span>Maker of the Year</span>
+          </sc-if>
+          <sc-if value="{{ isClaiming }}">
+            <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#64748B;background:#F1F5F9;box-shadow:inset 0 -1px 0 rgba(0,0,0,.05),inset 0 0 0 1px #E2E8F0"><span style="width:15px;height:15px;border-radius:50%;border:2px solid #CBD5E1;border-top-color:#10B981;animation:sbSpin 700ms/* motion-sweep: kept */ linear infinite;display:inline-block"></span>Minting…</span>
+          </sc-if>
+          <sc-if value="{{ isEarned }}">
+            <span style="position:relative;display:inline-grid;place-items:center;animation:sbPop var(--duration-entrance) var(--ease-bounce-soft) both">
+              <span style="position:absolute;inset:-6px;border-radius:9999px;border:2px solid rgba(234,179,8,.85);animation:sbRing 900ms/* motion-sweep: kept */ var(--ease-out) 120ms/* motion-sweep: kept */ both;pointer-events:none"></span>
+              <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 12px;border-radius:9999px;font-family:'Montserrat';font-size:13px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45),0 10px 26px -8px rgba(190,140,30,.9)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 2.2s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">workspace_premium</span>Maker of the Year</span>
+            </span>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-size:12px;font-weight:600;color:#64748B;max-width:340px;line-height:1.45">{{ demoCopy }}</div>
+          <div style="display:flex;gap:8px">
+            <button type="button" class="btn-green" onClick="{{ claim }}">
+              <span class="material-icons" style="font-size:16px">auto_awesome</span>{{ claimLabel }}
+            </button>
+            <button type="button" class="btn-discuss" onClick="{{ reset }}"><span class="material-icons" style="font-size:16px">restart_alt</span>Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isD }}">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;animation:sbFade var(--duration-slower) var(--ease-out) both">
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+      <span class="pills-label" style="margin:0">Profile header</span>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:52px;height:52px;border-radius:9999px;background:linear-gradient(150deg,#34D399,#047857);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);display:grid;place-items:center;color:#fff;font-weight:900;font-size:17px">EB</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px;font-weight:800;color:#0F172A">Elif Bora</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:9999px;font-family:'Montserrat';font-size:10px;font-weight:900;color:#FFFFFF;position:relative;overflow:hidden;background:linear-gradient(150deg,#A7F3D0 0%,#34D399 26%,#047857 52%,#6EE7B7 74%,#059669 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(2,44,34,.4),inset 0 0 0 1px rgba(4,80,58,.5);text-shadow:0 1px 2px rgba(0,0,0,.25)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.8),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:12px">verified</span>Verified</span>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:#64748B">Senior Broker · İstanbul</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+      <span class="pills-label" style="margin:0">Plan card</span>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:15px;font-weight:800;color:#0F172A">Deha Pro</div>
+          <div style="font-size:12px;color:#64748B">Unlimited pipelines, AI briefs, priority support.</div>
+        </div>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 9px;border-radius:9999px;font-family:'Montserrat';font-size:11px;font-weight:900;color:#3B2A05;position:relative;overflow:hidden;flex-shrink:0;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1.5px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:13px">bolt</span>Current plan</span>
+      </div>
+      <button type="button" class="btn-primary" style="align-self:flex-start">Manage plan <span class="material-icons btn-mi">arrow_forward</span></button>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:12px">
+      <span class="pills-label" style="margin:0">Leaderboard</span>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#F8FAFC;box-shadow:inset 0 0 0 1px #E2E8F0">
+          <span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9999px;color:#3B2A05;position:relative;overflow:hidden;font-size:12px;font-weight:900;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1.5px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">1</span>
+          <span style="font-size:13px;font-weight:800;color:#0F172A;flex:1">Elif Bora</span>
+          <span class="badge gci"><span>$</span> 45K GCI</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#F8FAFC;box-shadow:inset 0 0 0 1px #E2E8F0">
+          <span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9999px;color:#1E293B;font-size:12px;font-weight:900;background:linear-gradient(150deg,#FFFFFF,#E2E8F0 40%,#94A3B8 70%,#CBD5E1);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 0 1px rgba(100,116,139,.4)">2</span>
+          <span style="font-size:13px;font-weight:800;color:#0F172A;flex:1">Mert Aksoy</span>
+          <span class="badge tag"><span class="material-icons">trending_up</span> 38K</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:#F8FAFC;box-shadow:inset 0 0 0 1px #E2E8F0">
+          <span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9999px;color:#4A2C10;font-size:12px;font-weight:900;background:linear-gradient(150deg,#F5D9BE,#C98A4B 45%,#8A5524 75%,#DCA36B);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 0 0 1px rgba(120,70,25,.45)">3</span>
+          <span style="font-size:13px;font-weight:800;color:#0F172A;flex:1">Ayşe Demir</span>
+          <span class="badge tag"><span class="material-icons">trending_up</span> 31K</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:12px">
+      <span class="pills-label" style="margin:0">Listing card &amp; toast</span>
+      <div style="position:relative;padding:14px;border-radius:16px;background:#F8FAFC;box-shadow:inset 0 0 0 1px #E2E8F0;display:flex;flex-direction:column;gap:6px">
+        <span style="position:absolute;top:12px;right:12px;display:inline-flex;align-items:center;gap:5px;padding:3px 9px 3px 7px;border-radius:9999px;font-family:'Montserrat';font-size:10px;font-weight:900;color:#3B2A05;overflow:hidden;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -1px 0 rgba(120,80,0,.35),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:12px">star</span>Featured</span>
+        <div style="font-size:14px;font-weight:800;color:#0F172A">Nişantaşı 3+1 Penthouse</div>
+        <div style="font-size:12px;font-weight:600;color:#64748B">₺18.400.000 · 214 m² · 6 gün önce</div>
+        <div class="pills-row" style="margin-top:6px">
+          <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+          <span class="badge success"><span class="material-icons">trending_up</span> +12%</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#0F172A;color:#fff;box-shadow:0 12px 30px -12px rgba(15,23,42,.7)">
+        <span style="display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9999px;color:#3B2A05;position:relative;overflow:hidden;flex-shrink:0;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(140,96,10,.45)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none"><span class="material-icons" style="font-size:16px">workspace_premium</span></span>
+        <div style="display:flex;flex-direction:column;gap:2px;flex:1">
+          <span style="font-size:12.5px;font-weight:800">New badge unlocked</span>
+          <span style="font-size:11px;font-weight:600;color:#94A3B8">Maker of the Year 2025 is now on your profile.</span>
+        </div>
+        <span style="font-size:11px;font-weight:800;color:#34D399;cursor:pointer">View</span>
+      </div>
+    </div>
+
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isE }}">
+  <div style="display:flex;flex-direction:column;gap:16px;animation:sbFade var(--duration-slower) var(--ease-out) both">
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:18px">
+      <span class="pills-label" style="margin:0">Medal — large / medium / small</span>
+      <div style="display:flex;align-items:flex-end;gap:44px;flex-wrap:wrap;padding:12px 4px 4px">
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="position:relative;padding-top:34px;cursor:pointer;transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-4px) rotate(-2deg)">
+            <span style="position:absolute;top:0;left:50%;width:22px;height:46px;background:linear-gradient(180deg,#059669,#047857);transform:translateX(-118%) skewX(13deg);box-shadow:inset -2px 0 0 rgba(0,0,0,.18)"></span>
+            <span style="position:absolute;top:0;left:50%;width:22px;height:46px;background:linear-gradient(180deg,#34D399,#059669);transform:translateX(18%) skewX(-13deg);box-shadow:inset 2px 0 0 rgba(0,0,0,.12)"></span>
+            <span style="position:relative;display:grid;place-items:center;width:104px;height:104px;border-radius:9999px;overflow:hidden;color:#3B2A05;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -3px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 8px rgba(255,255,255,.22),0 18px 38px -14px rgba(140,95,10,.95)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+              <span style="display:flex;flex-direction:column;align-items:center;gap:1px;text-shadow:0 1px 0 rgba(255,255,255,.5)">
+                <span class="material-icons" style="font-size:30px">emoji_events</span>
+                <span style="font-size:10px;font-weight:900;letter-spacing:0.08em">1st</span>
+              </span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">lg · 104px</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="position:relative;padding-top:26px;cursor:pointer;transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-4px) rotate(-2deg)">
+            <span style="position:absolute;top:0;left:50%;width:16px;height:34px;background:linear-gradient(180deg,#059669,#047857);transform:translateX(-118%) skewX(13deg)"></span>
+            <span style="position:absolute;top:0;left:50%;width:16px;height:34px;background:linear-gradient(180deg,#34D399,#059669);transform:translateX(18%) skewX(-13deg)"></span>
+            <span style="position:relative;display:grid;place-items:center;width:74px;height:74px;border-radius:9999px;overflow:hidden;color:#3B2A05;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 6px rgba(255,255,255,.22),0 14px 28px -12px rgba(140,95,10,.9)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+              <span class="material-icons" style="font-size:26px;text-shadow:0 1px 0 rgba(255,255,255,.5)">emoji_events</span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">md · 74px</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="position:relative;padding-top:18px;cursor:pointer;transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-3px) rotate(-2deg)">
+            <span style="position:absolute;top:0;left:50%;width:11px;height:24px;background:linear-gradient(180deg,#059669,#047857);transform:translateX(-118%) skewX(13deg)"></span>
+            <span style="position:absolute;top:0;left:50%;width:11px;height:24px;background:linear-gradient(180deg,#34D399,#059669);transform:translateX(18%) skewX(-13deg)"></span>
+            <span style="position:relative;display:grid;place-items:center;width:48px;height:48px;border-radius:9999px;overflow:hidden;color:#3B2A05;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 4px rgba(255,255,255,.22),0 10px 20px -10px rgba(140,95,10,.85)" style-after="content:'';position:absolute;top:0;left:-60%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+              <span class="material-icons" style="font-size:18px">emoji_events</span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">sm · 48px</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="position:relative;padding-top:26px">
+            <span style="position:absolute;top:0;left:50%;width:16px;height:34px;background:linear-gradient(180deg,#94A3B8,#64748B);transform:translateX(-118%) skewX(13deg)"></span>
+            <span style="position:absolute;top:0;left:50%;width:16px;height:34px;background:linear-gradient(180deg,#CBD5E1,#94A3B8);transform:translateX(18%) skewX(-13deg)"></span>
+            <span style="position:relative;display:grid;place-items:center;width:74px;height:74px;border-radius:9999px;color:#94A3B8;background:#F1F5F9;box-shadow:inset 0 0 0 1px #E2E8F0,inset 0 0 0 6px rgba(255,255,255,.7);filter:saturate(0)">
+              <span class="material-icons" style="font-size:26px">lock</span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">md · locked</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-inner" style="display:flex;flex-direction:column;gap:18px">
+      <span class="pills-label" style="margin:0">Plaque — large / medium / small</span>
+      <div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;padding:4px">
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="position:relative;overflow:hidden;width:300px;border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:16px;color:#3B2A05;cursor:pointer;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 2px 0 rgba(255,255,255,.85),inset 0 -3px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 7px rgba(255,255,255,.2),0 18px 40px -16px rgba(140,95,10,.95);transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-3px) scale(1.015)" style-after="content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+            <span class="material-icons" style="font-size:34px;text-shadow:0 1px 0 rgba(255,255,255,.5)">workspace_premium</span>
+            <span style="display:flex;flex-direction:column;gap:3px;text-shadow:0 1px 0 rgba(255,255,255,.45)">
+              <span style="font-size:9.5px;font-weight:900;letter-spacing:0.16em;text-transform:uppercase;opacity:.75">Product Hunt</span>
+              <span style="font-size:15px;font-weight:900;letter-spacing:-0.01em;line-height:1.2">Maker of the Year</span>
+              <span style="font-size:11px;font-weight:700;opacity:.7">2025</span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">lg · 300×88</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="position:relative;overflow:hidden;width:228px;border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:12px;color:#3B2A05;cursor:pointer;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 5px rgba(255,255,255,.2),0 14px 30px -14px rgba(140,95,10,.9);transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-3px) scale(1.015)" style-after="content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+            <span class="material-icons" style="font-size:26px">workspace_premium</span>
+            <span style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:8.5px;font-weight:900;letter-spacing:0.16em;text-transform:uppercase;opacity:.75">Product Hunt</span>
+              <span style="font-size:12.5px;font-weight:900;line-height:1.2">Maker of the Year</span>
+            </span>
+          </div>
+          <span class="card-tag" style="margin:0">md · 228×66</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="position:relative;overflow:hidden;width:168px;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:9px;color:#3B2A05;cursor:pointer;background:linear-gradient(150deg,#FFF6D8 0%,#F2CE72 26%,#C9962F 52%,#F7E39C 74%,#D8A93F 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -2px 0 rgba(120,80,0,.4),inset 0 0 0 1px rgba(140,96,10,.5),inset 0 0 0 4px rgba(255,255,255,.2),0 10px 22px -12px rgba(140,95,10,.85);transition:transform var(--duration-slower) var(--ease-out)" style-hover="transform:translateY(-2px) scale(1.02)" style-after="content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:translateX(0) skewX(-20deg);animation:sbSweep 3.4s var(--ease-standard) infinite;pointer-events:none">
+            <span class="material-icons" style="font-size:19px">workspace_premium</span>
+            <span style="font-size:10.5px;font-weight:900;line-height:1.25">Maker of the Year</span>
+          </div>
+          <span class="card-tag" style="margin:0">sm · 168×44</span>
+        </div>
+
+      </div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px" class="card-inner">
+          <div class="card-name">Shared recipe</div>
+          <div class="card-desc">Medal, plaque and pill run the same five-stop gradient, inset bevel stack and sweep. Only radius, the inner white frame width and the icon scale change per shape.</div>
+        </div>
+        <div style="flex:1;min-width:240px" class="card-inner">
+          <div class="card-name">Sizing rule</div>
+          <div class="card-desc">Each step down keeps the bevel proportional: inner frame 8/6/4px on medals, 7/5/4px on plaques. Below sm, drop the engraved label and keep the icon only.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;heroTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PRODUCT HUNT&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;heroLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Maker of the Year 2025&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 'a', phase: 'locked' };
+
+  tabStyle(id) {
+    const on = this.state.tab === id;
+    return on
+      ? 'cursor:pointer;background:#10B981;color:#fff;border-color:transparent;font-weight:800;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15)'
+      : 'cursor:pointer';
+  }
+
+  go(tab) { return () => this.setState({ tab }); }
+
+  claim = () => {
+    if (this.state.phase !== 'locked') return;
+    this.setState({ phase: 'claiming' });
+    this._t = setTimeout(() => this.setState({ phase: 'earned' }), 1800);
+  };
+
+  reset = () => { clearTimeout(this._t); this.setState({ phase: 'locked' }); };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const { tab, phase } = this.state;
+    const copy = {
+      locked: 'Not earned yet. Claiming mints the badge — the pill morphs from slate to metal with a pop and a single expanding ring.',
+      claiming: 'Minting. The shine holds still while the spinner runs, so the metal never appears before the badge is real.',
+      earned: 'Earned. The badge settles into its resting loop: one sweep every 3.4 seconds.',
+    };
+    return {
+      isA: tab === 'a', isB: tab === 'b', isC: tab === 'c', isD: tab === 'd', isE: tab === 'e',
+      tabStyleA: this.tabStyle('a'), tabStyleB: this.tabStyle('b'),
+      tabStyleC: this.tabStyle('c'), tabStyleD: this.tabStyle('d'), tabStyleE: this.tabStyle('e'),
+      goA: this.go('a'), goB: this.go('b'), goC: this.go('c'), goD: this.go('d'), goE: this.go('e'),
+      isLocked: phase === 'locked', isClaiming: phase === 'claiming', isEarned: phase === 'earned',
+      demoCopy: copy[phase],
+      claimLabel: phase === 'locked' ? 'Claim badge' : phase === 'claiming' ? 'Minting…' : 'Claimed',
+      claim: this.claim, reset: this.reset,
+      heroLabel: this.props.heroLabel ?? 'Maker of the Year 2025',
+      heroTitle: this.props.heroTitle ?? 'PRODUCT HUNT',
+      heroSub: 'Awarded once a year. The badge is the only metallic surface in the system — reserve it for real distinction.',
+    };
+  }
+}
+</script>
+</body>
+</html>

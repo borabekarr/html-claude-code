@@ -1,0 +1,445 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="NewFeaturePopover" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_multisteps.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #0B0F17; }
+  :root { --duration-fast: 120ms /* motion-sweep: kept */; --duration-base: 200ms /* motion-sweep: kept */; --duration-slow: 320ms /* motion-sweep: kept */; --gap-icon-text: 8px; }
+  /* --ease-out / --ease-spring: removed local redefinitions (they shadowed the DS tokens);
+     --ease-out byte-matched the DS token already, --ease-spring is replaced below with the
+     nearest DS token var(--ease-spring-wide) (exact byte match, motion-sweep: rule). */
+  @keyframes nfPop { from { opacity: 0; transform: translateY(16px) scale(.965); } to { opacity: 1; transform: none; } }
+  @keyframes nfOut { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(10px) scale(.97); } }
+  @keyframes nfFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes nfRowIn { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+  @keyframes nfSlideRight { from { opacity: 0; transform: translateX(34px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes nfSlideOutRight { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(34px) scale(.97); } }
+  @keyframes nfDots { from { background-position: 0 0; } to { background-position: 26px 26px; } }
+  @keyframes nfFloat { 0%,100% { transform: translateY(-5px) rotate(-1.2deg); } 50% { transform: translateY(6px) rotate(1.2deg); } }
+  @keyframes nfSpin { to { transform: rotate(360deg); } }
+  @keyframes nfPopIn { 0% { transform: scale(0); } 62% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes nfSweep { from { left: -40%; } to { left: 115%; } }
+  @keyframes nfStepIn { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+  .nf-pop { animation: nfPop calc(520ms /* motion-sweep: kept -- no exact DS duration tier */ * var(--anim-mult,1)) var(--ease-spring-loose) both; }
+  .nf-out { animation: nfOut calc(var(--duration-260) * var(--anim-mult,1)) var(--ease-accel) both; }
+  .nf-fade { animation: nfFadeIn calc(var(--duration-420) * var(--anim-mult,1)) ease both; }
+  .nf-slide { animation: nfSlideRight calc(520ms /* motion-sweep: kept -- no exact DS duration tier */ * var(--anim-mult,1)) var(--ease-spring-loose) both; }
+  .nf-slide-out { animation: nfSlideOutRight calc(var(--duration-260) * var(--anim-mult,1)) var(--ease-accel) both; }
+  .nf-row { animation: nfRowIn calc(460ms /* motion-sweep: kept -- no exact DS duration tier */ * var(--anim-mult,1)) var(--ease-out) both; }
+  .nf-dots { animation: nfDots calc(9000ms /* motion-sweep: kept -- decorative infinite loop, no exact DS tier */ * var(--anim-mult,1)) linear infinite; }
+  .nf-float { animation: nfFloat calc(7000ms /* motion-sweep: kept -- decorative infinite loop, no exact DS tier */ * var(--anim-mult,1)) ease-in-out infinite; }
+  .nf-spin { animation: nfSpin calc(var(--duration-700) * var(--anim-mult,1)) linear infinite; }
+  .nf-check { animation: nfPopIn calc(520ms /* motion-sweep: kept -- no exact DS duration tier */ * var(--anim-mult,1)) var(--ease-spring-medium) both; }
+  .nf-step { animation: nfStepIn calc(var(--duration-380) * var(--anim-mult,1)) var(--ease-out) both; }
+  .nf-x { transition: background calc(var(--duration-base) * var(--anim-mult,1)), transform calc(var(--duration-150) * var(--anim-mult,1)) var(--ease-out), color calc(var(--duration-base) * var(--anim-mult,1)); }
+  .nf-x:active { transform: scale(.9) rotate(90deg); }
+  .nf-cta { position: relative; overflow: hidden; }
+  .nf-cta::after { content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 34%; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.42), transparent); opacity: 0; pointer-events: none; }
+  .nf-cta[data-state="loading"], .nf-cta[data-state="done"] { pointer-events: none; }
+  .nf-cta-layer { position: absolute; inset: 0; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: 9px; opacity: 0; transform: scale(.86); pointer-events: none; transition: opacity calc(var(--duration-200) * var(--anim-mult,1)) var(--ease-spring-wide), transform calc(var(--duration-slower) * var(--anim-mult,1)) var(--ease-spring-wide); }
+  .nf-cta-label { position: relative; inset: auto; visibility: hidden; }
+  .nf-cta[data-state="idle"] .nf-cta-label { opacity: 1; transform: none; visibility: visible; }
+  .nf-cta[data-state="loading"] .nf-cta-load  { opacity: 1; transform: none; }
+  .nf-cta[data-state="done"]    .nf-cta-ok    { opacity: 1; transform: none; }
+  .nf-cta-label .material-icons { transition: transform calc(var(--duration-240) * var(--anim-mult,1)) var(--ease-spring-wide); }
+  .nf-cta-spin { width: 16px; height: 16px; border-radius: 9999px; border: 2.5px solid rgba(255,255,255,.35); border-top-color: #fff; animation: nfSpin calc(var(--duration-700) * var(--anim-mult,1)) linear infinite; }
+  .nf-cta[data-state="done"] .nf-cta-ok .material-icons { animation: nfPopIn calc(520ms /* motion-sweep: kept -- no exact DS duration tier */ * var(--anim-mult,1)) var(--ease-spring-medium) both; }
+  .nf-feat { transition: background calc(var(--duration-180) * var(--anim-mult,1)), transform calc(var(--duration-200) * var(--anim-mult,1)) var(--ease-out); border-radius: 12px; }
+  .nf-feat-ic { transition: transform calc(var(--duration-260) * var(--anim-mult,1)) var(--ease-spring-wide); }
+  .nf-cta .material-icons { color: #fff; }
+  .btn-discuss:active { transform: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .nf-x:hover { background: rgba(255,255,255,.24); transform: scale(1.09) rotate(90deg); }
+    .nf-cta:hover::after { opacity: 1; animation: nfSweep calc(var(--duration-760) * var(--anim-mult,1)) var(--ease-standard) 1 both; }
+    .nf-cta[data-state="idle"]:hover .nf-cta-label .material-icons { transform: translate(2px, -2px); }
+    .nf-feat:hover { background: rgba(255,255,255,.05); transform: translateX(3px); }
+    .nf-feat:hover .nf-feat-ic { transform: scale(1.09) rotate(-4deg); }
+    .btn-discuss:hover { background: transparent; border-color: rgba(255,255,255,.18); transform: none; box-shadow: none; }
+  }
+  /* 44px hit layers + :focus-visible for icon-only close buttons and the tour progress dots */
+  .nf-x, .nf-dot { position: relative; }
+  .nf-x::after, .nf-dot::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .nf-x:focus-visible, .nf-dot:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-pop, .nf-slide, .nf-row, .nf-step, .nf-check { animation-duration: 1ms !important; /* motion-sweep: kept -- reduced-motion floor */ }
+    .nf-dots, .nf-float, .nf-ring::after, .nf-cta:hover::after { animation: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; box-sizing: border-box; padding: 32px 22px 60px; display: flex; flex-direction: column; align-items: center; gap: 24px; font-family: var(--font-display); background: #0B0F17; background-image: radial-gradient(120% 70% at 50% 0%, rgba(16,185,129,.10) 0%, transparent 62%);">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 13px; text-align: center;">
+    <span style="font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #64748B;">Deha DS · New Feature Popover</span>
+    <div class="pills-row" style="justify-content: center;">
+      <button type="button" class="pill-tab" onClick="{{ pickModal }}" style="{{ tabModal }}">Launch modal</button>
+      <button type="button" class="pill-tab" onClick="{{ pickCorner }}" style="{{ tabCorner }}">Corner nudge</button>
+      <button type="button" class="pill-tab" onClick="{{ pickTour }}" style="{{ tabTour }}">Guided tour</button>
+    </div>
+    <div class="pills-row" style="justify-content: center;">
+      <span class="pills-label" style="margin: 0 4px 0 0; align-self: center;">State</span>
+      <button type="button" class="pill-tab" onClick="{{ setIdle }}" style="{{ stIdle }}">Idle</button>
+      <button type="button" class="pill-tab" onClick="{{ setLoading }}" style="{{ stLoading }}">CTA loading</button>
+      <button type="button" class="pill-tab" onClick="{{ setDone }}" style="{{ stDone }}">Confirmed</button>
+      <button type="button" class="pill-tab" onClick="{{ setDismissed }}" style="{{ stDismissed }}">Dismissed</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ LAUNCH MODAL ══════════════ -->
+  <sc-if value="{{ isModal }}" hint-placeholder-val="{{ true }}">
+    <div style="position: relative; width: 100%; max-width: 1080px; min-height: 560px; box-sizing: border-box; padding: 26px 22px; display: grid; place-items: center; border-radius: 24px; overflow: hidden; background: #070A10; box-shadow: 0 40px 90px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.06);">
+
+      <div aria-hidden="true" style="position: absolute; inset: 0; padding: 16px; display: flex; flex-direction: column; gap: 14px; filter: blur(4px) saturate(.75); opacity: .8;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div style="height: 26px; width: 120px; border-radius: 9999px; background: rgba(255,255,255,.09);"></div>
+          <div style="height: 26px; width: 84px; border-radius: 9999px; background: rgba(255,255,255,.06);"></div>
+          <div style="height: 26px; width: 64px; border-radius: 9999px; background: rgba(255,255,255,.06);"></div>
+          <div style="margin-left: auto; height: 26px; width: 96px; border-radius: 9999px; background: rgba(16,185,129,.28);"></div>
+        </div>
+        <div style="flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;">
+          <div style="border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+          <div style="border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+          <div style="border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+          <div style="border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+        </div>
+      </div>
+      <div class="nf-fade" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(4,7,11,.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);"></div>
+
+      <sc-if value="{{ isDismissed }}" hint-placeholder-val="{{ false }}">
+        <div class="nf-fade" style="position: absolute; inset: 0; display: grid; place-items: center;">
+          <button type="button" class="btn-glass" onClick="{{ onReopen }}" style="cursor: pointer;"><span class="material-icons btn-mi">auto_awesome</span> Show what's new</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+        <div class="{{ animClass }}" role="dialog" aria-modal="true" aria-labelledby="nfp-modal-title" style="position: relative; width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); border-radius: 22px; overflow: hidden; background: #14161C; box-shadow: 0 40px 90px -30px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.07);">
+
+          <div style="position: relative; overflow: hidden; min-height: 380px; background: radial-gradient(120% 100% at 50% 100%, #10B981 0%, #065F46 42%, #06231C 74%, #05070B 100%);">
+            <div class="nf-dots" aria-hidden="true" style="position: absolute; inset: -10%; opacity: .5; background-image: radial-gradient(rgba(255,255,255,.5) 1.1px, transparent 1.1px); background-size: 13px 13px; mask-image: radial-gradient(78% 78% at 50% 60%, #000 0%, transparent 82%); -webkit-mask-image: radial-gradient(78% 78% at 50% 60%, #000 0%, transparent 82%);"></div>
+            <div style="position: relative; height: 100%; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 26px; min-height: 0; overflow: hidden;">
+              <div class="nf-float" style="flex: 1 1 0; min-height: 80px; width: auto; max-width: 230px; aspect-ratio: 3 / 4; border-radius: 18px; overflow: hidden; box-shadow: 0 28px 56px -18px rgba(0,0,0,.6), inset 0 0 0 3px rgba(255,255,255,.85);">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="nfp-media" shape="rect" fit="cover" placeholder="Drop the feature screenshot" hint-size="100%,100%"></x-import>
+              </div>
+              <div style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                <div style="position: relative; width: 108px; height: 74px; border-radius: 14px; background: linear-gradient(180deg, rgba(255,255,255,.9), rgba(236,253,245,.72)); box-shadow: 0 18px 36px -14px rgba(0,0,0,.5);">
+                  <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); width: 58px; height: 40px; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 18px -6px rgba(0,0,0,.55);">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(150deg, #34D399 0%, #10B981 46%, #065F46 100%);"></div>
+                  </div>
+                </div>
+                <span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,.9);">{{ mediaCaption }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="position: relative; display: flex; flex-direction: column; gap: 18px; padding: 22px 24px 22px; background: linear-gradient(160deg, #1B1E26 0%, #131620 55%, #0C0F16 100%);">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;">
+              <span class="badge gci" style="font-size: 12px; letter-spacing: .08em; padding: 5px 11px; border-radius: 6px;">{{ badgeLabel }}</span>
+              <button type="button" class="nf-x" onClick="{{ onClose }}" aria-label="Dismiss" style="flex: none; width: 36px; height: 36px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: #fff; background: rgba(255,255,255,.14); backdrop-filter: blur(8px);">
+                <span class="material-icons" style="font-size: 20px;">close</span>
+              </button>
+            </div>
+
+            <div class="nf-row" style="display: flex; flex-direction: column; gap: 9px; animation-delay: 60ms /* motion-sweep: kept -- JS/author stagger step */;">
+              <h2 id="nfp-modal-title" style="margin: 0; font-size: clamp(23px, 2.6vw, 31px); line-height: 1.08; font-weight: 900; letter-spacing: -.015em; text-transform: uppercase; color: #FFFFFF; text-wrap: balance;">{{ titleTop }}<br>{{ titleBottom }}</h2>
+              <p style="margin: 0; max-width: 46ch; font-size: 14px; font-weight: 500; line-height: 1.5; color: #94A3B8; text-wrap: pretty;">{{ body }}</p>
+            </div>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 2px;">
+              <sc-for list="{{ features }}" as="f" hint-placeholder-count="4">
+                <div class="nf-feat nf-row" style="{{ f.rowStyle }}">
+                  <span class="icon-badge icon-badge--lg nf-feat-ic" style="{{ f.iconStyle }}"><span class="material-icons">{{ f.icon }}</span></span>
+                  <span style="font-size: 13px; font-weight: 600; color: #E2E8F0;">{{ f.label }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <button type="button" class="btn-primary nf-cta" data-state="{{ ctaState }}" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleLg }}">
+              <span class="nf-cta-layer nf-cta-label"><span>{{ ctaLabel }}</span><span class="material-icons" style="font-size: 20px;">arrow_outward</span></span>
+              <span class="nf-cta-layer nf-cta-load"><span class="nf-cta-spin"></span><span>Opening</span></span>
+              <span class="nf-cta-layer nf-cta-ok"><span class="material-icons" style="font-size: 21px;">check_circle</span><span>You&rsquo;re all set</span></span>
+            </button>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ CORNER NUDGE ══════════════ -->
+  <sc-if value="{{ isCorner }}">
+    <div style="position: relative; width: 100%; max-width: 1080px; min-height: 520px; border-radius: 24px; overflow: hidden; background: #070A10; box-shadow: 0 40px 90px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.06);">
+      <div aria-hidden="true" style="position: absolute; inset: 0; padding: 18px; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 16px; filter: blur(2px); opacity: .7;">
+        <div style="border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+        <div style="border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+        <div style="border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+        <div style="border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+        <div style="border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+        <div style="border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+      </div>
+
+      <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+        <div class="{{ animSlideClass }}" style="position: absolute; right: 22px; bottom: 22px; width: 340px; border-radius: 20px; overflow: hidden; background: linear-gradient(160deg, #1B1E26 0%, #0F131B 100%); box-shadow: 0 34px 70px -26px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.08);">
+          <div style="position: relative; height: 128px; background: radial-gradient(120% 130% at 20% 0%, #10B981 0%, #065F46 45%, #06231C 100%);">
+            <div class="nf-dots" aria-hidden="true" style="position: absolute; inset: 0; opacity: .45; background-image: radial-gradient(rgba(255,255,255,.5) 1px, transparent 1px); background-size: 12px 12px;"></div>
+            <div style="position: absolute; left: 16px; bottom: -26px; width: 74px; height: 74px; border-radius: 16px; overflow: hidden; box-shadow: 0 16px 30px -10px rgba(0,0,0,.7), inset 0 0 0 3px rgba(255,255,255,.9);">
+              <div style="width: 100%; height: 100%; display: grid; place-items: center; background: linear-gradient(150deg, #34D399 0%, #10B981 46%, #065F46 100%);"><span class="material-icons" style="font-size: 30px; color: rgba(255,255,255,.92);">folder_copy</span></div>
+            </div>
+            <button type="button" class="nf-x" onClick="{{ onClose }}" aria-label="Dismiss" style="position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: #fff; background: rgba(4,7,11,.4); backdrop-filter: blur(8px);">
+              <span class="material-icons" style="font-size: 17px;">close</span>
+            </button>
+            <span class="badge gci" style="position: absolute; top: 12px; left: 14px; font-size: 10.5px; letter-spacing: .08em; padding: 4px 9px; border-radius: 5px;">{{ badgeLabel }}</span>
+          </div>
+          <div style="padding: 32px 18px 18px; display: flex; flex-direction: column; gap: 10px;">
+            <h3 style="margin: 0; font-size: 15.5px; line-height: 1.16; font-weight: 900; text-transform: uppercase; color: #fff;">{{ titleTop }} {{ titleBottom }}</h3>
+            <p style="margin: 0; font-size: 12.5px; font-weight: 500; line-height: 1.5; color: #94A3B8;">{{ body }}</p>
+            <div class="pills-row" style="gap: 6px; margin: 2px 0 4px;">
+              <span class="badge tag" style="box-sizing: border-box; height: 26px; padding: 0 12px; border-radius: 100px; background: rgba(255,255,255,.06); color: #CBD5E1; border-color: rgba(255,255,255,.1);">Projects</span>
+              <span class="badge tag" style="box-sizing: border-box; height: 26px; padding: 0 12px; border-radius: 100px; background: rgba(255,255,255,.06); color: #CBD5E1; border-color: rgba(255,255,255,.1);">Sharing</span>
+              <span class="badge tag" style="box-sizing: border-box; height: 26px; padding: 0 12px; border-radius: 100px; background: rgba(255,255,255,.06); color: #CBD5E1; border-color: rgba(255,255,255,.1);">Live edit</span>
+            </div>
+            <button type="button" class="btn-primary nf-cta" data-state="{{ ctaState }}" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleFull }}">
+              <span class="nf-cta-layer nf-cta-label"><span>{{ ctaLabel }}</span><span class="material-icons" style="font-size: 18px;">arrow_outward</span></span>
+              <span class="nf-cta-layer nf-cta-load"><span class="nf-cta-spin"></span><span>Opening</span></span>
+              <span class="nf-cta-layer nf-cta-ok"><span class="material-icons" style="font-size: 19px;">check_circle</span><span>You&rsquo;re all set</span></span>
+            </button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDismissed }}">
+        <button type="button" class="btn-glass nf-fade" onClick="{{ onReopen }}" style="position: absolute; right: 22px; bottom: 22px; cursor: pointer;"><span class="material-icons btn-mi">auto_awesome</span> What's new</button>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ══════════════ GUIDED TOUR ══════════════ -->
+  <sc-if value="{{ isTour }}">
+    <div style="position: relative; width: 100%; max-width: 1080px; min-height: 520px; border-radius: 24px; overflow: hidden; background: #070A10; box-shadow: 0 40px 90px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.06);">
+      <div class="nf-fade" aria-hidden="true" style="position: absolute; inset: 0; background: rgba(4,7,11,.6); backdrop-filter: blur(4px);"></div>
+
+      <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="position: absolute; inset: 0; display: grid; place-items: center; padding: 22px; box-sizing: border-box;">
+        <div class="{{ animClass }}" role="dialog" aria-modal="true" aria-labelledby="nfp-tour-title" style="position: relative; width: 560px; max-width: 100%; border-radius: 22px; overflow: hidden; background: linear-gradient(160deg, #1B1E26 0%, #0F131B 100%); box-shadow: 0 40px 80px -28px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.08);">
+          <div style="position: relative; height: 190px; background: radial-gradient(120% 130% at 70% 0%, #10B981 0%, #065F46 44%, #06231C 100%);">
+            <div class="nf-dots" aria-hidden="true" style="position: absolute; inset: 0; opacity: .42; background-image: radial-gradient(rgba(255,255,255,.5) 1px, transparent 1px); background-size: 12px 12px;"></div>
+            <div class="nf-step" key="{{ stepKey }}" style="position: absolute; inset: 0; display: grid; place-items: center; padding: 20px;">
+              <div style="width: 220px; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; box-shadow: 0 22px 44px -16px rgba(0,0,0,.65), inset 0 0 0 3px rgba(255,255,255,.85);">
+                <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ stepSlotId }}" shape="rect" fit="cover" placeholder="{{ stepMediaHint }}" hint-size="100%,100%"></x-import>
+              </div>
+            </div>
+            <button type="button" class="nf-x" onClick="{{ onClose }}" aria-label="Skip tour" style="position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: #fff; background: rgba(4,7,11,.4); backdrop-filter: blur(8px);">
+              <span class="material-icons" style="font-size: 18px;">close</span>
+            </button>
+          </div>
+
+          <div style="padding: 20px 22px 20px; display: flex; flex-direction: column; gap: 16px;">
+            <div class="nf-step" key="{{ stepKey }}" style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <span class="badge gci" style="font-size: 10.5px; letter-spacing: .08em; padding: 4px 9px; border-radius: 5px;">{{ badgeLabel }}</span>
+                <span style="font-size: 11.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #64748B;">{{ stepCounter }}</span>
+              </div>
+              <h3 id="nfp-tour-title" style="margin: 0; font-size: 20px; line-height: 1.12; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; color: #fff;">{{ stepTitle }}</h3>
+              <p style="margin: 0; font-size: 13px; font-weight: 500; line-height: 1.5; color: #94A3B8;">{{ stepBody }}</p>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px;">
+              <div style="display: flex; align-items: center; gap: 7px;">
+                <sc-for list="{{ dots }}" as="d" hint-placeholder-count="3">
+                  <button type="button" class="nf-dot" onClick="{{ d.go }}" aria-label="{{ d.label }}" style="{{ d.style }}"></button>
+                </sc-for>
+              </div>
+              <div style="display: flex; align-items: center; gap: 9px;">
+                <button type="button" class="btn-discuss" onClick="{{ onBack }}" disabled="{{ backDisabled }}" style="{{ backStyle }}">Back</button>
+                <button type="button" class="btn-primary nf-cta" data-state="{{ ctaState }}" onClick="{{ onNext }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleSm }}">
+                  <span class="nf-cta-layer nf-cta-label"><span>{{ nextLabel }}</span><span class="material-icons" style="font-size: 18px;">{{ nextIcon }}</span></span>
+                  <span class="nf-cta-layer nf-cta-load"><span class="nf-cta-spin"></span><span>Opening</span></span>
+                  <span class="nf-cta-layer nf-cta-ok"><span class="material-icons" style="font-size: 19px;">check_circle</span><span>All set</span></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isDismissed }}">
+        <div class="nf-fade" style="position: absolute; inset: 0; display: grid; place-items: center;">
+          <button type="button" class="btn-glass" onClick="{{ onReopen }}" style="cursor: pointer;"><span class="material-icons btn-mi">replay</span> Restart the tour</button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:760},&quot;badgeLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NEW&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;titleTop&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Organize. Share.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;titleBottom&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Create together&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;body&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;We've rebuilt how you structure your work — so finding, sharing, and reusing what you create is effortless&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Go to Cinema Studio&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;mediaCaption&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;generations&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { variant: 'modal', phase: 'idle', step: 0, exiting: false };
+
+  componentDidMount() {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    this.onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      const p = this.state.phase;
+      if (p === 'idle' || p === 'loading' || p === 'done') this.close();
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { clearTimeout(this.t); clearTimeout(this.exitT); window.removeEventListener('keydown', this.onKey); }
+
+  pick(variant) { return () => this.setState({ variant, phase: 'idle', step: 0, exiting: false }); }
+
+  setPhase(phase) {
+    return () => {
+      clearTimeout(this.t); clearTimeout(this.exitT);
+      this.setState({ phase, exiting: false, step: phase === 'dismissed' ? 0 : this.state.step });
+    };
+  }
+
+  close() {
+    if (this.state.exiting) return;
+    this.setState({ exiting: true });
+    this.exitT = setTimeout(() => this.setState({ phase: 'dismissed', exiting: false }), 260);
+  }
+
+  reopen() {
+    clearTimeout(this.t); clearTimeout(this.exitT);
+    this.setState({ phase: 'idle', step: 0, exiting: false });
+  }
+
+  cta() {
+    if (this.state.phase !== 'idle') return;
+    this.setState({ phase: 'loading' });
+    clearTimeout(this.t);
+    this.t = setTimeout(() => this.setState({ phase: 'done' }), 1500);
+  }
+
+  next() {
+    const last = this.steps().length - 1;
+    if (this.state.step < last) { this.setState({ step: this.state.step + 1 }); return; }
+    this.cta();
+  }
+
+  tabStyle(on) {
+    const geo = 'box-sizing: border-box; height: 30px; padding: 0 16px; border-radius: 100px; cursor: pointer; ';
+    return geo + (on
+      ? 'background: #10B981; color: #fff; border-color: transparent; font-weight: 900; box-shadow: inset 0 -2px 5px rgba(0,0,0,.15), inset 0 -1px 0 rgba(255,255,255,.15);'
+      : 'background: #131A26; color: #94A3B8; border-color: #26303F;');
+  }
+
+  ctaStyle(kind) {
+    const p = this.state.phase;
+    const size = kind === 'lg'
+      ? 'height: 50px; font-size: 14px; padding: 0 24px; width: 100%;'
+      : (kind === 'full' ? 'height: 42px; font-size: 13px; padding: 0 20px; width: 100%;' : 'height: 38px; font-size: 12.5px; padding: 0 18px;');
+    const common = 'box-sizing: border-box; justify-content: center; border-radius: 9999px; ' + size;
+    const grid = ' background-image: linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px); background-size: 14px 14px;';
+    if (p === 'done') return common + grid + ' box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22), inset 0 0 0 2px rgba(255,255,255,.55); cursor: default;';
+    if (p === 'loading') return common + grid + ' cursor: progress;';
+    return common + grid;
+  }
+
+  steps() {
+    return [
+      { title: 'One home for every render', body: 'Images and video now generate side by side in the same project timeline.', hint: 'Project timeline', icon: 'auto_awesome_motion' },
+      { title: 'Nest projects, stay tidy', body: 'Group shots into folders and sub-projects so nothing gets lost mid-shoot.', hint: 'Nested projects', icon: 'folder_copy' },
+      { title: 'Invite and build live', body: 'Share a project link and edit together in real time, with reusable elements.', hint: 'Live collaboration', icon: 'ios_share' },
+    ];
+  }
+
+  renderVals() {
+    const { variant, phase, step, exiting } = this.state;
+    const open = phase === 'idle' || phase === 'loading' || phase === 'done';
+    const featColors = ['#10B981', '#F97316', '#3B82F6', '#0F172A'];
+    const featIcons = ['auto_awesome_motion', 'folder_copy', 'ios_share', 'alternate_email'];
+    const featLabels = [
+      'Generate images and video in the same place',
+      'Nest projects to keep everything tidy',
+      'Invite others to build together, live',
+      'Reusable, shareable elements for any project',
+    ];
+    const features = featLabels.map((label, i) => ({
+      label, icon: featIcons[i],
+      rowStyle: 'display: flex; align-items: center; gap: 12px; padding: 7px 10px; margin: 0 -10px; animation-delay: ' + (160 + i * 90) + 'ms;',
+      iconStyle: '--icon-c: ' + featColors[i] + '; width: 28px; height: 28px; border-radius: 100px;',
+    }));
+
+    const sts = this.steps();
+    const cur = sts[Math.min(step, sts.length - 1)];
+    const dots = sts.map((s, i) => ({
+      label: 'Step ' + (i + 1),
+      go: () => this.setState({ step: i }),
+      style: 'border: none; padding: 0; cursor: pointer; height: 7px; border-radius: 9999px; transition: width var(--duration-slower) var(--ease-out), background var(--duration-slow); '
+        + (i === step ? 'width: 26px; background: #10B981;' : 'width: 7px; background: rgba(255,255,255,.2);'),
+    }));
+    const lastStep = step === sts.length - 1;
+    const ctaLabel = this.props.ctaLabel ?? 'Go to Cinema Studio';
+
+    return {
+      isModal: variant === 'modal', isCorner: variant === 'corner', isTour: variant === 'tour',
+      pickModal: this.pick('modal'), pickCorner: this.pick('corner'), pickTour: this.pick('tour'),
+      tabModal: this.tabStyle(variant === 'modal'), tabCorner: this.tabStyle(variant === 'corner'),
+      tabTour: this.tabStyle(variant === 'tour'),
+
+      setIdle: this.setPhase('idle'), setLoading: this.setPhase('loading'),
+      setDone: this.setPhase('done'), setDismissed: this.setPhase('dismissed'),
+      stIdle: this.tabStyle(phase === 'idle'), stLoading: this.tabStyle(phase === 'loading'),
+      stDone: this.tabStyle(phase === 'done'), stDismissed: this.tabStyle(phase === 'dismissed'),
+
+      isOpen: open, isDismissed: phase === 'dismissed',
+      animClass: exiting ? 'nf-out' : 'nf-pop',
+      animSlideClass: exiting ? 'nf-slide-out' : 'nf-slide',
+
+      badgeLabel: this.props.badgeLabel ?? 'NEW',
+      titleTop: this.props.titleTop ?? 'Organize. Share.',
+      titleBottom: this.props.titleBottom ?? 'Create together',
+      body: this.props.body ?? 'We\u2019ve rebuilt how you structure your work — so finding, sharing, and reusing what you create is effortless',
+      mediaCaption: this.props.mediaCaption ?? 'generations',
+      features,
+
+      ctaDisabled: phase !== 'idle',
+      ctaStyleLg: this.ctaStyle('lg'), ctaStyleSm: this.ctaStyle('sm'), ctaStyleFull: this.ctaStyle('full'),
+      ctaState: phase === 'dismissed' ? 'idle' : phase,
+      ctaLabel,
+      nextLabel: lastStep ? ctaLabel : 'Next',
+      nextIcon: lastStep ? 'arrow_outward' : 'arrow_forward',
+      onCta: () => this.cta(),
+      onNext: () => this.next(),
+      onBack: () => this.setState({ step: Math.max(0, step - 1) }),
+      backDisabled: step === 0,
+      backStyle: 'border: none; background: transparent; font-family: inherit; font-size: 12.5px; font-weight: 800; padding: 9px 13px; border-radius: 10px; '
+        + (step === 0 ? 'color: #33415580; cursor: not-allowed;' : 'color: #64748B; cursor: pointer;'),
+      onClose: () => this.close(),
+      onReopen: () => this.reopen(),
+
+      dots, stepKey: 'step-' + step, stepSlotId: 'nfp-tour-' + step,
+      stepTitle: cur.title, stepBody: cur.body, stepMediaHint: cur.hint,
+      stepCounter: 'Step ' + (step + 1) + ' of ' + sts.length,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Context" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_metric-circle.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #F8FAFC; margin: 0; }
+  @keyframes ctxIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+  @keyframes ctxShimmer { 0% { background-position: -240px 0 } 100% { background-position: 240px 0 } }
+  @keyframes ctxPulse { 0%,100% { opacity: 1 } 50% { opacity: .45 } }
+  @keyframes ctxGrow { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+
+  /* focus-visible (rule set: :focus-visible on every interactive element) */
+  .ctx-trigger:focus-visible,
+  .btn-primary:focus-visible,
+  input[type="range"]:focus-visible {
+    outline: 2px solid var(--brand-primary, #10B981);
+    outline-offset: 2px;
+  }
+
+  /* 44px hit layers (rule set: button/[role=button] under 44px in either axis) */
+  .ctx-trigger, .btn-primary { position: relative; }
+  .ctx-trigger::after, .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ctx-trigger, .btn-primary,
+    section[style*="animation:ctxIn"],
+    [style*="ctxGrow"], [style*="ctxPulse"], [style*="ctxShimmer"] {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;font-family:var(--font-display);background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%);padding:40px 32px 80px">
+  <div style="max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px">
+
+    <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span class="badge tag" style="align-self:flex-start"><span class="material-icons">memory</span>ai-elements</span>
+        <h1 style="font-size:28px;font-weight:900;letter-spacing:-0.02em;color:var(--fg1);margin:0">ai-chat-context</h1>
+        <p style="font-size:14px;font-weight:500;color:var(--fg3);margin:0;max-width:52ch;text-wrap:pretty">Shows how much of the model's context window a conversation has consumed, and breaks the usage down by token type and cost.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:240px">
+        <span class="pills-label" style="margin:0">Live usage · <span style="color:var(--fg2)">{{ pct }}%</span></span>
+        <input type="range" min="0" max="100" step="1" value="{{ pct }}" onChange="{{ setPct }}" onInput="{{ setPct }}" style="width:100%;accent-color:#10B981;cursor:pointer">
+        <span style="font-size:11px;font-weight:600;color:var(--fg4)">Drag to drive every instance on the page.</span>
+      </div>
+    </header>
+
+    <nav class="pills-row" style="gap:8px">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button class="pill-tab {{ t.cls }}" onClick="{{ t.go }}" style="cursor:pointer;padding:8px 18px;font-size:13px">{{ t.label }}</button>
+      </sc-for>
+    </nav>
+
+    <sc-if value="{{ isComposer }}" hint-placeholder-val="{{ true }}">
+    <section style="animation:ctxIn var(--duration-320) var(--ease-out);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--fg1);margin:0">In the chat composer</h2>
+        <p style="font-size:13px;font-weight:500;color:var(--fg3);margin:0">The default home for the component. Click the capsule to open the breakdown.</p>
+      </div>
+
+      <div class="card-inner" style="padding:0;overflow:visible">
+        <div style="padding:24px 24px 8px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:9999px;background:#E2E8F0;flex-shrink:0"></div>
+            <div style="font-size:14px;font-weight:500;color:var(--fg2);line-height:1.55;padding-top:4px">Summarise the last four support threads and flag anything that looks like a billing bug.</div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <div style="width:28px;height:28px;border-radius:9999px;background:#10B981;flex-shrink:0;display:grid;place-items:center"><span class="material-icons" style="font-size:16px;color:#fff">auto_awesome</span></div>
+            <div style="font-size:14px;font-weight:500;color:var(--fg2);line-height:1.55;padding-top:4px">Three of the four threads mention duplicate invoices after a plan upgrade. I've grouped them and pulled the shared account IDs.</div>
+          </div>
+        </div>
+
+        <div style="position:relative;padding:16px 20px;border-top:1px solid var(--border-hairline);display:flex;align-items:center;gap:12px">
+          <div style="flex:1;font-size:14px;font-weight:500;color:var(--fg4)">Ask a follow-up…</div>
+
+          <div style="position:relative">
+            <button class="ctx-trigger" onClick="{{ togglePop }}" style="{{ triggerStyle }}" style-hover="filter:brightness(1.02);border-color:#CBD5E1">
+              <dc-import name="ContextRing" pct="{{ pct }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import>
+              <span style="font-size:13px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums">{{ pct }}%</span>
+            </button>
+
+            <div style="{{ popStyle }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:1px solid var(--border-hairline)">
+                <div style="display:flex;flex-direction:column;gap:2px">
+                  <span style="font-size:13px;font-weight:800;color:var(--fg1)">Context window</span>
+                  <span style="font-size:11px;font-weight:600;color:var(--fg4)">{{ usedFmt }} of {{ maxFmt }} tokens</span>
+                </div>
+                <span class="badge {{ toneBadge }}">{{ toneLabel }}</span>
+              </div>
+              <div style="display:flex;height:8px;border-radius:9999px;overflow:hidden;background:var(--bg-chip);margin:14px 0 12px">
+                <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+                  <div style="width:{{ s.w }}%;background:{{ s.color }};transition:width 520ms /* motion-sweep: kept */ var(--ease-out)"></div>
+                </sc-for>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="width:8px;height:8px;border-radius:50%;background:{{ s.color }};flex-shrink:0"></span>
+                    <span style="flex:1;font-size:12px;font-weight:600;color:var(--fg2)">{{ s.label }}</span>
+                    <span style="font-size:12px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums">{{ s.tokens }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border-hairline)">
+                <span style="font-size:11px;font-weight:700;color:var(--fg4);text-transform:uppercase;letter-spacing:0.1em">Est. cost</span>
+                <span style="font-size:15px;font-weight:900;color:var(--fg1);font-variant-numeric:tabular-nums">${{ cost }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-primary" style="padding:10px 14px;border-radius:12px"><span class="material-icons" style="font-size:18px">arrow_upward</span></button>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{ isBreakdown }}" hint-placeholder-val="{{ false }}">
+    <section style="animation:ctxIn var(--duration-320) var(--ease-out);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--fg1);margin:0">Expanded breakdown</h2>
+        <p style="font-size:13px;font-weight:500;color:var(--fg3);margin:0">Pinned open as a panel — for settings pages, admin views, or wide layouts.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px">
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;align-items:center;gap:14px">
+            <dc-import name="ContextRing" pct="{{ pct }}" size="{{ 56 }}" hint-size="56px,56px"></dc-import>
+            <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+              <div style="display:flex;align-items:baseline;gap:6px">
+                <span style="font-size:26px;font-weight:900;letter-spacing:-0.025em;color:var(--fg1);font-variant-numeric:tabular-nums">{{ pct }}</span>
+                <span style="font-size:15px;font-weight:800;color:var(--fg3)">% used</span>
+              </div>
+              <span style="font-size:12px;font-weight:600;color:var(--fg4);white-space:nowrap">{{ usedFmt }} / {{ maxFmt }} tokens</span>
+            </div>
+            <span class="badge {{ toneBadge }}" style="margin-left:auto">{{ toneLabel }}</span>
+          </div>
+          <div style="display:flex;height:10px;border-radius:9999px;overflow:hidden;background:var(--bg-chip)">
+            <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+              <div style="width:{{ s.w }}%;background:{{ s.color }};transition:width 520ms /* motion-sweep: kept */ var(--ease-out)"></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--bg-chip)" style-hover="filter:brightness(0.985)">
+                <span class="material-icons" style="font-size:18px;color:{{ s.color }}">{{ s.icon }}</span>
+                <span style="flex:1;font-size:13px;font-weight:700;color:var(--fg2)">{{ s.label }}</span>
+                <span style="font-size:11px;font-weight:700;color:var(--fg4);font-variant-numeric:tabular-nums">{{ s.share }}%</span>
+                <span style="font-size:13px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums;min-width:64px;text-align:right">{{ s.tokens }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--border-hairline)">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:10px;font-weight:700;color:var(--fg4);text-transform:uppercase;letter-spacing:0.12em">Estimated cost</span>
+              <span style="font-size:20px;font-weight:900;color:var(--fg1);font-variant-numeric:tabular-nums">${{ cost }}</span>
+            </div>
+            <button class="btn-primary" style="margin-left:auto;padding:10px 18px;font-size:13px"><span class="material-icons" style="font-size:17px">restart_alt</span>New chat</button>
+          </div>
+        </div>
+
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+          <span class="pills-label" style="margin:0">Applied to</span>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;gap:8px"><span class="material-icons" style="font-size:16px;color:var(--fg4)">smart_toy</span><span style="font-size:13px;font-weight:700;color:var(--fg2)">Model</span><span class="badge tag" style="margin-left:auto">claude-sonnet</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="material-icons" style="font-size:16px;color:var(--fg4)">forum</span><span style="font-size:13px;font-weight:700;color:var(--fg2)">Turns</span><span class="badge tag" style="margin-left:auto">18</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="material-icons" style="font-size:16px;color:var(--fg4)">attach_file</span><span style="font-size:13px;font-weight:700;color:var(--fg2)">Attachments</span><span class="badge tag" style="margin-left:auto">3 files</span></div>
+          </div>
+          <div style="{{ adviceStyle }}">
+            <span class="material-icons" style="font-size:18px">{{ adviceIcon }}</span>
+            <span style="font-size:12px;font-weight:600;line-height:1.5">{{ adviceText }}</span>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge tag"><span class="material-icons">bolt</span>cache hit 62%</span>
+            <span class="badge tag"><span class="material-icons">schedule</span>4.2s avg</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+    <section style="animation:ctxIn var(--duration-320) var(--ease-out);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--fg1);margin:0">States</h2>
+        <p style="font-size:13px;font-weight:500;color:var(--fg3);margin:0">Thresholds at 60% and 85% switch the ring and badge tone. Loading and disabled are static.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+        <sc-for list="{{ states }}" as="st" hint-placeholder-count="5">
+          <div class="card-inner" style="display:flex;flex-direction:column;gap:14px;transition:transform var(--duration-slow) var(--ease-out)" style-hover="transform:translateY(-3px)">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <span class="pills-label" style="margin:0">{{ st.name }}</span>
+              <span class="badge {{ st.badge }}">{{ st.badgeText }}</span>
+            </div>
+            <div style="{{ st.capsuleStyle }}">
+              <dc-import name="ContextRing" pct="{{ st.pct }}" size="{{ 32 }}" hint-size="32px,32px"></dc-import>
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <span style="{{ st.valueStyle }}">{{ st.value }}</span>
+                <span style="font-size:10px;font-weight:600;color:var(--fg4)">{{ st.sub }}</span>
+              </div>
+            </div>
+            <span style="font-size:11px;font-weight:600;color:var(--fg4);line-height:1.5">{{ st.note }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{ isSizes }}" hint-placeholder-val="{{ false }}">
+    <section style="animation:ctxIn var(--duration-320) var(--ease-out);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--fg1);margin:0">Densities</h2>
+        <p style="font-size:13px;font-weight:500;color:var(--fg3);margin:0">Four shapes for four contexts: toolbars, composers, sidebars, and full-width panels.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+          <span class="pills-label" style="margin:0">Icon · toolbar</span>
+          <div style="display:flex;align-items:center;justify-content:center;padding:14px 0">
+            <div style="width:36px;height:36px;border-radius:9999px;display:grid;place-items:center;background:#fff;border:1px solid #E2E8F0;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.06);transition:transform var(--duration-180) var(--ease-out)" style-hover="transform:scale(1.06)">
+              <dc-import name="ContextRing" pct="{{ pct }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import>
+            </div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:var(--fg4);line-height:1.5">Ring only. Percentage moves to a tooltip.</span>
+        </div>
+
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+          <span class="pills-label" style="margin:0">Compact · composer</span>
+          <div style="display:flex;align-items:center;justify-content:center;padding:14px 0">
+            <div style="display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:9999px;background:#fff;border:1px solid #E2E8F0;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.06)">
+              <dc-import name="ContextRing" pct="{{ pct }}" size="{{ 22 }}" hint-size="22px,22px"></dc-import>
+              <span style="font-size:13px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums">{{ pct }}%</span>
+            </div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:var(--fg4);line-height:1.5">Default trigger. Fits a 40px input row.</span>
+        </div>
+
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+          <span class="pills-label" style="margin:0">Capsule · sidebar</span>
+          <div style="display:flex;align-items:center;justify-content:center;padding:8px 0">
+            <div class="metric-circle" style="width:100%;min-height:58px">
+              <dc-import name="ContextRing" pct="{{ pct }}" size="{{ 38 }}" hint-size="38px,38px"></dc-import>
+              <div class="text-block">
+                <div class="num">{{ pct }}<span class="suf">%</span></div>
+                <div class="mc-label">context used</div>
+              </div>
+            </div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:var(--fg4);line-height:1.5">Labelled capsule for persistent rails.</span>
+        </div>
+
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px">
+          <span class="pills-label" style="margin:0">Bar · full width</span>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:14px 0">
+            <div style="display:flex;align-items:baseline;justify-content:space-between">
+              <span style="font-size:12px;font-weight:700;color:var(--fg2)">{{ usedFmt }}</span>
+              <span style="font-size:11px;font-weight:600;color:var(--fg4)">of {{ maxFmt }}</span>
+            </div>
+            <div style="display:flex;height:8px;border-radius:9999px;overflow:hidden;background:var(--bg-chip)">
+              <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+                <div style="width:{{ s.w }}%;background:{{ s.color }};transition:width 520ms /* motion-sweep: kept */ var(--ease-out)"></div>
+              </sc-for>
+            </div>
+          </div>
+          <span style="font-size:11px;font-weight:600;color:var(--fg4);line-height:1.5">Segmented bar when the split matters more than the total.</span>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <sc-if value="{{ isSession }}" hint-placeholder-val="{{ false }}">
+    <section style="animation:ctxIn var(--duration-320) var(--ease-out);display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <h2 style="font-size:20px;font-weight:800;color:var(--fg1);margin:0">Session summary</h2>
+        <p style="font-size:13px;font-weight:500;color:var(--fg3);margin:0">The same data promoted to a headline card — usage dashboards and end-of-session recaps.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+        <div class="card-accent" style="padding:22px;display:flex;flex-direction:column;gap:18px">
+          <div style="position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.8)">Context consumed</span>
+            <span class="material-icons" style="font-size:20px;color:rgba(255,255,255,0.85)">donut_large</span>
+          </div>
+          <div style="position:relative;display:flex;align-items:baseline;gap:8px">
+            <span style="font-size:44px;font-weight:900;line-height:1;letter-spacing:-0.03em;font-variant-numeric:tabular-nums">{{ pct }}%</span>
+            <span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.85)">{{ usedFmt }} tokens</span>
+          </div>
+          <div style="position:relative;height:8px;border-radius:9999px;background:rgba(255,255,255,0.25);overflow:hidden">
+            <div style="height:100%;width:{{ pct }}%;background:#fff;border-radius:9999px;transition:width 620ms /* motion-sweep: kept */ var(--ease-out)"></div>
+          </div>
+          <div style="position:relative;display:flex;gap:8px;flex-wrap:wrap">
+            <span class="badge" style="background:rgba(255,255,255,0.22);color:#fff">18 turns</span>
+            <span class="badge" style="background:rgba(255,255,255,0.22);color:#fff">3 files</span>
+            <span class="badge" style="background:rgba(255,255,255,0.22);color:#fff">{{ costLabel }}</span>
+          </div>
+        </div>
+
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:12px">
+          <span class="pills-label" style="margin:0">By token type</span>
+          <sc-for list="{{ segs }}" as="s" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <span style="font-size:12px;font-weight:700;color:var(--fg2);flex:1">{{ s.label }}</span>
+                <span style="font-size:12px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums">{{ s.tokens }}</span>
+              </div>
+              <div style="height:6px;border-radius:9999px;background:var(--bg-chip);overflow:hidden">
+                <div style="height:100%;width:{{ s.share }}%;background:{{ s.color }};border-radius:9999px;transform-origin:left;animation:ctxGrow 620ms /* motion-sweep: kept */ var(--ease-out)"></div>
+              </div>
+            </div>
+          </sc-for>
+          <button class="btn-primary" style="margin-top:auto;padding:11px 18px;font-size:13px;width:100%"><span class="material-icons" style="font-size:17px">download</span>Export usage report</button>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;maxTokens&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:200000,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Data&quot;}}">
+class Component extends DCLogic {
+  state = { tab: 0, pct: 42, pop: false };
+
+  fmt(n) {
+    if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "") + "K";
+    return String(n);
+  }
+
+  renderVals() {
+    const pct = this.state.pct;
+    const max = Number(this.props.maxTokens ?? 200000);
+    const used = Math.round(max * pct / 100);
+    const mix = [
+      { label: "Input", icon: "south_west", color: "#10B981", k: 0.44 },
+      { label: "Output", icon: "north_east", color: "#0EA5E9", k: 0.22 },
+      { label: "Reasoning", icon: "psychology", color: "#A855F7", k: 0.24 },
+      { label: "Cache read", icon: "bolt", color: "#94A3B8", k: 0.10 }
+    ];
+    const segs = mix.map(m => ({
+      label: m.label, icon: m.icon, color: m.color,
+      tokens: this.fmt(Math.round(used * m.k)),
+      share: Math.round(m.k * 100),
+      w: +(pct * m.k).toFixed(2)
+    }));
+
+    const tone = pct >= 85 ? "critical" : pct >= 60 ? "moderate" : "healthy";
+    const toneBadge = pct >= 85 ? "danger" : pct >= 60 ? "time" : "success";
+    const toneLabel = pct >= 85 ? "Critical" : pct >= 60 ? "Filling up" : "Healthy";
+
+    const advice = {
+      healthy: ["check_circle", "Plenty of room. No action needed.", "#10B981", "#ECFDF5"],
+      moderate: ["error_outline", "Past 60%. Consider trimming attachments before the next long turn.", "#CA8A04", "#FEFCE8"],
+      critical: ["warning_amber", "Past 85%. Older turns will start dropping out — summarise or start a new chat.", "#DC2626", "#FEF2F2"]
+    }[tone];
+
+    const labels = ["Composer", "Breakdown", "States", "Densities", "Session"];
+    const tabs = labels.map((label, i) => ({
+      label, cls: this.state.tab === i ? "active" : "",
+      go: () => this.setState({ tab: i })
+    }));
+
+    const capsule = "display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:9999px;background:#fff;border:1px solid #E2E8F0;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.06)";
+    const valueStyle = "font-size:15px;font-weight:800;color:var(--fg1);font-variant-numeric:tabular-nums;line-height:1";
+    const states = [
+      { name: "Healthy", pct: 18, badge: "success", badgeText: "0–59%", value: "18%", sub: "36K / 200K", note: "Emerald ring. The resting state for most of a conversation.", capsuleStyle: capsule, valueStyle },
+      { name: "Filling up", pct: 68, badge: "time", badgeText: "60–84%", value: "68%", sub: "136K / 200K", note: "Amber ring plus a soft nudge in the popover.", capsuleStyle: capsule, valueStyle },
+      { name: "Critical", pct: 93, badge: "danger", badgeText: "85–100%", value: "93%", sub: "186K / 200K", note: "Red ring. Truncation is imminent.", capsuleStyle: capsule + ";border-color:#FECACA;background:#FEF2F2", valueStyle },
+      { name: "Loading", pct: 0, badge: "tag", badgeText: "pending", value: "––%", sub: "counting tokens", note: "Shown while the first response streams and totals are unknown.", capsuleStyle: capsule + ";animation:ctxPulse 1500ms /* motion-sweep: kept */ ease-in-out infinite", valueStyle: valueStyle + ";color:var(--fg4)" },
+      { name: "Disabled", pct: 0, badge: "tag", badgeText: "n/a", value: "—", sub: "not reported", note: "The provider does not expose usage for this model.", capsuleStyle: capsule + ";opacity:0.45;filter:grayscale(1)", valueStyle: valueStyle + ";color:var(--fg4)" }
+    ];
+
+    const open = this.state.pop;
+    const popStyle = "position:absolute;bottom:calc(100% + 10px);right:0;width:300px;padding:16px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;box-shadow:0 24px 48px -16px rgba(15,23,42,0.28);z-index:20;transform-origin:bottom right;transition:opacity var(--duration-slow) var(--ease-out), transform var(--duration-260) var(--ease-slide-bounce);" +
+      (open ? "opacity:1;transform:translateY(0) scale(1);pointer-events:auto" : "opacity:0;transform:translateY(8px) scale(0.96);pointer-events:none");
+
+    return {
+      pct, tabs, segs, states, popStyle,
+      isComposer: this.state.tab === 0,
+      isBreakdown: this.state.tab === 1,
+      isStates: this.state.tab === 2,
+      isSizes: this.state.tab === 3,
+      isSession: this.state.tab === 4,
+      usedFmt: this.fmt(used),
+      maxFmt: this.fmt(max),
+      cost: (used / 1000 * 0.012).toFixed(2),
+      costLabel: "$" + (used / 1000 * 0.012).toFixed(2),
+      toneBadge, toneLabel,
+      adviceIcon: advice[0], adviceText: advice[1],
+      adviceStyle: "display:flex;gap:8px;align-items:flex-start;padding:12px;border-radius:12px;color:" + advice[2] + ";background:" + advice[3] + ";transition:background var(--duration-slower) ease, color var(--duration-slower) ease",
+      triggerStyle: "display:inline-flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:9999px;background:" + (open ? "#F1F5F9" : "#fff") + ";border:1px solid " + (open ? "#CBD5E1" : "#E2E8F0") + ";box-shadow:inset 0 -2px 5px rgba(0,0,0,0.06);cursor:pointer;font-family:var(--font-display);transition:background var(--duration-200) ease, border-color var(--duration-200) ease",
+      togglePop: () => this.setState(s => ({ pop: !s.pop })),
+      setPct: e => this.setState({ pct: Number(e.target.value) })
+    };
+  }
+}
+</script>
+</body>
+</html>

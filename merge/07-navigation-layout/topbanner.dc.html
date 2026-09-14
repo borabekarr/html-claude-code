@@ -1,0 +1,267 @@
+<!-- @dsCard group="Merge - navigation-layout" name="TopBanner" subtitle="-> new: Navigation & layout" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #0B0F17; }
+  :root { --gap-icon-text: 8px; } /* local duration/ease overrides removed: byte-identical to DS var(--duration-fast/base/320) + var(--ease-out); unused elsewhere in this file */
+  @keyframes tbDrop { from { opacity: 0; transform: translateY(-100%); } to { opacity: 1; transform: none; } }
+  @keyframes tbLift { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-100%); } }
+  @keyframes tbFlip { from { opacity: 0; transform: translateY(-65%); } to { opacity: 1; transform: none; } }
+  @keyframes tbSweep { from { left: -220px; } to { left: 112%; } }
+  @keyframes tbSpin { to { transform: rotate(360deg); } }
+  @keyframes tbPop { 0% { transform: scale(0); } 60% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes tbPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+  .tb-drop { animation: tbDrop 520ms /* motion-sweep: kept, no DS tier within 40ms */ var(--ease-spring-loose) both; }
+  .tb-out { animation: tbLift var(--duration-340) var(--ease-accel) both; }
+  .tb-digit { display: inline-block; animation: tbFlip var(--duration-260) var(--ease-out); }
+  .tb-sweep { animation: tbSweep 4600ms /* motion-sweep: kept, ambient sweep loop, far outside DS tier scale */ linear infinite; }
+  .tb-spin { animation: tbSpin var(--duration-700) linear infinite; }
+  .tb-pop { animation: tbPop 520ms /* motion-sweep: kept, no DS tier within 40ms */ var(--ease-spring-medium) both; }
+  .tb-live { animation: tbPulse 1500ms /* motion-sweep: kept, ambient pulse loop, far outside DS tier scale */ var(--ease-in-out) infinite; }
+  @keyframes tbShimmer { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(320%) skewX(-18deg); } }
+  .tb-shim { position: relative; }
+  .tb-shim::after { content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 38%; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); transform: translateX(-120%) skewX(-18deg); }
+  @media (hover: hover) and (pointer: fine) {
+    .tb-shim:hover { filter: brightness(1.05); }
+    .tb-shim:hover::after { animation: tbShimmer var(--duration-1100) var(--ease-swap) infinite; }
+    .tb-x:hover { transform: scale(1.1) rotate(90deg); opacity: 1; }
+    .tb-link:hover { opacity: .72; transform: translateX(2px); }
+  }
+  .tb-shim, .tb-shim:hover, .tb-shim:active { transform: none !important; }
+  .tb-shim:active { filter: brightness(.96); }
+  .tb-x { position: relative; transition: background var(--duration-base), transform var(--duration-150) var(--ease-out), opacity var(--duration-base); }
+  .tb-x::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .tb-x:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .tb-x:active { transform: scale(.9); }
+  .tb-link { transition: opacity var(--duration-base), transform var(--duration-base); }
+  .tb-link:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .tb-bar { transition: height var(--duration-320) var(--ease-out), opacity var(--duration-260); }
+  .tb-shim.btn-cta { position: relative; }
+  .tb-shim.btn-cta::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .tb-shim.btn-cta:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .tb-drop, .tb-out, .tb-sweep, .tb-live, .tb-digit, .tb-pop { animation: none !important; }
+    .tb-shim::after { animation: none !important; opacity: 0; }
+    .tb-x, .tb-link, .tb-bar { transition: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; box-sizing: border-box; padding: 30px 22px 60px; display: flex; flex-direction: column; align-items: center; gap: 22px; font-family: var(--font-display); background: #0B0F17; background-image: radial-gradient(120% 70% at 50% 0%, rgba(228,255,58,.09) 0%, transparent 60%);">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 11px; text-align: center;">
+    <span style="font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #64748B;">Deha DS · In-app Top Banner</span>
+    <div class="pills-row" style="justify-content: center; flex-wrap: wrap;">
+      <span class="pills-label" style="margin: 0 4px 0 0; align-self: center;">State</span>
+      <button type="button" class="pill-tab" onClick="{{ setIdle }}" style="{{ stIdle }}">Idle</button>
+      <button type="button" class="pill-tab" onClick="{{ setLoading }}" style="{{ stLoading }}">Loading</button>
+      <button type="button" class="pill-tab" onClick="{{ setClaimed }}" style="{{ stClaimed }}">Claimed</button>
+      <button type="button" class="pill-tab" onClick="{{ setExpired }}" style="{{ stExpired }}">Expired</button>
+      <button type="button" class="pill-tab" onClick="{{ setDismissed }}" style="{{ stDismissed }}">Dismissed</button>
+    </div>
+  </div>
+
+  <div style="width: 100%; max-width: 1180px; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 70px -34px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.06);">
+    <div class="tb-bar {{ animClass }}" style="{{ hidden }}">
+      <div style="position: relative; overflow: hidden; box-sizing: border-box; padding: 7px 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; background: {{ shellBg }};">
+        <div aria-hidden="true" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">
+          <div class="tb-sweep" style="position: absolute; top: 0; bottom: 0; left: -220px; width: 220px; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.26), transparent);"></div>
+        </div>
+
+        <div style="position: relative; display: inline-flex; align-items: center; gap: 8px; flex: 0 1 auto; min-width: 0; padding: 3px 11px 3px 3px; border-radius: 16px; background: rgba(4,7,12,.9); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+          <span style="display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 11px; font-size: 10.5px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.3); background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(100deg, #FF3FA4 0%, #F0439E 55%, #D93FB8 100%); background-size: 7px 7px, 7px 7px, cover; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(60,0,35,.25);"><span class="material-icons tb-live" style="font-size: 12px; margin-right: 4px;">timer</span>{{ pillLabel }}</span>
+          <span style="display: inline-flex; align-items: baseline; gap: 6px; color: #F8FAFC; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums;">
+            <span><span class="tb-digit" key="{{ hh }}">{{ hh }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 10px; margin-left: 2px;">h</span></span>
+            <span><span class="tb-digit" key="{{ mm }}">{{ mm }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 10px; margin-left: 2px;">m</span></span>
+            <span><span class="tb-digit" key="{{ ss }}">{{ ss }}</span><span style="color: #94A3B8; font-weight: 600; font-size: 10px; margin-left: 2px;">s</span></span>
+          </span>
+        </div>
+
+        <p style="position: relative; margin: 0; flex: 1 1 300px; min-width: 220px; color: {{ ink }}; font-size: 13px; font-weight: 800; line-height: 1.25; letter-spacing: -.005em; text-wrap: pretty;">{{ message }}</p>
+
+        <div style="position: relative; display: flex; align-items: center; gap: 8px; flex: none;">
+          <span style="display: inline-flex; padding: 3px; border-radius: 9999px; background: rgba(4,7,12,.9); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+            <button type="button" class="btn-cta tb-shim" onClick="{{ onCta }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyle }}">{{ ctaContent }}</button>
+          </span>
+          <button type="button" class="tb-x" onClick="{{ onClose }}" aria-label="Dismiss banner" style="width: 24px; height: 24px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: {{ ink }}; opacity: .75; background: transparent;">
+            <span class="material-icons" style="font-size: 18px;">close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px; padding: 12px 16px; background: #11151D; box-shadow: inset 0 -1px 0 rgba(255,255,255,.06);">
+      <div style="width: 24px; height: 24px; border-radius: 8px; background: linear-gradient(150deg, #E4FF3A, #A8D400);"></div>
+      <div style="display: flex; gap: 15px;">
+        <span style="font-size: 12px; font-weight: 800; color: #F1F5F9;">Projects</span>
+        <span style="font-size: 12px; font-weight: 700; color: #7C8899;">Renders</span>
+        <span style="font-size: 12px; font-weight: 700; color: #7C8899;">Billing</span>
+      </div>
+      <div style="margin-left: auto; width: 24px; height: 24px; border-radius: 9999px; background: rgba(255,255,255,.12);"></div>
+    </div>
+
+    <div style="height: 180px; padding: 20px 22px; box-sizing: border-box; background: #0F1219; display: flex; flex-direction: column; gap: 11px;">
+      <div style="height: 18px; width: 38%; border-radius: 7px; background: rgba(255,255,255,.09);"></div>
+      <div style="height: 10px; width: 24%; border-radius: 6px; background: rgba(255,255,255,.06);"></div>
+      <div style="flex: 1; display: flex; gap: 13px;">
+        <div style="flex: 1; border-radius: 14px; background: rgba(255,255,255,.045);"></div>
+        <div style="flex: 1; border-radius: 14px; background: rgba(255,255,255,.045);"></div>
+        <div style="flex: 1; border-radius: 14px; background: rgba(255,255,255,.045);"></div>
+      </div>
+    </div>
+
+    <sc-if value="{{ isDismissed }}">
+      <div style="padding: 11px 16px; background: #0B0F17; display: flex; justify-content: center;">
+        <button type="button" class="tb-link" onClick="{{ onRestore }}" style="border: none; background: transparent; color: #94A3B8; font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;">Banner dismissed — bring it back</button>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ isClaimed }}">
+    <div style="display: flex; align-items: center; gap: 11px; padding: 10px 14px; border-radius: 13px; background: #14161C; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);">
+      <span class="tb-pop" style="width: 26px; height: 26px; border-radius: 9999px; display: grid; place-items: center; background: linear-gradient(160deg, #34D399, #10B981);">
+        <span class="material-icons" style="font-size: 16px; color: #fff;">check</span>
+      </span>
+      <span style="font-size: 12.5px; font-weight: 700; color: #D9E6F5;">Unlocked — 11 unlimited days added to your workspace.</span>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;pillLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;55% discount expires in&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;message&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;11-day Unlimited Seedance with 55% OFF. 4 days of Seedance 2.0 in 4K + 7 days of Unlimited Seedance 2.5&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Get Unlimited with 55% OFF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#D6F92E&quot;,&quot;options&quot;:[&quot;#D6F92E&quot;,&quot;#E4FF3A&quot;,&quot;#FF3FA4&quot;,&quot;#2FA6E6&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { phase: 'idle', left: 2 * 3600 + 11 * 60 + 2, closing: false, entered: false };
+
+  componentDidMount() {
+    this.entryT = setTimeout(() => this.setState({ entered: true }), 620);
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    this.timer = setInterval(() => {
+      if (this.state.phase === 'expired' || this.state.phase === 'dismissed') return;
+      this.setState(s => {
+        const left = s.left - 1;
+        return left <= 0 ? { left: 0, phase: 'expired' } : { left };
+      });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.ctaT); clearTimeout(this.closeT); clearTimeout(this.entryT); }
+
+  replayEntry() {
+    clearTimeout(this.entryT);
+    this.setState({ entered: false });
+    this.entryT = setTimeout(() => this.setState({ entered: true }), 620);
+  }
+
+  setPhase(phase) {
+    return () => {
+      clearTimeout(this.closeT);
+      if (phase === 'expired') return this.setState({ phase, left: 0, closing: false });
+      if (phase === 'dismissed') return this.setState({ phase, closing: false });
+      if (this.state.phase === 'dismissed') this.replayEntry();
+      this.setState({ phase, closing: false, left: this.state.left > 0 ? this.state.left : 2 * 3600 + 11 * 60 + 2 });
+    };
+  }
+
+  cta() {
+    if (this.state.phase !== 'idle') return;
+    this.setState({ phase: 'loading' });
+    clearTimeout(this.ctaT);
+    this.ctaT = setTimeout(() => this.setState({ phase: 'claimed' }), 1600);
+  }
+
+  close() {
+    if (this.state.phase === 'dismissed' || this.state.closing) return;
+    this.setState({ closing: true });
+    clearTimeout(this.closeT);
+    this.closeT = setTimeout(() => this.setState({ phase: 'dismissed', closing: false }), 320);
+  }
+
+  tabStyle(on) {
+    return on
+      ? 'background: #E4FF3A; color: #12200B; border-color: transparent; font-weight: 800; box-shadow: inset 0 -2px 5px rgba(0,0,0,.16), 0 4px 14px -4px rgba(214,249,46,.5); cursor: pointer;'
+      : 'background: #131A26; color: #94A3B8; border-color: #26303F; cursor: pointer;';
+  }
+
+  /* Deha .btn-cta, exactly as specified in the DS: only --accent / --ctaglow
+     and a compact size are set; fill, texture, glow, hover/active come from the class. */
+  ctaBase() {
+    const p = this.state.phase;
+    const size = 'height: 32px; font-size: 13px; font-weight: 900; letter-spacing: -.005em; padding: 0 15px; flex: none;';
+    if (p === 'expired') return size + '--accent: #64748B; --ctaglow: rgba(100,116,139,.45); cursor: not-allowed;';
+    if (p === 'claimed') return size + '--accent: #10B981; --ctaglow: rgba(16,185,129,.5); cursor: default;';
+    if (p === 'loading') return size + '--accent: #F0439E; --ctaglow: rgba(255,63,164,.55); cursor: progress;';
+    return size + '--accent: #FF3FA4; --ctaglow: rgba(255,63,164,.6);';
+  }
+
+  ctaChildren() {
+    const p = this.state.phase;
+    const h = React.createElement;
+    const wrap = kids => h('span', { style: { display: 'inline-flex', alignItems: 'center', gap: 6 } }, kids);
+    const ic = (name, s) => h('span', { key: 'i', className: 'material-icons', style: Object.assign({ fontSize: 15 }, s) }, name);
+    if (p === 'loading') return wrap([
+      h('svg', { key: 's', className: 'btn-apply-spin-svg', viewBox: '0 0 32 32', style: { width: 16, height: 16 } }, [
+        h('circle', { key: 't', className: 'btn-apply-spin-track', cx: 16, cy: 16, r: 11 }),
+        h('circle', { key: 'a', className: 'btn-apply-spin-arc', cx: 16, cy: 16, r: 11 }),
+      ]),
+      'Securing discount',
+    ]);
+    if (p === 'claimed') return wrap([ic('check'), 'Offer applied']);
+    if (p === 'expired') return wrap([ic('lock_clock', { fontSize: 14 }), 'Offer expired']);
+    return wrap([ic('bolt'), this.props.ctaLabel ?? 'Get Unlimited with 55% OFF']);
+  }
+
+  renderVals() {
+    const { phase, left, closing } = this.state;
+    const pad = n => String(n).padStart(2, '0');
+    const dismissed = phase === 'dismissed';
+    const accent = this.props.accent ?? '#D6F92E';
+
+    return {
+      hh: pad(Math.floor(left / 3600)), mm: pad(Math.floor((left % 3600) / 60)), ss: pad(left % 60),
+      pillLabel: phase === 'expired' ? 'Discount ended' : (this.props.pillLabel ?? '55% discount expires in'),
+      message: this.props.message ?? '11-day Unlimited Seedance with 55% OFF. 4 days of Seedance 2.0 in 4K + 7 days of Unlimited Seedance 2.5',
+      shellBg: phase === 'expired' ? 'linear-gradient(90deg, #2A2E1C, #232617)'
+        : phase === 'claimed' ? 'linear-gradient(90deg, #B9F2C4, #9FE9B4)' : accent,
+      ink: phase === 'expired' ? '#DCE3EC' : '#10160A',
+      hidden: dismissed ? 'height: 0; opacity: 0; overflow: hidden;' : '',
+      animClass: closing ? 'tb-out' : (!dismissed && !this.state.entered ? 'tb-drop' : ''),
+      setIdle: this.setPhase('idle'), setLoading: this.setPhase('loading'), setClaimed: this.setPhase('claimed'),
+      setExpired: this.setPhase('expired'), setDismissed: this.setPhase('dismissed'),
+      stIdle: this.tabStyle(phase === 'idle'), stLoading: this.tabStyle(phase === 'loading'),
+      stClaimed: this.tabStyle(phase === 'claimed'), stExpired: this.tabStyle(phase === 'expired'),
+      stDismissed: this.tabStyle(dismissed),
+      isClaimed: phase === 'claimed', isDismissed: dismissed,
+      ctaDisabled: phase !== 'idle',
+      ctaStyle: this.ctaBase(),
+      ctaContent: this.ctaChildren(),
+      onCta: () => this.cta(),
+      onClose: () => this.close(),
+      onRestore: this.setPhase('idle'),
+    };
+  }
+}
+</script>
+</body>
+</html>

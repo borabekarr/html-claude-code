@@ -1,0 +1,246 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Confirmation" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: var(--shell-bg); font-family: 'Montserrat', system-ui, sans-serif; }
+  body, button, input { font-family: 'Montserrat', system-ui, sans-serif; }
+  .material-icons { font-family: 'Material Icons'; }
+  a { color: var(--brand-primary-600); } a:hover { color: var(--brand-primary-700); }
+  .badge { position: relative !important; inset: auto !important; align-self: flex-start; width: fit-content; height: auto !important; padding: 4px 11px !important; opacity: 1 !important; transform: none !important; }
+  @keyframes ccSpin { to { transform: rotate(360deg); } }
+  @keyframes ccSheen { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+  /* .pill-tab/.btn-discuss/.btn-text/.btn-green/.btn-red 44px hit layers + :focus-visible
+     now come from the regenerated data-ds style copies above (fixed at the shared
+     claude-design mirror source, this file re-inlined against it). */
+  @media (prefers-reduced-motion: reduce) {
+    [style*="animation: ccSpin"], [style*="animation: ccSheen"] { animation: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; background: var(--shell-bg); background-image: var(--bg-section-grid); background-size: var(--bg-section-grid-size); font-family: var(--font-display); padding: 48px 32px 80px; display: flex; flex-direction: column; align-items: center; gap: 30px;">
+
+  <div style="width: 100%; max-width: 780px; display: flex; flex-direction: column; gap: 10px;">
+    <span class="micro-label" style="color: var(--fg3);">Deha · AI elements</span>
+    <h1 class="h1" style="margin: 0;">Chat confirmation</h1>
+    <p class="body" style="margin: 0; max-width: 58ch; text-wrap: pretty;">The gate the assistant raises before it acts on your behalf. Choose a usage area, then approve or deny to walk the whole state machine.</p>
+  </div>
+
+  <div style="width: 100%; max-width: 780px; display: flex; flex-wrap: wrap; gap: 8px;">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="6">
+      <button class="{{ v.pillClass }}" onClick="{{ v.pick }}" style="cursor: pointer; padding: 8px 17px; font-size: 12.5px;">{{ v.label }}</button>
+    </sc-for>
+  </div>
+
+  <div class="card-glass" style="width: 100%; max-width: 780px; padding: 30px; display: flex; flex-direction: column; gap: 22px; background: rgba(255,255,255,.82);">
+
+    <div style="display: flex; justify-content: flex-end;">
+      <div style="max-width: 66%; padding: 11px 16px; border-radius: 18px 18px 5px 18px; background: var(--bg-chip); color: var(--fg2); font-size: 13.5px; font-weight: 600; line-height: 1.5;">{{ userMsg }}</div>
+    </div>
+
+    <div style="display: flex; gap: 14px; align-items: flex-start;">
+      <div style="width: 30px; height: 30px; margin-top: 2px; flex: none; border-radius: 9999px; display: grid; place-items: center; background: var(--brand-primary); color: #fff; font-size: 12px; font-weight: 900; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.2);">AI</div>
+
+      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px;">
+        <p class="body" style="margin: 0; line-height: 1.55;">{{ aiMsg }}</p>
+
+        <div style="box-sizing: border-box; border-radius: 42px; background: #F1F5F9; border: 1px solid #E2E8F0; box-shadow: 0 4px 8px rgba(15,23,42,0.10); padding: 10px; display: flex;">
+        <div style="flex: 1; min-width: 0; border: 1px solid #E2E8F0; border-radius: 32px; background: #FFFFFF; padding: 22px 24px 18px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), inset 0 0 0 1px rgba(15,23,42,0.03);">
+
+          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;">
+            <div style="min-width: 0; display: flex; gap: 13px; align-items: flex-start;">
+              <div class="icon-badge icon-badge--lg" style="--icon-c: {{ accent }}; width: 40px; height: 40px; border-radius: 100px; flex: none; margin-top: 2px;"><span class="material-icons">{{ headIcon }}</span></div>
+              <div style="min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <span class="micro-label" style="letter-spacing: .14em; font-weight: 900;">{{ subtitle }}</span>
+                <div style="font-size: 25px; font-weight: 900; letter-spacing: -.022em; line-height: 1.12; color: #0F172A;">{{ headline }}</div>
+                <span style="font-size: 13px; font-weight: 900; color: #64748B; line-height: 1.45;">{{ caption }}</span>
+              </div>
+            </div>
+            <span class="badge-event" style="flex: none; background-color: {{ badgeColor }}; height: 26px; padding: 0 12px; border-radius: 100px; font-size: 11px; font-weight: 900; gap: 6px; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 7px 7px;"><span class="material-icons" style="font-size: 15px;">{{ badgeIcon }}</span>{{ badgeLabel }}</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: #E2E8F0; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-recessed);">
+            <sc-for list="{{ rows }}" as="row" hint-placeholder-count="4">
+              <div style="background: #FFFFFF; padding: 13px 15px; display: flex; flex-direction: column; gap: 5px;">
+                <span style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .1em; color: #94A3B8;">{{ row.label }}</span>
+                <span style="font-size: 13px; font-weight: 900; color: #0F172A; font-variant-numeric: tabular-nums;">{{ row.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px; min-height: 42px; border-top: 1px solid #E2E8F0; padding-top: 16px;">
+
+            <sc-if value="{{ isPending }}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%; flex-wrap: wrap;">
+                <span class="meta" style="font-weight: 900;">{{ note }}</span>
+                <div style="flex: 1;"></div>
+                <button class="btn-discuss" onClick="{{ deny }}" style="font-weight: 900;"><span class="material-icons" style="font-size: 16px;">close</span>Deny</button>
+                <button class="{{ approveClass }}" onClick="{{ approve }}" style="font-weight: 900;"><span class="material-icons btn-mi" style="font-size: 16px;">{{ approveIcon }}</span>{{ approveLabel }}</button>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                <svg width="18" height="18" viewBox="0 0 32 32" style="animation: ccSpin 800ms linear infinite; flex: none; /* motion-sweep: kept */">
+                  <circle cx="16" cy="16" r="12" fill="none" stroke="rgba(15,23,42,.12)" stroke-width="3"></circle>
+                  <circle cx="16" cy="16" r="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" stroke-linecap="round" stroke-dasharray="25 50"></circle>
+                </svg>
+                <span style="font-size: 13px; font-weight: 900; color: #334155;">{{ runningLabel }}</span>
+                <div style="flex: 1; min-width: 60px; height: 3px; border-radius: 9999px; background: rgba(15,23,42,.08); overflow: hidden;">
+                  <div style="width: 28%; height: 100%; border-radius: 9999px; background: var(--brand-primary); animation: ccSheen 1.1s var(--ease-in-out) infinite; /* motion-sweep: kept */"></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 11px; width: 100%;">
+                <span class="{{ resultBadgeClass }}" style="font-size: 11px; font-weight: 900; flex: none;"><span class="material-icons">{{ resultIcon }}</span>{{ resultBadge }}</span>
+                <span style="font-size: 13px; font-weight: 900; color: #334155;">{{ resultText }}</span>
+                <div style="flex: 1;"></div>
+                <button class="btn-text" onClick="{{ reset }}" style="font-size: 12.5px; font-weight: 900;"><span class="material-icons" style="font-size: 16px;">replay</span>Replay</button>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        </div>
+
+        <span class="meta" style="font-weight: 600; color: var(--fg4);">Nothing runs until you approve. AI can make mistakes — check the details.</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="width: 100%; max-width: 780px; display: flex; flex-direction: column; gap: 12px;">
+    <span class="pills-label" style="color: var(--fg3);">States</span>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px;">
+      <div class="card-inner" style="padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 9px;">
+        <span class="badge tag">Awaiting approval</span>
+        <span class="meta" style="font-weight: 600; line-height: 1.45;">Card appears in place; details read as a static grid.</span>
+      </div>
+      <div class="card-inner" style="padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 9px;">
+        <span class="badge tag">Executing</span>
+        <span class="meta" style="font-weight: 600; line-height: 1.45;">Footer swaps to a spinner and indeterminate bar.</span>
+      </div>
+      <div class="card-inner" style="padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 9px;">
+        <span class="badge success">Approved</span>
+        <span class="meta" style="font-weight: 600; line-height: 1.45;">Result badge replaces the controls; footer becomes a receipt.</span>
+      </div>
+      <div class="card-inner" style="padding: 15px; border-radius: 16px; display: flex; flex-direction: column; gap: 9px;">
+        <span class="badge danger">Denied</span>
+        <span class="meta" style="font-weight: 600; line-height: 1.45;">Action discarded, outcome logged back to the thread.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:900}}">
+const VARIANTS = [
+  { id: 'payment', label: 'Payment',
+    userMsg: 'Pay the Northwind invoice that came in this morning.',
+    aiMsg: 'Invoice INV-4482 from Northwind Traders is ready to pay. I need your approval before moving money.',
+    headline: '$12,480.00', caption: 'to Northwind Traders · invoice INV-4482', subtitle: 'Stripe · Treasury',
+    rows: [['Due', 'Sep 4, 2026'], ['From', 'Operating ···4417'], ['Method', 'ACH transfer'], ['Reversible', 'No']],
+    approveLabel: 'Approve payment', approveClass: 'btn-green', note: 'Expires in 10 min',
+    runningLabel: 'Submitting transfer…',
+    okText: 'Payment sent · receipt saved to the thread.', noText: 'Payment cancelled. No funds moved.' },
+  { id: 'calendar', label: 'Scheduling',
+    userMsg: 'Find time with Dana next week and book it.',
+    aiMsg: 'Tuesday 14:00 works for both calendars. Confirm and I will send the invite.',
+    headline: 'Tue Sep 8, 14:00', caption: '45 minutes with Dana Ruiz', subtitle: 'Google Calendar',
+    rows: [['Location', 'Meet · auto link'], ['Guests', '2'], ['Reminder', '10 min before'], ['Reversible', 'Yes']],
+    approveLabel: 'Send invite', approveClass: 'btn-green', note: 'Slot held 15 min',
+    runningLabel: 'Creating event…',
+    okText: 'Invite sent · on both calendars.', noText: 'Nothing booked. I can propose other slots.' },
+  { id: 'delete', label: 'Destructive',
+    userMsg: 'Clean up the archived leads from the 2024 import.',
+    aiMsg: 'That matches 1,204 records. Deleting them cannot be undone, so I need explicit confirmation.',
+    headline: '1,204 records', caption: 'archived leads from “2024 import”', subtitle: 'CRM · Leads',
+    rows: [['Scope', 'Archived only'], ['Snapshot', 'Today 08:12'], ['Purge', 'After 30 days'], ['Reversible', 'No']],
+    approveLabel: 'Delete permanently', approveClass: 'btn-red', note: 'Expires in 5 min',
+    runningLabel: 'Deleting in batches…',
+    okText: 'Deleted · snapshot retained for 30 days.', noText: 'Deletion declined. Records untouched.' },
+  { id: 'email', label: 'Outbound message',
+    userMsg: 'Reply to Priya with the revised pricing.',
+    aiMsg: 'The draft is ready. Check the recipients before it leaves your mailbox.',
+    headline: 'Revised pricing — Meridian', caption: 'to priya@meridian.io · cc finance@deha.co', subtitle: 'Gmail · you@deha.co',
+    rows: [['Attachment', 'pricing-v3.pdf'], ['Size', '240 KB'], ['Thread', 'Meridian deal'], ['Reversible', 'Undo 30 s']],
+    approveLabel: 'Send now', approveClass: 'btn-green', note: 'Draft held 30 min',
+    runningLabel: 'Sending message…',
+    okText: 'Email sent · logged to the Meridian deal.', noText: 'Kept as a draft. Nothing was sent.' },
+  { id: 'access', label: 'Access',
+    userMsg: 'Give the new analyst read access to the revenue dashboards.',
+    aiMsg: 'This grants data beyond the analyst default. Approve to apply the role change.',
+    headline: 'Read-only access', caption: 'Ken Aoyama → Revenue dashboards', subtitle: 'Identity · role change',
+    rows: [['Role', 'Analyst'], ['Duration', '90 days'], ['Review', 'Nov 30, 2026'], ['Reversible', 'Yes']],
+    approveLabel: 'Grant access', approveClass: 'btn-green', note: 'Request expires in 1 h',
+    runningLabel: 'Applying role change…',
+    okText: 'Access granted · expires Nov 30.', noText: 'Request denied. Access unchanged.' },
+  { id: 'deploy', label: 'Deploy',
+    userMsg: 'Ship the pricing fix to production.',
+    aiMsg: 'Tests are green on 4f21c9e. Confirm to promote the build to production.',
+    headline: 'Promote 4f21c9e', caption: 'staging → production · deha-web', subtitle: 'CI · release',
+    rows: [['Change', 'Fix pricing rounding'], ['Checks', '38 passed'], ['Rollback', 'One click, 40 s'], ['Reversible', 'Yes']],
+    approveLabel: 'Promote build', approveClass: 'btn-green', note: 'Build valid 20 min',
+    runningLabel: 'Promoting build…',
+    okText: 'Deployed · live for all users.', noText: 'Deploy held. Production unchanged.' }
+];
+
+class Component extends DCLogic {
+  state = { active: 'payment', status: 'pending', run: 0 };
+  componentWillUnmount() { clearTimeout(this._t); }
+  set(active) { clearTimeout(this._t); this.setState(s => ({ active, status: 'pending', run: s.run + 1 })); }
+  decide(ok) {
+    clearTimeout(this._t);
+    this.setState({ status: 'running' });
+    this._t = setTimeout(() => this.setState({ status: ok ? 'approved' : 'denied' }), ok ? 1400 : 800);
+  }
+  renderVals() {
+    const v = VARIANTS.find(x => x.id === this.state.active) || VARIANTS[0];
+    const st = this.state.status, done = st === 'approved' || st === 'denied', ok = st === 'approved';
+    const badge = { pending: ['#F97316', 'Awaiting approval', 'schedule'], running: ['#3B82F6', 'Executing', 'autorenew'],
+      approved: ['#10B981', 'Approved', 'task_alt'], denied: ['#EF4444', 'Denied', 'block'] }[st];
+    const ICONS = { payment: ['payments', '#10B981', 'check_circle'], calendar: ['event_available', '#3B82F6', 'send'],
+      delete: ['delete_forever', '#EF4444', 'delete'], email: ['mail', '#3B82F6', 'send'],
+      access: ['key', '#EAB308', 'lock_open'], deploy: ['rocket_launch', '#F97316', 'publish'] }[v.id];
+    return {
+      variants: VARIANTS.map(x => ({ label: x.label,
+        pillClass: 'pill-tab' + (x.id === this.state.active ? ' active' : ''), pick: () => this.set(x.id) })),
+      cardKey: v.id + ':' + this.state.run,
+      userMsg: v.userMsg, aiMsg: v.aiMsg, headline: v.headline, caption: v.caption, subtitle: v.subtitle,
+      rows: v.rows.map((r, i) => ({ label: r[0], value: r[1], delay: (110 + i * 60) + 'ms' })),
+      badgeColor: badge[0], badgeLabel: badge[1], badgeIcon: badge[2],
+      headIcon: ICONS[0], accent: ICONS[1], approveIcon: ICONS[2],
+      resultIcon: ok ? 'task_alt' : 'block',
+      approveLabel: v.approveLabel, approveClass: v.approveClass, note: v.note, runningLabel: v.runningLabel,
+      isPending: st === 'pending', isRunning: st === 'running', isDone: done,
+      resultBadgeClass: ok ? 'badge success' : 'badge danger', resultBadge: ok ? 'Approved' : 'Denied',
+      resultText: ok ? v.okText : v.noText,
+      approve: () => this.decide(true), deny: () => this.decide(false),
+      reset: () => this.setState(s => ({ status: 'pending', run: s.run + 1 }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

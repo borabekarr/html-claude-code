@@ -1,0 +1,206 @@
+<!-- @dsCard group="Merge - typography" name="Highlighted Text" subtitle="-> Foundations: Type Display" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin:0; background:#F8FAFC; }
+  @keyframes hlSweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes hlWipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes hlRise { from { transform: scaleY(0.06); opacity:.4; } to { transform: scaleY(1); opacity:1; } }
+  @keyframes hlBox { from { opacity:0; transform: scale(.86); } to { opacity:1; transform: scale(1); } }
+  @keyframes hlLift { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes hlFade { from { opacity:0; } to { opacity:1; } }
+  @keyframes hlCaret { 0%,45% { opacity:1; } 50%,100% { opacity:0; } }
+  @keyframes hlGlow { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } 50% { box-shadow: 0 0 0 6px rgba(16,185,129,.16); } }
+  .hl-hit44 { position: relative; }
+  .hl-hit44::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .hl-focus-demo:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  @media (prefers-reduced-motion: reduce) {
+    *[style*="animation:"], *[style*="transition:"] { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } /* motion-sweep: kept */
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:40px 40px 64px;font-family:'Montserrat',sans-serif;background:#F8FAFC;background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px),linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);background-size:24px 24px">
+  <div style="max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:28px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:#94A3B8">Deha · Component</span>
+        <h1 style="margin:0;font-size:34px;font-weight:900;letter-spacing:-0.02em;color:#0F172A">Highlighted Text</h1>
+        <p style="margin:0;max-width:560px;font-size:14px;font-weight:500;line-height:1.6;color:#64748B">An inline emphasis primitive: a highlight layer animates in behind a run of words. Three treatments, one timing curve, driven by the emerald brand scale.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="pill-tab" onClick="{{ toggleSlow }}" style="cursor:pointer;padding:9px 16px;font-size:12px">Slow motion</button>
+        <button class="btn-primary hl-hit44" onClick="{{ replay }}" style="padding:10px 18px;font-size:13px"><span class="material-icons" style="font-size:18px">replay</span>Replay</button>
+      </div>
+    </div>
+
+    <div class="pills-seg" style="align-self:flex-start">
+      <div class="pills-seg-pill" style="left:{{ pillLeft }};width:170px"></div>
+      <button class="{{ c0 }} hl-hit44" onClick="{{ go0 }}" style="width:170px">Hero headline</button>
+      <button class="{{ c1 }} hl-hit44" onClick="{{ go1 }}" style="width:170px">AI answer</button>
+      <button class="{{ c2 }} hl-hit44" onClick="{{ go2 }}" style="width:170px">Metric callout</button>
+    </div>
+
+    <div style="position:relative;border-radius:24px;background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.10),0 2px 4px -1px rgba(0,0,0,0.06);padding:44px;min-height:340px;display:flex;align-items:center">
+
+      <sc-if value="{{ isHero }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:24px;animation:hlFade var(--duration-slower) both">
+          <span class="badge tag" style="align-self:flex-start">Marker sweep</span>
+          <h2 style="margin:0;font-size:46px;line-height:1.18;font-weight:900;letter-spacing:-0.03em;color:#0F172A;max-width:760px;text-wrap:pretty">Bora turns a noisy pipeline into
+            <span style="position:relative;display:inline-block;white-space:nowrap">
+              <span style="position:absolute;inset:-2px -8px;border-radius:8px;background:#A7F3D0;transform-origin:left center;animation:hlSweep var(--duration-560) var(--ease-out) var(--duration-260) both;z-index:0"></span>
+              <span style="position:relative;z-index:1">three decisions</span>
+            </span>
+            you make before lunch.</h2>
+          <p style="margin:0;max-width:620px;font-size:15px;font-weight:500;line-height:1.65;color:#475569">The sweep scales from the left on a single spring curve, var(--duration-560), delayed just past the headline's own entrance so the eye lands on the words first.</p>
+          <div style="display:flex;gap:12px;align-items:center">
+            <button class="btn-primary hl-hit44" style="padding:12px 22px">Start free<span class="material-icons" style="font-size:18px">arrow_forward</span></button>
+            <button class="pill-tab" style="padding:12px 20px;font-size:13px;cursor:pointer">See how it works</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAi }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px;width:100%;max-width:720px;animation:hlFade var(--duration-slower) both">
+          <span class="badge tag" style="align-self:flex-start">Progressive wipe</span>
+          <div style="border-radius:20px;background:#F8FAFC;border:1px solid #E2E8F0;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:inset 0 2px 4px 0 rgba(0,0,0,0.04)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="width:28px;height:28px;border-radius:9999px;background:#10B981;display:grid;place-items:center;box-shadow:0 10px 30px -10px rgba(16,185,129,.5)"><span class="material-icons" style="font-size:16px;color:#fff">auto_awesome</span></span>
+              <span style="font-size:13px;font-weight:800;color:#0F172A">Deha Assistant</span>
+              <span class="badge gci" style="position:relative;flex-direction:row;align-items:center;white-space:nowrap;margin-left:auto">Live</span>
+            </div>
+            <p style="margin:0;font-size:16px;line-height:1.75;font-weight:500;color:#334155">Three deals in your pipeline slipped past their close date. The largest,
+              <span style="position:relative;display:inline-block"><span style="position:absolute;inset:-1px -5px;border-radius:6px;background:#D1FAE5;animation:hlWipe var(--duration-420) var(--ease-out) var(--duration-slower) both;z-index:0"></span><span style="position:relative;z-index:1;font-weight:800;color:#065F46">Kestrel Holdings — $184K</span></span>,
+              has had no contact for
+              <span style="position:relative;display:inline-block"><span style="position:absolute;inset:-1px -5px;border-radius:6px;background:#FEF2F2;animation:hlWipe var(--duration-420) var(--ease-out) var(--duration-760) both;z-index:0"></span><span style="position:relative;z-index:1;font-weight:800;color:#EF4444">19 days</span></span>.
+              I'd send the renewal note today and push the other two to
+              <span style="position:relative;display:inline-block"><span style="position:absolute;inset:-1px -5px;border-radius:6px;background:#FEFCE8;animation:hlWipe var(--duration-420) var(--ease-out) 1220ms both;z-index:0"></span><span style="position:relative;z-index:1;font-weight:800;color:#A16207">next Tuesday</span></span>.<span style="display:inline-block;width:2px;height:16px;background:#10B981;margin-left:4px;vertical-align:-2px;animation:hlCaret 1000ms steps(1) 1640ms infinite"><!-- 1220ms/1000ms/1640ms: motion-sweep: kept, no exact DS token --></span>
+            </p>
+            <div style="display:flex;gap:8px;padding-top:4px;animation:hlLift var(--duration-400) var(--ease-out) 1700ms both"><!-- 1700ms: motion-sweep: kept, no exact DS token -->
+              <button class="btn-primary hl-hit44" style="padding:10px 18px;font-size:13px">Send renewal note</button>
+              <button class="pill-tab" style="padding:10px 18px;font-size:12px;cursor:pointer">Reschedule both</button>
+            </div>
+          </div>
+          <p style="margin:0;font-size:11px;font-weight:600;color:#94A3B8;display:flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px">info</span>Highlights are applied per claim, so each one lands as the sentence is read.</p>
+        </div>
+      </sc-if>
+
+      
+
+      <sc-if value="{{ isMetric }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:24px;width:100%;flex-wrap:wrap;animation:hlFade var(--duration-slower) both">
+          <div class="card-accent" style="flex:1 1 320px;padding:28px;display:flex;flex-direction:column;gap:14px">
+            <span style="position:relative;z-index:1;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.82)">Quarter to date</span>
+            <div style="position:relative;z-index:1;display:flex;align-items:baseline;gap:10px">
+              <span style="font-size:44px;font-weight:900;letter-spacing:-0.03em;color:#fff;animation:hlLift 500ms var(--ease-out) var(--duration-fast) both">$1.24M<!-- 500ms: motion-sweep: kept, no exact DS token --></span>
+              <span class="badge gci" style="display:inline-flex;position:relative;flex-direction:row;align-items:center;white-space:nowrap;flex:0 0 auto;align-self:center;width:auto;background:rgba(255,255,255,.22);animation:hlLift 500ms var(--ease-out) var(--duration-280) both"><span class="material-icons">trending_up</span>+18.4%<!-- 500ms: motion-sweep: kept, no exact DS token --></span>
+            </div>
+            <p style="position:relative;z-index:1;margin:0;font-size:14px;font-weight:600;line-height:1.6;color:rgba(255,255,255,.92)">Closed-won is up on the back of
+              <span style="position:relative;display:inline-block"><span style="position:absolute;left:-2px;right:-2px;bottom:-2px;height:3px;border-radius:2px;background:#fff;transform-origin:left center;animation:hlSweep var(--duration-480) var(--ease-out) 620ms both"></span><span style="position:relative">seven enterprise renewals</span><!-- 620ms: motion-sweep: kept, no exact DS token --></span>
+              signed this month.</p>
+          </div>
+          <div style="flex:1 1 320px;display:flex;flex-direction:column;gap:14px;padding:28px;border-radius:24px;background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.08)">
+            <span class="badge tag" style="align-self:flex-start">Underline grow</span>
+            <p style="margin:0;font-size:18px;font-weight:700;line-height:1.6;color:#0F172A">On light surfaces the same treatment reads as an
+              <span style="position:relative;display:inline-block"><span style="position:absolute;left:-2px;right:-2px;bottom:-1px;height:8px;border-radius:4px;background:#A7F3D0;transform-origin:left bottom;animation:hlSweep var(--duration-480) var(--ease-out) 500ms both;z-index:0"></span><span style="position:relative;z-index:1">ink underline</span></span>,<!-- 500ms: motion-sweep: kept, no exact DS token -->
+              keeping the numerals as the loudest element on the card.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto">
+              <span class="pill-priority"><span class="dot" style="background:#10B981"></span>Renewals</span>
+              <span class="pill-priority"><span class="dot" style="background:#F97316"></span>Expansion</span>
+              <span class="pill-priority"><span class="dot" style="background:#64748B"></span>New logo</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8">States</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+        <div style="padding:18px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:800;color:#94A3B8">Idle</span>
+          <span style="font-size:15px;font-weight:700;color:#0F172A"><span style="padding:2px 6px;border-radius:6px;box-shadow:inset 0 0 0 1px #E2E8F0;color:#475569">quarterly target</span></span>
+        </div>
+        <div style="padding:18px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:800;color:#94A3B8">Hover</span>
+          <span style="font-size:15px;font-weight:700;color:#0F172A"><span style="padding:2px 6px;border-radius:6px;background:#ECFDF5;box-shadow:inset 0 0 0 1px #A7F3D0;color:#065F46;cursor:pointer;transition:background var(--duration-200) var(--ease-out), box-shadow var(--duration-200) var(--ease-out), transform var(--duration-200) var(--ease-out)" style-hover="background:#A7F3D0;box-shadow:inset 0 0 0 1px #34D399;transform:translateY(-1px)">quarterly target</span></span>
+        </div>
+        <div style="padding:18px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:800;color:#94A3B8">Focus</span>
+          <span style="font-size:15px;font-weight:700;color:#0F172A"><span tabindex="0" class="hl-focus-demo" style="padding:2px 6px;border-radius:6px;background:#ECFDF5;color:#065F46;outline:none;box-shadow:inset 0 0 0 1px #A7F3D0;transition:box-shadow var(--duration-200)" style-focus="box-shadow:inset 0 0 0 1px #10B981, 0 0 0 4px rgba(16,185,129,.22)">quarterly target</span></span>
+        </div>
+        <div style="padding:18px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:800;color:#94A3B8">Selected</span>
+          <span style="font-size:15px;font-weight:700;color:#0F172A"><span style="padding:2px 6px;border-radius:6px;background:#10B981;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 6px 16px -8px rgba(16,185,129,.8)">quarterly target</span></span>
+        </div>
+        <div style="padding:18px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:800;color:#94A3B8">Disabled</span>
+          <span style="font-size:15px;font-weight:700;color:#0F172A"><span style="padding:2px 6px;border-radius:6px;background:#F1F5F9;color:#94A3B8;opacity:.7">quarterly target</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { i: 0, on: true, slow: false };
+
+  go(i) {
+    if (i === this.state.i) { this.replayNow(); return; }
+    this.setState({ i, on: false });
+    setTimeout(() => this.setState({ on: true }), 40);
+  }
+  replayNow() {
+    this.setState({ on: false });
+    setTimeout(() => this.setState({ on: true }), 40);
+  }
+  renderVals() {
+    const i = this.state.i, on = this.state.on;
+    const cls = (n) => n === i ? 'active' : '';
+    return {
+      pillLeft: (3 + i * 170) + 'px',
+      c0: cls(0), c1: cls(1), c2: cls(2),
+      isHero: on && i === 0,
+      isAi: on && i === 1,
+      isMetric: on && i === 2,
+      go0: () => this.go(0), go1: () => this.go(1), go2: () => this.go(2),
+      replay: () => this.replayNow(),
+      toggleSlow: () => {
+        const next = !this.state.slow;
+        document.documentElement.setAttribute('data-anim-slow', next ? 'true' : 'false');
+        this.setState({ slow: next });
+        this.replayNow();
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

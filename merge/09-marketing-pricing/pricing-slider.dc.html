@@ -1,0 +1,359 @@
+<!-- @dsCard group="Merge - marketing-pricing" name="Pricing Slider" subtitle="-> new: Marketing & pricing" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+@keyframes ps-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+/* thumb hit layer: .slider .thumb is 20px (from _ds), below the 44px minimum for a drag surface */
+.slider .thumb { position: relative; }
+.slider .thumb::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+/* seg toggle + tick + dark-switch: not covered by the shared focus-visible ring or the shared 44px hit-layer set */
+.seg button:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+.seg button, .btn-glass, .btn-inverse { position: relative; }
+.seg button::after, .btn-glass::after, .btn-inverse::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.ps-tick { position: relative; }
+.ps-tick:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+.ps-tick::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.sw-base:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+@media (prefers-reduced-motion: reduce) {
+  .card-accent, .card-inner { animation: none !important; transition: none !important; }
+}
+</style>
+</helmet>
+
+<div style="min-height: 100%; background: var(--bg-app); padding: 48px 32px 64px; font-family: var(--font-display);">
+  <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span class="micro-label">Pricing</span>
+        <h1 class="h1" style="margin: 0;">Pick your capacity</h1>
+        <p class="body" style="margin: 0; max-width: 46ch;">Every plan carries its own credit slider. Drag it, tap a tick, or use the arrow keys.</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div class="seg" style="display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;">
+          <div class="seg-pill" style="{{ segStyle }}"></div>
+          <button class="{{ monthlyCls }}" onClick="{{ setMonthly }}">Monthly</button>
+          <button class="{{ annualCls }}" onClick="{{ setAnnual }}">Annual</button>
+        </div>
+        <span class="badge gci" style="opacity: {{ saveOpacity }}; transition: opacity var(--duration-240) var(--ease-out);"><span class="material-icons" style="font-size: 13px;">savings</span>Save 20%</span>
+        <div style="display: flex; align-items: center; gap: 8px; padding-left: 6px; border-left: 1px solid var(--border-hairline);">
+          <span class="meta">Dark</span>
+          <div class="{{ swClass }}" onClick="{{ toggleDark }}" onKeyDown="{{ swKeyDown }}" role="switch" aria-checked="{{ dark }}" tabindex="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch;">
+      <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+        <div class="{{ c.cls }}" onClick="{{ c.select }}" style="padding: 24px; display: flex; flex-direction: column; gap: 18px; cursor: pointer; animation: ps-rise var(--duration-380) var(--ease-out) both; animation-delay: {{ c.delay }}; transition: transform var(--duration-360) var(--ease-out), box-shadow var(--duration-360) var(--ease-out), background-color var(--duration-320) var(--ease-out), color var(--duration-240) var(--ease-out), border-color var(--duration-320) var(--ease-out); transform: {{ c.lift }};" style-active="{{ c.pressStyle }}">
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 26px;">
+            <span class="h4" style="color: inherit;">{{ c.name }}</span>
+            <sc-if value="{{ c.selected }}" hint-placeholder-val="{{ false }}">
+              <span class="badge" style="background: rgba(255,255,255,0.22); color: #fff; padding: 3px 9px;"><span class="material-icons" style="font-size: 14px;">check</span>Selected</span>
+            </sc-if>
+            <sc-if value="{{ c.popular }}" hint-placeholder-val="{{ false }}">
+              <span class="badge tag">Most popular</span>
+            </sc-if>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <div style="display: flex; align-items: baseline; gap: 4px;">
+              <span class="display-1" style="color: inherit; font-variant-numeric: tabular-nums;">{{ c.price }}</span>
+              <span style="font-size: 13px; font-weight: 700; opacity: 0.72; white-space: nowrap;">{{ c.per }}</span>
+            </div>
+            <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.04em; opacity: 0.62; white-space: nowrap; min-height: 14px;">{{ c.cycle }}</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 14px; background: {{ c.wellBg }};">
+            <div style="display: flex; align-items: baseline; justify-content: space-between;">
+              <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7;">Credits / month</span>
+              <span class="h4" style="color: inherit; font-variant-numeric: tabular-nums;">{{ c.credits }}</span>
+            </div>
+            <div style="padding: 14px 12px; margin: -12px 0; touch-action: none; cursor: pointer;" onPointerDown="{{ c.onDown }}" onPointerMove="{{ c.onMove }}" onPointerUp="{{ c.onUp }}" onPointerCancel="{{ c.onUp }}">
+            <div class="{{ c.sliderCls }}" style="width: 100%; opacity: {{ c.sliderOpacity }};">
+              <div class="fill" style="width: {{ c.fillPct }}; background: {{ c.fillColor }};"></div>
+              <sc-for list="{{ c.notches }}" as="nn" hint-placeholder-count="3">
+                <div style="position: absolute; top: 50%; left: {{ nn.left }}; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%; background: {{ nn.color }}; transition: background var(--duration-240) var(--ease-out);"></div>
+              </sc-for>
+              <div class="thumb" style="left: {{ c.fillPct }}; width: 22px; height: 22px; box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.08);" tabindex="0" onKeyDown="{{ c.onKey }}"></div>
+            </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0 6px;">
+              <sc-for list="{{ c.ticks }}" as="t" hint-placeholder-count="3">
+                <button onClick="{{ t.go }}" class="ps-tick" style="background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-display); font-size: 11px; font-weight: 800; letter-spacing: 0.03em; transition: opacity var(--duration-200) var(--ease-out), transform var(--duration-200) var(--ease-out); color: inherit; opacity: {{ t.opacity }};" style-hover="{{ t.hoverStyle }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <span class="{{ c.descCls }}" style="margin: 0;">{{ c.blurb }}</span>
+
+          <div style="display: flex; flex-direction: column; gap: 9px;">
+            <sc-for list="{{ c.features }}" as="f" hint-placeholder-count="4">
+              <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 600; line-height: 1.45; opacity: 0.92;">
+                <span class="material-icons" style="font-size: 16px; opacity: 0.85;">check_circle</span>
+                <span>{{ f.text }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <button class="{{ c.btnCls }}" style="width: 100%; justify-content: center; margin-top: auto;">{{ c.cta }}</button>
+        </div>
+      </sc-for>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1160,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.PLANS = [
+      {
+        name: 'Free', blurb: 'Try the product with a small monthly allowance.', cta: 'Start for free',
+        steps: [{ credits: 400, price: 0 }],
+        features: ['Up to 400 tasks', '1M character knowledge base', 'Community support']
+      },
+      {
+        name: 'Pro', blurb: 'For individuals running work end to end.', cta: 'Get started', popular: true,
+        steps: [{ credits: 1000, price: 19.99 }, { credits: 2500, price: 29.99 }, { credits: 5000, price: 49.99 }],
+        features: ['Tasks matched to your credits', '20M character knowledge base', 'Premium actions', 'Phone call basic features']
+      },
+      {
+        name: 'Business', blurb: 'For teams with volume and support needs.', cta: 'Get started',
+        steps: [{ credits: 10000, price: 99.99 }, { credits: 20000, price: 199.99 }, { credits: 30000, price: 299.99 }],
+        features: ['Tasks matched to your credits', '20M character knowledge base', 'Premium actions', 'Priority support']
+      }
+    ];
+    this.state = {
+      selected: 1,
+      idx: [0, 2, 2],
+      shown: this.PLANS.map(p => p.steps[p.steps.length - 1].price),
+      annual: false, dragging: -1, raw: null,
+      dark: typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+    };
+    this.state.shown[0] = 0;
+    this.state.target = this.state.shown.slice();
+    this.state.tweening = this.PLANS.map(() => false);
+    this._raf = [];
+    this._to = [];
+  }
+
+  componentWillUnmount() {
+    this._raf.forEach(r => r && cancelAnimationFrame(r));
+    this._to.forEach(t => t && clearTimeout(t));
+  }
+
+  target(i, idx, annual) {
+    const p = this.PLANS[i].steps[idx].price;
+    return annual ? p * 0.8 : p;
+  }
+
+  /* The price in state.target is authoritative and set synchronously.
+     The rAF pass below only interpolates state.shown for the count-up;
+     a timeout backstop settles it even if frames never fire. */
+  tween(i, to) {
+    if (this._raf[i]) cancelAnimationFrame(this._raf[i]);
+    if (this._to[i]) clearTimeout(this._to[i]);
+    const target = this.state.target.slice();
+    target[i] = to;
+    const tweening = this.state.tweening.slice();
+    tweening[i] = true;
+    this.setState({ target, tweening });
+
+    const from = this.state.shown[i], t0 = performance.now(), dur = 420;
+    const settle = () => {
+      const shown = this.state.shown.slice(); shown[i] = to;
+      const tw = this.state.tweening.slice(); tw[i] = false;
+      this.setState({ shown, tweening: tw });
+    };
+    const step = (t) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      const shown = this.state.shown.slice();
+      shown[i] = from + (to - from) * e;
+      this.setState({ shown });
+      if (k < 1) this._raf[i] = requestAnimationFrame(step);
+      else settle();
+    };
+    this._raf[i] = requestAnimationFrame(step);
+    this._to[i] = setTimeout(settle, dur + 80);
+  }
+
+  setIdx(i, next, raw) {
+    const n = this.PLANS[i].steps.length;
+    next = Math.max(0, Math.min(n - 1, next));
+    const idx = this.state.idx.slice();
+    const changed = idx[i] !== next;
+    idx[i] = next;
+    this.setState({ idx, raw: raw === undefined ? this.state.raw : raw });
+    if (changed) this.tween(i, this.target(i, next, this.state.annual));
+  }
+
+  /* The thumb tracks the pointer 1:1, so the value follows what you see:
+     it commits to a tier once the thumb passes that tier's midpoint. */
+  stepFromPct(v, n) {
+    if (n < 2) return 0;
+    return Math.max(0, Math.min(n - 1, Math.round(v * (n - 1))));
+  }
+
+  /* Unclamped position, with progressive rubber-band resistance past the ends. */
+  pct(e) {
+    const r = (this._track || e.currentTarget).getBoundingClientRect();
+    const v = (e.clientX - r.left) / r.width;
+    if (v < 0) return Math.max(-0.06, v / 3);
+    if (v > 1) return Math.min(1.06, 1 + (v - 1) / 3);
+    return v;
+  }
+
+  fmt(n) { return n === 0 ? '$0' : '$' + n.toFixed(2); }
+
+  indicator(i, n) {
+    return `left: calc(3px + ${i} * (100% - 6px) / ${n}); width: calc((100% - 6px) / ${n});`;
+  }
+
+  renderVals() {
+    const s = this.state;
+
+    const cards = this.PLANS.map((p, i) => {
+      const n = p.steps.length;
+      const sel = i === s.selected;
+      const single = n === 1;
+      const snapped = single ? 100 : (s.idx[i] / (n - 1)) * 100;
+      const live = s.dragging === i && s.raw !== null ? s.raw * 100 : snapped;
+      const fillPct = Math.max(0, Math.min(106, live)).toFixed(3) + '%';
+      const step = p.steps[s.idx[i]];
+
+      const guard = (fn) => (e) => { if (single) return; fn(e); };
+
+      return {
+        key: p.name,
+        name: p.name,
+        selected: sel,
+        popular: !sel && !!p.popular,
+        cls: sel ? 'card-accent' : 'card-inner',
+        lift: sel ? 'translateY(-8px)' : 'none',
+        delay: (i * 70) + 'ms',
+        select: () => this.setState({ selected: i }),
+        price: this.fmt(s.tweening[i] ? s.shown[i] : s.target[i]),
+        per: step.price === 0 ? '' : '/ mo',
+        cycle: step.price === 0 ? 'Free forever' : (s.annual ? 'billed yearly' : 'billed monthly'),
+        credits: step.credits.toLocaleString('en-US'),
+        blurb: p.blurb,
+        descCls: sel ? 'card-desc card-desc-w' : 'card-desc',
+        btnCls: sel ? 'btn-inverse' : 'btn-glass',
+        cta: p.cta,
+        pressStyle: { transform: sel ? 'translateY(-8px) scale(0.985)' : 'scale(0.985)' },
+        features: p.features.map(f => ({ key: f, text: f })),
+        wellBg: sel ? 'rgba(255,255,255,0.16)' : 'var(--bg-chip)',
+        fillColor: sel ? '#FFFFFF' : '#10B981',
+        sliderOpacity: single ? 0.55 : 1,
+        sliderCls: 'slider' + (s.dragging === i ? ' dragging' : ''),
+        fillPct,
+        notches: single ? [] : p.steps.map((st, j) => ({
+          key: st.credits,
+          left: `calc(4px + ${j} * (100% - 8px) / ${n - 1})`,
+          color: j <= s.idx[i] ? (sel ? 'rgba(16,185,129,0.55)' : 'rgba(255,255,255,0.75)') : (sel ? 'rgba(255,255,255,0.45)' : '#CBD5E1')
+        })),
+        ticks: p.steps.map((st, j) => ({
+          key: st.credits,
+          label: st.credits >= 1000 ? (st.credits / 1000) + 'k' : String(st.credits),
+          opacity: j === s.idx[i] ? 1 : 0.45,
+          hoverStyle: { opacity: 0.8, transform: 'translateY(-1px)' },
+          go: (e) => { e.stopPropagation(); this.setState({ raw: null, selected: i }); this.setIdx(i, j); }
+        })),
+        /* Direct manipulation: the thumb tracks the pointer 1:1 while held,
+           then springs to the nearest tier on release. */
+        onDown: guard((e) => {
+          e.stopPropagation();
+          this._track = e.currentTarget;
+          e.currentTarget.setPointerCapture(e.pointerId);
+          const v = this.pct(e);
+          this.setState({ dragging: i, raw: v, selected: i });
+          this.setIdx(i, this.stepFromPct(v, n), v);
+        }),
+        onMove: guard((e) => {
+          if (s.dragging !== i) return;
+          const v = this.pct(e);
+          this.setState({ raw: v });
+          const next = this.stepFromPct(v, n);
+          if (next !== s.idx[i]) this.setIdx(i, next, v);
+        }),
+        onUp: guard((e) => {
+          if (s.dragging !== i) return;
+          try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) {}
+          this.setState({ dragging: -1, raw: null });
+        }),
+        onKey: guard((e) => {
+          const k = e.key;
+          if (k === 'ArrowRight' || k === 'ArrowUp') { e.preventDefault(); this.setState({ raw: null }); this.setIdx(i, s.idx[i] + 1); }
+          if (k === 'ArrowLeft' || k === 'ArrowDown') { e.preventDefault(); this.setState({ raw: null }); this.setIdx(i, s.idx[i] - 1); }
+          if (k === 'Home') { e.preventDefault(); this.setState({ raw: null }); this.setIdx(i, 0); }
+          if (k === 'End') { e.preventDefault(); this.setState({ raw: null }); this.setIdx(i, n - 1); }
+        })
+      };
+    });
+
+    return {
+      cards,
+      annual: s.annual,
+      saveOpacity: s.annual ? 1 : 0,
+      monthlyCls: s.annual ? '' : 'active',
+      annualCls: s.annual ? 'active' : '',
+      segStyle: this.indicator(s.annual ? 1 : 0, 2),
+      setMonthly: () => {
+        if (!s.annual) return;
+        this.setState({ annual: false });
+        this.PLANS.forEach((p, i) => this.tween(i, this.target(i, s.idx[i], false)));
+      },
+      setAnnual: () => {
+        if (s.annual) return;
+        this.setState({ annual: true });
+        this.PLANS.forEach((p, i) => this.tween(i, this.target(i, s.idx[i], true)));
+      },
+      swClass: 'sw-base sw-armed ' + (s.dark ? 'sw-on' : 'sw-off'),
+      dark: s.dark,
+      toggleDark: () => {
+        const dark = !s.dark;
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        this.setState({ dark });
+      },
+      swKeyDown: (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        const dark = !this.state.dark;
+        document.documentElement.classList.toggle('dark', dark);
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+        this.setState({ dark });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

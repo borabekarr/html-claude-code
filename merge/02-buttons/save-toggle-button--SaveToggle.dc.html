@@ -1,0 +1,184 @@
+<!-- @dsCard group="Merge - buttons" name="Save Toggle Button - SaveToggle" subtitle="-> Buttons" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+
+<style>
+@keyframes st-pop { 0%{transform:scale(1)} 40%{transform:scale(1.16) rotate(-3deg)} 74%{transform:scale(.98)} 100%{transform:scale(1)} }
+@keyframes st-unpop { 0%{transform:scale(1)} 45%{transform:scale(.86)} 100%{transform:scale(1)} }
+@keyframes st-burst { 0%{opacity:0; transform:rotate(var(--a)) translateY(-4px) scale(.4)} 22%{opacity:1} 100%{opacity:0; transform:rotate(var(--a)) translateY(-19px) scale(.9)} }
+@keyframes st-ring { 0%{opacity:.55; transform:scale(.35)} 100%{opacity:0; transform:scale(1.9)} }
+@keyframes st-in { 0%{opacity:0; transform:translateY(7px)} 100%{opacity:1; transform:translateY(0)} }
+@keyframes st-spin { 100%{transform:rotate(360deg)} }
+@keyframes st-shake { 0%,100%{transform:translateX(0)} 18%{transform:translateX(-4px)} 42%{transform:translateX(4px)} 66%{transform:translateX(-2px)} 86%{transform:translateX(2px)} }
+@keyframes st-count { 0%{transform:translateY(6px) scale(.7); opacity:0} 100%{transform:translateY(0) scale(1); opacity:1} }
+</style>
+<link rel="stylesheet" href="../../styles.css"></helmet>
+<button type="button" onClick="{{ onClick }}" disabled="{{ isDisabled }}" aria-pressed="{{ isSaved }}" aria-label="{{ aria }}" style="position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; box-sizing:border-box; height:{{ h }}; width:{{ w }}; padding:{{ pad }}; border-radius:{{ radius }}; border:1px solid {{ borderColor }}; background-color:{{ bg }}; background-image:linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px); background-size:{{ tex }}; color:{{ fg }}; box-shadow:{{ shadow }}; font-family:'Montserrat'; font-size:13px; font-weight:800; letter-spacing:-0.01em; line-height:1; cursor:{{ cursor }}; opacity:{{ opacity }}; white-space:nowrap; -webkit-tap-highlight-color:transparent; transition:background-color 280ms cubic-bezier(.22,1,.36,1), border-color 220ms, color 200ms, box-shadow 280ms, transform 150ms cubic-bezier(.34,1.3,.64,1), opacity 200ms; animation:{{ rootAnim }};" style-hover="filter:brightness(1.05); transform:translateY(-1px)" style-active="transform:scale(0.94)" style-focus-visible="outline:2px solid rgba(16,185,129,0.5); outline-offset:2px">
+  <span style="position:relative; width:20px; height:20px; display:grid; place-items:center; flex:0 0 auto;">
+    <sc-if value="{{ isSaving }}" hint-placeholder-val="{{ false }}">
+      <svg viewBox="0 0 24 24" style="width:18px; height:18px; animation:st-spin 720ms linear infinite;">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="2.6"></circle>
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="18 40"></circle>
+      </svg>
+    </sc-if>
+    <sc-if value="{{ showGlyph }}" hint-placeholder-val="{{ true }}">
+      <span class="material-symbols-outlined" style="font-size:20px; font-variation-settings:'FILL' {{ fill }}, 'wght' 600, 'opsz' 20; transition:font-variation-settings 340ms cubic-bezier(.22,1,.36,1); animation:{{ glyphAnim }};">{{ glyph }}</span>
+    </sc-if>
+    <sc-if value="{{ burst }}" hint-placeholder-val="{{ false }}">
+      <span style="position:absolute; inset:0; pointer-events:none;">
+        <span style="position:absolute; inset:-2px; border-radius:9999px; border:2px solid currentColor; animation:st-ring 520ms cubic-bezier(.22,1,.36,1) forwards;"></span>
+        <sc-for list="{{ sparks }}" as="s" hint-placeholder-count="0">
+          <span style="position:absolute; left:50%; top:50%; width:4px; height:4px; margin:-2px 0 0 -2px; border-radius:9999px; background:{{ s.c }}; --a:{{ s.a }}; animation:st-burst 560ms cubic-bezier(.22,1,.36,1) {{ s.d }} forwards;"></span>
+        </sc-for>
+      </span>
+    </sc-if>
+  </span>
+  <sc-if value="{{ showLabel }}" hint-placeholder-val="{{ true }}">
+    <span style="display:inline-block; animation:{{ labelAnim }};">{{ labelText }}</span>
+  </sc-if>
+  <sc-if value="{{ showCount }}" hint-placeholder-val="{{ false }}">
+    <span style="display:inline-grid; place-items:center; min-width:20px; height:18px; padding:0 6px; border-radius:9999px; background:{{ countBg }}; color:{{ countFg }}; font-size:10.5px; font-weight:900; font-variant-numeric:tabular-nums; box-shadow:inset 0 -1px 0 rgba(0,0,0,0.08), inset 0 0 0 1px rgba(0,0,0,0.05);">
+      <span style="animation:{{ countAnim }};">{{ count }}</span>
+    </span>
+  </sc-if>
+</button>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:120},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Save&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;savedLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Saved&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;savingLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Saving&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;errorLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Retry&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;skin&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;deha&quot;,&quot;watermelon&quot;],&quot;default&quot;:&quot;deha&quot;,&quot;tsType&quot;:&quot;'deha'|'watermelon'&quot;},&quot;shape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;pill&quot;,&quot;wide&quot;,&quot;icon&quot;,&quot;small&quot;],&quot;default&quot;:&quot;pill&quot;,&quot;tsType&quot;:&quot;'pill'|'wide'|'icon'|'small'&quot;},&quot;tone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;emerald&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;emerald&quot;,&quot;tsType&quot;:&quot;'emerald'|'dark'&quot;},&quot;glyph&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;bookmark&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;count&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:null,&quot;tsType&quot;:&quot;number|null&quot;},&quot;initialSaved&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;disabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;fail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;latency&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:620,&quot;min&quot;:0,&quot;max&quot;:2000,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    const saved = !!p.initialSaved;
+    this.state = { phase: saved ? 'saved' : 'idle', burst: 0, tick: 0, count: p.count ?? null };
+    this.timers = [];
+  }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  toggle() {
+    const { phase } = this.state;
+    if (phase === 'saving' || phase === 'removing' || this.props.disabled) return;
+    if (phase === 'saved') {
+      this.setState(s => ({ phase: 'removing', tick: s.tick + 1 }));
+      this.later(() => this.setState(s => ({
+        phase: 'idle',
+        count: s.count === null ? null : Math.max(0, s.count - 1),
+      })), 240);
+      return;
+    }
+    if (this.props.fail) { this.setState(s => ({ phase: 'error', tick: s.tick + 1 })); return; }
+    this.setState(s => ({
+      phase: 'saved',
+      burst: s.burst + 1,
+      tick: s.tick + 1,
+      count: s.count === null ? null : s.count + 1,
+    }));
+  }
+
+  renderVals() {
+    const p = this.props;
+    const shape = p.shape ?? 'pill';
+    const tone = p.tone ?? 'emerald';
+    const { phase, burst, tick, count } = this.state;
+    const isSaved = phase === 'saved';
+    const isSaving = phase === 'saving';
+    const isError = phase === 'error';
+    const disabled = !!p.disabled;
+    const glyph = isError ? 'error' : (p.glyph ?? 'bookmark');
+
+    const accent = tone === 'dark' ? '#0F172A' : '#10B981';
+    const glow = tone === 'dark' ? 'rgba(15,23,42,0.45)' : 'rgba(16,185,129,0.55)';
+    const onDark = !!p.onDark;
+
+    const restBg = onDark ? 'rgba(255,255,255,0.14)' : '#FFFFFF';
+    const restFg = onDark ? '#FFFFFF' : '#64748B';
+    const restBorder = onDark ? 'rgba(255,255,255,0.35)' : '#CBD5E1';
+    const restShadow = 'inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04)';
+    const activeShadow = `0 8px 22px -8px ${glow}, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15)`;
+
+    let bg = isError ? '#FEF2F2' : isSaved ? accent : restBg;
+    let fg = isError ? '#EF4444' : isSaved ? '#FFFFFF' : restFg;
+    let borderColor = isError ? '#FECACA' : isSaved ? 'transparent' : restBorder;
+    let shadow = isSaved ? activeShadow : restShadow;
+
+    // Saved state on a colored/media surface inverts, so it stays legible.
+    if (onDark && isSaved && !isError) {
+      bg = '#FFFFFF';
+      fg = tone === 'dark' ? '#0F172A' : '#10B981';
+      borderColor = 'transparent';
+      shadow = '0 6px 18px -6px rgba(15,23,42,0.45), inset 0 -2px 0 rgba(15,23,42,0.10)';
+    }
+
+    // "watermelon" skin: neutral zinc, flat, no texture/sparks — the reference styling.
+    const wm = p.skin === 'watermelon';
+    if (wm) {
+      bg = isSaved ? '#18181B' : '#FFFFFF';
+      fg = isSaved ? '#FAFAFA' : '#3F3F46';
+      borderColor = isSaved ? '#18181B' : '#E4E4E7';
+      shadow = isSaved
+        ? '0 1px 2px rgba(0,0,0,0.20)'
+        : '0 1px 2px rgba(0,0,0,0.05)';
+    }
+
+    const sizes = {
+      pill:  { h: '40px', pad: '0 16px', radius: '16px' },
+      wide:  { h: '46px', pad: '0 22px', radius: '16px' },
+      icon:  { h: '44px', w: '44px', pad: '0', radius: '9999px' },
+      small: { h: '30px', pad: '0 10px', radius: '9999px' },
+    };
+    const size = sizes[shape] ?? sizes.pill;
+
+    const label = p.label ?? 'Save';
+    const savedLabel = p.savedLabel ?? 'Saved';
+    const text = isError ? (p.errorLabel ?? 'Retry') : isSaving ? (p.savingLabel ?? 'Saving') : isSaved ? savedLabel : label;
+
+    const sparkColors = tone === 'dark' ? ['#0F172A', '#64748B', '#10B981'] : ['#10B981', '#6EE7B7', '#EAB308'];
+    const sparks = [0, 55, 120, 180, 235, 300].map((a, i) => ({
+      a: a + 'deg', c: sparkColors[i % sparkColors.length], d: (i % 3) * 35 + 'ms',
+    }));
+
+    return {
+      onClick: () => this.toggle(),
+      isDisabled: disabled,
+      isSaved, isSaving, burst: burst > 0 && isSaved && !wm,
+      sparks,
+      glyph,
+      showGlyph: !isSaving,
+      showLabel: shape !== 'icon',
+      showCount: shape !== 'icon' && count !== null,
+      count, labelText: text,
+      countBg: isSaved ? 'rgba(255,255,255,0.92)' : '#F1F5F9',
+      countFg: isSaved ? 'rgba(15,23,42,0.85)' : '#475569',
+      countAnim: 'st-count 320ms cubic-bezier(.34,1.3,.64,1) both',
+      fill: isSaved ? 1 : 0,
+      glyphAnim: isSaved ? 'st-pop 460ms cubic-bezier(.34,1.3,.64,1) both' : phase === 'removing' ? 'st-unpop 260ms ease both' : 'none',
+      labelAnim: isSaving ? 'none' : 'st-in 260ms cubic-bezier(.22,1,.36,1) both',
+      rootAnim: isError ? 'st-shake 420ms cubic-bezier(.36,.07,.19,.97) both' : 'none',
+      bg, fg, borderColor, shadow,
+      h: size.h, w: size.w ?? 'auto', pad: size.pad, radius: size.radius,
+      tex: isSaved && !wm && !onDark && tone !== 'dark' ? '14px 14px' : '0 0',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      opacity: disabled ? 0.5 : 1,
+      aria: isSaved ? savedLabel : label,
+    };
+  }
+}
+</script>
+</body>
+</html>

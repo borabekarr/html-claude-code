@@ -1,0 +1,385 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Checkpoint" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Material+Icons&family=Material+Symbols+Outlined&display=swap" rel="stylesheet">
+
+<style>
+  body { margin: 0; background: #F8FAFC; }
+  a { color: #10B981; }
+  a:hover { color: #059669; }
+  @keyframes cp-spin { to { transform: rotate(360deg); } }
+  @keyframes cp-pop { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.12) } 100% { transform: scale(1); opacity: 1 } }
+  @keyframes cp-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,.55) } 70% { box-shadow: 0 0 0 7px rgba(16,185,129,0) } }
+  @keyframes cp-in { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+  @keyframes cp-line { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+  @keyframes cp-shimmer { from { background-position: -220px 0 } to { background-position: 220px 0 } }
+  /* .pill-tab 44px hit layer + :focus-visible now comes from the regenerated
+     data-ds ="preview/done/jsx/_pills.css" copy above (fixed at the shared
+     claude-design mirror source, this file re-inlined against it). */
+  .cp-action-btn { position: relative; }
+  .cp-action-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .cp-action-btn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    [style*="animation: cp-"] { animation: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; padding: 40px 32px 64px; font-family: var(--font-display); background: radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, #F8FAFC 55%, #FFFFFF 100%);">
+  <div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span class="label">Deha · AI Elements</span>
+      <h1 class="h1" style="margin: 0;">Chat Checkpoint</h1>
+      <p class="body" style="margin: 0; max-width: 60ch; text-wrap: pretty;">A marker placed in a conversation thread. It separates what came before from what came after, and gives the user a way to return to that moment — restore, branch, or label it.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; position: sticky; top: 0; z-index: 5; padding: 10px 0; background: linear-gradient(#F8FAFC 70%, rgba(248,250,252,0));">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="6">
+        <button type="button" class="pill-tab {{ tab.cls }}" onClick="{{ tab.go }}" style="cursor: pointer; gap: 6px; font-family: var(--font-display);">
+          <span class="material-icons" style="font-size: 14px;">{{ tab.icon }}</span>
+          {{ tab.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <span class="label">{{ activeLabel }}</span>
+      <p class="meta" style="margin: 0 0 6px; font-weight: 600; max-width: 62ch; text-wrap: pretty;">{{ activeDesc }}</p>
+
+      <div>
+        <div>
+
+          <div style="padding: 4px 0 8px; display: flex; flex-direction: column; gap: 14px;" key="{{ variant }}">
+
+            <div style="display: flex; justify-content: flex-end; animation: cp-in 320ms var(--ease-out) both; /* motion-sweep: kept */">
+              <div style="max-width: 74%; padding: 10px 14px; border-radius: 16px 16px 4px 16px; background: #0F172A; color: #fff; font-size: 13px; font-weight: 600; line-height: 1.5;">{{ msgUser }}</div>
+            </div>
+
+            <div style="display: flex; animation: cp-in 320ms 60ms var(--ease-out) both; /* motion-sweep: kept */">
+              <div style="max-width: 78%; padding: 12px 14px; border-radius: 16px 16px 16px 4px; background: #F1F5F9; color: var(--fg2); font-size: 13px; font-weight: 500; line-height: 1.55; border: 1px solid var(--border-hairline);">{{ msgAi }}</div>
+            </div>
+
+            <div onMouseEnter="{{ enter }}" onMouseLeave="{{ leave }}" style="display: flex; align-items: center; justify-content: flex-start; gap: 10px; padding: 4px 0; animation: cp-in 340ms 120ms var(--ease-out) both; /* motion-sweep: kept */">
+              <button type="button" onClick="{{ act }}" disabled="{{ isDisabled }}" class="cp-action-btn" style="{{ pillStyle }}">
+                <span style="display: grid; place-items: center; width: 15px; height: 15px;">
+                  <sc-if value="{{ isBusy }}" hint-placeholder-val="{{ false }}">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; animation: cp-spin 700ms linear infinite; /* motion-sweep: kept */"></span>
+                  </sc-if>
+                  <sc-if value="{{ notBusy }}" hint-placeholder-val="{{ true }}">
+                    <span class="material-icons" style="font-size: 14px; animation: cp-pop 260ms var(--ease-bounce-soft) both; /* motion-sweep: kept */" key="{{ cpIcon }}">{{ cpIcon }}</span>
+                  </sc-if>
+                </span>
+                <span style="white-space: nowrap;">{{ cpLabel }}</span>
+                <span style="font-weight: 600; opacity: .65; white-space: nowrap; font-size: 10px;">{{ cpMeta }}</span>
+                <span style="display: inline-flex; align-items: center; overflow: hidden; white-space: nowrap; will-change: max-width, opacity; transition: max-width 340ms var(--ease-out), opacity 240ms var(--ease-out); max-width: {{ revealW }}; opacity: {{ revealO }}; /* motion-sweep: kept */">
+                  <span style="width: 1px; height: 11px; margin: 0 7px; background: currentColor; opacity: .28;"></span>
+                  <span class="material-icons" style="font-size: 13px; margin-right: 4px;">{{ actionIcon }}</span>
+                  {{ actionLabel }}
+                </span>
+              </button>
+
+              <span style="height: 1px; flex: 1; transform-origin: left; animation: cp-line 420ms 160ms var(--ease-out) both; transition: background 320ms var(--ease-out); background: {{ lineGrad }}; /* motion-sweep: kept */"></span>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; transition: opacity 380ms var(--ease-out), filter 380ms, max-height 460ms var(--ease-out); overflow: hidden; opacity: {{ afterO }}; filter: {{ afterF }}; max-height: {{ afterH }}; /* motion-sweep: kept */">
+              <div style="display: flex; justify-content: flex-end;">
+                <div style="max-width: 74%; padding: 10px 14px; border-radius: 16px 16px 4px 16px; background: #0F172A; color: #fff; font-size: 13px; font-weight: 600; line-height: 1.5;">{{ msgUser2 }}</div>
+              </div>
+              <div style="display: flex;">
+                <div style="max-width: 78%; padding: 12px 14px; border-radius: 16px 16px 16px 4px; background: #F1F5F9; color: var(--fg2); font-size: 13px; font-weight: 500; line-height: 1.55; border: 1px solid var(--border-hairline);">{{ msgAi2 }}</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ showRolledBack }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 16px; background: var(--semantic-success-bg); border: 1px solid #A7F3D0; animation: cp-in 300ms var(--ease-out) both; /* motion-sweep: kept */">
+                <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #047857;">
+                  <span class="material-icons" style="font-size: 16px;">history</span>
+                  2 messages after this point were discarded.
+                </span>
+                <button type="button" class="btn-discuss" onClick="{{ undo }}" style="cursor: pointer;">
+                  <span class="material-icons" style="font-size: 15px;">undo</span>
+                  Undo
+                </button>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 2px;">
+        <sc-for list="{{ anatomy }}" as="a" hint-placeholder-count="3">
+          <span class="badge tag"><span class="material-icons">{{ a.icon }}</span> {{ a.text }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="height: 1px; background: var(--border-hairline); margin: 8px 0;"></div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <span class="label">States · idle → hover → busy → done → restored → locked</span>
+      <div class="shell" style="padding: 10px;">
+        <div class="card-inner" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding: 20px;">
+          <sc-for list="{{ states }}" as="s" hint-placeholder-count="6">
+            <div style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 16px; background: #F8FAFC; border: 1px solid var(--border-hairline);">
+              <span class="mono">{{ s.name }}</span>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="{{ s.style }}">
+                  <span class="material-icons" style="font-size: 14px;">{{ s.icon }}</span>
+                  {{ s.label }}
+                  <span style="font-weight: 600; opacity: .65; font-size: 10px;">{{ s.meta }}</span>
+                </span>
+                <span style="height: 1px; flex: 1; background: linear-gradient(90deg, #E2E8F0, transparent);"></span>
+              </div>
+              <span class="meta" style="font-weight: 600; font-size: 11px;">{{ s.note }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:940,&quot;height&quot;:1200}}">
+const VARIANTS = {
+  restore: {
+    label: 'Restore point',
+    desc: 'The default. Sits between turns, stays quiet until hovered, then offers to rewind the thread to this moment.',
+    icon: 'bookmark', accent: '#10B981', action: 'Restore', actionIcon: 'history',
+    cpLabel: 'Checkpoint', meta: '14:02 · 2 messages ago',
+    user: 'Add rate limiting to the leads endpoint.',
+    ai: 'Added a token-bucket limiter at 60 req/min and wired it into the router. Two files touched.',
+    user2: 'Now also cache the response for 30 seconds.',
+    ai2: 'Cached with a 30s TTL. This changed the limiter signature, so the earlier tests no longer pass.',
+    anatomy: [
+      { icon: 'linear_scale', text: 'hairline rule · fades toward the pill' },
+      { icon: 'touch_app', text: 'hover reveals the action' },
+      { icon: 'bolt', text: 'busy → done → restored' },
+    ],
+  },
+  branch: {
+    label: 'Branch point',
+    desc: 'Same marker, different intent: keep the current thread and fork a second one from here.',
+    icon: 'call_split', accent: '#3B82F6', action: 'Branch here', actionIcon: 'call_split',
+    cpLabel: 'Branch point', meta: 'from turn 6',
+    user: 'Draft the launch email for the Istanbul agents.',
+    ai: 'Here is a draft in Turkish, formal register, 180 words.',
+    user2: 'Make it shorter and switch to English.',
+    ai2: 'Shortened to 90 words in English. The Turkish version is no longer in context.',
+    anatomy: [
+      { icon: 'call_split', text: 'creates a sibling thread' },
+      { icon: 'lock_open', text: 'original thread untouched' },
+      { icon: 'swap_horiz', text: 'switcher appears in the header' },
+    ],
+  },
+  snapshot: {
+    label: 'Snapshot',
+    desc: 'A labelled save of the workspace at this turn. Carries tags for what it captured.',
+    icon: 'photo_camera', accent: '#0F172A', action: 'Open snapshot', actionIcon: 'folder_open',
+    cpLabel: 'Snapshot v3', meta: '6 files · 12.4k tokens',
+    user: 'Save where we are before you refactor.',
+    ai: 'Snapshot v3 stored. It holds the router, the limiter and the four test files.',
+    user2: 'Go ahead with the refactor.',
+    ai2: 'Refactor applied across six files. Snapshot v3 remains available.',
+    anatomy: [
+      { icon: 'sell', text: 'tags describe the captured scope' },
+      { icon: 'schedule', text: 'immutable once written' },
+      { icon: 'download', text: 'exportable' },
+    ],
+  },
+  milestone: {
+    label: 'Milestone',
+    desc: 'The one loud variant. Emerald fill, reserved for a moment worth marking — a deploy, an approval, a goal met.',
+    icon: 'flag', accent: '#10B981', action: 'View run', actionIcon: 'open_in_new',
+    cpLabel: 'Deployed to production', meta: 'build 219 · 2m 41s',
+    user: 'Ship it.',
+    ai: 'Build 219 passed all checks and is live on production.',
+    user2: 'Any errors since?',
+    ai2: 'No errors in the first ten minutes. Error rate is flat at 0.02%.',
+    solid: true,
+    anatomy: [
+      { icon: 'star', text: 'accent fill · emerald glow' },
+      { icon: 'priority_high', text: 'at most one per thread' },
+      { icon: 'notifications', text: 'mirrors to the activity feed' },
+    ],
+  },
+  context: {
+    label: 'Context cleared',
+    desc: 'A passive marker. Nothing to click — it only tells the user the model stopped seeing what is above.',
+    icon: 'layers_clear', accent: '#94A3B8', action: '', actionIcon: '',
+    cpLabel: 'Context cleared', meta: '14:31',
+    user: 'Forget the email thread, new topic.',
+    ai: 'Context cleared. Earlier messages will not be used.',
+    user2: 'What is our churn rate this quarter?',
+    ai2: 'Churn is 4.1% for Q3, down from 5.6% in Q2.',
+    passive: true,
+    anatomy: [
+      { icon: 'block', text: 'no action · not focusable' },
+      { icon: 'visibility_off', text: 'muted slate treatment' },
+      { icon: 'straighten', text: 'shortest height in the set' },
+    ],
+  },
+  recovery: {
+    label: 'Error recovery',
+    desc: 'Appears automatically when a run fails. The rewind is the primary path out, so the action is visible from the start.',
+    icon: 'warning', accent: '#EF4444', action: 'Roll back', actionIcon: 'restart_alt',
+    cpLabel: 'Run failed', meta: 'step 4 of 7 · timeout',
+    user: 'Run the migration against staging.',
+    ai: 'Migration started. Steps 1 through 3 completed.',
+    user2: 'Keep going.',
+    ai2: 'Step 4 timed out after 30s. The database is in a partially migrated state.',
+    danger: true, alwaysOpen: true,
+    anatomy: [
+      { icon: 'error', text: 'danger tone · always expanded' },
+      { icon: 'undo', text: 'rollback is the primary action' },
+      { icon: 'bug_report', text: 'links to the failing step' },
+    ],
+  },
+};
+
+const ORDER = ['restore', 'branch', 'snapshot', 'milestone', 'context', 'recovery'];
+
+class Component extends DCLogic {
+  state = { variant: 'restore', hover: false, phase: 'idle' };
+
+  componentWillUnmount() { clearTimeout(this.t1); clearTimeout(this.t2); }
+
+  go(id) {
+    clearTimeout(this.t1); clearTimeout(this.t2);
+    this.setState({ variant: id, phase: 'idle', hover: false });
+  }
+
+  run() {
+    const v = VARIANTS[this.state.variant];
+    if (v.passive || this.state.phase !== 'idle') return;
+    this.setState({ phase: 'busy' });
+    this.t1 = setTimeout(() => {
+      this.setState({ phase: 'done' });
+      this.t2 = setTimeout(() => this.setState({ phase: 'restored' }), 1400);
+    }, 1300);
+  }
+
+  pillStyle(v, phase, hover) {
+    const done = phase === 'done' || phase === 'restored';
+    const accent = done ? '#10B981' : v.accent;
+    const base = {
+      display: 'inline-flex', alignItems: 'center', gap: '6px',
+      padding: '5px 11px', borderRadius: '9999px',
+      fontFamily: 'var(--font-display)', fontSize: '11px', fontWeight: 800,
+      lineHeight: 1, whiteSpace: 'nowrap', border: '1px solid transparent',
+      cursor: v.passive ? 'default' : 'pointer',
+      willChange: 'transform, box-shadow',
+      transition: 'transform var(--duration-base) var(--ease-press-calm), box-shadow var(--duration-base) var(--ease-standard), background-color var(--duration-base) var(--ease-standard), color var(--duration-base) var(--ease-standard), border-color var(--duration-base) var(--ease-standard)',
+      transform: 'none',
+    };
+    if (v.passive) return { ...base, background: '#F1F5F9', color: '#94A3B8', border: '1px dashed #CBD5E1', fontWeight: 700 };
+    if (v.solid || done || v.danger) {
+      const bg = v.danger && !done ? '#EF4444' : accent;
+      return { ...base, background: bg, color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,.22)',
+        backgroundImage: 'linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px)',
+        backgroundSize: '7px 7px',
+        boxShadow: `inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(15,23,42,.2), inset 0 0 0 1px rgba(15,23,42,.08), 0 ${hover ? 10 : 6}px ${hover ? 26 : 16}px -8px ${bg}99` };
+    }
+    return { ...base, background: '#FFFFFF', color: hover ? accent : 'var(--fg2)',
+      borderColor: hover ? accent : '#CBD5E1',
+      boxShadow: hover ? `0 6px 18px -8px ${accent}80, inset 0 -2px 5px rgba(0,0,0,.05)` : 'inset 0 -2px 5px rgba(0,0,0,.07), inset 0 -1px 2px rgba(0,0,0,.04)' };
+  }
+
+  statePill(bg, color, border, extra) {
+    return Object.assign({
+      display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 11px',
+      borderRadius: '9999px', fontFamily: 'var(--font-display)', fontSize: '11px',
+      fontWeight: 800, lineHeight: 1, whiteSpace: 'nowrap',
+      background: bg, color, border,
+    }, extra || {});
+  }
+
+  renderVals() {
+    const { variant, hover, phase } = this.state;
+    const v = VARIANTS[variant];
+    const busy = phase === 'busy';
+    const done = phase === 'done';
+    const restored = phase === 'restored';
+    const open = (hover || v.alwaysOpen || busy || done) && !v.passive && !restored;
+
+    const label = busy ? 'Restoring…' : done ? 'Restored' : restored ? 'Restored to here' : v.cpLabel;
+    const icon = busy ? v.icon : done || restored ? 'check' : v.icon;
+
+    const st = (name, note, style, icon, label, meta) => ({ name, note, style, icon, label, meta });
+
+    return {
+      variant, activeLabel: v.label, activeDesc: v.desc,
+      msgUser: v.user, msgAi: v.ai, msgUser2: v.user2, msgAi2: v.ai2,
+      anatomy: v.anatomy,
+      tabs: ORDER.map((id) => ({
+        id, label: VARIANTS[id].label, icon: VARIANTS[id].icon,
+        cls: id === variant ? 'active' : '',
+        go: () => this.go(id),
+      })),
+      lineGrad: `linear-gradient(90deg, transparent, ${hover && !v.passive ? v.accent + '55' : '#E2E8F0'})`,
+      pillStyle: this.pillStyle(v, phase, hover),
+      cpLabel: label, cpIcon: icon, cpMeta: restored ? '' : v.meta,
+      actionLabel: busy ? '' : done ? '' : v.action,
+      actionIcon: v.actionIcon,
+      revealW: open && v.action ? '180px' : '0px',
+      revealO: open && v.action ? 1 : 0,
+      isBusy: busy, notBusy: !busy,
+      isDisabled: v.passive || busy || restored,
+      showRolledBack: restored,
+      afterO: restored ? 0 : 1,
+      afterF: restored ? 'blur(3px)' : 'none',
+      afterH: restored ? '0px' : '400px',
+      enter: () => this.setState({ hover: true }),
+      leave: () => this.setState({ hover: false }),
+      act: () => this.run(),
+      undo: () => this.setState({ phase: 'idle', hover: false }),
+      states: [
+        st('idle', 'Resting. Label and time only — the action stays hidden.',
+          this.statePill('#fff', 'var(--fg2)', '1px solid #CBD5E1', { boxShadow: 'inset 0 -2px 5px rgba(0,0,0,.07)' }),
+          'bookmark', 'Checkpoint', '14:02'),
+        st('hover / focus', 'Lifts 1px, border takes the accent, the action slides out.',
+          this.statePill('#fff', '#10B981', '1px solid #10B981', { boxShadow: '0 6px 18px -8px rgba(16,185,129,.5)' }),
+          'bookmark', 'Checkpoint', '· Restore'),
+        st('busy', 'Spinner replaces the glyph; the pill is not clickable.',
+          this.statePill('#10B981', '#fff', '1px solid transparent', { boxShadow: 'inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(15,23,42,.2)', textShadow: '0 1px 2px rgba(0,0,0,.22)' }),
+          'autorenew', 'Restoring…', ''),
+        st('done', 'Check pops in, holds 1.4s, then the thread settles.',
+          this.statePill('#10B981', '#fff', '1px solid transparent', { boxShadow: 'inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(15,23,42,.2), 0 8px 22px -8px rgba(16,185,129,.6)', textShadow: '0 1px 2px rgba(0,0,0,.22)' }),
+          'check', 'Restored', ''),
+        st('restored', 'Terminal. Messages below collapse; an undo bar takes their place.',
+          this.statePill('#ECFDF5', '#047857', '1px solid #A7F3D0'),
+          'check_circle', 'Restored to here', ''),
+        st('locked', 'Read-only threads and shared transcripts. Dashed, muted, inert.',
+          this.statePill('#F1F5F9', '#94A3B8', '1px dashed #CBD5E1', { fontWeight: 700 }),
+          'lock', 'Checkpoint', 'read-only'),
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

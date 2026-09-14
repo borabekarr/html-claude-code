@@ -1,0 +1,73 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="ActionSheet" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+
+<style>
+  body { margin: 0; background: #FFFFFF; font-family: 'Montserrat', system-ui, sans-serif; }
+  body, button, input, select, textarea { font-family: 'Montserrat', system-ui, sans-serif; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 900; }
+  .material-icons { font-family: 'Material Icons'; }
+  .material-symbols-outlined, .ms { font-family: 'Material Symbols Outlined'; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; text-decoration: underline; }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; line-height: 1; }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<style>
+  .as-item { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .as-item:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: -2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .as-item:hover { background: var(--brand-primary-50); transition: background var(--duration-base) var(--ease-standard); }
+    .as-item.as-danger:hover { background: var(--semantic-danger-bg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .as-item { transition: none; }
+  }
+</style></helmet>
+
+<div style="padding: 40px 48px 64px; display: flex; flex-direction: column; gap: 24px; color: #0F172A;">
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #94A3B8;">Bora · Overlays</div>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">ActionSheet</h1>
+    <p style="margin: 0; font-size: 13px; font-weight: 500; color: #64748B;">Bottom sheet with destructive action last, cancel detached.</p>
+  </div>
+
+  <div style="display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap;">
+    <div style="width: 300px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;">
+      <div role="dialog" aria-modal="true" aria-labelledby="as-title-1" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06); overflow: hidden;">
+        <div id="as-title-1" style="padding: 14px 16px; text-align: center; font-size: 12px; font-weight: 600; color: #64748B; border-bottom: 1px solid #E2E8F0;">Acme Nordics AB</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 600; color: #0F172A; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size:20px; color:#64748B;">person_add</span>Assign owner</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 600; color: #0F172A; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size:20px; color:#64748B;">swap_horiz</span>Move to stage</div>
+        <div class="as-item as-danger" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--semantic-danger);"><span class="ms" style="font-size:20px; color:var(--semantic-danger);">delete</span>Delete lead</div>
+      </div>
+      <div class="as-item" role="button" tabindex="0" aria-label="Cancel" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10); padding: 15px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; color: #334155;"><span class="ms" style="font-size:20px; color:#64748B;">close</span>Cancel</div>
+    </div>
+
+    <div style="width: 300px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;">
+      <div role="dialog" aria-modal="true" aria-labelledby="as-title-2" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06); overflow: hidden;">
+        <div id="as-title-2" class="sr-only-label" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0);">Lead actions</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">call</span>Call contact</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">mail</span>Send proposal</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 600; border-bottom: 1px solid #E2E8F0;"><span class="ms" style="font-size: 20px; color: #64748B;">event</span>Book follow-up</div>
+        <div class="as-item" role="button" tabindex="0" style="padding: 15px 16px; display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 800; color: var(--brand-primary-700); background: var(--brand-primary-50);"><span class="ms" style="font-size: 20px; color: var(--brand-primary-600);">task_alt</span>Mark closed won</div>
+      </div>
+      <div class="as-item" role="button" tabindex="0" aria-label="Cancel" style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10); padding: 15px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; color: #334155;"><span class="ms" style="font-size:20px; color:#64748B;">close</span>Cancel</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

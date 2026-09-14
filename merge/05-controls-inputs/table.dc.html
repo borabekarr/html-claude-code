@@ -1,0 +1,631 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Table" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: #F1F5F9; font-family: 'Montserrat', sans-serif; }
+  a { color: var(--brand-primary); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) { a:hover { color: var(--brand-primary-600); } }
+  .dt-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 18px; border-radius: 14px;
+    position: relative; cursor: default;
+    transition: background var(--duration-180) var(--ease-out), box-shadow var(--duration-180) var(--ease-out), transform var(--duration-180) var(--ease-out);
+    animation: dt-in calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out) both;
+  }
+  @keyframes dt-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-row:hover { background: #F8FAFC; box-shadow: inset 0 0 0 1px #E2E8F0; }
+  }
+  .dt-row.is-sel { background: #ECFDF5; box-shadow: inset 0 0 0 1px #A7F3D0; }
+  .dt-row.is-sel::before {
+    content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px;
+    border-radius: 9999px; background: var(--brand-primary);
+    animation: dt-bar calc(var(--duration-240) * var(--anim-mult, 1)) var(--ease-spring) both;
+  }
+  @keyframes dt-bar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-row:hover .dt-actions { opacity: 1; transform: none; }
+  }
+  .dt-row:focus-within .dt-actions { opacity: 1; transform: none; }
+  .dt-actions { opacity: 0; transform: translateX(6px); transition: opacity var(--duration-180) var(--ease-out), transform var(--duration-180) var(--ease-out); }
+  .dt-check {
+    width: 18px; height: 18px; border-radius: 6px; flex: none; cursor: pointer;
+    display: grid; place-items: center; background: #fff;
+    box-shadow: inset 0 0 0 1.5px #CBD5E1, inset 0 -1px 0 rgba(0,0,0,0.05);
+    transition: background var(--duration-base) var(--ease-fade), box-shadow var(--duration-base) var(--ease-fade), transform var(--duration-140) var(--ease-spring);
+    position: relative;
+  }
+  .dt-check::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .dt-check:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-check:hover { box-shadow: inset 0 0 0 1.5px #94A3B8; }
+  }
+  .dt-check:active { transform: scale(0.86); }
+  .dt-check.on { background: var(--brand-primary); box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.18), inset 0 0 0 1px rgba(15,23,42,0.08); }
+  .dt-check .material-icons { font-size: 14px; color: #fff; transform: scale(0); transition: transform var(--duration-200) var(--ease-spring); }
+  .dt-check.on .material-icons { transform: scale(1); }
+  .dt-th {
+    display: inline-flex; align-items: center; gap: 4px; background: none; border: none; padding: 0;
+    font-family: 'Montserrat'; font-size: 10px; font-weight: 900; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #94A3B8; cursor: pointer;
+    transition: color var(--duration-base) var(--ease-fade);
+    position: relative;
+  }
+  .dt-th::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .dt-th:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-th:hover { color: #475569; }
+  }
+  .dt-th .dt-thic { opacity: 1 !important; transform: none !important; font-size: 14px; color: #94A3B8; }
+  .dt-th.on .dt-thic { color: var(--brand-primary); }
+  .dt-col { position: relative; box-sizing: border-box; padding-right: 8px; }
+  .dt-col.dragging { opacity: .45; }
+  .dt-col.dropto::before { content: ''; position: absolute; left: -4px; top: 2px; bottom: 2px; width: 2px; border-radius: 2px; background: var(--brand-primary); }
+  .dt-grip { position: absolute; top: -10px; bottom: -10px; right: 0; width: 9px; cursor: col-resize; z-index: 2; }
+  .dt-grip::after { content: ''; position: absolute; top: 12px; bottom: 12px; left: 4px; width: 2px; border-radius: 2px; background: #CBD5E1; opacity: 0; transition: opacity var(--duration-base) var(--ease-fade); }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-grip:hover::after { opacity: 1; }
+  }
+  .dt-th.on { color: var(--brand-primary); }
+  .dt-th .material-icons { font-size: 15px; opacity: 0; transform: rotate(0deg); transition: opacity var(--duration-180) var(--ease-fade), transform var(--duration-240) var(--ease-spring); }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-th:hover .material-icons { opacity: 0.45; }
+  }
+  .dt-th.on .material-icons { opacity: 1; }
+  .dt-th.on.desc .material-icons { transform: rotate(180deg); }
+  .dt-icbtn {
+    width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #E2E8F0; cursor: pointer;
+    display: grid; place-items: center; background: #fff; color: #64748B;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.06), inset 0 -1.5px 0 rgba(15,23,42,0.05);
+    transition: transform var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-fade), box-shadow var(--duration-base) var(--ease-fade), border-color var(--duration-base) var(--ease-fade), background var(--duration-base) var(--ease-fade);
+    position: relative;
+  }
+  .dt-icbtn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .dt-icbtn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-icbtn:hover { color: var(--brand-primary-700); background: #ECFDF5; border-color: #A7F3D0; transform: translateY(-1px);
+      box-shadow: 0 6px 14px -6px rgba(16,185,129,0.45), inset 0 -1.5px 0 rgba(15,23,42,0.04); }
+  }
+  .dt-icbtn:active { transform: scale(0.92); }
+  @media (hover: hover) and (pointer: fine) {
+    .dt-icbtn.danger:hover { color: #B91C1C; background: #FEF2F2; border-color: #FECACA; box-shadow: 0 6px 14px -6px rgba(239,68,68,0.4); }
+  }
+  .dt-skel {
+    border-radius: 8px; background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 400% 100%; animation: dt-shim calc(1400ms * var(--anim-mult, 1)) linear infinite; /* motion-sweep: kept */
+  }
+  @keyframes dt-shim { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+  .dt-bulk { animation: dt-bulk-in calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-spring) both; }
+  @keyframes dt-bulk-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } to { opacity: 1; transform: none; } }
+  .dt-detail { animation: dt-detail-in calc(var(--duration-280) * var(--anim-mult, 1)) var(--ease-out) both; overflow: hidden; }
+  @keyframes dt-detail-in { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 220px; } }
+  .dt-bar-fill { transition: width calc(600ms * var(--anim-mult, 1)) var(--ease-out); } /* motion-sweep: kept */
+  .dt-search:focus-within { box-shadow: inset 0 0 0 1.5px var(--brand-primary), 0 0 0 4px rgba(16,185,129,0.12) !important; }
+  .dt-search input { border: none; outline: none; background: none; font-family: 'Montserrat'; font-size: 13px; font-weight: 600; color: var(--fg1); width: 100%; }
+  .dt-search input::placeholder { color: #94A3B8; font-weight: 600; }
+  @media (prefers-reduced-motion: reduce) {
+    .dt-row, .dt-row.is-sel::before, .dt-actions, .dt-check, .dt-check .material-icons,
+    .dt-th, .dt-grip::after, .dt-th .material-icons, .dt-icbtn, .dt-skel, .dt-bulk,
+    .dt-detail, .dt-bar-fill, .dt-search { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  }
+  .dt-seg-btn, .dt-filter-btn { position: relative; }
+  .dt-seg-btn::after, .dt-filter-btn::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%;
+    width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  .dt-seg-btn:focus-visible, .dt-filter-btn:focus-visible {
+    outline: 2px solid var(--brand-primary); outline-offset: 2px;
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 40px 36px 64px; background: #F1F5F9; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #F1F5F9 100%); font-family: 'Montserrat', sans-serif;">
+  <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px;">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #94A3B8;">Component</span>
+        <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.02em; color: #0F172A;">Table</h1>
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #64748B; max-width: 560px; text-wrap: pretty;">Selection, sorting, row expansion, bulk actions, loading and empty states — composed from Deha cards, pills, badges and buttons.</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="seg" id="dt-seg" style="align-self: center; display: grid; grid-template-columns: repeat(3, 92px);">
+          <div class="seg-pill" style="left: {{ segLeft }}; width: 92px;"></div>
+          <sc-for list="{{ states }}" as="s" hint-placeholder-count="3">
+            <button class="{{ s.cls }} dt-seg-btn" onClick="{{ s.pick }}" style="padding: 6px 0; text-align: center;">{{ s.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div class="pills-row" style="gap: 10px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+        <button class="{{ v.cls }}" onClick="{{ v.pick }}" style="cursor: pointer; gap: 7px;">
+          <span class="material-icons" style="font-size: 15px;">{{ v.icon }}</span>
+          {{ v.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <div class="card-inner" style="padding: 0; overflow: hidden;">
+
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 18px 16px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 3px;">
+          <div style="display: flex; align-items: center; gap: 9px;">
+            <span class="icon-badge icon-badge--sm" style="--icon-c: var(--brand-primary); width: 24px; height: 24px; border-radius: 100px;"><span class="material-icons">{{ titleIcon }}</span></span>
+            <h2 style="margin: 0; font-size: 16px; font-weight: 900; color: #0F172A;">{{ title }}</h2>
+            <span class="badge tag">{{ countLabel }}</span>
+          </div>
+          <span style="font-size: 12px; font-weight: 600; color: #64748B;">{{ subtitle }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div class="dt-search" style="display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 14px; border-radius: 12px; background: #fff; width: 210px; box-shadow: inset 0 0 0 1px #E2E8F0, inset 0 -1.5px 0 rgba(15,23,42,0.05); transition: box-shadow var(--duration-180) var(--ease-out);">
+            <span class="material-icons" style="font-size: 17px; color: #94A3B8;">search</span>
+            <input type="text" placeholder="Search" value="{{ query }}" onChange="{{ onQuery }}">
+          </div>
+          <button class="btn-glass dt-filter-btn" style="height: 38px; padding: 0 14px; font-size: 12px; border-radius: 12px;">
+            <span class="material-icons" style="font-size: 16px;">filter_list</span>Filter
+          </button>
+          <button class="btn-primary" style="height: 38px; padding: 0 16px; font-size: 12px; border-radius: 12px;">
+            <span class="material-icons" style="font-size: 16px;">add</span>{{ addLabel }}
+          </button>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ false }}">
+        <div class="dt-bulk" style="margin: 0 18px 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 12px 10px 16px; border-radius: 14px; background: #0F172A; box-shadow: 0 12px 30px -14px rgba(15,23,42,0.6), inset 0 1px 0 rgba(255,255,255,0.08);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="badge success">{{ selectedCount }}</span>
+            <span style="font-size: 12px; font-weight: 700; color: #F1F5F9;">selected</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-task" style="--fbtn: #334155;"><span class="material-icons">label</span>Tag</button>
+            <button class="btn-task" style="--fbtn: var(--brand-primary);"><span class="material-icons">download</span>Export</button>
+            <button class="btn-task" style="--fbtn: var(--semantic-danger);" onClick="{{ deleteSelected }}"><span class="material-icons">delete</span>Delete</button>
+            <button class="dt-icbtn" onClick="{{ clearSelection }}" style="background: rgba(255,255,255,0.08); color: #CBD5E1; box-shadow: none;"><span class="material-icons" style="font-size: 17px;">close</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; gap: 16px; padding: 10px 18px; margin: 0 6px; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; background: #F8FAFC;">
+        <div class="dt-check {{ allCls }}" onClick="{{ toggleAll }}"><span class="material-icons">check</span></div>
+        <div class="{{ hEntity.cls }}" style="{{ hEntity.style }}" draggable="true" onDragStart="{{ hEntity.dragStart }}" onDragOver="{{ hEntity.dragOver }}" onDragLeave="{{ hEntity.dragLeave }}" onDrop="{{ hEntity.drop }}" onDragEnd="{{ dragEnd }}">
+          <button class="dt-th {{ sortEntity }}" onClick="{{ sortByName }}" style="cursor: grab;"><span class="material-icons dt-thic">{{ hEntity.icon }}</span>{{ colEntity }}<span class="material-icons">arrow_downward</span></button>
+          <span class="dt-grip" onMouseDown="{{ hEntity.resize }}"></span>
+        </div>
+        <sc-if value="{{ showBadge }}" hint-placeholder-val="{{ true }}">
+          <div class="{{ hBadge.cls }}" style="{{ hBadge.style }}" draggable="true" onDragStart="{{ hBadge.dragStart }}" onDragOver="{{ hBadge.dragOver }}" onDragLeave="{{ hBadge.dragLeave }}" onDrop="{{ hBadge.drop }}" onDragEnd="{{ dragEnd }}">
+            <span class="dt-th" style="cursor: grab;"><span class="material-icons dt-thic">{{ hBadge.icon }}</span>{{ colBadge }}</span>
+            <span class="dt-grip" onMouseDown="{{ hBadge.resize }}"></span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showTags }}" hint-placeholder-val="{{ false }}">
+          <div class="{{ hTags.cls }}" style="{{ hTags.style }}" draggable="true" onDragStart="{{ hTags.dragStart }}" onDragOver="{{ hTags.dragOver }}" onDragLeave="{{ hTags.dragLeave }}" onDrop="{{ hTags.drop }}" onDragEnd="{{ dragEnd }}">
+            <span class="dt-th" style="cursor: grab;"><span class="material-icons dt-thic">{{ hTags.icon }}</span>{{ colTags }}</span>
+            <span class="dt-grip" onMouseDown="{{ hTags.resize }}"></span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ false }}">
+          <div class="{{ hProgress.cls }}" style="{{ hProgress.style }}" draggable="true" onDragStart="{{ hProgress.dragStart }}" onDragOver="{{ hProgress.dragOver }}" onDragLeave="{{ hProgress.dragLeave }}" onDrop="{{ hProgress.drop }}" onDragEnd="{{ dragEnd }}">
+            <button class="dt-th {{ sortProg }}" onClick="{{ sortByProgress }}" style="cursor: grab;"><span class="material-icons dt-thic">{{ hProgress.icon }}</span>{{ colProgress }}<span class="material-icons">arrow_downward</span></button>
+            <span class="dt-grip" onMouseDown="{{ hProgress.resize }}"></span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showAmount }}" hint-placeholder-val="{{ false }}">
+          <div class="{{ hAmount.cls }}" style="text-align: right;{{ hAmount.style }}" draggable="true" onDragStart="{{ hAmount.dragStart }}" onDragOver="{{ hAmount.dragOver }}" onDragLeave="{{ hAmount.dragLeave }}" onDrop="{{ hAmount.drop }}" onDragEnd="{{ dragEnd }}">
+            <button class="dt-th {{ sortAmt }}" onClick="{{ sortByAmount }}" style="justify-content: flex-end; cursor: grab;"><span class="material-icons dt-thic">{{ hAmount.icon }}</span>{{ colAmount }}<span class="material-icons">arrow_downward</span></button>
+            <span class="dt-grip" onMouseDown="{{ hAmount.resize }}"></span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ showMeta }}" hint-placeholder-val="{{ true }}">
+          <div class="{{ hMeta.cls }}" style="{{ hMeta.style }}" draggable="true" onDragStart="{{ hMeta.dragStart }}" onDragOver="{{ hMeta.dragOver }}" onDragLeave="{{ hMeta.dragLeave }}" onDrop="{{ hMeta.drop }}" onDragEnd="{{ dragEnd }}">
+            <span class="dt-th" style="cursor: grab;"><span class="material-icons dt-thic">{{ hMeta.icon }}</span>{{ colMeta }}</span>
+            <span class="dt-grip" onMouseDown="{{ hMeta.resize }}"></span>
+          </div>
+        </sc-if>
+        <div style="flex: 0 0 108px; order: 99;"></div>
+      </div>
+
+      <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+        <div style="padding: 8px 6px;">
+          <sc-for list="{{ skeletons }}" as="k" hint-placeholder-count="5">
+            <div style="display: flex; align-items: center; gap: 16px; padding: 15px 18px;">
+              <div class="dt-skel" style="width: 18px; height: 18px; border-radius: 6px;"></div>
+              <div style="flex: 1 1 240px; display: flex; align-items: center; gap: 12px;">
+                <div class="dt-skel" style="width: 36px; height: 36px; border-radius: 50%;"></div>
+                <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+                  <div class="dt-skel" style="height: 10px; width: {{ k.w1 }}%;"></div>
+                  <div class="dt-skel" style="height: 8px; width: {{ k.w2 }}%;"></div>
+                </div>
+              </div>
+              <div class="dt-skel" style="flex: 0 0 96px; height: 20px; border-radius: 9999px;"></div>
+              <div class="dt-skel" style="flex: 0 0 128px; height: 10px;"></div>
+              <div class="dt-skel" style="flex: 0 0 108px; height: 10px;"></div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 64px 24px 68px; text-align: center;">
+          <div style="width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; background: #F1F5F9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);">
+            <span class="material-icons" style="font-size: 30px; color: #94A3B8;">{{ emptyIcon }}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+            <span style="font-size: 15px; font-weight: 800; color: #0F172A;">{{ emptyTitle }}</span>
+            <span style="font-size: 12.5px; font-weight: 600; color: #64748B; max-width: 330px; text-wrap: pretty;">{{ emptyBody }}</span>
+          </div>
+          <button class="btn-primary" style="height: 38px; padding: 0 18px; font-size: 12px; border-radius: 12px; margin-top: 4px;">
+            <span class="material-icons" style="font-size: 16px;">add</span>{{ addLabel }}
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showRows }}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 8px 6px; display: flex; flex-direction: column; gap: 2px;">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+            <div style="display: flex; flex-direction: column;">
+              <div class="dt-row {{ r.selCls }}" style="animation-delay: {{ r.delay }}ms;">
+                <div class="dt-check {{ r.checkCls }}" onClick="{{ r.toggle }}"><span class="material-icons">check</span></div>
+                <div style="display: flex; align-items: center; gap: 12px; box-sizing: border-box; padding-right: 8px;{{ cEntity }}">
+                  <div style="width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 12px; font-weight: 900; color: #fff; background: {{ r.avatarBg }}; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.18); text-shadow: 0 1px 2px rgba(0,0,0,0.25);">{{ r.initials }}</div>
+                  <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                    <span style="font-size: 13.5px; font-weight: 800; color: #0F172A; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.name }}</span>
+                    <span style="font-size: 11.5px; font-weight: 600; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ r.sub }}</span>
+                  </div>
+                </div>
+                <sc-if value="{{ showBadge }}" hint-placeholder-val="{{ true }}">
+                  <div style="box-sizing: border-box; padding-right: 8px;{{ cBadge }}">
+                    <span class="badge-event" style="background-color: {{ r.badgeColor }};">
+                      <span class="material-icons">{{ r.badgeIcon }}</span>{{ r.badgeLabel }}
+                    </span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ showTags }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; box-sizing: border-box; padding-right: 8px;{{ cTags }}">
+                    <sc-for list="{{ r.tags }}" as="t" hint-placeholder-count="2">
+                      <span class="badge tag">{{ t.label }}</span>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ showProgress }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; padding-right: 8px;{{ cProgress }}">
+                    <div style="height: 7px; border-radius: 9999px; background: #E2E8F0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); overflow: hidden;">
+                      <div class="dt-bar-fill" style="height: 100%; border-radius: 9999px; width: {{ r.progress }}%; background: {{ r.progressColor }};"></div>
+                    </div>
+                    <span style="font-size: 10.5px; font-weight: 800; color: #64748B; letter-spacing: 0.04em;">{{ r.progressLabel }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ showAmount }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px; box-sizing: border-box; padding-right: 8px;{{ cAmount }}">
+                    <span style="font-size: 13.5px; font-weight: 900; color: #0F172A; font-variant-numeric: tabular-nums;">{{ r.amount }}</span>
+                    <span style="font-size: 10.5px; font-weight: 700; color: #94A3B8;">{{ r.amountSub }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ showMeta }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; flex-direction: column; gap: 2px; box-sizing: border-box; padding-right: 8px;{{ cMeta }}">
+                    <span style="font-size: 12px; font-weight: 700; color: #334155;">{{ r.meta }}</span>
+                    <span style="font-size: 10.5px; font-weight: 600; color: #94A3B8;">{{ r.metaSub }}</span>
+                  </div>
+                </sc-if>
+                <div class="dt-actions" style="flex: 0 0 108px; order: 99; display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+                  <button class="dt-icbtn" onClick="{{ r.expand }}"><span class="material-icons" style="font-size: 17px;">{{ r.expandIcon }}</span></button>
+                  <button class="dt-icbtn"><span class="material-icons" style="font-size: 17px;">chat_bubble_outline</span></button>
+                  <button class="dt-icbtn danger" onClick="{{ r.remove }}"><span class="material-icons" style="font-size: 17px;">delete_outline</span></button>
+                </div>
+              </div>
+              <sc-if value="{{ r.expanded }}" hint-placeholder-val="{{ false }}">
+                <div class="dt-detail" style="margin: 2px 18px 10px 52px; padding: 16px 18px; border-radius: 14px; background: #F8FAFC; box-shadow: inset 0 0 0 1px #E2E8F0;">
+                  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;">
+                    <sc-for list="{{ r.detail }}" as="d" hint-placeholder-count="3">
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: #94A3B8;">{{ d.label }}</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #0F172A;">{{ d.value }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; margin-top: 16px;">
+                    <button class="btn-discuss"><span class="material-icons" style="font-size: 15px;">open_in_new</span>Open record</button>
+                    <button class="btn-text">View activity<span class="material-icons" style="font-size: 16px;">arrow_forward</span></button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; border-top: 1px solid #E2E8F0; background: #F8FAFC;">
+        <span style="font-size: 11.5px; font-weight: 700; color: #94A3B8;">{{ pageLabel }}</span>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button class="dt-icbtn" onClick="{{ prevPage }}"><span class="material-icons" style="font-size: 18px;">chevron_left</span></button>
+          <sc-for list="{{ pages }}" as="p" hint-placeholder-count="3">
+            <button class="{{ p.cls }}" onClick="{{ p.pick }}" style="min-width: 32px; height: 32px; padding: 0 10px; cursor: pointer; justify-content: center;">{{ p.label }}</button>
+          </sc-for>
+          <button class="dt-icbtn" onClick="{{ nextPage }}"><span class="material-icons" style="font-size: 18px;">chevron_right</span></button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+const AV = ['var(--brand-primary)', '#0F172A', 'var(--semantic-hot)', '#6366F1', 'var(--semantic-danger)', '#0EA5E9', 'var(--semantic-warning)', '#8B5CF6'];
+
+const DATA = {
+  team: {
+    title: 'Team members', subtitle: 'People with access to the Bora workspace', add: 'Invite',
+    cols: { entity: 'Member', badge: 'Status', tags: 'Access', meta: 'Last active' },
+    show: { badge: true, tags: true, meta: true },
+    empty: { icon: 'group_add', title: 'No members yet', body: 'Invite your teammates to collaborate on pipelines, tasks and reports.' },
+    rows: [
+      { name: 'Ada Karaca', sub: 'ada@deha.co', badge: ['Active', 'var(--brand-primary)', 'check_circle'], tags: ['Admin', 'Billing'], meta: ['2 min ago', 'Istanbul'], detail: [['Role', 'Workspace admin'], ['Joined', 'Mar 2024'], ['2FA', 'Enabled']] },
+      { name: 'Marc Vidal', sub: 'marc@deha.co', badge: ['Pending', 'var(--semantic-warning)', 'schedule'], tags: ['Editor'], meta: ['Invited', 'Barcelona'], detail: [['Role', 'Editor'], ['Joined', '—'], ['2FA', 'Not set']] },
+      { name: 'Priya Nair', sub: 'priya@deha.co', badge: ['Active', 'var(--brand-primary)', 'check_circle'], tags: ['Editor', 'Reports'], meta: ['1 hr ago', 'Bangalore'], detail: [['Role', 'Editor'], ['Joined', 'Jan 2025'], ['2FA', 'Enabled']] },
+      { name: 'Tom Reiner', sub: 'tom@deha.co', badge: ['Suspended', 'var(--semantic-danger)', 'block'], tags: ['Viewer'], meta: ['12 days ago', 'Berlin'], detail: [['Role', 'Viewer'], ['Joined', 'Aug 2023'], ['2FA', 'Enabled']] },
+      { name: 'Sena Aydın', sub: 'sena@deha.co', badge: ['Active', 'var(--brand-primary)', 'check_circle'], tags: ['Viewer'], meta: ['Yesterday', 'Izmir'], detail: [['Role', 'Viewer'], ['Joined', 'Jun 2025'], ['2FA', 'Enabled']] }
+    ]
+  },
+  payments: {
+    title: 'Payments', subtitle: 'Settlements from the last 30 days', add: 'New charge',
+    cols: { entity: 'Customer', badge: 'Status', amount: 'Amount', meta: 'Method' },
+    show: { badge: true, amount: true, meta: true },
+    empty: { icon: 'receipt_long', title: 'No payments in range', body: 'Nothing settled in the selected period. Widen the date filter to see history.' },
+    rows: [
+      { name: 'Northwind Retail', sub: 'INV-20412', badge: ['Paid', 'var(--brand-primary)', 'check_circle'], amount: [4820, '$4,820.00', 'Sep 12'], meta: ['Visa •• 4429', 'Auto-charge'], detail: [['Invoice', 'INV-20412'], ['Settled', 'Sep 12, 09:41'], ['Fee', '$139.78']] },
+      { name: 'Loom & Co.', sub: 'INV-20408', badge: ['Refunded', '#64748B', 'undo'], amount: [1290, '$1,290.00', 'Sep 10'], meta: ['ACH transfer', 'Manual'], detail: [['Invoice', 'INV-20408'], ['Refunded', 'Sep 14, 16:02'], ['Reason', 'Duplicate']] },
+      { name: 'Halcyon Labs', sub: 'INV-20399', badge: ['Failed', 'var(--semantic-danger)', 'error_outline'], amount: [9400, '$9,400.00', 'Sep 08'], meta: ['Mastercard •• 8801', 'Retry queued'], detail: [['Invoice', 'INV-20399'], ['Attempts', '3'], ['Next retry', 'Sep 18']] },
+      { name: 'Bright Harbor', sub: 'INV-20390', badge: ['Pending', 'var(--semantic-warning)', 'schedule'], amount: [640, '$640.00', 'Sep 06'], meta: ['SEPA', 'Auto-charge'], detail: [['Invoice', 'INV-20390'], ['Expected', 'Sep 19'], ['Fee', '$18.56']] },
+      { name: 'Aster Studio', sub: 'INV-20381', badge: ['Paid', 'var(--brand-primary)', 'check_circle'], amount: [15200, '$15,200.00', 'Sep 02'], meta: ['Wire', 'Manual'], detail: [['Invoice', 'INV-20381'], ['Settled', 'Sep 03, 11:20'], ['Fee', '$0.00']] }
+    ]
+  },
+  deals: {
+    title: 'Pipeline', subtitle: 'Open opportunities across all owners', add: 'Add deal',
+    cols: { entity: 'Deal', badge: 'Stage', progress: 'Probability', amount: 'Value', meta: 'Owner' },
+    show: { badge: true, progress: true, amount: true, meta: true },
+    empty: { icon: 'donut_large', title: 'Pipeline is clear', body: 'No open opportunities match this view. Add a deal or clear your filters.' },
+    rows: [
+      { name: 'Meridian rollout', sub: 'Enterprise · 240 seats', badge: ['Negotiation', 'var(--semantic-hot)', 'local_fire_department'], progress: [78, 'Closing Sep 30'], amount: [128000, '$128k', 'ARR'], meta: ['Ada Karaca', 'EMEA'], detail: [['Source', 'Outbound'], ['Champion', 'L. Weiss'], ['Next step', 'Legal review']] },
+      { name: 'Torrid Analytics', sub: 'Mid-market · 60 seats', badge: ['Proposal', '#6366F1', 'description'], progress: [45, 'Closing Oct 14'], amount: [42000, '$42k', 'ARR'], meta: ['Marc Vidal', 'EMEA'], detail: [['Source', 'Inbound'], ['Champion', 'R. Deniz'], ['Next step', 'Pricing call']] },
+      { name: 'Kestrel Freight', sub: 'Enterprise · 500 seats', badge: ['Discovery', '#0EA5E9', 'travel_explore'], progress: [20, 'Closing Nov 02'], amount: [310000, '$310k', 'ARR'], meta: ['Priya Nair', 'APAC'], detail: [['Source', 'Partner'], ['Champion', 'S. Mehta'], ['Next step', 'Technical scope']] },
+      { name: 'Vantage Health', sub: 'Mid-market · 90 seats', badge: ['Won', 'var(--brand-primary)', 'check_circle'], progress: [100, 'Closed Sep 09'], amount: [64500, '$64.5k', 'ARR'], meta: ['Sena Aydın', 'EMEA'], detail: [['Source', 'Referral'], ['Champion', 'O. Yalçın'], ['Next step', 'Kickoff']] },
+      { name: 'Cobalt Interactive', sub: 'SMB · 25 seats', badge: ['At risk', 'var(--semantic-danger)', 'warning_amber'], progress: [12, 'Stalled 21 days'], amount: [18000, '$18k', 'ARR'], meta: ['Tom Reiner', 'DACH'], detail: [['Source', 'Outbound'], ['Champion', '—'], ['Next step', 'Re-engage']] }
+    ]
+  },
+  tasks: {
+    title: 'Work items', subtitle: 'Everything assigned across the current sprint', add: 'New task',
+    cols: { entity: 'Task', badge: 'Column', progress: 'Completion', tags: 'Labels', meta: 'Due' },
+    show: { badge: true, progress: true, tags: true, meta: true },
+    empty: { icon: 'task_alt', title: 'Sprint is clear', body: 'No work items left in this sprint. Pull something from the backlog.' },
+    rows: [
+      { name: 'Table component spec', sub: 'DS-142', badge: ['In progress', 'var(--semantic-hot)', 'bolt'], progress: [65, '13 of 20 subtasks'], tags: ['Design system'], meta: ['Sep 18', '2 days left'] , detail: [['Assignee', 'Ada Karaca'], ['Estimate', '8 pts'], ['Epic', 'Data display']] },
+      { name: 'Dark mode audit', sub: 'DS-138', badge: ['Review', '#FACC15', 'visibility'], progress: [90, '9 of 10 screens'], tags: ['A11y'], meta: ['Sep 16', 'Due today'], detail: [['Assignee', 'Priya Nair'], ['Estimate', '5 pts'], ['Epic', 'Foundations']] },
+      { name: 'Pagination tokens', sub: 'DS-151', badge: ['To do', '#64748B', 'radio_button_unchecked'], progress: [0, 'Not started'], tags: ['Tokens'], meta: ['Sep 24', '8 days left'], detail: [['Assignee', 'Marc Vidal'], ['Estimate', '3 pts'], ['Epic', 'Data display']] },
+      { name: 'Bulk action bar', sub: 'DS-149', badge: ['Done', 'var(--brand-primary)', 'check_circle'], progress: [100, 'Shipped'], tags: ['Motion'], meta: ['Sep 11', 'Completed'], detail: [['Assignee', 'Sena Aydın'], ['Estimate', '5 pts'], ['Epic', 'Data display']] },
+      { name: 'Empty-state copy', sub: 'DS-155', badge: ['To do', '#64748B', 'radio_button_unchecked'], progress: [0, 'Not started'], tags: ['Content'], meta: ['Sep 26', '10 days left'], detail: [['Assignee', 'Tom Reiner'], ['Estimate', '2 pts'], ['Epic', 'Data display']] }
+    ]
+  }
+};
+
+const VARIANTS = [
+  { key: 'team', label: 'Team', icon: 'group' },
+  { key: 'payments', label: 'Payments', icon: 'payments' },
+  { key: 'deals', label: 'Pipeline', icon: 'trending_up' },
+  { key: 'tasks', label: 'Tasks', icon: 'checklist' }
+];
+const STATES = [{ key: 'default', label: 'Default' }, { key: 'loading', label: 'Loading' }, { key: 'empty', label: 'Empty' }];
+const COLS = ['entity', 'badge', 'tags', 'progress', 'amount', 'meta'];
+const COLW = { entity: 240, badge: 132, tags: 190, progress: 168, amount: 128, meta: 140 };
+const COLMIN = { entity: 180, badge: 92, tags: 120, progress: 120, amount: 96, meta: 100 };
+const COLIC = { entity: 'badge', badge: 'flag', tags: 'sell', progress: 'donut_small', amount: 'payments', meta: 'schedule' };
+const TITLEIC = { team: 'group', payments: 'payments', deals: 'trending_up', tasks: 'checklist' };
+
+function initials(n) { return n.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase(); }
+
+class Component extends DCLogic {
+  state = { variant: 'team', view: 'default', sortKey: null, sortDir: 'asc', selected: {}, expanded: null, removed: {}, page: 1, query: '',
+    colOrder: COLS.slice(), colW: Object.assign({}, COLW), dragCol: null, overCol: null };
+
+  startResize = (k) => (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const x0 = e.clientX, w0 = this.state.colW[k];
+    const move = (ev) => {
+      const w = Math.max(COLMIN[k], Math.round(w0 + (ev.clientX - x0)));
+      this.setState(st => ({ colW: Object.assign({}, st.colW, { [k]: w }) }));
+    };
+    const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+    window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+  };
+
+  dropOn = (k) => (e) => {
+    e.preventDefault();
+    const from = this.state.dragCol;
+    this.setState(st => {
+      if (!from || from === k) return { dragCol: null, overCol: null };
+      const order = st.colOrder.filter(c => c !== from);
+      order.splice(order.indexOf(k), 0, from);
+      return { colOrder: order, dragCol: null, overCol: null };
+    });
+  };
+
+  colHead(k, order) {
+    const i = order.indexOf(k);
+    const w = this.state.colW[k];
+    const base = k === 'entity' ? `flex:1 1 ${w}px;min-width:${COLMIN[k]}px;` : `flex:0 0 ${w}px;`;
+    return {
+      icon: COLIC[k],
+      style: base + `order:${i};`,
+      cls: 'dt-col' + (this.state.dragCol === k ? ' dragging' : '') + (this.state.overCol === k && this.state.dragCol && this.state.dragCol !== k ? ' dropto' : ''),
+      dragStart: (e) => { if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'; this.setState({ dragCol: k }); },
+      dragOver: (e) => { e.preventDefault(); if (this.state.overCol !== k) this.setState({ overCol: k }); },
+      dragLeave: () => { if (this.state.overCol === k) this.setState({ overCol: null }); },
+      drop: this.dropOn(k),
+      resize: this.startResize(k)
+    };
+  }
+
+  set(patch) { this.setState(patch); }
+
+  pickVariant(k) { this.setState({ variant: k, selected: {}, expanded: null, removed: {}, sortKey: null, page: 1 }); }
+
+  pickState(k) {
+    if (k === 'loading') {
+      this.setState({ view: 'loading', selected: {}, expanded: null });
+      clearTimeout(this._t);
+      this._t = setTimeout(() => this.setState(s => (s.view === 'loading' ? { view: 'default' } : null)), 2200);
+    } else {
+      clearTimeout(this._t);
+      this.setState({ view: k, selected: {}, expanded: null });
+    }
+  }
+
+  sortBy(key) {
+    this.setState(s => ({ sortKey: key, sortDir: s.sortKey === key && s.sortDir === 'asc' ? 'desc' : 'asc' }));
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const s = this.state;
+    const d = DATA[s.variant];
+    const show = d.show;
+    const order = s.colOrder;
+    const cellStyle = (k) => {
+      const w = s.colW[k];
+      const base = k === 'entity' ? `flex:1 1 ${w}px;min-width:${COLMIN[k]}px;` : `flex:0 0 ${w}px;`;
+      return base + `order:${order.indexOf(k)};`;
+    };
+
+    let list = d.rows
+      .map((r, i) => ({ ...r, id: s.variant + '-' + i, av: AV[i % AV.length] }))
+      .filter(r => !s.removed[r.id])
+      .filter(r => !s.query || (r.name + ' ' + r.sub).toLowerCase().includes(s.query.toLowerCase()));
+
+    if (s.sortKey) {
+      const dir = s.sortDir === 'asc' ? 1 : -1;
+      list = list.slice().sort((a, b) => {
+        if (s.sortKey === 'name') return a.name.localeCompare(b.name) * dir;
+        if (s.sortKey === 'amount') return ((a.amount ? a.amount[0] : 0) - (b.amount ? b.amount[0] : 0)) * dir;
+        return ((a.progress ? a.progress[0] : 0) - (b.progress ? b.progress[0] : 0)) * dir;
+      });
+    }
+
+    const selectedIds = Object.keys(s.selected).filter(k => s.selected[k]);
+    const selectedCount = selectedIds.length;
+    const allOn = list.length > 0 && list.every(r => s.selected[r.id]);
+
+    const rows = list.map((r, i) => {
+      const sel = !!s.selected[r.id];
+      const exp = s.expanded === r.id;
+      return {
+        name: r.name, sub: r.sub, initials: initials(r.name), avatarBg: r.av,
+        delay: i * 45,
+        selCls: sel ? 'is-sel' : '',
+        checkCls: sel ? 'on' : '',
+        badgeLabel: r.badge ? r.badge[0] : '', badgeColor: r.badge ? r.badge[1] : '#64748B', badgeIcon: r.badge ? r.badge[2] : 'circle',
+        tags: (r.tags || []).map(t => ({ label: t })),
+        progress: r.progress ? r.progress[0] : 0,
+        progressLabel: r.progress ? r.progress[1] : '',
+        progressColor: r.progress && r.progress[0] >= 100 ? 'var(--brand-primary)' : r.progress && r.progress[0] < 25 ? 'var(--semantic-danger)' : 'var(--brand-primary)',
+        amount: r.amount ? r.amount[1] : '', amountSub: r.amount ? r.amount[2] : '',
+        meta: r.meta ? r.meta[0] : '', metaSub: r.meta ? r.meta[1] : '',
+        detail: (r.detail || []).map(x => ({ label: x[0], value: x[1] })),
+        expanded: exp, expandIcon: exp ? 'expand_less' : 'expand_more',
+        toggle: () => this.setState(st => ({ selected: { ...st.selected, [r.id]: !st.selected[r.id] } })),
+        expand: () => this.setState(st => ({ expanded: st.expanded === r.id ? null : r.id })),
+        remove: () => this.setState(st => ({ removed: { ...st.removed, [r.id]: true }, expanded: null }))
+      };
+    });
+
+    return {
+      variants: VARIANTS.map(v => ({
+        label: v.label, icon: v.icon,
+        cls: 'pill-tab' + (v.key === s.variant ? ' active' : ''),
+        pick: () => this.pickVariant(v.key)
+      })),
+      states: STATES.map(x => ({
+        label: x.label, cls: x.key === s.view ? 'active' : '', pick: () => this.pickState(x.key)
+      })),
+      segLeft: (3 + 92 * Math.max(0, STATES.findIndex(x => x.key === s.view))) + 'px',
+
+      hEntity: this.colHead('entity', order), hBadge: this.colHead('badge', order), hTags: this.colHead('tags', order),
+      hProgress: this.colHead('progress', order), hAmount: this.colHead('amount', order), hMeta: this.colHead('meta', order),
+      cEntity: cellStyle('entity'), cBadge: cellStyle('badge'), cTags: cellStyle('tags'),
+      cProgress: cellStyle('progress'), cAmount: cellStyle('amount'), cMeta: cellStyle('meta'),
+      dragEnd: () => this.setState({ dragCol: null, overCol: null }),
+      titleIcon: TITLEIC[s.variant] || 'table_rows',
+      title: d.title, subtitle: d.subtitle, addLabel: d.add,
+      countLabel: list.length + ' items',
+      colEntity: d.cols.entity, colBadge: d.cols.badge || '', colTags: d.cols.tags || '',
+      colProgress: d.cols.progress || '', colAmount: d.cols.amount || '', colMeta: d.cols.meta || '',
+      showBadge: !!show.badge, showTags: !!show.tags, showProgress: !!show.progress,
+      showAmount: !!show.amount, showMeta: !!show.meta,
+
+      isLoading: s.view === 'loading',
+      isEmpty: s.view === 'empty' || (s.view === 'default' && list.length === 0),
+      showRows: s.view === 'default' && list.length > 0,
+      emptyIcon: d.empty.icon, emptyTitle: d.empty.title, emptyBody: d.empty.body,
+      skeletons: [{ w1: 58, w2: 34 }, { w1: 42, w2: 46 }, { w1: 66, w2: 28 }, { w1: 50, w2: 38 }, { w1: 38, w2: 44 }],
+
+      rows,
+      query: s.query,
+      onQuery: e => this.setState({ query: e.target.value }),
+
+      allCls: allOn ? 'on' : '',
+      toggleAll: () => this.setState(st => {
+        const next = {};
+        if (!allOn) list.forEach(r => { next[r.id] = true; });
+        return { selected: next };
+      }),
+      hasSelection: selectedCount > 0,
+      selectedCount: String(selectedCount),
+      clearSelection: () => this.setState({ selected: {} }),
+      deleteSelected: () => this.setState(st => {
+        const rm = { ...st.removed };
+        selectedIds.forEach(id => { rm[id] = true; });
+        return { removed: rm, selected: {} };
+      }),
+
+      sortEntity: s.sortKey === 'name' ? 'on ' + s.sortDir : '',
+      sortAmt: s.sortKey === 'amount' ? 'on ' + s.sortDir : '',
+      sortProg: s.sortKey === 'progress' ? 'on ' + s.sortDir : '',
+      sortByName: () => this.sortBy('name'),
+      sortByAmount: () => this.sortBy('amount'),
+      sortByProgress: () => this.sortBy('progress'),
+
+      pageLabel: 'Showing ' + list.length + ' of ' + d.rows.length,
+      pages: [1, 2, 3].map(p => ({
+        label: String(p), cls: 'pill-tab' + (p === s.page ? ' active' : ''), pick: () => this.setState({ page: p })
+      })),
+      prevPage: () => this.setState(st => ({ page: Math.max(1, st.page - 1) })),
+      nextPage: () => this.setState(st => ({ page: Math.min(3, st.page + 1) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

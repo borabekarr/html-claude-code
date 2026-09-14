@@ -1,0 +1,478 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="MenuDropdownAnimation" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+:root{
+  --card-bg: #fff;
+  --dropdown-open-dur: var(--duration-260);
+  --dropdown-close-dur: var(--duration-150);
+  --dropdown-pre-scale: .97;
+  --dropdown-closing-scale: .99;
+  --dropdown-ease: var(--ease-out);
+}
+html.dark{ --card-bg:#1E293B; }
+body{ margin:0; background:#F1F5F9; font-family:'Montserrat',system-ui,sans-serif; }
+html.dark body{ background:#0B1220; }
+a{ color:#10B981; text-decoration:none; }
+@media (hover: hover) and (pointer: fine) {
+  a:hover{ color:#059669; }
+}
+
+.t-dropdown{
+  transform-origin: top left;
+  transform: scale(var(--dropdown-pre-scale));
+  opacity:0; pointer-events:none;
+  transition: transform calc(var(--dropdown-open-dur) * var(--anim-mult,1)) var(--dropdown-ease),
+              opacity   calc(var(--duration-base) * var(--anim-mult,1)) linear;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.t-dropdown[data-origin="top-right"]{ transform-origin: top right; }
+.t-dropdown[data-origin="top-center"]{ transform-origin: top center; }
+.t-dropdown[data-origin="bottom-left"]{ transform-origin: bottom left; }
+.t-dropdown[data-origin="bottom-center"]{ transform-origin: bottom center; }
+.t-dropdown[data-origin="bottom-right"]{ transform-origin: bottom right; }
+/* keyframes, not transitions: the animation runs from its own start state, so a
+   class flip that lands in the same frame as a React re-render still animates. */
+@keyframes t-drop-in  { from { opacity:0; transform: scale(var(--dropdown-pre-scale)); } to { opacity:1; transform: scale(1); } }
+@keyframes t-drop-out { from { opacity:1; transform: scale(1); } to { opacity:0; transform: scale(var(--dropdown-closing-scale)); } }
+@keyframes t-row-in   { from { opacity:0; } to { opacity:1; } }
+.t-dropdown.is-open{
+  transform: scale(1); opacity:1; pointer-events:auto;
+  animation: t-drop-in calc(var(--dropdown-open-dur) * var(--anim-mult,1)) var(--dropdown-ease) both;
+}
+.t-dropdown.is-closing{
+  transform: scale(var(--dropdown-closing-scale)); opacity:0; pointer-events:none;
+  animation: t-drop-out calc(var(--dropdown-close-dur) * var(--anim-mult,1)) var(--dropdown-ease) both;
+}
+
+/* rows do not animate on their own — one composited motion for the whole panel */
+.t-dropdown .t-item{ opacity:1; }
+
+.t-menu{
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: 0 18px 40px -12px rgba(15,23,42,.28), 0 2px 6px rgba(15,23,42,.08), inset 0 0 0 1px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.7);
+}
+html.dark .t-menu{ box-shadow: 0 18px 40px -12px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.10); }
+.t-row{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:9px 10px; border:none; background:transparent; border-radius:11px;
+  font-family:'Montserrat'; font-size:13px; font-weight:700; color:#334155;
+  cursor:pointer; text-align:left;
+  transition: background calc(var(--duration-140) * var(--anim-mult,1)) var(--ease-out), transform calc(var(--duration-fast) * var(--anim-mult,1)) var(--ease-press-calm), color calc(var(--duration-140) * var(--anim-mult,1));
+}
+html.dark .t-row{ color:#CBD5E1; }
+.t-row .material-icons{ font-size:18px; color:#94A3B8; transition: color var(--duration-140) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .t-row:hover{ background:#F1F5F9; }
+  html.dark .t-row:hover{ background:#0F172A; }
+  .t-row:hover .material-icons{ color:#94A3B8; }
+}
+.t-row:active{ transform: scale(.975); }
+.t-row:focus-visible{ outline:2px solid #10B981; outline-offset:-2px; }
+.t-row[data-selected="true"]{ background:#ECFDF5; color:#047857; }
+.t-row[data-selected="true"] .material-icons{ color:#10B981; }
+.t-row[data-danger="true"]{ color:#EF4444; }
+.t-row[data-danger="true"] .material-icons{ color:#F87171; }
+@media (hover: hover) and (pointer: fine) {
+  .t-row[data-danger="true"]:hover{ background:#FEF2F2; }
+}
+.t-row[aria-disabled="true"]{ opacity:.42; cursor:not-allowed; }
+@media (hover: hover) and (pointer: fine) {
+  .t-row[aria-disabled="true"]:hover{ background:transparent; transform:none; }
+}
+.t-sep{ height:1px; margin:5px 8px; background:#E2E8F0; }
+html.dark .t-sep{ background:#334155; }
+.t-cap{ font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#94A3B8; padding:8px 10px 4px; }
+.t-kbd{ margin-left:auto; font-size:10.5px; font-weight:800; color:#94A3B8; background:#F1F5F9; border-radius:6px; padding:2px 6px; box-shadow: inset 0 -1px 0 rgba(0,0,0,.06); }
+html.dark .t-kbd{ background:#0F172A; }
+.t-trigger[data-open="true"] .chev{ transform: rotate(180deg); }
+.chev{ transition: transform calc(var(--duration-260) * var(--anim-mult,1)) var(--ease-slide-bounce); }
+.badge{ position:static !important; inset:auto !important; opacity:1 !important; z-index:auto !important; display:inline-flex !important; flex-direction:row !important; align-items:center !important; height:auto !important; width:auto !important; transform:none !important; animation:none !important; line-height:1.3 !important; }
+.badge.tag{ padding:4px 9px !important; }
+.badge.tag .material-icons{ font-size:13px; line-height:1; }
+.t-count{ display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; border-radius:9999px; background:#10B981; color:#fff; font-size:11px; font-weight:900; line-height:1; box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.18); }
+.t-money{ display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:9999px; background:#10B981; color:#fff; font-size:11px; font-weight:900; line-height:1; text-shadow:0 1px 2px rgba(0,0,0,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -1px 0 rgba(0,0,0,.18); }
+.t-money .material-icons{ font-size:13px; line-height:1; }
+
+/* the DS preview sheets collide on .btn-* — force the documented box */
+.btn-glass, .btn-inverse, .btn-primary{ display:inline-flex !important; align-items:center !important; gap:8px !important; box-sizing:border-box; height:auto !important; line-height:1.2 !important; font-family:'Montserrat',sans-serif !important; }
+.btn-primary, .btn-inverse{ padding:12px 18px !important; }
+.btn-glass{ padding:10px 14px !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+.t-menu{ transform: translateZ(0); }
+.btn-glass[data-icon-only="true"]{ padding:9px !important; }
+[data-block="true"]{ width:100% !important; }
+.btn-mi{ line-height:1 !important; }
+.t-row .material-icons{ line-height:1; }
+
+/* origins lab — the trigger sits where the anchor implies, so the menu has room */
+.t-stage{ display:grid; place-items:center; padding:24px; box-sizing:border-box; }
+
+/* origins lab — placement follows data-origin */
+.t-lab-menu[data-origin^="top"]{ bottom:calc(100% + 8px); top:auto; }
+.t-lab-menu[data-origin^="bottom"]{ top:calc(100% + 8px); bottom:auto; }
+.t-lab-menu[data-origin$="left"]{ right:calc(100% - 100px); left:auto; margin-left:0; }
+.t-lab-menu[data-origin$="right"]{ left:calc(100% - 100px); right:auto; margin-left:0; }
+.t-lab-menu[data-origin$="center"]{ left:50%; right:auto; margin-left:-110px; }
+.meta, .micro-label, .h1, .h4, .body, .badge, .t-cap{ font-family:'Montserrat',system-ui,sans-serif !important; }
+.meta{ font-size:12px; }
+.pill-tab[data-active="true"]{ background:#10B981; color:#fff; border-color:transparent; font-weight:800; box-shadow: inset 0 -2px 5px rgba(0,0,0,.15), inset 0 -1px 0 rgba(255,255,255,.15); }
+.pill-tab{ cursor:pointer; }
+.pill-priority{ cursor:pointer; }
+.pill-priority[data-on="true"]{ border-color:#10B981; color:#047857; background:#ECFDF5; }
+.pill-priority:active{ transform: scale(.95); }
+/* 44px hit layers: rows/pills/icon-triggers render shorter than 44px tall;
+   ::after expands the tap target without enlarging the visible box. */
+.t-row, .pill-tab, .pill-priority, .btn-glass[data-icon-only="true"]{ position:relative; }
+.t-row::after, .pill-tab::after, .pill-priority::after, .btn-glass[data-icon-only="true"]::after{
+  content:""; position:absolute; inset:50% auto auto 50%;
+  width:44px; height:44px; transform:translate(-50%,-50%);
+}
+@media (prefers-reduced-motion: reduce){ .t-dropdown, .t-dropdown .t-item { transition:none !important; animation:none !important; } }
+</style>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="min-height:100%;padding:40px 32px 96px;font-family:'Montserrat',sans-serif;display:flex;flex-direction:column;align-items:center;gap:28px">
+
+  <div style="width:100%;max-width:980px;display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#94A3B8">Deha · Motion</span>
+    <h1 class="h1" style="margin:0">menu-dropdown-animation</h1>
+    <p class="body" style="margin:0;max-width:620px;text-wrap:pretty">Scale-and-fade dropdown with a three-phase state machine — <strong>idle → is-open → is-closing</strong> — anchored to any of six transform origins. Items stagger in on open and fade as one on close.</p>
+  </div>
+
+  <div class="pills-row" style="width:100%;max-width:980px" role="tablist">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+      <button class="pill-tab" data-active="{{ tab.active }}" aria-selected="{{ tab.active }}" onClick="{{ tab.go }}" role="tab">{{ tab.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="width:100%;max-width:980px;min-height:520px;border-radius:24px;background:var(--card-bg);box-shadow:inset 0 0 0 1px rgba(15,23,42,.07), 0 1px 2px rgba(15,23,42,.04);background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px),linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);background-size:24px 24px;padding:40px">
+
+    <!-- 1 · Row actions -->
+    <sc-if value="{{ isActions }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="micro-label">Row actions · origin top-right</span>
+        <p class="meta" style="margin:0 0 18px;font-weight:600;max-width:520px">The most common case: an overflow trigger on a table row or card header. The menu grows out of the corner it is pinned to.</p>
+        <div style="max-width:560px;border-radius:20px;padding:16px 18px;background:var(--card-bg);box-shadow:inset 0 0 0 1px rgba(15,23,42,.08), 0 8px 24px -16px rgba(15,23,42,.4);display:flex;align-items:center;gap:14px">
+          <div style="width:38px;height:38px;border-radius:9999px;background:#10B981;display:grid;place-items:center;color:#fff;font-weight:900;font-size:13px">MK</div>
+          <div style="display:flex;flex-direction:column;gap:4px;flex:1">
+            <span class="h4" style="font-size:15px">Mira Kaplan</span>
+            <div class="pills-row">
+              <span class="badge tag">Hot lead</span>
+              <span class="t-money"><span class="material-icons">trending_up</span>$48k</span>
+            </div>
+          </div>
+          <div style="position:relative">
+            <button class="btn-glass t-trigger" data-icon-only="true" data-open="{{ openActions }}" onClick="{{ toggleActions }}" style="border-radius:12px" aria-haspopup="menu" aria-expanded="{{ openActions }}">
+              <span class="material-icons btn-mi">more_horiz</span>
+            </button>
+            <div class="t-dropdown {{ clsActions }}" data-origin="top-right" role="menu" style="position:absolute;top:calc(100% + 8px);right:0;width:236px;z-index:20">
+              <div class="t-menu">
+                <button class="t-row t-item" role="menuitem"><span class="material-icons">visibility</span>View profile<span class="t-kbd">V</span></button>
+                <button class="t-row t-item" role="menuitem"><span class="material-icons">edit</span>Edit deal<span class="t-kbd">E</span></button>
+                <button class="t-row t-item" role="menuitem"><span class="material-icons">forum</span>Log a call</button>
+                <div class="t-item t-sep"></div>
+                <button class="t-row t-item" role="menuitem" aria-disabled="true"><span class="material-icons">archive</span>Archive</button>
+                <button class="t-row t-item" data-danger="true" role="menuitem"><span class="material-icons">delete</span>Delete lead</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- 2 · Select -->
+    <sc-if value="{{ isSelect }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="micro-label">Select · origin top-left</span>
+        <p class="meta" style="margin:0 0 18px;font-weight:600;max-width:520px">Single-choice field. The trigger keeps the current value, the checked row stays tinted, and the chevron rotates with the open state.</p>
+        <div style="position:relative;width:280px">
+          <button class="btn-inverse t-trigger" data-block="true" data-open="{{ openSelect }}" onClick="{{ toggleSelect }}" style="justify-content:space-between;color:#334155" aria-haspopup="listbox" aria-expanded="{{ openSelect }}">
+            <span style="display:inline-flex;align-items:center;gap:8px"><span class="material-icons btn-mi" style="color:#10B981">flag</span>{{ pipelineValue }}</span>
+            <span class="material-icons btn-mi chev" style="color:#94A3B8">expand_more</span>
+          </button>
+          <div class="t-dropdown {{ clsSelect }}" data-origin="top-left" role="listbox" style="position:absolute;top:calc(100% + 8px);left:0;width:100%;z-index:20">
+            <div class="t-menu">
+              <div class="t-item t-cap">Pipeline stage</div>
+              <sc-for list="{{ stages }}" as="stage" hint-placeholder-count="4">
+                <button class="t-row t-item" data-selected="{{ stage.selected }}" onClick="{{ stage.pick }}" role="option" aria-selected="{{ stage.selected }}">
+                  <span class="material-icons">{{ stage.icon }}</span>{{ stage.label }}
+                  <sc-if value="{{ stage.selected }}"><span class="material-icons" style="margin-left:auto">check</span></sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- 3 · Filter -->
+    <sc-if value="{{ isFilter }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="micro-label">Filter menu · origin top-left</span>
+        <p class="meta" style="margin:0 0 18px;font-weight:600;max-width:520px">Multi-select with tags. Rows stay open on click; the trigger badge counts the active filters and the chosen tags land back in the toolbar.</p>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="position:relative">
+            <button class="btn-glass t-trigger" data-open="{{ openFilter }}" onClick="{{ toggleFilter }}" aria-haspopup="menu" aria-expanded="{{ openFilter }}">
+              <span class="material-icons btn-mi">filter_list</span>Filters
+              <sc-if value="{{ hasFilters }}"><span class="t-count">{{ filterCount }}</span></sc-if>
+              <span class="material-icons btn-mi chev" style="color:#94A3B8">expand_more</span>
+            </button>
+            <div class="t-dropdown {{ clsFilter }}" data-origin="top-left" role="menu" style="position:absolute;top:calc(100% + 8px);left:0;width:252px;z-index:20">
+              <div class="t-menu">
+                <div class="t-item t-cap">Tags</div>
+                <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+                  <button class="t-row t-item" data-selected="{{ f.on }}" onClick="{{ f.toggle }}" role="menuitemcheckbox" aria-checked="{{ f.on }}">
+                    <span class="material-icons">{{ f.icon }}</span>{{ f.label }}
+                    <sc-if value="{{ f.on }}"><span class="material-icons" style="margin-left:auto">check_circle</span></sc-if>
+                  </button>
+                </sc-for>
+                <div class="t-item t-sep"></div>
+                <button class="t-row t-item" onClick="{{ clearFilters }}"><span class="material-icons">restart_alt</span>Clear all</button>
+              </div>
+            </div>
+          </div>
+          <sc-for list="{{ activeFilters }}" as="a" hint-placeholder-count="2">
+            <span class="badge tag"><span class="material-icons">{{ a.icon }}</span>{{ a.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- 4 · Account / drop-up -->
+    <sc-if value="{{ isAccount }}">
+      <div style="display:flex;flex-direction:column;gap:10px;height:100%">
+        <span class="micro-label">Account menu · origin bottom-left</span>
+        <p class="meta" style="margin:0 0 18px;font-weight:600;max-width:520px">Pinned to the bottom of a sidebar, the menu opens upward — origin flips so the growth still reads as coming out of the trigger.</p>
+        <div style="width:260px;border-radius:20px;padding:14px;background:var(--card-bg);box-shadow:inset 0 0 0 1px rgba(15,23,42,.08);display:flex;flex-direction:column;gap:12px;height:280px">
+          <div style="display:flex;flex-direction:column;gap:2px;flex:1;align-content:flex-start">
+            <span class="t-cap">Workspace</span>
+            <div class="t-row" style="cursor:default"><span class="material-icons">dashboard</span>Pipeline</div>
+            <div class="t-row" style="cursor:default"><span class="material-icons">group</span>Leads</div>
+          </div>
+          <div style="position:relative">
+            <button class="btn-glass t-trigger" data-block="true" data-open="{{ openAccount }}" onClick="{{ toggleAccount }}" style="justify-content:flex-start" aria-haspopup="menu" aria-expanded="{{ openAccount }}">
+              <span style="width:26px;height:26px;border-radius:9999px;background:#10B981;color:#fff;display:grid;place-items:center;font-size:11px;font-weight:900">DB</span>
+              Deniz B.
+              <span class="material-icons btn-mi chev" style="color:#94A3B8;margin-left:auto">expand_less</span>
+            </button>
+            <div class="t-dropdown {{ clsAccount }}" data-origin="bottom-left" role="menu" style="position:absolute;bottom:calc(100% + 8px);left:0;width:100%;z-index:20">
+              <div class="t-menu">
+                <button class="t-row t-item" role="menuitem"><span class="material-icons">person</span>Account</button>
+                <button class="t-row t-item" role="menuitem"><span class="material-icons">tune</span>Preferences</button>
+                <button class="t-row t-item" onClick="{{ toggleDark }}" role="menuitem"><span class="material-icons">dark_mode</span>Dark mode<span class="t-kbd">⌘D</span></button>
+                <div class="t-item t-sep"></div>
+                <button class="t-row t-item" data-danger="true" role="menuitem"><span class="material-icons">logout</span>Sign out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- 5 · Origins lab -->
+    <sc-if value="{{ isLab }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span class="micro-label">Origins · all six anchors</span>
+        <p class="meta" style="margin:0 0 18px;font-weight:600;max-width:560px">Pick an anchor, then fire the transition. Same markup, same timings — only <strong>data-origin</strong> changes, and with it the corner the menu appears to unfold from.</p>
+        <div class="pills-row" style="margin-bottom:22px">
+          <sc-for list="{{ origins }}" as="o" hint-placeholder-count="6">
+            <button class="pill-priority" data-on="{{ o.active }}" onClick="{{ o.pick }}"><span class="dot" style="background:#10B981"></span>{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display:flex;align-items:stretch;gap:24px;flex-wrap:wrap">
+          <div class="t-stage" data-origin="{{ origin }}" style="flex:1;min-width:340px;height:400px;border-radius:20px;background:#F8FAFC;box-shadow:inset 0 0 0 1px rgba(15,23,42,.07)">
+            <div style="position:relative;display:inline-flex">
+            <button class="btn-primary t-trigger" onClick="{{ toggleLab }}">
+              <span class="material-icons btn-mi">bolt</span>{{ labButton }}
+            </button>
+            <div class="t-dropdown t-lab-menu {{ clsLab }}" data-origin="{{ origin }}" role="menu" style="position:absolute;width:220px;z-index:20">
+              <div class="t-menu">
+                <div class="t-item t-cap" style="white-space:nowrap">{{ origin }}</div>
+                <button class="t-row t-item"><span class="material-icons">north_west</span>Anchor point</button>
+                <button class="t-row t-item"><span class="material-icons">timer</span>250 / 150 ms</button>
+                <button class="t-row t-item"><span class="material-icons">show_chart</span>ease (0.22, 1, 0.36, 1)</button>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div style="flex:0 1 280px;min-width:240px;display:flex;flex-direction:column;gap:12px">
+            <div style="border-radius:16px;padding:14px 16px;background:#F8FAFC;box-shadow:inset 0 0 0 1px rgba(15,23,42,.07)">
+              <span class="micro-label">State</span>
+              <div class="pills-row" style="margin-top:8px">
+                <span class="pill-tab" data-active="{{ labIdle }}">idle</span>
+                <span class="pill-tab" data-active="{{ labOpen }}">is-open</span>
+                <span class="pill-tab" data-active="{{ labClosing }}">is-closing</span>
+              </div>
+            </div>
+            <div style="border-radius:16px;padding:14px 16px;background:#F8FAFC;box-shadow:inset 0 0 0 1px rgba(15,23,42,.07);display:flex;flex-direction:column;gap:8px">
+              <span class="micro-label">Timings</span>
+              <span class="meta" style="font-weight:600">open 250ms · scale 0.97 → 1</span>
+              <span class="meta" style="font-weight:600">close 150ms · scale 1 → 0.99</span>
+              <span class="meta" style="font-weight:600">items stagger 25ms apart</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:760}}">
+const TABS = [
+  ["actions", "Row actions"],
+  ["select", "Select"],
+  ["filter", "Filter"],
+  ["account", "Account"],
+  ["lab", "Origins lab"],
+];
+const ORIGINS = ["top-left","top-center","top-right","bottom-left","bottom-center","bottom-right"];
+
+class Component extends DCLogic {
+  state = {
+    variant: "actions",
+    phase: {},          // id -> "open" | "closing"
+    origin: "top-left",
+    pipeline: "Qualified",
+    filters: { hot: true, referral: false, enterprise: true, stale: false, nurture: false },
+  };
+
+  componentDidMount() {
+    this._onKey = (e) => { if (e.key === "Escape") this.closeAll(); };
+    this._onDown = (e) => {
+      if (!e.target.closest) return;
+      if (e.target.closest(".t-dropdown, .t-trigger, .pill-priority, .pill-tab")) return;
+      if (Date.now() - this._openedAt < 250) return; // never fight the click that just opened it
+      this.closeAll();
+    };
+    document.addEventListener("keydown", this._onKey);
+    document.addEventListener("mousedown", this._onDown);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this._onKey);
+    document.removeEventListener("mousedown", this._onDown);
+    Object.values(this._timers || {}).forEach(clearTimeout);
+  }
+
+  closeDur() {
+    const v = getComputedStyle(document.documentElement).getPropertyValue("--dropdown-close-dur");
+    return parseFloat(v) || 150;
+  }
+  setPhase(id, val) {
+    this.setState((s) => {
+      const phase = Object.assign({}, s.phase);
+      if (val === null) delete phase[id]; else phase[id] = val;
+      return { phase };
+    });
+  }
+  open(id) {
+    this._openedAt = Date.now();
+    this._timers = this._timers || {};
+    clearTimeout(this._timers[id]);   // cancel a pending close of this same menu
+    delete this._timers[id];
+    this.setPhase(id, "open");
+  }
+  close(id) {
+    if (this.state.phase[id] !== "open") return;
+    this.setPhase(id, "closing");
+    this._timers = this._timers || {};
+    clearTimeout(this._timers[id]);
+    this._timers[id] = setTimeout(() => {
+      delete this._timers[id];
+      if (this.state.phase[id] === "closing") this.setPhase(id, null);
+    }, this.closeDur() + 20);
+  }
+  closeAll() { Object.keys(this.state.phase).forEach((id) => this.close(id)); }
+  toggle(id) {
+    if (this.state.phase[id] === "open") this.close(id);
+    else { this.closeAll(); this.open(id); }
+  }
+  cls(id) { const p = this.state.phase[id]; return p === "open" ? "is-open" : p === "closing" ? "is-closing" : ""; }
+
+  renderVals() {
+    const s = this.state;
+    const FILTERS = [
+      ["hot", "Hot lead", "local_fire_department"],
+      ["referral", "Referral", "share"],
+      ["enterprise", "Enterprise", "domain"],
+      ["stale", "Stale 30d+", "hourglass_bottom"],
+      ["nurture", "Nurture", "eco"],
+    ];
+    const active = FILTERS.filter(([k]) => s.filters[k]);
+    return {
+      tabs: TABS.map(([id, label]) => ({
+        label, active: s.variant === id,
+        go: () => { this.closeAll(); this.setState({ variant: id }); },
+      })),
+      isActions: s.variant === "actions",
+      isSelect: s.variant === "select",
+      isFilter: s.variant === "filter",
+      isAccount: s.variant === "account",
+      isLab: s.variant === "lab",
+
+      openActions: s.phase.actions === "open",
+      clsActions: this.cls("actions"),
+      toggleActions: () => this.toggle("actions"),
+
+      openSelect: s.phase.select === "open",
+      clsSelect: this.cls("select"),
+      toggleSelect: () => this.toggle("select"),
+      pipelineValue: s.pipeline,
+      stages: [
+        ["New", "fiber_new"], ["Qualified", "verified"], ["Proposal", "description"], ["Closing", "handshake"],
+      ].map(([label, icon]) => ({
+        label, icon, selected: s.pipeline === label,
+        pick: () => { this.setState({ pipeline: label }); this.close("select"); },
+      })),
+
+      openFilter: s.phase.filter === "open",
+      clsFilter: this.cls("filter"),
+      toggleFilter: () => this.toggle("filter"),
+      filters: FILTERS.map(([k, label, icon]) => ({
+        label, icon, on: !!s.filters[k],
+        toggle: () => this.setState((st) => ({ filters: Object.assign({}, st.filters, { [k]: !st.filters[k] }) })),
+      })),
+      activeFilters: active.map(([, label, icon]) => ({ label, icon })),
+      filterCount: active.length,
+      hasFilters: active.length > 0,
+      clearFilters: () => this.setState({ filters: {} }),
+
+      openAccount: s.phase.account === "open",
+      clsAccount: this.cls("account"),
+      toggleAccount: () => this.toggle("account"),
+      toggleDark: () => { document.documentElement.classList.toggle("dark"); this.close("account"); },
+
+      origin: s.origin,
+      origins: ORIGINS.map((o) => ({
+        label: o, active: s.origin === o,
+        pick: () => { this.setState({ origin: o }); if (this.state.phase.lab !== "open") this.open("lab"); },
+      })),
+      clsLab: this.cls("lab"),
+      toggleLab: () => this.toggle("lab"),
+      labButton: s.phase.lab === "open" ? "Close menu" : "Open menu",
+      labIdle: !s.phase.lab,
+      labOpen: s.phase.lab === "open",
+      labClosing: s.phase.lab === "closing",
+    };
+  }
+}
+
+</script>
+</body>
+</html>

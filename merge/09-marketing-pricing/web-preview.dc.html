@@ -1,0 +1,451 @@
+<!-- @dsCard group="Merge - marketing-pricing" name="Web Preview" subtitle="-> new: Marketing & pricing" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_colors-neutrals.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_colors-semantic.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+/* local --duration-fast/base/slow override removed: unused anywhere in this file (no var(--duration-fast/base/slow) consumer), and its 120/180/260ms values (motion-sweep: kept) are already exactly available as var(--duration-fast), var(--duration-180), var(--duration-260) from _ds. */
+body { margin: 0; background: #F8FAFC; font-family: 'Montserrat', sans-serif; }
+a { color: #10B981; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) {
+  a:hover { color: #059669; }
+}
+@keyframes wp-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(320%); } }
+@keyframes wp-shimmer { 0% { background-position: -420px 0; } 100% { background-position: 420px 0; } }
+@keyframes wp-spin { to { transform: rotate(360deg); } }
+@keyframes wp-in { from { opacity: 0; transform: translateY(calc(10px * var(--wp-anim-mult, 1))) translateX(calc(var(--wp-tab-dir, 0) * 16px)) scale(0.99); } to { opacity: 1; transform: none; } }
+@keyframes wp-drawer { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes wp-log { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+.wp-hit { position: relative; }
+.wp-hit::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+x-dc button:focus-visible, x-dc [role="button"]:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .wp-anim-in, [style*="animation: wp-"] { animation: none !important; }
+  * { transition-duration: 0.01ms !important; } /* motion-sweep: kept, reduced-motion floor, not a real transition */
+}
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 40px 32px 64px; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); font-family: 'Montserrat', sans-serif;">
+  <div style="max-width: 980px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span class="pills-label" style="margin: 0;">Deha Design System · AI Elements</span>
+      <h1 class="type-display" style="font-size: 38px; margin: 0; color: #0F172A;">Web Preview</h1>
+      <p style="margin: 0; max-width: 620px; font-size: 14px; line-height: 1.55; color: #64748B; text-wrap: pretty;">A browser frame for showing generated UI: address bar, live viewport, source code and a runtime console. Pick a variant below to walk through every state.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="6">
+        <button class="pill-tab {{ v.cls }}" onClick="{{ v.select }}" style="cursor: pointer; padding: 8px 16px; font-size: 12px;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px; min-height: 22px;">
+      <span class="badge tag">{{ activeLabel }}</span>
+      <span style="font-size: 12px; color: #64748B; line-height: 1.4;">{{ activeDesc }}</span>
+    </div>
+
+    <sc-if value="{{ isClosed }}" hint-placeholder-val="{{ false }}">
+      <div class="card-inner" style="display: flex; align-items: center; justify-content: space-between; gap: 16px; animation: wp-in var(--duration-280) var(--ease-out) both;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="icon-badge icon-badge--sm" style="--icon-c: #64748B;"><span class="material-icons">close</span></span>
+          <span style="font-size: 13px; font-weight: 800; color: #0F172A;">Preview window closed</span>
+        </div>
+        <button class="btn-primary" onClick="{{ reopen }}" style="padding: 9px 16px; font-size: 12px;"><span class="material-icons" style="font-size: 16px;">open_in_browser</span>Reopen</button>
+      </div>
+    </sc-if>
+
+    <div style="display: {{ shellDisplay }}; justify-content: center;">
+      <div class="card-inner" style="width: {{ shellWidth }}; padding: 0; overflow: hidden; box-shadow: 0 24px 60px -28px rgba(15,23,42,0.35), inset 0 0 0 1px rgba(15,23,42,0.04); transition: width var(--duration-380) var(--ease-out);">
+
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--card-border); background: linear-gradient(180deg, rgba(248,250,252,0.9), rgba(241,245,249,0.65));">
+          <div style="display: flex; align-items: center; gap: 7px; padding-right: 4px;">
+            <button class="wp-hit" onClick="{{ closeWin }}" title="Close" style="width: 14px; height: 14px; padding: 0; border: none; border-radius: 50%; background: #EF4444; cursor: pointer; display: grid; place-items: center; color: rgba(15,23,42,0.55); box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2); transition: transform var(--duration-base) var(--ease-spring), filter var(--duration-base);" style-hover="filter: brightness(1.12); transform: scale(1.15);" style-active="transform: scale(0.85);"><span class="material-icons" style="font-size: 10px; line-height: 1;">close</span></button>
+            <button class="wp-hit" onClick="{{ minimizeWin }}" title="Minimize" style="width: 14px; height: 14px; padding: 0; border: none; border-radius: 50%; background: #F97316; cursor: pointer; display: grid; place-items: center; color: rgba(15,23,42,0.55); box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2); transition: transform var(--duration-base) var(--ease-spring), filter var(--duration-base);" style-hover="filter: brightness(1.12); transform: scale(1.15);" style-active="transform: scale(0.85);"><span class="material-icons" style="font-size: 10px; line-height: 1;">remove</span></button>
+            <button class="wp-hit" onClick="{{ maximizeWin }}" title="Maximize" style="width: 14px; height: 14px; padding: 0; border: none; border-radius: 50%; background: #EAB308; cursor: pointer; display: grid; place-items: center; color: rgba(15,23,42,0.55); box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2); transition: transform var(--duration-base) var(--ease-spring), filter var(--duration-base);" style-hover="filter: brightness(1.12); transform: scale(1.15);" style-active="transform: scale(0.85);"><span class="material-icons" style="font-size: 10px; line-height: 1;">fullscreen</span></button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 2px;">
+            <button class="wp-hit" onClick="{{ noop }}" style="width: 30px; height: 30px; display: grid; place-items: center; border: none; background: transparent; border-radius: 9px; color: #94A3B8; cursor: not-allowed;"><span class="material-icons" style="font-size: 19px;">arrow_back</span></button>
+            <button class="wp-hit" onClick="{{ noop }}" style="width: 30px; height: 30px; display: grid; place-items: center; border: none; background: transparent; border-radius: 9px; color: #94A3B8; cursor: not-allowed;"><span class="material-icons" style="font-size: 19px;">arrow_forward</span></button>
+            <button class="wp-hit" onClick="{{ reload }}" title="Reload" style="width: 30px; height: 30px; display: grid; place-items: center; border: none; background: transparent; border-radius: 9px; color: #475569; cursor: pointer; transition: background var(--duration-base) var(--ease-out);" style-hover="background: rgba(15,23,42,0.07);" style-active="transform: scale(0.9);"><span class="material-icons" style="font-size: 19px; animation: {{ spinAnim }};">refresh</span></button>
+          </div>
+
+          <div style="flex: 1; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 9999px; background: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.14), inset 0 2px 4px rgba(15,23,42,0.05); min-width: 0; transition: box-shadow var(--duration-200) var(--ease-out);" style-hover="box-shadow: inset 0 0 0 1px rgba(16,185,129,0.55), 0 0 0 3px rgba(16,185,129,0.12);">
+            <span class="material-icons" style="font-size: 15px; color: {{ lockColor }};">{{ lockIcon }}</span>
+            <span style="flex: 1; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ url }}</span>
+            <span class="{{ statusBadgeCls }}" style="flex-shrink: 0;">{{ statusText }}</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <sc-for list="{{ devices }}" as="d" hint-placeholder-count="3">
+              <button class="wp-hit" onClick="{{ d.select }}" title="{{ d.label }}" style="width: 30px; height: 30px; display: grid; place-items: center; border: none; border-radius: 9px; cursor: pointer; color: {{ d.color }}; background: {{ d.bg }}; transition: background var(--duration-180), color var(--duration-180), transform var(--duration-base) var(--ease-spring);" style-active="transform: scale(0.88);"><span class="material-icons" style="font-size: 18px;">{{ d.icon }}</span></button>
+            </sc-for>
+            <span style="width: 1px; height: 18px; background: rgba(15,23,42,0.12); margin: 0 2px;"></span>
+            <button class="wp-hit" onClick="{{ toggleConsole }}" title="Console" style="height: 30px; padding: 0 10px; display: inline-flex; align-items: center; gap: 5px; border: none; border-radius: 9px; cursor: pointer; font-family: 'Montserrat'; font-size: 11px; font-weight: 800; color: {{ consoleColor }}; background: {{ consoleBg }}; transition: background var(--duration-180), color var(--duration-180), transform var(--duration-base) var(--ease-spring);" style-active="transform: scale(0.92);">
+              <span class="material-icons" style="font-size: 16px;">terminal</span>
+              <span>{{ consoleCount }}</span>
+            </button>
+          </div>
+        </div>
+
+        <sc-if value="{{ isMinimized }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; animation: wp-in var(--duration-260) var(--ease-out) both;">
+            <span style="font-size: 12px; font-weight: 700; color: #64748B;">Window minimized</span>
+            <button class="btn-discuss" onClick="{{ restoreWin }}"><span class="material-icons" style="font-size: 15px;">expand_more</span>Restore</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showBody }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; align-items: center; gap: 4px; padding: 8px 14px 0; background: rgba(241,245,249,0.5);">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="2">
+            <button class="wp-hit" onClick="{{ t.select }}" style="position: relative; border: none; background: transparent; cursor: pointer; font-family: 'Montserrat'; font-size: 12px; font-weight: 800; color: {{ t.color }}; padding: 8px 14px 10px; transition: color var(--duration-200);">
+              {{ t.label }}
+              <span style="position: absolute; left: 12px; right: 12px; bottom: 0; height: 2.5px; border-radius: 3px; background: #10B981; transform: scaleX({{ t.underline }}); transform-origin: center; transition: transform var(--duration-280) var(--ease-slide-bounce);"></span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="position: relative; height: 3px; overflow: hidden; background: rgba(15,23,42,0.06);">
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ true }}">
+            <span style="position: absolute; inset: 0 auto 0 0; width: 30%; background: linear-gradient(90deg, transparent, #10B981, transparent); animation: wp-bar var(--duration-1100) var(--ease-draw) infinite;"></span>
+          </sc-if>
+        </div>
+
+        <div style="padding: {{ stagePad }}; background: #F1F5F9; display: flex; justify-content: center; height: 440px; transition: padding var(--duration-380) var(--ease-out); --wp-tab-dir: {{ tabDir }};">
+          <div style="width: {{ frameWidth }}; max-width: 100%; border-radius: {{ frameRadius }}; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; background: #FFFFFF; box-shadow: {{ frameShadow }}; transition: width var(--duration-420) var(--ease-out), border-radius var(--duration-380);">
+
+            <sc-if value="{{ showCode }}" hint-placeholder-val="{{ false }}">
+              <div style="background: #0F172A; padding: 18px 20px; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; line-height: 1.75; color: #E2E8F0; min-height: 340px; animation: wp-in var(--duration-slower) var(--ease-out) both;">
+                <sc-for list="{{ codeLines }}" as="l" hint-placeholder-count="10">
+                  <div style="display: flex; gap: 16px;"><span style="color: #475569; user-select: none; min-width: 18px; text-align: right;">{{ l.n }}</span><span style="color: {{ l.color }}; white-space: pre;">{{ l.text }}</span></div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showSkeleton }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 26px; display: flex; flex-direction: column; gap: 16px; min-height: 340px; animation: wp-in var(--duration-slower) var(--ease-out) both;">
+                <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="6">
+                  <span style="display: block; height: {{ s.h }}; width: {{ s.w }}; border-radius: 8px; background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%); background-size: 420px 100%; animation: wp-shimmer 1.4s /* motion-sweep: kept, no DS tier within 300ms */ var(--ease-linear) infinite;"></span>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showError }}" hint-placeholder-val="{{ false }}">
+              <div style="min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 40px 28px; text-align: center; animation: wp-in var(--duration-320) var(--ease-out) both;">
+                <span class="icon-badge icon-badge--lg icon-badge--glow" style="--icon-c: #EF4444;"><span class="material-icons">wifi_off</span></span>
+                <div style="display: flex; flex-direction: column; gap: 6px; align-items: center;">
+                  <h3 class="type-display" style="margin: 0; font-size: 18px; color: #0F172A;">This site can't be reached</h3>
+                  <p style="margin: 0; font-size: 13px; color: #64748B; max-width: 320px; line-height: 1.5;">The preview server refused the connection. Check the dev server is running on port 5173.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                  <button class="btn-red" onClick="{{ reload }}" style="height: 34px; min-width: 0;"><span class="material-icons" style="font-size: 15px;">refresh</span>Try again</button>
+                  <button class="btn-discuss" onClick="{{ openConsole }}"><span class="material-icons" style="font-size: 15px;">terminal</span>View console</button>
+                </div>
+                <code style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #94A3B8; margin-top: 2px;">ERR_CONNECTION_REFUSED</code>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showPage }}" hint-placeholder-val="{{ true }}">
+              <div style="min-height: 340px; animation: wp-in var(--duration-340) var(--ease-out) both;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #E2E8F0;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="icon-badge icon-badge--sm" style="--icon-c: #10B981;"><span class="material-icons">bolt</span></span>
+                    <span style="font-size: 13px; font-weight: 900; color: #0F172A;">Northbeam</span>
+                  </div>
+                  <div style="display: flex; gap: 14px; font-size: 11px; font-weight: 700; color: #64748B;">
+                    <span>Product</span><span>Pricing</span><span>Docs</span>
+                  </div>
+                </div>
+                <div style="padding: 34px 26px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start;">
+                  <span class="badge success"><span class="material-icons">auto_awesome</span>Generated just now</span>
+                  <h2 class="type-display" style="margin: 0; font-size: 30px; color: #0F172A; max-width: 380px; line-height: 1.1;">Ship the interface you just described.</h2>
+                  <p style="margin: 0; font-size: 13px; color: #64748B; max-width: 400px; line-height: 1.6;">Every component renders live in the preview pane. Edit the prompt and the frame reloads in place.</p>
+                  <div style="display: flex; gap: 10px; margin-top: 4px;">
+                    <button class="btn-primary" style="padding: 10px 18px; font-size: 13px;">Get started</button>
+                    <button class="btn-glass wp-hit" style="padding: 9px 16px; font-size: 13px;">Read docs</button>
+                  </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 26px 28px;">
+                  <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="3">
+                    <div style="border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; background: #F8FAFC;">
+                      <span class="material-icons" style="font-size: 17px; color: #10B981;">{{ t.icon }}</span>
+                      <span style="font-size: 11.5px; font-weight: 800; color: #0F172A;">{{ t.title }}</span>
+                      <span style="font-size: 10.5px; color: #64748B; line-height: 1.45;">{{ t.desc }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="border-top: 1px solid #E2E8F0; padding: 28px 26px; display: flex; flex-direction: column; gap: 14px; background: #F8FAFC;">
+                  <span class="pills-label" style="margin: 0;">Changelog</span>
+                  <sc-for list="{{ feed }}" as="f" hint-placeholder-count="4">
+                    <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; background: #FFFFFF; border: 1px solid #E2E8F0;">
+                      <span class="icon-badge icon-badge--sm" style="--icon-c: {{ f.color }};"><span class="material-icons">{{ f.icon }}</span></span>
+                      <div style="display: flex; flex-direction: column; gap: 3px;">
+                        <span style="font-size: 12px; font-weight: 800; color: #0F172A;">{{ f.title }}</span>
+                        <span style="font-size: 11px; color: #64748B; line-height: 1.5;">{{ f.desc }}</span>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="padding: 26px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid #E2E8F0;">
+                  <span style="font-size: 11px; color: #94A3B8;">© 2026 Northbeam Labs</span>
+                  <button class="btn-text" style="font-size: 12px;">Back to top<span class="material-icons" style="font-size: 15px;">arrow_upward</span></button>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ consoleOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top: 1px solid var(--card-border); background: #0F172A; animation: wp-drawer var(--duration-slower) var(--ease-out) both;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-icons" style="font-size: 15px; color: #34D399;">terminal</span>
+                <span style="font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #94A3B8;">Console</span>
+                <span class="badge danger" style="font-size: 10px;">{{ errorCount }}</span>
+                <span class="badge" style="font-size: 10px; background: #FBBF24; color: #451A03;">{{ warnCount }}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <button class="wp-hit" onClick="{{ clearLogs }}" style="height: 26px; padding: 0 10px; border: none; border-radius: 8px; background: rgba(255,255,255,0.08); color: #CBD5E1; font-family: 'Montserrat'; font-size: 11px; font-weight: 700; cursor: pointer; transition: background var(--duration-base);" style-hover="background: rgba(255,255,255,0.16);">Clear</button>
+                <button class="wp-hit" onClick="{{ toggleConsole }}" aria-label="Close console" style="width: 26px; height: 26px; display: grid; place-items: center; border: none; border-radius: 8px; background: transparent; color: #94A3B8; cursor: pointer; transition: background var(--duration-base), color var(--duration-base);" style-hover="background: rgba(255,255,255,0.1); color: #fff;"><span class="material-icons" style="font-size: 16px;">close</span></button>
+              </div>
+            </div>
+            <div style="max-height: 168px; overflow: auto; padding: 6px 0;">
+              <sc-for list="{{ logs }}" as="log" hint-placeholder-count="4">
+                <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 14px; border-left: 2px solid {{ log.accent }}; background: {{ log.bg }}; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 11.5px; animation: wp-log var(--duration-260) var(--ease-out) both;">
+                  <span style="color: #64748B; flex-shrink: 0;">{{ log.time }}</span>
+                  <span class="material-icons" style="font-size: 14px; color: {{ log.accent }}; flex-shrink: 0;">{{ log.icon }}</span>
+                  <span style="color: {{ log.color }}; line-height: 1.5;">{{ log.text }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ noLogs }}" hint-placeholder-val="{{ false }}">
+                <div style="padding: 22px 14px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #475569;">No console output.</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span class="pills-label" style="margin: 0;">Try it</span>
+      <button class="btn-discuss" onClick="{{ reload }}"><span class="material-icons" style="font-size: 15px;">refresh</span>Simulate reload</button>
+      <button class="btn-discuss" onClick="{{ toggleConsole }}"><span class="material-icons" style="font-size: 15px;">terminal</span>Toggle console</button>
+      <button class="btn-discuss" onClick="{{ pushLog }}"><span class="material-icons" style="font-size: 15px;">add</span>Emit log</button>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:900}}">
+const VARIANTS = [
+  { id: 'live',      label: 'Live preview', desc: 'Default resting state — the generated page renders in the frame.' },
+  { id: 'loading',   label: 'Loading',      desc: 'Navigation in flight: progress bar, spinning reload, shimmering skeleton.' },
+  { id: 'error',     label: 'Error',        desc: 'The preview server refused the connection — recovery actions inline.' },
+  { id: 'console',   label: 'Console open', desc: 'Runtime drawer with warning and error rows, timestamped.' },
+  { id: 'responsive',label: 'Responsive',   desc: 'Device switcher narrows the viewport with a spring width transition.' },
+  { id: 'code',      label: 'Source code',  desc: 'Code tab shows the component source behind the render.' }
+];
+
+const LT = String.fromCharCode(60);
+const CODE = [
+  { n: 1,  text: LT + 'script lang="ts">',                          c: '#94A3B8' },
+  { n: 2,  text: "  import { WebPreview } from '$lib/ui';",         c: '#E2E8F0' },
+  { n: 3,  text: "  let url = $state('https://svelte.dev');",       c: '#E2E8F0' },
+  { n: 4,  text: LT + '/script>',                                   c: '#94A3B8' },
+  { n: 5,  text: ' ',                                               c: '#E2E8F0' },
+  { n: 6,  text: LT + 'WebPreview {url} defaultDevice="desktop">',  c: '#34D399' },
+  { n: 7,  text: '  ' + LT + 'WebPreviewNavigation />',             c: '#34D399' },
+  { n: 8,  text: '  ' + LT + 'WebPreviewBody src={url} />',         c: '#34D399' },
+  { n: 9,  text: '  ' + LT + 'WebPreviewConsole logs={logs} />',    c: '#34D399' },
+  { n: 10, text: LT + '/WebPreview>',                               c: '#34D399' }
+];
+
+const BASE_LOGS = [
+  { level: 'info', time: '7:56:49 PM', text: 'Vite connected — HMR ready in 214ms' },
+  { level: 'warn', time: '7:56:53 PM', text: 'Warning: Deprecated API used (svelte/legacy)' },
+  { level: 'error', time: '7:56:58 PM', text: 'Error: Failed to load resource: /api/session 404' }
+];
+
+const LEVEL = {
+  info:  { accent: '#64748B', color: '#CBD5E1', icon: 'chevron_right', bg: 'transparent' },
+  warn:  { accent: '#FBBF24', color: '#FDE68A', icon: 'warning',       bg: 'rgba(251,191,36,0.08)' },
+  error: { accent: '#EF4444', color: '#FCA5A5', icon: 'error',         bg: 'rgba(239,68,68,0.09)' }
+};
+
+class Component extends DCLogic {
+  state = { variant: 'live', device: 'desktop', consoleOpen: false, loading: false, logs: BASE_LOGS, tab: 'preview', tabDir: 0, win: 'normal' };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  /* Direction-aware entrance (plan: claude-design-frontend-pass Step 26):
+     the Preview/Code tab control switches the frame content below it, so the
+     content re-entrance animation reads +1 (right) when moving preview->code,
+     -1 (left) when moving code->preview, via --wp-tab-dir feeding wp-in's
+     translateX. */
+  setTab(id) {
+    this.setState(s => ({ tab: id, tabDir: id === s.tab ? s.tabDir : (id === 'code' ? 1 : -1) }));
+  }
+
+  setVariant(id) {
+    clearTimeout(this._t);
+    const nextTab = id === 'code' ? 'code' : 'preview';
+    this.setState(s => ({
+      variant: id,
+      consoleOpen: id === 'console' || id === 'error',
+      device: id === 'responsive' ? 'mobile' : 'desktop',
+      tab: nextTab,
+      tabDir: nextTab === s.tab ? s.tabDir : (nextTab === 'code' ? 1 : -1),
+      loading: id === 'loading'
+    }));
+  }
+
+  reload = () => {
+    clearTimeout(this._t);
+    this.setState({ loading: true });
+    this._t = setTimeout(() => this.setState({ loading: false }), 1600);
+  };
+
+  pushLog = () => {
+    const levels = ['info', 'warn', 'error'];
+    const level = levels[this.state.logs.length % 3];
+    const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    const msgs = { info: 'Rendered WebPreview in 12ms', warn: 'Warning: prop `src` will be required', error: 'Error: hydration mismatch on main' };
+    this.setState(s => ({ consoleOpen: true, logs: s.logs.concat([{ level, time, text: msgs[level] }]) }));
+  };
+
+  renderVals() {
+    const s = this.state;
+    const v = VARIANTS.find(x => x.id === s.variant) || VARIANTS[0];
+    const isLoading = s.loading;
+    const isError = s.variant === 'error' && !isLoading;
+    const showCode = s.tab === 'code' && !isLoading;
+    const showPage = !isLoading && !isError && !showCode;
+    const counts = s.logs.reduce((a, l) => { a[l.level] = (a[l.level] || 0) + 1; return a; }, {});
+    const widths = { desktop: '100%', tablet: '560px', mobile: '330px' };
+
+    return {
+      variants: VARIANTS.map(x => ({
+        label: x.label,
+        cls: x.id === s.variant ? 'active' : '',
+        select: () => this.setVariant(x.id)
+      })),
+      activeLabel: v.label,
+      activeDesc: v.desc,
+
+      url: isError ? 'http://localhost:5173/preview' : 'https://svelte.dev',
+      lockIcon: isError ? 'lock_open' : 'lock',
+      lockColor: isError ? '#EF4444' : '#10B981',
+      statusText: isLoading ? 'Loading' : isError ? 'Offline' : 'Live',
+      statusBadgeCls: isLoading ? 'badge tag' : isError ? 'badge danger' : 'badge success',
+
+      devices: [
+        { id: 'desktop', icon: 'desktop_windows', label: 'Desktop' },
+        { id: 'tablet',  icon: 'tablet_mac',      label: 'Tablet' },
+        { id: 'mobile',  icon: 'smartphone',      label: 'Mobile' }
+      ].map(d => ({
+        icon: d.icon, label: d.label,
+        color: d.id === s.device ? '#fff' : '#64748B',
+        bg: d.id === s.device ? '#0F172A' : 'transparent',
+        select: () => this.setState({ device: d.id })
+      })),
+      frameWidth: widths[s.device],
+      stagePad: s.device === 'desktop' ? '0px' : '20px',
+      frameRadius: s.device === 'desktop' ? '0px' : '16px',
+      frameShadow: s.device === 'desktop' ? 'none' : '0 12px 34px -18px rgba(15,23,42,0.45), inset 0 0 0 1px rgba(15,23,42,0.08)',
+
+      tabs: [
+        { id: 'preview', label: 'Preview' },
+        { id: 'code',    label: 'Code' }
+      ].map(t => ({
+        label: t.label,
+        color: t.id === s.tab ? '#0F172A' : '#94A3B8',
+        underline: t.id === s.tab ? 1 : 0,
+        select: () => this.setTab(t.id)
+      })),
+      tabDir: s.tabDir,
+
+      isLoading,
+      showError: isError,
+      showSkeleton: isLoading,
+      showCode,
+      showPage,
+      spinAnim: isLoading ? 'wp-spin var(--duration-900) var(--ease-linear) infinite' : 'none',
+
+      codeLines: CODE.map(l => ({ n: l.n, text: l.text, color: l.c })),
+      skeletons: [
+        { w: '42%', h: '22px' }, { w: '86%', h: '12px' }, { w: '72%', h: '12px' },
+        { w: '130px', h: '36px' }, { w: '100%', h: '96px' }, { w: '60%', h: '12px' }
+      ],
+      tiles: [
+        { icon: 'speed',      title: 'Instant HMR', desc: 'Reloads in under 40ms.' },
+        { icon: 'devices',    title: 'Responsive',  desc: 'Three device widths.' },
+        { icon: 'bug_report', title: 'Console',     desc: 'Errors surfaced inline.' }
+      ],
+
+      feed: [
+        { icon: 'bolt',      color: '#10B981', title: 'Streaming renders', desc: 'The frame paints while the model is still writing markup.' },
+        { icon: 'devices',   color: '#0F172A', title: 'Device presets',    desc: 'Desktop, tablet and mobile widths animate in place.' },
+        { icon: 'terminal',  color: '#F97316', title: 'Console capture',   desc: 'Warnings and errors from the sandbox stream into the drawer.' },
+        { icon: 'lock',      color: '#64748B', title: 'Sandboxed origin',  desc: 'Previews run isolated from the host document.' }
+      ],
+
+      consoleOpen: s.consoleOpen && s.win !== 'minimized',
+      toggleConsole: () => this.setState(st => ({ consoleOpen: !st.consoleOpen })),
+      openConsole: () => this.setState({ consoleOpen: true }),
+      clearLogs: () => this.setState({ logs: [] }),
+      pushLog: this.pushLog,
+      noLogs: s.logs.length === 0,
+      consoleCount: String(s.logs.length),
+      consoleColor: s.consoleOpen ? '#fff' : '#475569',
+      consoleBg: s.consoleOpen ? '#10B981' : 'rgba(15,23,42,0.05)',
+      errorCount: (counts.error || 0) + ' errors',
+      warnCount: (counts.warn || 0) + ' warnings',
+      logs: s.logs.map((l, i) => Object.assign({ key: i, time: l.time, text: l.text }, LEVEL[l.level])),
+
+      isClosed: s.win === 'closed',
+      isMinimized: s.win === 'minimized',
+      showBody: s.win === 'normal' || s.win === 'maximized',
+      shellDisplay: s.win === 'closed' ? 'none' : 'flex',
+      shellWidth: s.win === 'maximized' ? '100%' : '92%',
+      closeWin: () => this.setState({ win: 'closed' }),
+      minimizeWin: () => this.setState(st => ({ win: st.win === 'minimized' ? 'normal' : 'minimized' })),
+      maximizeWin: () => this.setState(st => ({ win: st.win === 'maximized' ? 'normal' : 'maximized' })),
+      restoreWin: () => this.setState({ win: 'normal' }),
+      reopen: () => this.setState({ win: 'normal' }),
+
+      reload: this.reload,
+      noop: () => {}
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!-- @dsCard group="Merge - cards" name="ai-chat__AttachmentCard" subtitle="-> Cards" -->
+
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<style>
+  .ac-card { transition: transform var(--duration-200) var(--ease-out), box-shadow var(--duration-200) var(--ease-out), border-color var(--duration-200) var(--ease-linear); animation: attIn var(--duration-260) var(--ease-out-native) both; }
+  .ac-remove-btn { position: relative; transition: background var(--duration-base), transform var(--duration-base) var(--ease-out); }
+  .ac-remove-btn::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .ac-remove-btn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .ac-retry-btn { position: relative; transition: background var(--duration-base); }
+  .ac-retry-btn::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .ac-retry-btn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    .ac-card { animation: none !important; transition: none !important; }
+    .att-spin, .att-shake { animation: none !important; }
+    .ac-progress-bar { transition: none !important; }
+  }
+</style>
+<div class="ac-card" style="position:relative;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:#fff;border:1px solid var(--border-hairline);box-shadow:0 1px 2px rgba(15,23,42,0.05),inset 0 1px 0 rgba(255,255,255,0.6);will-change:transform" style-hover="transform:translateY(-2px);box-shadow:0 10px 24px -8px rgba(15,23,42,0.22);border-color:var(--slate-300)">
+  <div style="position:relative;height:92px;display:grid;place-items:center;overflow:hidden">
+    <div style="position:absolute;inset:0;background:{{ thumbBg }}"></div>
+    <sc-if value="{{ isImage }}" hint-placeholder-val="{{ true }}">
+      <span class="material-icons" style="position:relative;font-size:24px;color:rgba(255,255,255,0.92);text-shadow:0 1px 4px rgba(15,23,42,0.35)">image</span>
+    </sc-if>
+    <sc-if value="{{ isFile }}">
+      <span class="material-icons" style="position:relative;font-size:24px;color:{{ iconColor }}">{{ icon }}</span>
+    </sc-if>
+    <span class="badge tag" style="position:absolute;left:6px;top:6px;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);letter-spacing:0.06em">{{ ext }}</span>
+    <sc-if value="{{ removable }}" hint-placeholder-val="{{ true }}">
+    <button type="button" class="ac-remove-btn" aria-label="Remove attachment" onClick="{{ onRemove }}" style="position:absolute;right:5px;top:5px;width:21px;height:21px;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:0;border:none;border-radius:9999px;cursor:pointer;background:rgba(15,23,42,0.62);color:#fff;backdrop-filter:blur(8px);box-shadow:0 2px 6px rgba(15,23,42,0.3)" style-hover="background:var(--semantic-danger);transform:rotate(90deg) scale(1.08)" style-active="transform:rotate(90deg) scale(0.9)">
+      <span class="material-icons" style="font-size:13px;line-height:1;display:block">close</span>
+    </button>
+    </sc-if>
+    <sc-if value="{{ isUploading }}">
+      <div style="position:absolute;inset:0;background:rgba(248,250,252,0.72);backdrop-filter:blur(2px);display:grid;place-items:center">
+        <span class="material-icons att-spin" style="font-size:19px;color:var(--brand-primary-600);animation:attSpin var(--duration-900) var(--ease-linear) infinite">progress_activity</span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ isError }}">
+      <div style="position:absolute;inset:0;background:var(--semantic-danger-bg);display:grid;place-items:center">
+        <span class="material-icons att-shake" style="font-size:20px;color:var(--semantic-danger);animation:attShake var(--duration-480) var(--ease-shake) both">error</span>
+      </div>
+    </sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;padding:5px 8px 6px">
+    <span style="font-size:11px;font-weight:700;color:var(--fg1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ name }}</span>
+    <span style="font-size:10px;font-weight:600;color:{{ metaColor }}">{{ meta }}</span>
+  </div>
+  <sc-if value="{{ isUploading }}">
+    <div style="height:3px;background:var(--slate-200)">
+      <div class="ac-progress-bar" style="height:100%;width:{{ progressWidth }};background:var(--brand-primary);box-shadow:0 0 8px rgba(16,185,129,0.6);transition:width var(--duration-400) var(--ease-out)"></div>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isError }}">
+    <button type="button" class="ac-retry-btn" onClick="{{ onRetry }}" style="display:flex;align-items:center;justify-content:center;gap:5px;padding:6px;border:none;border-top:1px solid var(--semantic-danger-bg);background:var(--semantic-danger-bg);color:var(--semantic-danger);font-family:var(--font-display);font-size:11px;font-weight:800;cursor:pointer" style-hover="background:#FEE2E2">
+      <span class="material-icons" style="font-size:14px">refresh</span> Retry
+    </button>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:180,&quot;height&quot;:170},&quot;fileName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;quarterly-report.pdf&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;meta&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;1.2 MB&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;ext&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PDF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;kind&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;image&quot;,&quot;file&quot;],&quot;default&quot;:&quot;file&quot;,&quot;tsType&quot;:&quot;'image' | 'file'&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;done&quot;,&quot;uploading&quot;,&quot;error&quot;],&quot;default&quot;:&quot;done&quot;,&quot;tsType&quot;:&quot;'done' | 'uploading' | 'error'&quot;},&quot;progress&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:100,&quot;default&quot;:40,&quot;tsType&quot;:&quot;number&quot;},&quot;icon&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;description&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;iconColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#64748B&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;thumbBg&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;linear-gradient(135deg,#F1F5F9,#E2E8F0)&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onRemove&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;},&quot;onRetry&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const state = p.state || 'done';
+    const kind = p.kind || 'file';
+    return {
+      name: p.fileName || p.name || 'file',
+      meta: p.meta || '',
+      ext: (p.ext || 'FILE').toUpperCase(),
+      icon: p.icon || 'description',
+      iconColor: p.iconColor || 'var(--slate-500)',
+      thumbBg: p.thumbBg || 'linear-gradient(135deg,#F1F5F9,#E2E8F0)',
+      isImage: kind === 'image' && state !== 'error',
+      isFile: kind !== 'image' && state !== 'error',
+      isUploading: state === 'uploading',
+      isError: state === 'error',
+      metaColor: state === 'error' ? 'var(--semantic-danger)' : 'var(--fg3)',
+      progressWidth: (p.progress || 0) + '%',
+      removable: p.removable !== false,
+      onRemove: p.onRemove,
+      onRetry: p.onRetry
+    };
+  }
+}
+
+</script>
+</body>
+</html>
+
+<link rel="stylesheet" href="../../styles.css">

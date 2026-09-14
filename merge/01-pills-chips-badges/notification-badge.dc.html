@@ -1,0 +1,436 @@
+<!-- @dsCard group="Merge - pills-chips-badges" name="Notification Badge" subtitle="-> Pills, chips & badges" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+/* Transitions.dev — Notification badge (component contract) */
+:root {
+  --badge-slide-dur: var(--duration-slow); /* 220ms, nearest DS tier to source 260ms -- motion-sweep: kept (doc comment, not a literal duration) */
+  --badge-pop-dur: var(--duration-expand); /* 460ms, nearest DS tier to source 500ms -- motion-sweep: kept (doc comment, not a literal duration) */
+  --badge-pop-close-dur: var(--duration-base); /* 160ms, nearest DS tier to source 180ms -- motion-sweep: kept (doc comment, not a literal duration) */
+  --badge-fade-dur: var(--duration-sweep); /* 360ms, nearest DS tier to source 400ms -- motion-sweep: kept (doc comment, not a literal duration) */
+  --badge-fade-close-dur: var(--duration-base); /* 160ms, nearest DS tier to source 180ms -- motion-sweep: kept (doc comment, not a literal duration) */
+  --badge-blur: 2px;
+  --badge-offset-x: -8.2px;
+  --badge-offset-y: 12.4px;
+  --badge-slide-ease: var(--ease-out); /* exact match to source .22 1 .36 1 */
+  --badge-pop-ease: var(--ease-bounce-soft); /* nearest DS curve to source .34 1.36 .64 1 (delta .04 on p2) */
+  --badge-close-ease: var(--ease-standard); /* exact match to source .4 0 .2 1 */
+}
+@keyframes t-badge-slide-in {
+  from { transform: translate(var(--badge-offset-x), var(--badge-offset-y)); }
+  to   { transform: translate(0, 0); }
+}
+.t-badge { position: absolute; top: -6px; right: -8px; pointer-events: none; will-change: transform; }
+.t-badge[data-open="true"] { animation: t-badge-slide-in calc(var(--badge-slide-dur) * var(--anim-mult, 1)) var(--badge-slide-ease); }
+.t-badge-dot {
+  display: block; transform-origin: center; transform: scale(1); opacity: 1; filter: blur(0);
+  transition:
+    transform calc(var(--badge-pop-dur) * var(--anim-mult, 1)) var(--badge-pop-ease),
+    opacity   calc(var(--badge-fade-dur) * var(--anim-mult, 1)) var(--badge-pop-ease),
+    filter    calc(var(--badge-pop-dur) * var(--anim-mult, 1)) var(--badge-pop-ease);
+  will-change: transform, opacity, filter;
+}
+.t-badge[data-open="false"] .t-badge-dot {
+  transform: scale(0); opacity: 0; filter: blur(var(--badge-blur));
+  transition:
+    transform calc(var(--badge-pop-close-dur) * var(--anim-mult, 1)) var(--badge-close-ease),
+    opacity   calc(var(--badge-fade-close-dur) * var(--anim-mult, 1)) var(--badge-close-ease),
+    filter    calc(var(--badge-pop-close-dur) * var(--anim-mult, 1)) var(--badge-close-ease);
+}
+/* Dot skin — Deha pill language: grid texture, top sheen, bottom shade */
+.t-badge-dot {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9999px;
+  font-family: 'Montserrat'; font-size: 10.5px; font-weight: 900; line-height: 18px;
+  text-align: center; color: #fff; font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(15,23,42,0.18),
+    inset 0 0 0 1px rgba(15,23,42,0.10),
+    0 0 0 2px var(--t-badge-ring, #FFFFFF);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+.t-badge-dot--sm { min-width: 10px; height: 10px; padding: 0; }
+.t-badge-dot--lg { min-width: 22px; height: 22px; line-height: 22px; font-size: 11.5px; }
+.t-badge--pulse .t-badge-dot::after {
+  content: ''; position: absolute; inset: 0; border-radius: 9999px;
+  box-shadow: 0 0 0 0 currentColor; animation: t-badge-pulse calc(1800ms * var(--anim-mult, 1)) var(--ease-out) infinite; /* motion-sweep: kept -- 1800ms decorative pulse period has no matching DS duration tier */
+}
+@keyframes t-badge-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.5); }
+  70%  { box-shadow: 0 0 0 9px rgba(239,68,68,0); }
+  100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+}
+html.dark .t-badge-dot { --t-badge-ring: #0B1220; }
+@media (prefers-reduced-motion: reduce) {
+  .t-badge, .t-badge-dot, .t-badge-dot::after { animation: none !important; transition: none !important; }
+}
+/* trigger surfaces */
+.nb-trigger {
+  position: relative; display: inline-grid; place-items: center; width: 44px; height: 44px;
+  border-radius: 14px; border: none; cursor: pointer; background: #FFFFFF; color: #334155;
+  box-shadow: inset 0 0 0 1px rgba(15,23,42,0.12), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 0 rgba(15,23,42,0.10);
+  transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nb-trigger:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(15,23,42,0.14), inset 0 1px 0 rgba(255,255,255,0.7), inset 0 -2px 0 rgba(15,23,42,0.10), 0 6px 18px -6px rgba(15,23,42,0.22); }
+}
+.nb-trigger:active { transform: scale(0.95) translateY(-1px); transition: transform var(--duration-fast) var(--ease-press-calm); }
+.nb-trigger:focus-visible { outline: 2px solid var(--brand-primary, #10B981); outline-offset: 2px; }
+.nb-trigger .material-icons { font-size: 21px; }
+.nb-trigger--dark { background: #0F172A; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -2px 0 rgba(0,0,0,0.35); }
+.nb-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+html.dark .nb-trigger { background: #1E293B; color: #E2E8F0; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 -2px 0 rgba(0,0,0,0.3); }
+body { margin: 0; background: #F1F5F9; }
+a { color: #10B981; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) {
+  a:hover { color: #059669; }
+}
+</style>
+</helmet>
+<div style="min-height: 100%; padding: 32px; background: #F1F5F9; font-family: 'Montserrat'; box-sizing: border-box; display: flex; justify-content: center;">
+  <div style="width: 760px; display: flex; flex-direction: column; gap: 20px;">
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span class="label" style="color: #94A3B8;">Deha · Components</span>
+      <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+        <h1 style="margin: 0; font-size: 30px; font-weight: 900; letter-spacing: -0.02em; color: #0F172A;">notification-badge</h1>
+        <span class="badge tag"><span class="material-icons">bolt</span> slide + pop</span>
+      </div>
+      <p style="margin: 0; max-width: 58ch; font-size: 13px; font-weight: 500; color: #64748B; text-wrap: pretty;">An absolutely-anchored count dot that slides into its trigger and pops open. Only the badge moves; the trigger stays put. Toggle <span class="mono">data-open</span> to drive it.</p>
+    </div>
+
+    <div class="pills-row" role="tablist">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <span class="pill-tab {{ v.cls }}" style="cursor: pointer; user-select: none; border: 1px solid {{ v.bd }}; color: {{ v.fg }}; background: {{ v.bg }}" onClick="{{ v.select }}">{{ v.label }}</span>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isBell }}" hint-placeholder-val="{{ true }}">
+      <div class="shell">
+        <div class="card-inner" style="padding: 26px;">
+          <div class="card-name" style="font-size: 15px; font-weight: 900; color: #0F172A;">App bar & toolbar icons</div>
+          <div class="card-desc" style="margin: 4px 0 20px; font-size: 12px; color: #64748B;">Click any trigger to clear its badge. Anchored at top -6px / right -8px.</div>
+          <div class="nb-row">
+            <sc-for list="{{ bellTriggers }}" as="t" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 9px; width: 92px;">
+                <button class="nb-trigger" onClick="{{ t.toggle }}">
+                  <span class="material-icons">{{ t.icon }}</span>
+                  <span class="t-badge" data-open="{{ t.open }}">
+                    <span class="t-badge-dot" style="background-color: {{ t.color }}">{{ t.text }}</span>
+                  </span>
+                </button>
+                <span class="mono" style="font-size: 10px; color: #94A3B8; text-align: center;">{{ t.note }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isNav }}" hint-placeholder-val="{{ false }}">
+      <div class="shell">
+        <div class="card-inner" style="padding: 22px;">
+          <div class="card-name" style="font-size: 15px; font-weight: 900; color: #0F172A;">Sidebar navigation</div>
+          <div class="card-desc" style="margin: 4px 0 18px; font-size: 12px; color: #64748B;">Badge rides the item icon; selecting an item marks it read.</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+              <div onClick="{{ n.read }}" style="display: flex; align-items: center; gap: 14px; padding: 11px 14px; border-radius: 14px; cursor: pointer; transition: background var(--duration-base); background-color: {{ n.bg }}" style-hover="background: #F1F5F9">
+                <span style="position: relative; display: grid; place-items: center; width: 32px; height: 32px; color: #475569;">
+                  <span class="material-icons" style="font-size: 20px;">{{ n.icon }}</span>
+                  <span class="t-badge" data-open="{{ n.open }}" style="top: -2px; right: -2px;">
+                    <span class="t-badge-dot t-badge-dot--sm" style="background-color: #EF4444"></span>
+                  </span>
+                </span>
+                <span style="flex: 1; font-size: 13.5px; font-weight: 700; color: #0F172A;">{{ n.label }}</span>
+                <span class="badge tag">{{ n.count }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAvatar }}" hint-placeholder-val="{{ false }}">
+      <div class="shell">
+        <div class="card-inner" style="padding: 22px;">
+          <div class="card-name" style="font-size: 15px; font-weight: 900; color: #0F172A;">Avatars & inbox rows</div>
+          <div class="card-desc" style="margin: 4px 0 18px; font-size: 12px; color: #64748B;">Presence dot and unread count share the same anchor mechanics.</div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <sc-for list="{{ chats }}" as="c" hint-placeholder-count="3">
+              <div onClick="{{ c.read }}" style="display: flex; align-items: center; gap: 14px; padding: 12px; border-radius: 16px; background: #F8FAFC; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06); cursor: pointer;" style-hover="background: #F1F5F9">
+                <span style="position: relative; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; font-size: 14px; font-weight: 900; color: #fff; background-color: {{ c.color }}">
+                  {{ c.initials }}
+                  <span class="t-badge" data-open="{{ c.online }}" style="top: auto; bottom: -2px; right: -2px;">
+                    <span class="t-badge-dot t-badge-dot--sm" style="background-color: #10B981"></span>
+                  </span>
+                </span>
+                <span style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 13.5px; font-weight: 800; color: #0F172A;">{{ c.name }}</span>
+                  <span style="font-size: 12px; font-weight: 500; color: #64748B;">{{ c.msg }}</span>
+                </span>
+                <span style="position: relative; display: grid; place-items: center; width: 26px; height: 26px;">
+                  <span class="t-badge" data-open="{{ c.open }}" style="top: 2px; right: 0;">
+                    <span class="t-badge-dot" style="background-color: #10B981">{{ c.count }}</span>
+                  </span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTab }}" hint-placeholder-val="{{ false }}">
+      <div class="shell">
+        <div class="card-inner" style="padding: 26px;">
+          <div class="card-name" style="font-size: 15px; font-weight: 900; color: #0F172A;">Tabs, pills & buttons</div>
+          <div class="card-desc" style="margin: 4px 0 20px; font-size: 12px; color: #64748B;">On text triggers the badge sits outside the pill and keeps the same spring.</div>
+          <span class="btn-label">Tab bar</span>
+          <div class="pills-row" style="margin-bottom: 22px;">
+            <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+              <span onClick="{{ t.read }}" class="pill-tab {{ t.cls }}" style="position: relative; cursor: pointer; border: 1px solid {{ t.bd }}; color: {{ t.fg }}; background: {{ t.bg }}">
+                {{ t.label }}
+                <span class="t-badge" data-open="{{ t.open }}">
+                  <span class="t-badge-dot" style="background-color: {{ t.color }}">{{ t.count }}</span>
+                </span>
+              </span>
+            </sc-for>
+          </div>
+          <span class="btn-label">Buttons</span>
+          <div class="btn-row">
+            <button class="btn-primary" style="position: relative;" onClick="{{ clearCart }}">
+              <span class="material-icons btn-mi">shopping_bag</span> Cart
+              <span class="t-badge" data-open="{{ cartOpen }}" style="top: -8px; right: -10px;">
+                <span class="t-badge-dot t-badge-dot--lg" style="background: #0F172A">{{ cartCount }}</span>
+              </span>
+            </button>
+            <button class="btn-glass" style="position: relative;" onClick="{{ clearFilters }}">
+              <span class="material-icons btn-mi">filter_list</span> Filters
+              <span class="t-badge" data-open="{{ filterOpen }}" style="top: -7px; right: -9px;">
+                <span class="t-badge-dot" style="background: #10B981">{{ filterCount }}</span>
+              </span>
+            </button>
+            <button class="btn-inverse" style="position: relative;" onClick="{{ clearReview }}">
+              <span class="material-icons btn-mi">rate_review</span> Review
+              <span class="t-badge t-badge--pulse" data-open="{{ reviewOpen }}" style="top: -7px; right: -9px;">
+                <span class="t-badge-dot" style="background: #EF4444; position: relative;">{{ reviewCount }}</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isAnatomy }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="shell">
+          <div class="card-inner" style="padding: 26px; display: flex; gap: 28px; align-items: center; flex-wrap: wrap;">
+            <div style="display: grid; place-items: center; width: 150px; height: 130px; border-radius: 18px; background: #F8FAFC; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06);">
+              <button class="nb-trigger nb-trigger--dark" style="width: 54px; height: 54px; border-radius: 18px;" onClick="{{ togglePlayground }}">
+                <span class="material-icons" style="font-size: 25px;">notifications</span>
+                <span class="t-badge" data-open="{{ playOpen }}" style="top: -7px; right: -9px;">
+                  <span class="t-badge-dot t-badge-dot--lg" style="background: #EF4444">{{ playLabel }}</span>
+                </span>
+              </button>
+            </div>
+            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="btn-label">State</span>
+                <span class="mono" style="font-size: 12px; color: #334155;">{{ playState }}</span>
+              </div>
+              <div class="btn-row">
+                <button class="btn-task" style="--fbtn: #10B981;" onClick="{{ incPlay }}"><span class="material-icons">add</span> Incoming</button>
+                <button class="btn-task" style="--fbtn: #64748B;" onClick="{{ decPlay }}"><span class="material-icons">remove</span> Read one</button>
+                <button class="btn-task" style="--fbtn: #0F172A;" onClick="{{ clearPlay }}"><span class="material-icons">done_all</span> Clear all</button>
+              </div>
+              <div class="pills-row">
+                <span class="pill-priority" style="cursor: pointer;" onClick="{{ speedNormal }}"><span class="dot" style="background: #10B981;"></span> 1×</span>
+                <span class="pill-priority" style="cursor: pointer;" onClick="{{ speedSlow }}"><span class="dot" style="background: #EAB308;"></span> 0.4×</span>
+                <span class="pill-priority" style="cursor: pointer;" onClick="{{ speedCrawl }}"><span class="dot" style="background: #EF4444;"></span> 0.15×</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="shell">
+          <div class="card-inner" style="padding: 24px;">
+            <span class="btn-label">Transition tokens</span>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 24px; margin-top: 10px;">
+              <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="8">
+                <div style="display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #F1F5F9;">
+                  <span class="mono" style="font-size: 11px; color: #64748B;">{{ t.name }}</span>
+                  <span class="mono" style="font-size: 11px; color: #0F172A; font-weight: 700;">{{ t.value }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:840,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  state = {
+    variant: 'bell',
+    speed: 1,
+    bells: { notifications: 3, mail: 12, chat: 1, campaign: 0 },
+    nav: { inbox: 4, deals: 2, tasks: 9, settings: 0 },
+    chats: { ay: 3, mk: 1, sd: 7 },
+    tabs: { all: 0, unread: 5, mentions: 2 },
+    cart: 2, filters: 3, review: 1,
+    play: 1,
+  };
+
+  componentDidMount() { this.applySpeed(this.state.speed); }
+  applySpeed(m) { document.documentElement.style.setProperty('--anim-mult', String(1 / m)); }
+  setSpeed(m) { this.applySpeed(m); this.setState({ speed: m }); }
+
+  cap(n) { return n > 9 ? '9+' : String(n); }
+
+  renderVals() {
+    const s = this.state;
+    const variants = [
+      ['bell', 'Icon triggers'], ['nav', 'Navigation'], ['avatar', 'Avatars & inbox'],
+      ['tab', 'Tabs & buttons'], ['anatomy', 'States & tokens'],
+    ].map(([id, label]) => ({
+      id, label,
+      cls: s.variant === id ? 'active' : '',
+      bg: s.variant === id ? '#10B981' : '#FFFFFF',
+      fg: s.variant === id ? '#FFFFFF' : '#64748B',
+      bd: s.variant === id ? 'transparent' : '#CBD5E1',
+      select: () => this.setState({ variant: id }),
+    }));
+
+    const bellMeta = {
+      notifications: { icon: 'notifications', color: '#EF4444', note: 'count · danger' },
+      mail: { icon: 'mail', color: '#0F172A', note: 'overflow · 9+' },
+      chat: { icon: 'forum', color: '#10B981', note: 'single · brand' },
+      campaign: { icon: 'campaign', color: '#F97316', note: 'zero · hidden' },
+    };
+    const bellTriggers = Object.keys(bellMeta).map((k) => {
+      const m = bellMeta[k], n = s.bells[k];
+      return {
+        icon: m.icon, color: m.color, note: m.note,
+        text: this.cap(n),
+        open: n > 0 ? 'true' : 'false',
+        toggle: () => this.setState((p) => ({ bells: { ...p.bells, [k]: p.bells[k] > 0 ? 0 : 3 } })),
+      };
+    });
+
+    const navMeta = {
+      inbox: { icon: 'inbox', label: 'Inbox' },
+      deals: { icon: 'handshake', label: 'Deals' },
+      tasks: { icon: 'task_alt', label: 'Tasks' },
+      settings: { icon: 'settings', label: 'Settings' },
+    };
+    const navItems = Object.keys(navMeta).map((k) => {
+      const n = s.nav[k];
+      return {
+        icon: navMeta[k].icon, label: navMeta[k].label, count: this.cap(n),
+        open: n > 0 ? 'true' : 'false',
+        bg: n > 0 ? '#F8FAFC' : 'transparent',
+        read: () => this.setState((p) => ({ nav: { ...p.nav, [k]: p.nav[k] > 0 ? 0 : 4 } })),
+      };
+    });
+
+    const chatMeta = {
+      ay: { initials: 'AY', name: 'Ayşe Yılmaz', msg: 'Sözleşme taslağını gönderdim.', color: '#EC4899', online: 'true' },
+      mk: { initials: 'MK', name: 'Mert Kaya', msg: 'Yarın 12:00 uygun mu?', color: '#3B82F6', online: 'true' },
+      sd: { initials: 'SD', name: 'Selin Demir', msg: 'Değerleme raporu hazır.', color: '#0F172A', online: 'false' },
+    };
+    const chats = Object.keys(chatMeta).map((k) => {
+      const n = s.chats[k];
+      return {
+        ...chatMeta[k], count: this.cap(n),
+        open: n > 0 ? 'true' : 'false',
+        read: () => this.setState((p) => ({ chats: { ...p.chats, [k]: p.chats[k] > 0 ? 0 : 3 } })),
+      };
+    });
+
+    const tabMeta = {
+      all: { label: 'Tümü', color: '#0F172A' },
+      unread: { label: 'Okunmayan', color: '#EF4444' },
+      mentions: { label: 'Bahsedilenler', color: '#10B981' },
+    };
+    const tabs = Object.keys(tabMeta).map((k) => {
+      const n = s.tabs[k];
+      return {
+        label: tabMeta[k].label, color: tabMeta[k].color, count: this.cap(n),
+        open: n > 0 ? 'true' : 'false',
+        cls: k === 'all' ? 'active' : '',
+        bg: k === 'all' ? '#10B981' : '#FFFFFF',
+        fg: k === 'all' ? '#FFFFFF' : '#64748B',
+        bd: k === 'all' ? 'transparent' : '#CBD5E1',
+        read: () => this.setState((p) => ({ tabs: { ...p.tabs, [k]: p.tabs[k] > 0 ? 0 : 5 } })),
+      };
+    });
+
+    const tokens = [
+      { name: '--badge-slide-dur', value: '260ms' }, // motion-sweep: kept (displayed doc value, actual timing uses var(--duration-slow))
+      { name: '--badge-pop-dur', value: '500ms' }, // motion-sweep: kept (displayed doc value, actual timing uses var(--duration-expand))
+      { name: '--badge-pop-close-dur', value: '180ms' }, // motion-sweep: kept (displayed doc value, actual timing uses var(--duration-base))
+      { name: '--badge-fade-dur', value: '400ms' }, // motion-sweep: kept (displayed doc value, actual timing uses var(--duration-sweep))
+      { name: '--badge-fade-close-dur', value: '180ms' }, // motion-sweep: kept (displayed doc value, actual timing uses var(--duration-base))
+      { name: '--badge-blur', value: '2px' },
+      { name: '--badge-offset-x / y', value: '-8.2px / 12.4px' },
+      { name: '--badge-slide-ease', value: '.22 1 .36 1' },
+      { name: '--badge-pop-ease', value: '.34 1.36 .64 1' },
+      { name: '--badge-close-ease', value: '.4 0 .2 1' },
+    ];
+
+    return {
+      variants, bellTriggers, navItems, chats, tabs, tokens,
+      isBell: s.variant === 'bell', isNav: s.variant === 'nav',
+      isAvatar: s.variant === 'avatar', isTab: s.variant === 'tab',
+      isAnatomy: s.variant === 'anatomy',
+
+      cartCount: this.cap(s.cart), cartOpen: s.cart > 0 ? 'true' : 'false',
+      clearCart: () => this.setState((p) => ({ cart: p.cart > 0 ? 0 : 2 })),
+      filterCount: this.cap(s.filters), filterOpen: s.filters > 0 ? 'true' : 'false',
+      clearFilters: () => this.setState((p) => ({ filters: p.filters > 0 ? 0 : 3 })),
+      reviewCount: this.cap(s.review), reviewOpen: s.review > 0 ? 'true' : 'false',
+      clearReview: () => this.setState((p) => ({ review: p.review > 0 ? 0 : 1 })),
+
+      playLabel: this.cap(s.play),
+      playOpen: s.play > 0 ? 'true' : 'false',
+      playState: 'data-open="' + (s.play > 0) + '"  ·  count ' + s.play + '  ·  speed ' + s.speed + '×',
+      togglePlayground: () => this.setState((p) => ({ play: p.play > 0 ? 0 : 1 })),
+      incPlay: () => this.setState((p) => ({ play: Math.min(p.play + 1, 99) })),
+      decPlay: () => this.setState((p) => ({ play: Math.max(p.play - 1, 0) })),
+      clearPlay: () => this.setState({ play: 0 }),
+      speedNormal: () => this.setSpeed(1),
+      speedSlow: () => this.setSpeed(0.4),
+      speedCrawl: () => this.setSpeed(0.15),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

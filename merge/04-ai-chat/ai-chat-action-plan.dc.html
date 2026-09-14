@@ -1,0 +1,405 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Action Plan" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400..700,0..1,0&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+
+<style>
+  body { margin: 0; background: #F8FAFC; }
+  a { color: var(--brand-primary-600); text-decoration: none; }
+  a:hover { color: var(--brand-primary-700); }
+  @keyframes apIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes apDraw { to { stroke-dashoffset: 0; } }
+  @keyframes apSpin { to { transform: rotate(360deg); } }
+  @keyframes apRise { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+  .ap-item { animation: apIn calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+  .ap-item { border: 0 solid var(--border-hairline); }
+  .ap-item + .ap-item { border-top-width: 1px; border-radius: 0 0 12px 12px; }
+  .ap-item:has(+ .ap-item) { border-radius: 12px 12px 0 0; }
+  .ap-item:nth-child(1) { animation-delay: calc(40ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+  .ap-item:nth-child(2) { animation-delay: calc(110ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+  .ap-item:nth-child(3) { animation-delay: calc(var(--duration-180) * var(--anim-mult, 1)); }
+  .ap-item:nth-child(4) { animation-delay: calc(250ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+  .ap-item:nth-child(5) { animation-delay: calc(var(--duration-320) * var(--anim-mult, 1)); }
+  .ap-item:nth-child(6) { animation-delay: calc(390ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+  .ap-item.is-off .ap-txt { color: var(--fg4); }
+  .ap-item .ap-ic { transition: transform calc(var(--duration-slow) * var(--anim-mult,1)) var(--ease-spring), color calc(var(--duration-200) * var(--anim-mult,1)); }
+  .ap-item.is-off .ap-ic { color: #CBD5E1; }
+  .ap-item.is-on .ap-ic { animation: apPop calc(var(--duration-320) * var(--anim-mult,1)) var(--ease-spring) both; }
+  @keyframes apPop { 0% { transform: scale(.7); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+  .mb-btn.is-active { background: #F1F5F9; border-color: #94A3B8; }
+  html.dark .mb-btn.is-active { background: #0F172A; border-color: #64748B; }
+  .ap-footer { animation: apRise calc(380ms * var(--anim-mult,1)) var(--ease-out) both; } /* motion-sweep: kept */
+  .ap-spin { animation: apSpin calc(800ms * var(--anim-mult,1)) linear infinite; } /* motion-sweep: kept */
+  .ap-check-draw path { stroke-dasharray: 28; stroke-dashoffset: 28; animation: apDraw calc(var(--duration-420) * var(--anim-mult,1)) calc(80ms * var(--anim-mult,1)) var(--ease-draw) forwards; } /* motion-sweep: kept */
+
+  /* 44px hit layers (DS rule): .pill-tab/.mb-btn/.mb-send are locked
+     data-ds classes whose real box is under 44px in this component's
+     usage; adding position:relative + a centered ::after hit target here
+     (new selectors, no edits inside the locked <style data-ds =...>
+     blocks) satisfies the probe's hit-under-44 check without resizing
+     the visible control. */
+  .pill-tab, .mb-btn, .mb-send, button[aria-label="Cancel edit"], .mb .btn-green, .mb .btn-yellow, .mb .btn-red { position: relative; }
+  .pill-tab::after, .mb-btn::after, .mb-send::after, button[aria-label="Cancel edit"]::after,
+  .mb .btn-green::after, .mb .btn-yellow::after, .mb .btn-red::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%;
+    width: 44px; height: 44px; transform: translate(-50%, -50%);
+  }
+
+  /* :focus-visible (DS rule): these three classes are not covered by the
+     shared :where(...) ring in the locked block above (that ring lists
+     .btn-green/.btn-yellow/.btn-red/.btn-primary/.btn-inverse/.btn-glass/
+     .btn-text/.ap-edge-btn/.ap-thumb/.ap-submit/.ie-act only), so the
+     ring is added here for this component's own controls. */
+  .pill-tab:focus-visible, .mb-btn:focus-visible, .mb-send:focus-visible, button[aria-label="Cancel edit"]:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--focus-ring-color, var(--brand-primary));
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  /* prefers-reduced-motion (DS rule): zero this component's own
+     animated selectors; the locked data-ds blocks handle their own
+     families via --anim-mult already, this covers the local keyframes
+     that aren't wrapped by another component's reduced-motion block. */
+  @media (prefers-reduced-motion: reduce) {
+    .ap-item, .ap-item.is-on .ap-ic, .ap-footer, .ap-spin, .ap-check-draw path {
+      animation: none !important;
+    }
+    .ap-item .ap-ic {
+      transition: none !important;
+    }
+  }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="min-height: 100vh; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; gap: 20px; font-family: 'Montserrat', sans-serif; background: #FFFFFF;">
+
+  <div style="width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 10px;">
+    <span class="pills-label" style="margin: 0;">Usage areas</span>
+    <div class="pills-row">
+      <sc-for list="{{ pills }}" as="p" hint-placeholder-count="5">
+        <button type="button" class="pill-tab {{ p.cls }}" onClick="{{ p.select }}" style="border: 1px solid #CBD5E1; cursor: pointer; gap: 6px;">
+          <span class="material-icons" style="font-size: 14px;">{{ p.icon }}</span>
+          {{ p.label }}
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="shell" style="width: 100%; max-width: 620px; box-sizing: border-box;">
+    <div class="mb {{ mbState }} card-inner" style="--acc: {{ accent }}; padding: 14px;">
+
+      <div style="display: flex; align-items: center; gap: 9px;">
+        <div class="icon-badge icon-badge--sm icon-badge--glow" style="--icon-c: var(--acc);">
+          <span class="material-icons">{{ icon }}</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px; flex: 1; min-width: 0;">
+          <span style="font-size: 13px; font-weight: 900; color: var(--fg1); letter-spacing: -0.02em; white-space: nowrap;">{{ title }}</span>
+          <span style="font-size: 11px; font-weight: 600; color: var(--fg4); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ kicker }}</span>
+        </div>
+        <span class="badge tag" style="flex-shrink: 0;">
+          <span class="material-icons">check_circle</span>{{ doneCount }} / {{ totalCount }}
+        </span>
+      </div>
+
+      <div style="height: 1px; background: var(--border-hairline); margin: 11px 0;"></div>
+
+      <sc-if value="{{ isGenerating }}" hint-placeholder-val="{{ false }}">
+        <div class="mb-skel" style="position: static; inset: auto; min-height: 128px; justify-content: center;">
+          <div class="skel-bar w1"></div>
+          <div class="skel-bar w3"></div>
+          <div class="skel-bar w2"></div>
+          <div class="skel-bar w1"></div>
+          <div class="skel-bar w3"></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 11px;">
+          <p style="margin: 0; font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--fg2); text-wrap: pretty;">
+            <strong style="font-weight: 800; color: var(--fg1);">Summary:</strong> {{ summary }}
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 0;">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="5">
+              <div class="ap-item is-on" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 8px; border-radius: 10px; background: transparent; font-family: 'Montserrat', sans-serif;">
+                <span class="material-symbols-outlined ap-ic" style="font-size: 19px; color: var(--acc); line-height: 1; flex-shrink: 0;">{{ it.icon }}</span>
+                <span class="ap-txt" style="flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: var(--fg2); line-height: 1.4; transition: color calc(var(--duration-200) * var(--anim-mult,1));">{{ it.text }}</span>
+                <sc-if value="{{ it.tag }}" hint-placeholder-val="{{ true }}">
+                  <span class="badge tag" style="flex-shrink: 0;">{{ it.tag }}</span>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <div class="pills-row" style="gap: 6px;">
+            <sc-for list="{{ tags }}" as="t" hint-placeholder-count="3">
+              <span class="badge tag"><span class="material-icons">{{ t.icon }}</span>{{ t.label }}</span>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ footerVisible }}" hint-placeholder-val="{{ true }}">
+          <div class="ap-footer" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 11px 12px; border-radius: 14px; background: var(--bg-chip); box-shadow: var(--shadow-recessed);">
+            <div style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 180px;">
+              <span style="font-size: 13px; font-weight: 800; color: var(--fg2);">{{ footerTitle }}</span>
+              <span style="font-size: 12px; font-weight: 500; color: var(--fg3);">{{ footerSub }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" class="mb-btn {{ editBtnCls }}" onClick="{{ toggleEdit }}" title="Edit plan">
+                <span class="material-icons">edit</span>Edit
+              </button>
+              <button type="button" class="{{ ctaClass }}" onClick="{{ approve }}" style="min-width: 148px;">
+                <sc-if value="{{ ctaIdle }}" hint-placeholder-val="{{ true }}">
+                  <span style="display: inline-flex; align-items: center; gap: 7px;">
+                    <span class="material-icons" style="font-size: 16px;">{{ ctaIcon }}</span>{{ ctaLabel }}
+                  </span>
+                </sc-if>
+                <sc-if value="{{ ctaLoading }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: inline-flex; align-items: center; gap: 8px;">
+                    <svg class="ap-spin" width="15" height="15" viewBox="0 0 32 32" fill="none" style="display: block;">
+                      <circle cx="16" cy="16" r="12" stroke="rgba(255,255,255,0.25)" stroke-width="4"></circle>
+                      <circle cx="16" cy="16" r="12" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-dasharray="30 90"></circle>
+                    </svg>{{ ctaBusyLabel }}
+                  </span>
+                </sc-if>
+                <sc-if value="{{ ctaDone }}" hint-placeholder-val="{{ false }}">
+                  <span style="display: inline-flex; align-items: center; gap: 7px;">
+                    <svg class="ap-check-draw" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block;">
+                      <path d="M5 12l5 5L20 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>{{ ctaDoneLabel }}
+                  </span>
+                </sc-if>
+              </button>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
+            <div class="ap-footer" style="display: flex; align-items: center; gap: 8px; padding: 7px 7px 7px 14px; border-radius: 9999px; background: var(--bg-chip); box-shadow: var(--shadow-recessed);">
+              <input class="mb-input" type="text" placeholder="What should change?" onInput="{{ onEditInput }}" onKeyDown="{{ onEditKey }}" value="{{ editValue }}" autoFocus="{{ true }}" style="min-height: 0; flex: 1; min-width: 0; padding: 0; font-size: 13px; font-weight: 600;">
+              <button type="button" onClick="{{ cancelEdit }}" aria-label="Cancel edit" title="Cancel" style="width: 28px; height: 28px; flex-shrink: 0; display: grid; place-items: center; border-radius: 9999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--fg3); cursor: pointer; transition: background calc(var(--duration-140) * var(--anim-mult,1)), transform calc(var(--duration-instant) * var(--anim-mult,1)) var(--ease-out);" style-hover="background: #F8FAFC; color: var(--fg1);" style-active="transform: scale(0.92);">
+                <span class="material-icons" style="font-size: 15px;">close</span>
+              </button>
+              <button type="button" class="mb-send" onClick="{{ sendEdit }}" aria-label="Send change" style="width: 28px; height: 28px; flex-shrink: 0;">
+                <span class="material-icons" style="font-size: 15px;">arrow_upward</span>
+              </button>
+            </div>
+          </sc-if>
+
+          <span class="hint" style="text-align: left;">{{ caveat }}</span>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#10B981&quot;,&quot;#F97316&quot;,&quot;#3B82F6&quot;,&quot;#EF4444&quot;],&quot;section&quot;:&quot;Appearance&quot;},&quot;showTags&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;autoGenerate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const VARIANTS = [
+  {
+    key: 'build', label: 'Build plan', pillIcon: 'rocket_launch', icon: 'rocket_launch', accent: '#10B981',
+    title: 'Build plan', kicker: 'Generated from your last 3 messages',
+    summary: 'Smart packing list app that auto-generates and updates based on destination weather, so users don\u2019t have to plan manually.',
+    items: [
+      { text: 'Trip setup form to collect destination, dates, and trip type', tag: 'Frontend' },
+      { text: 'Weather API integration to fetch and cache forecasts', tag: 'Backend' },
+      { text: 'Packing list generation engine using rule-based logic' },
+      { text: 'Editable packing list UI with live sync', tag: 'Frontend' },
+      { text: 'Real-time updates when forecast changes' },
+    ],
+    tags: [{ icon: 'schedule', label: '~3 sprints' }, { icon: 'group', label: '2 engineers' }, { icon: 'flag', label: 'MVP scope' }],
+    footerTitle: 'Ready to build?', footerSub: 'Approve the plan when you\u2019re ready.',
+    ctaLabel: 'Approve plan', ctaIcon: 'check', ctaBusy: 'Approving\u2026', ctaDoneLabel: 'Plan approved',
+    ctaClass: 'btn-green', doneTitle: 'Plan approved', doneSub: '5 tasks pushed to your board.',
+    caveat: 'AI drafted this plan from your conversation. Review each step before approving.',
+  },
+  {
+    key: 'lead', label: 'Lead follow-up', pillIcon: 'call', icon: 'call', accent: '#F97316',
+    title: 'Follow-up sequence', kicker: 'Hot lead \u00b7 Ayşe Demir \u00b7 Kadıköy 3+1',
+    summary: 'Five-touch follow-up over eight days to move a hot valuation lead to a listing appointment before the weekend.',
+    items: [
+      { text: 'Call within the hour while the valuation is still open', tag: 'Today' },
+      { text: 'Send comparable sales for the same building', tag: 'Today' },
+      { text: 'WhatsApp a short valuation summary with next steps' },
+      { text: 'Book the listing appointment for Saturday morning', tag: 'Day 3' },
+      { text: 'Reminder call the evening before the appointment', tag: 'Day 8' },
+    ],
+    tags: [{ icon: 'trending_up', label: 'Score 92' }, { icon: 'volunteer_activism', label: 'Nurture' }, { icon: 'sell', label: 'Listing' }],
+    footerTitle: 'Start the sequence?', footerSub: 'Steps are queued to your task board.',
+    ctaLabel: 'Start sequence', ctaIcon: 'play_arrow', ctaBusy: 'Queueing\u2026', ctaDoneLabel: 'Sequence live',
+    ctaClass: 'btn-green', doneTitle: 'Sequence live', doneSub: 'First call scheduled for 14:30.',
+    caveat: 'Contact times respect your quiet hours. Edit any step before starting.',
+  },
+  {
+    key: 'campaign', label: 'Campaign', pillIcon: 'campaign', icon: 'campaign', accent: '#EAB308',
+    title: 'Campaign plan', kicker: 'Q4 listing push \u00b7 4 channels',
+    summary: 'Four-week campaign to promote six new listings, weighted toward the channels that produced last quarter\u2019s cheapest leads.',
+    items: [
+      { text: 'Shoot and edit reels for the three highest-priced listings', tag: 'Week 1' },
+      { text: 'Launch retargeting set for site visitors who viewed 2+ listings', tag: 'Ads' },
+      { text: 'Weekly newsletter with a neighbourhood price snapshot' },
+      { text: 'Landing page per listing with a valuation call to action', tag: 'Web' },
+      { text: 'Review cost per lead at day 14 and reallocate budget' },
+    ],
+    tags: [{ icon: 'payments', label: '₺45K budget' }, { icon: 'schedule', label: '4 weeks' }, { icon: 'insights', label: 'Target 120 leads' }],
+    footerTitle: 'Schedule this campaign?', footerSub: 'Nothing goes live until you confirm.',
+    ctaLabel: 'Schedule campaign', ctaIcon: 'event_available', ctaBusy: 'Scheduling\u2026', ctaDoneLabel: 'Campaign set',
+    ctaClass: 'btn-yellow', doneTitle: 'Campaign scheduled', doneSub: 'Starts Monday 09:00.',
+    caveat: 'Budget split is a recommendation based on last quarter\u2019s performance.',
+  },
+  {
+    key: 'meeting', label: 'Meeting prep', pillIcon: 'event', icon: 'event', accent: '#3B82F6',
+    title: 'Meeting prep', kicker: 'Listing presentation \u00b7 Thu 11:00',
+    summary: 'Everything to prepare before Thursday\u2019s listing presentation, ordered so the pricing story is ready first.',
+    items: [
+      { text: 'Pull the last six comparable sales within 500 m', tag: '15 min' },
+      { text: 'Build the pricing scenario deck with three price bands', tag: '40 min' },
+      { text: 'Confirm photographer availability for next week' },
+      { text: 'Print the commission and marketing plan one-pager' },
+    ],
+    tags: [{ icon: 'schedule', label: '1h 20m prep' }, { icon: 'person', label: '2 attendees' }, { icon: 'home_work', label: 'Beşiktaş' }],
+    footerTitle: 'Add prep to your calendar?', footerSub: 'Blocks land tomorrow afternoon.',
+    ctaLabel: 'Add to calendar', ctaIcon: 'calendar_add_on', ctaBusy: 'Adding\u2026', ctaDoneLabel: 'Added to calendar',
+    ctaClass: 'btn-green', doneTitle: 'Prep blocked out', doneSub: 'Wed 15:00\u201316:20 held.',
+    caveat: 'Times avoid your existing appointments. Move any block after adding.',
+  },
+  {
+    key: 'cleanup', label: 'Data cleanup', pillIcon: 'cleaning_services', icon: 'cleaning_services', accent: '#EF4444',
+    title: 'Cleanup plan', kicker: 'Destructive \u00b7 affects 1,284 records',
+    summary: 'Merge duplicates and archive stale contacts so pipeline reporting stops double counting. Archived records stay recoverable for 30 days.',
+    items: [
+      { text: 'Merge 214 duplicate contacts matched on phone number', tag: 'Merge' },
+      { text: 'Archive 640 leads with no activity in 18 months', tag: 'Archive' },
+      { text: 'Normalise 430 district names to the standard list' },
+      { text: 'Rebuild pipeline reports after the merge completes' },
+    ],
+    tags: [{ icon: 'warning', label: 'Irreversible after 30 days' }, { icon: 'backup', label: 'Snapshot taken' }],
+    footerTitle: 'Run the cleanup?', footerSub: 'A snapshot is taken before anything changes.',
+    ctaLabel: 'Run cleanup', ctaIcon: 'play_arrow', ctaBusy: 'Running\u2026', ctaDoneLabel: 'Cleanup done',
+    ctaClass: 'btn-red', doneTitle: 'Cleanup complete', doneSub: '854 records merged or archived.',
+    caveat: 'Review each step carefully. Archived records are recoverable for 30 days.',
+  },
+];
+
+class Component extends DCLogic {
+  state = { vi: 0, phase: 'ready', cta: 'idle', off: {}, editOpen: false, editValue: '', extra: {}, edited: false };
+
+  componentDidMount() {
+    if (this.props.autoGenerate) this.run(this.state.vi);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._c); }
+
+  run(vi) {
+    clearTimeout(this._t);
+    this.setState({ vi, phase: 'generating', cta: 'idle', editOpen: false, editValue: '', edited: false });
+    this._t = setTimeout(() => this.setState({ phase: 'ready' }), 1500);
+  }
+
+  sendEdit() {
+    const text = this.state.editValue.trim();
+    if (!text) return;
+    const idx = Math.min(this.state.vi, VARIANTS.length - 1);
+    clearTimeout(this._t);
+    this.setState({ editOpen: false, editValue: '', phase: 'generating', cta: 'idle' });
+    this._t = setTimeout(() => {
+      this.setState((s) => ({
+        phase: 'ready',
+        edited: true,
+        extra: { ...s.extra, [idx]: [...(s.extra[idx] || []), text] },
+      }));
+    }, 1500);
+  }
+
+  approve() {
+    if (this.state.cta !== 'idle') return;
+    clearTimeout(this._c);
+    this.setState({ cta: 'loading' });
+    this._c = setTimeout(() => this.setState({ cta: 'done' }), 1400);
+  }
+
+  renderVals() {
+    const idx = Math.min(this.state.vi, VARIANTS.length - 1);
+    const v = VARIANTS[idx];
+    const accent = this.props.accent || v.accent;
+    const done = this.state.cta === 'done';
+
+    const extra = (this.state.extra[idx] || []).map((t) => ({ text: t, tag: 'Your edit' }));
+    const all = v.items.concat(extra);
+    const items = all.map((it) => ({
+      text: it.text,
+      tag: this.props.showTags === false ? null : (it.tag || null),
+      icon: 'check_circle',
+    }));
+
+    return {
+      accent,
+      icon: v.icon,
+      title: v.title,
+      kicker: v.kicker,
+      summary: v.summary,
+      items,
+      tags: v.tags,
+      caveat: v.caveat,
+      totalCount: all.length,
+      doneCount: all.length,
+      kicker: this.state.edited ? 'Updated from your edit just now' : v.kicker,
+      editOpen: this.state.editOpen,
+      footerVisible: !this.state.editOpen,
+      editValue: this.state.editValue,
+      editBtnCls: this.state.editOpen ? 'is-active' : '',
+      toggleEdit: () => this.setState((s) => ({ editOpen: !s.editOpen })),
+      cancelEdit: () => this.setState({ editOpen: false, editValue: '' }),
+      onEditInput: (e) => this.setState({ editValue: e.target.value }),
+      onEditKey: (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendEdit(); }
+        if (e.key === 'Escape') this.setState({ editOpen: false, editValue: '' });
+      },
+      sendEdit: () => this.sendEdit(),
+      mbState: this.state.phase === 'generating' ? 'generating' : (done ? 'done' : ''),
+      isGenerating: this.state.phase === 'generating',
+      isReady: this.state.phase === 'ready',
+      footerTitle: done ? v.doneTitle : v.footerTitle,
+      footerSub: done ? v.doneSub : v.footerSub,
+      ctaClass: v.ctaClass,
+      ctaLabel: v.ctaLabel,
+      ctaIcon: v.ctaIcon,
+      ctaBusyLabel: v.ctaBusy,
+      ctaDoneLabel: v.ctaDoneLabel,
+      ctaIdle: this.state.cta === 'idle',
+      ctaLoading: this.state.cta === 'loading',
+      ctaDone: done,
+      approve: () => this.approve(),
+      regenerate: () => this.run(idx),
+      pills: VARIANTS.map((x, i) => ({
+        label: x.label,
+        icon: x.pillIcon,
+        cls: i === idx ? 'active' : '',
+        select: () => { if (i !== idx) this.run(i); },
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>

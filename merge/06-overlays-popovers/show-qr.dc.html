@@ -1,0 +1,302 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="Show QR" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+  html, body { background: var(--bg-app); }
+  a { color: var(--brand-primary); text-decoration: none; }
+  a:hover { color: var(--brand-primary-700); }
+  @keyframes qrShimmer { 0% { background-position: -180px 0; } 100% { background-position: 220px 0; } }
+  @keyframes qrPanelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    :root { --anim-mult: 0; }
+    [style*="qrShimmer"], [style*="qrPanelIn"] { animation: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;box-sizing:border-box;padding:40px 32px 56px;font-family:var(--font-display);background:var(--bg-app)">
+  <div style="max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="micro-label">Deha · Widgets</span>
+      <h1 class="h1" style="margin:0">Show QR</h1>
+      <p class="body" style="margin:0;max-width:56ch;text-wrap:pretty">A collapsed pill that opens a popover above every layer: scannable code, copy-link action, close. Pick a usage area below — the widget keeps its state machine in every context.</p>
+    </div>
+
+    <div class="pills-row" role="tablist">
+      <sc-for list="{{ pills }}" as="p" hint-placeholder-count="5">
+        <button class="{{ p.cls }}" onClick="{{ p.go }}" style="cursor:pointer;font-family:inherit;border:1px solid #CBD5E1;padding:7px 16px">{{ p.label }}</button>
+      </sc-for>
+      <button class="{{ slowCls }}" onClick="{{ toggleSlow }}" style="cursor:pointer;font-family:inherit;border:1px solid #CBD5E1;padding:7px 16px;margin-left:auto">Slow motion</button>
+    </div>
+
+    <div class="card-inner" style="padding:0;position:relative">
+      <div style="display:flex;gap:28px;padding:26px;align-items:stretch;flex-wrap:wrap">
+
+        <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:14px">
+          <div class="pills-row">
+            <sc-for list="{{ badges }}" as="b" hint-placeholder-count="3">
+              <span class="{{ b.cls }}"><span class="material-icons">{{ b.icon }}</span> {{ b.text }}</span>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span class="micro-label">{{ kicker }}</span>
+            <h2 class="h3" style="margin:0">{{ title }}</h2>
+            <p style="margin:0;font-family:var(--font-display);font-size:var(--type-body-sm);font-weight:500;color:var(--fg3);line-height:1.55;text-wrap:pretty">{{ desc }}</p>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:12px;background:var(--bg-chip);min-width:0">
+            <span class="material-icons" style="font-size:15px;color:var(--fg4)">link</span>
+            <span class="mono" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ value }}</span>
+          </div>
+
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn-discuss" onClick="{{ regen }}"><span class="material-icons" style="font-size:15px">refresh</span> Yeni kod</button>
+            <button class="btn-text" onClick="{{ expand }}">Aç <span class="material-icons btn-mi">arrow_forward</span></button>
+          </div>
+        </div>
+
+        <div style="flex:0 0 auto;width:288px;display:flex;align-items:center;justify-content:center;padding:6px 0">
+          <div style="position:relative;width:180px;height:48px;z-index:50">
+            <div style="overflow:visible;border-radius:26px;background:var(--bg-chip);box-shadow:inset 0 1px 3px rgba(15,23,42,0.06);position:absolute;top:0;left:0;width:180px;height:48px">
+
+              <div onClick="{{ expand }}" role="button" tabindex="0" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:14px;font-weight:800;color:var(--fg1);white-space:nowrap;transition:opacity calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), filter calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)), transform calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ collapsedSt }}">
+                <span class="material-icons" style="font-size:21px;color:{{ accent }}">qr_code_2</span>
+                <span>{{ buttonLabel }}</span>
+              </div>
+
+              <div style="position:absolute;top:50%;left:50%;width:258px;height:320px;margin:-160px 0 0 -129px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;align-items:center;transform-origin:center;transition:opacity calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), transform calc(340ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ expandedSt }}" ref="{{ popRef }}">
+                <div style="width:100%;border-radius:42px;background:#F1F5F9;border:1px solid #E2E8F0;box-shadow:0 24px 60px -18px rgba(15,23,42,0.32), 0 4px 8px rgba(15,23,42,0.10);padding:10px;box-sizing:border-box">
+                <div style="width:100%;height:222px;border-radius:32px;background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), inset 0 0 0 1px rgba(15,23,42,0.03);box-sizing:border-box;padding:16px;display:grid;place-items:center;transition:transform calc(400ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), opacity calc(300ms/* motion-sweep: kept */ * var(--anim-mult,1));{{ qrBoxSt }}">
+                  <sc-if value="{{ qrReady }}" hint-placeholder-val="{{ true }}">
+                    <svg viewBox="{{ qrViewBox }}" shape-rendering="crispEdges" style="width:100%;height:100%;display:block;color:var(--fg1)">
+                      <path d="{{ qrPath }}" fill="currentColor"></path>
+                    </svg>
+                  </sc-if>
+                  <sc-if value="{{ qrPending }}" hint-placeholder-val="{{ false }}">
+                    <div style="width:100%;height:100%;border-radius:14px;background:linear-gradient(100deg,var(--slate-100) 20%,#FFFFFF 40%,var(--slate-100) 60%);background-size:400px 100%;animation:qrShimmer calc(1200ms/* motion-sweep: kept */ * var(--anim-mult,1)) linear infinite;display:grid;place-items:center">
+                      <span class="micro-label">Kod üretiliyor</span>
+                    </div>
+                  </sc-if>
+                </div>
+
+                </div>
+
+                <div style="width:100%;border-radius:9999px;background:#F1F5F9;border:1px solid #E2E8F0;box-shadow:0 12px 28px -14px rgba(15,23,42,0.28), 0 3px 6px rgba(15,23,42,0.08);padding:5px;box-sizing:border-box;transition:opacity calc(300ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), transform calc(340ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ actionsSt }}">
+                <div style="display:flex;gap:5px;width:100%;align-items:center;box-sizing:border-box">
+                  <button class="btn-primary" onClick="{{ copy }}" style="flex:1;height:32px;padding:0 16px;border-radius:9999px;font-size:12px;justify-content:center;gap:8px;min-width:0">
+                    <span class="material-icons" style="font-size:17px;transition:transform calc(260ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ copyIconSt }}">{{ copyIcon }}</span>
+                    <span style="position:relative;display:inline-flex;justify-content:center;width:74px;height:16px;overflow:visible">
+                      <span style="display:inline-flex;position:absolute;top:0;left:50%;transform:translateX(-50%);white-space:pre">
+                        <sc-for list="{{ copyChars }}" as="c" hint-placeholder-count="4">
+                          <span style="display:inline-block;transition:opacity calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), transform calc(260ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ c.st }}">{{ c.ch }}</span>
+                        </sc-for>
+                      </span>
+                      <span style="display:inline-flex;position:absolute;top:0;left:50%;transform:translateX(-50%);white-space:pre">
+                        <sc-for list="{{ copiedChars }}" as="c" hint-placeholder-count="0">
+                          <span style="display:inline-block;transition:opacity calc(240ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out), transform calc(260ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out);{{ c.st }}">{{ c.ch }}</span>
+                        </sc-for>
+                      </span>
+                    </span>
+                  </button>
+                  <button class="btn-discuss" onClick="{{ collapse }}" aria-label="Kapat" style="width:32px;height:32px;padding:0;justify-content:center;border-radius:9999px;flex:0 0 auto">
+                    <span class="material-icons" style="font-size:18px">close</span>
+                  </button>
+                </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 26px;border-top:1px solid var(--border-hairline);background:var(--slate-50);flex-wrap:wrap;border-radius:0 0 var(--card-radius) var(--card-radius)">
+        <span class="material-icons" style="font-size:16px;color:var(--fg4)">info</span>
+        <span style="font-family:var(--font-display);font-size:var(--type-meta);font-weight:600;color:var(--fg3)">{{ foot }}</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <span class="micro-label">State machine</span>
+      <div class="pills-row">
+        <sc-for list="{{ states }}" as="s" hint-placeholder-count="5">
+          <span class="{{ s.cls }}"><span class="material-icons">{{ s.icon }}</span> {{ s.text }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;buttonLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Widget&quot;},&quot;qrValue&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Widget&quot;},&quot;collapseAfterCopy&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behaviour&quot;}}">
+const VARIANTS = [
+  { id: 'standalone', pill: 'Standalone', kicker: 'Base widget', title: 'Show QR',
+    desc: 'The bare widget. A 180×48 pill opens a 250×302 popover centred on itself — the code settles in from below, actions fade up underneath.',
+    label: 'Show QR Code', value: 'https://deha.app/qr/base', accent: '#0F172A',
+    badges: [{ cls: 'badge tag', icon: 'widgets', text: 'Widget' }, { cls: 'badge gci', icon: 'bolt', text: 'Ease-out 380ms' }], // motion-sweep: kept (display copy, not a live CSS duration)
+    foot: 'Pill 180×48 · popover 250×302, layered above the page — the host layout never reflows. Escape or the close button dismisses it.' },
+  { id: 'listing', pill: 'Portföy paylaşımı', kicker: 'Listing card', title: 'Bahçeşehir 3+1 · Daire',
+    desc: 'Ajans vitrininde ilan kartının altına gömülür. Müşteri telefonuyla okutup ilan sayfasına gider.',
+    label: 'İlanı paylaş', value: 'https://deha.app/l/BH-3421', accent: '#10B981',
+    badges: [{ cls: 'badge tag', icon: 'sell', text: 'Satış' }, { cls: 'badge gci', icon: 'home_work', text: '4.2M ₺' }, { cls: 'badge tag', icon: 'place', text: 'Bahçeşehir' }],
+    foot: 'Kart içinde kullanırken pili sağ alt köşeye hizalayın; panel kartın üzerine açılır, kartı büyütmez.' },
+  { id: 'agent', pill: 'Ajan kartviziti', kicker: 'Digital vCard', title: 'Selin Aydın · Kıdemli Danışman',
+    desc: 'Toplantı sonunda kartvizit yerine. QR vCard indirir, Copy Link ise profil bağlantısını kopyalar.',
+    label: 'Kartviziti aç', value: 'https://deha.app/a/selin-aydin', accent: '#3B82F6',
+    badges: [{ cls: 'badge gci', icon: 'workspace_premium', text: 'Top 5%' }, { cls: 'badge tag', icon: 'call', text: '+90 532 ···' }],
+    foot: 'Kartvizit modunda buton etiketi kişi adını taşır; ikon rengi ajanın takım rengine bağlanır.' },
+  { id: 'checkin', pill: 'Etkinlik girişi', kicker: 'Check-in pass', title: 'Deha Broker Summit · Kapı girişi',
+    desc: 'Katılımcı biletindeki tek aksiyon. Okutulduktan sonra widget kendi kendine kapanır ve yeşil onaya döner.',
+    label: 'Giriş kodu', value: 'DEHA-SUM-26-0421-88F', accent: '#F97316',
+    badges: [{ cls: 'badge time', icon: 'schedule', text: '09:30' }, { cls: 'badge col-tag progress', icon: 'confirmation_number', text: 'Salon A' }],
+    foot: 'Kısa metin girdilerinde modül sayısı düşer, kod daha iri basılır — 2 metre mesafeden okunur.' },
+  { id: 'pay', pill: 'Ödeme linki', kicker: 'Payment request', title: 'Komisyon tahsilatı · 126.000 ₺',
+    desc: 'Sözleşme ekranında ödeme talebi. Kopyala aksiyonu linki WhatsApp’a yapıştırmak için, QR ise masa başı tahsilat için.',
+    label: 'Ödeme kodu', value: 'https://pay.deha.app/i/9F2K-77Q', accent: '#EF4444',
+    badges: [{ cls: 'badge gci', icon: 'payments', text: '126.000 ₺' }, { cls: 'badge danger', icon: 'schedule', text: '3 gün' }],
+    foot: 'Tahsilat akışında kopyalandı durumu 2 saniye tutulur, sonra etiket kendi kendine geri döner.' }
+];
+
+const STATES = [
+  { cls: 'badge tag', icon: 'radio_button_unchecked', text: 'Idle · pill 180×48' },
+  { cls: 'badge tag', icon: 'touch_app', text: 'Press · scale 0.96' },
+  { cls: 'badge gci', icon: 'open_in_full', text: 'Popover · scale + fade' },
+  { cls: 'badge tag', icon: 'hourglass_top', text: 'Generating · shimmer' },
+  { cls: 'badge gci', icon: 'content_copy', text: 'Copied · per-char morph' },
+  { cls: 'badge tag', icon: 'close_fullscreen', text: 'Collapse · blur out' }
+];
+
+class Component extends DCLogic {
+  state = { v: 0, expanded: false, copied: false, ready: false, salt: 0, slow: false };
+  popRef = React.createRef();
+
+  componentDidMount() {
+    this._tick = setInterval(() => {
+      if (window.qrcode) { clearInterval(this._tick); this.setState({ ready: true }); }
+    }, 60);
+    if (window.qrcode) { clearInterval(this._tick); this.setState({ ready: true }); }
+    this._esc = (e) => { if (e.key === 'Escape') this.setState({ expanded: false, copied: false }); };
+    document.addEventListener('keydown', this._esc);
+    this._outside = (e) => {
+      if (!this.state.expanded) return;
+      const el = this.popRef.current;
+      if (el && !el.contains(e.target)) this.setState({ expanded: false, copied: false });
+    };
+    document.addEventListener('mousedown', this._outside, true);
+  }
+  componentWillUnmount() { clearInterval(this._tick); clearTimeout(this._copyT); document.removeEventListener('keydown', this._esc); document.removeEventListener('mousedown', this._outside, true); }
+
+  qr(value) {
+    if (!window.qrcode) return null;
+    try {
+      const q = window.qrcode(0, 'H');
+      q.addData(value);
+      q.make();
+      const n = q.getModuleCount();
+      let d = '';
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += 'M' + c + ' ' + r + 'h1v1h-1z';
+      return { d, n };
+    } catch (e) { return null; }
+  }
+
+  chars(word, active, dir) {
+    return word.split('').map((ch, i) => ({
+      ch: ch === ' ' ? '\u00A0' : ch,
+      st: 'opacity:' + (active ? 1 : 0) +
+          ';transform:translateY(' + (active ? 0 : dir * 5) + 'px) scale(' + (active ? 1 : 0.88) + ')' +
+          ';transition-delay:' + (active ? i * 26 : 0) + 'ms' /* motion-sweep: kept */
+    }));
+  }
+
+  renderVals() {
+    const v = VARIANTS[this.state.v] || VARIANTS[0];
+    const value = this.props.qrValue || v.value;
+    const salted = this.state.salt ? value + '?r=' + this.state.salt : value;
+    const code = this.state.ready ? this.qr(salted) : null;
+    const exp = this.state.expanded;
+    const cp = this.state.copied;
+
+    document.documentElement.setAttribute('data-anim-slow', this.state.slow ? 'true' : 'false');
+
+    return {
+      pills: VARIANTS.map((x, i) => ({
+        label: x.pill,
+        cls: 'pill-tab' + (i === this.state.v ? ' active' : ''),
+        go: () => this.setState({ v: i, expanded: false, copied: false })
+      })),
+      slowCls: 'pill-tab' + (this.state.slow ? ' dark' : ''),
+      toggleSlow: () => this.setState({ slow: !this.state.slow }),
+      states: STATES,
+      kicker: v.kicker, title: v.title, desc: v.desc, foot: v.foot,
+      value: salted, accent: v.accent,
+      buttonLabel: this.props.buttonLabel || v.label,
+      badges: v.badges,
+
+      collapsedSt: exp
+        ? 'opacity:0;filter:blur(3px);transform:scale(0.98);pointer-events:none'
+        : 'opacity:1;filter:blur(0px);transform:scale(1)',
+      expandedSt: exp
+        ? 'opacity:1;transform:scale(1);pointer-events:auto'
+        : 'opacity:0;transform:scale(0.9);pointer-events:none',
+      actionsSt: exp
+        ? 'opacity:1;transform:translateY(0);transition-delay:120ms/* motion-sweep: kept */'
+        : 'opacity:0;transform:translateY(14px)',
+      qrBoxSt: exp
+        ? 'opacity:1;transform:translateY(0);transition-delay:60ms/* motion-sweep: kept */'
+        : 'opacity:0;transform:translateY(16px)',
+
+      popRef: this.popRef,
+      qrReady: !!code,
+      qrPending: !code,
+      qrPath: code ? code.d : '',
+      qrViewBox: code ? '0 0 ' + code.n + ' ' + code.n : '0 0 1 1',
+
+      copyIcon: cp ? 'check_circle' : 'link',
+      copyIconSt: 'transform:scale(' + (cp ? 1.06 : 1) + ')',
+      copyChars: this.chars('Copy Link', !cp, 1),
+      copiedChars: this.chars('Copied!', cp, -1),
+
+      expand: () => this.setState({ expanded: true }),
+      collapse: () => this.setState({ expanded: false, copied: false }),
+      regen: () => this.setState({ salt: Date.now() % 100000, copied: false }),
+      copy: () => {
+        try { navigator.clipboard && navigator.clipboard.writeText(salted); } catch (e) {}
+        clearTimeout(this._copyT);
+        this.setState({ copied: true });
+        this._copyT = setTimeout(() => {
+          this.setState({ copied: false });
+          if (this.props.collapseAfterCopy) this.setState({ expanded: false });
+        }, 2000);
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!-- @dsCard group="Merge - animations" name="Phone Scroll Animation" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_metric-circle.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_multisteps.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  html, body { margin:0; padding:0; height:100%; }
+  .psa-scroll::-webkit-scrollbar { width:0; height:0; }
+  @keyframes psaRise { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+  @keyframes psaGlow { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.45); } 50% { box-shadow:0 0 0 10px rgba(16,185,129,0); } }
+  a { color:#10B981; text-decoration:none; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color:#047857; }
+  }
+  [data-psa] a:focus-visible, .btn-primary:focus-visible, .btn-glass:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .pills-row button, .btn-primary, .btn-glass { position: relative; }
+  .pills-row button::after, .btn-primary::after, .btn-glass::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (prefers-reduced-motion: reduce) {
+    [style*="transition"] { transition-duration: 0.01ms !important; } /* motion-sweep: kept — reduced-motion floor for the scroll-linked inline transitions, cannot be zero because opacity/transform are the sc-for state carriers */
+  }
+</style>
+</helmet>
+
+<div style="height:100vh;overflow:hidden;background:#FFFFFF;font-family:'Montserrat',system-ui,sans-serif;color:#0F172A">
+  <div class="psa-scroll" data-psa="page" style="height:100%;overflow-y:auto;scrollbar-width:none">
+
+    <div style="position:sticky;top:0;z-index:20;background:rgba(255,255,255,0.86);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #E2E8F0">
+      <div style="max-width:1180px;margin:0 auto;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:30px;height:30px;border-radius:9px;background:#10B981;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -2px 0 rgba(0,0,0,0.22)">
+            <span class="material-icons" style="font-size:17px;color:#fff">swipe_vertical</span>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:900;letter-spacing:-0.01em">Phone Scroll Animation</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94A3B8">Deha · Bora</div>
+          </div>
+        </div>
+        <div class="pills-row" style="gap:8px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+            <button type="button" class="{{ t.cls }}" onClick="{{ t.onClick }}" style="cursor:pointer;font-family:'Montserrat'">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="height:2px;background:#F1F5F9">
+        <div style="height:100%;background:#10B981;transition:width var(--duration-fast) var(--ease-linear);width:{{ pctW }}"></div>
+      </div>
+    </div>
+
+    <div style="max-width:1180px;margin:0 auto;padding:0 40px">
+
+      <div style="padding:72px 0 40px;max-width:660px">
+        <div class="badge tag" style="margin-bottom:14px">{{ heroKicker }}</div>
+        <h1 style="font-size:44px;line-height:1.06;letter-spacing:-0.03em;font-weight:900;margin:0 0 14px;text-wrap:pretty">{{ heroTitle }}</h1>
+        <p style="font-size:15px;line-height:1.6;font-weight:500;color:#475569;margin:0 0 24px;max-width:520px;text-wrap:pretty">{{ heroBody }}</p>
+        <div class="btn-row">
+          <button type="button" class="btn-primary" onClick="{{ startTour }}">
+            <span class="material-icons" style="font-size:18px">play_arrow</span>Play the scroll
+          </button>
+          <button type="button" class="btn-glass" onClick="{{ resetTour }}">
+            <span class="material-icons" style="font-size:18px">restart_alt</span>Reset
+          </button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:72px;align-items:start;padding-bottom:0">
+
+        <div data-psa="steps" style="position:relative;padding-left:34px">
+          <div style="position:absolute;left:9px;top:12px;bottom:12px;width:2px;background:#E2E8F0;border-radius:2px">
+            <div style="width:100%;background:#10B981;border-radius:2px;transition:height var(--duration-fast) var(--ease-linear);height:{{ railH }}"></div>
+          </div>
+
+          <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+            <div style="min-height:74vh;display:flex;flex-direction:column;justify-content:center;position:relative;transition:opacity var(--duration-420) var(--ease-out),transform var(--duration-420) var(--ease-out);opacity:{{ s.op }};transform:translateY({{ s.ty }}px)">
+              <div style="position:absolute;left:-34px;top:50%;margin-top:-9px;width:20px;height:20px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;transition:background var(--duration-slower) var(--ease-standard),transform var(--duration-slower) var(--ease-standard);background:{{ s.dot }};transform:scale({{ s.dotS }})">
+                <span style="font-size:9px;font-weight:900;color:#fff">{{ s.n }}</span>
+              </div>
+              <div style="font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#10B981;margin-bottom:10px">{{ s.eyebrow }}</div>
+              <h2 style="font-size:30px;line-height:1.12;letter-spacing:-0.025em;font-weight:900;margin:0 0 12px;max-width:440px;text-wrap:pretty">{{ s.title }}</h2>
+              <p style="font-size:14px;line-height:1.65;font-weight:500;color:#475569;margin:0 0 18px;max-width:420px;text-wrap:pretty">{{ s.body }}</p>
+              <div class="pills-row">
+                <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="2">
+                  <span class="badge tag">
+                    <span class="material-icons">{{ c.icon }}</span>{{ c.label }}
+                  </span>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="position:sticky;top:76px;display:flex;justify-content:center;align-items:flex-start;height:{{ stageH }}px">
+          <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,0.18) 0%,transparent 65%);filter:blur(10px);pointer-events:none"></div>
+
+          <div style="position:relative;width:340px;height:700px;border-radius:54px;background:linear-gradient(160deg,#1E293B 0%,#0F172A 60%,#334155 100%);padding:11px;box-shadow:0 40px 80px -30px rgba(15,23,42,0.55),0 0 0 1px rgba(15,23,42,0.9),inset 0 2px 0 rgba(255,255,255,0.18);transform-origin:top center;transition:transform var(--duration-entrance) var(--ease-out);transform:scale({{ scale }}) rotate({{ tilt }}deg)">
+
+            <div style="position:absolute;left:-3px;top:150px;width:3px;height:34px;border-radius:3px 0 0 3px;background:#334155"></div>
+            <div style="position:absolute;left:-3px;top:200px;width:3px;height:56px;border-radius:3px 0 0 3px;background:#334155"></div>
+            <div style="position:absolute;right:-3px;top:190px;width:3px;height:80px;border-radius:0 3px 3px 0;background:#334155"></div>
+
+            <div style="position:relative;width:100%;height:100%;border-radius:44px;overflow:hidden;background:#F8FAFC">
+
+              <div style="position:absolute;top:0;left:0;right:0;height:46px;z-index:6;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 8px;background:linear-gradient(#F8FAFC 62%,rgba(248,250,252,0))">
+                <span style="font-size:11px;font-weight:800;color:#0F172A">9:41</span>
+                <span style="display:flex;gap:4px;align-items:center;color:#0F172A">
+                  <span class="material-icons" style="font-size:13px">signal_cellular_alt</span>
+                  <span class="material-icons" style="font-size:13px">wifi</span>
+                  <span class="material-icons" style="font-size:15px">battery_full</span>
+                </span>
+              </div>
+              <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:98px;height:26px;border-radius:16px;background:#0F172A;z-index:8"></div>
+
+              <div class="psa-scroll" data-psa="phone" style="position:absolute;top:46px;left:0;right:0;bottom:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+                <div>
+                  <sc-for list="{{ screens }}" as="sc" hint-placeholder-count="4">
+                    <div style="height:632px;padding:14px 16px 0;box-sizing:border-box;transition:opacity var(--duration-slower) var(--ease-standard);opacity:{{ sc.op }}">
+
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                        <div>
+                          <div style="font-size:9px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#94A3B8">{{ sc.sub }}</div>
+                          <div style="font-size:19px;font-weight:900;letter-spacing:-0.02em;margin-top:2px">{{ sc.title }}</div>
+                        </div>
+                        <div style="width:32px;height:32px;border-radius:50%;background:#F1F5F9;display:grid;place-items:center;border:1px solid #E2E8F0">
+                          <span class="material-icons" style="font-size:17px;color:#64748B">{{ sc.icon }}</span>
+                        </div>
+                      </div>
+
+                      <div class="card-accent" style="padding:16px;border-radius:20px;margin-bottom:12px;transition:transform var(--duration-480) var(--ease-out),opacity var(--duration-480) var(--ease-out);transform:translateY({{ sc.heroY }}px) scale({{ sc.heroS }});opacity:{{ sc.heroO }}">
+                        <div style="position:relative;z-index:1">
+                          <div style="display:flex;align-items:center;justify-content:space-between">
+                            <span style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;opacity:0.85">{{ sc.hero.label }}</span>
+                            <span class="badge success" style="background:rgba(255,255,255,0.22)">{{ sc.hero.delta }}</span>
+                          </div>
+                          <div style="font-size:34px;font-weight:900;letter-spacing:-0.03em;line-height:1;margin:10px 0 4px">{{ sc.hero.value }}</div>
+                          <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.85)">{{ sc.hero.note }}</div>
+                          <sc-if value="{{ sc.hasBar }}" hint-placeholder-val="{{ true }}">
+                            <div style="margin-top:14px;height:7px;border-radius:9999px;background:rgba(255,255,255,0.25);overflow:hidden">
+                              <div style="height:100%;border-radius:9999px;background:#fff;transition:width var(--duration-700) var(--ease-out);width:{{ sc.barW }}"></div>
+                            </div>
+                          </sc-if>
+                          <sc-if value="{{ sc.hasDots }}" hint-placeholder-val="{{ true }}">
+                            <div style="margin-top:14px;display:flex;gap:6px">
+                              <sc-for list="{{ sc.dots }}" as="d" hint-placeholder-count="7">
+                                <div style="flex:1;height:26px;border-radius:8px;display:grid;place-items:center;font-size:9px;font-weight:900;transition:background var(--duration-400) var(--ease-standard);background:{{ d.bg }};color:{{ d.fg }}">{{ d.label }}</div>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                        </div>
+                      </div>
+
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin:0 2px 8px">
+                        <span style="font-size:10px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:#94A3B8">{{ sc.listLabel }}</span>
+                        <span style="font-size:11px;font-weight:800;color:#10B981">See all</span>
+                      </div>
+
+                      <div style="display:flex;flex-direction:column;gap:8px">
+                        <sc-for list="{{ sc.rows }}" as="r" hint-placeholder-count="3">
+                          <div class="card-inner" style="padding:11px 12px;border-radius:14px;display:flex;align-items:center;gap:10px;transition:transform var(--duration-480) var(--ease-out),opacity var(--duration-480) var(--ease-out);transform:translateY({{ r.ty }}px);opacity:{{ r.op }}">
+                            <div style="width:30px;height:30px;border-radius:10px;background:#ECFDF5;display:grid;place-items:center;flex:0 0 auto">
+                              <span class="material-icons" style="font-size:16px;color:#10B981">{{ r.icon }}</span>
+                            </div>
+                            <div style="min-width:0;flex:1">
+                              <div style="font-size:12.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
+                              <div style="font-size:10.5px;font-weight:600;color:#64748B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.meta }}</div>
+                            </div>
+                            <span class="{{ r.tagCls }}">{{ r.tag }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+
+                      <button type="button" class="btn-primary" style="width:100%;justify-content:center;margin-top:14px;padding:11px 16px;font-size:13px">
+                        <span class="material-icons" style="font-size:17px">{{ sc.ctaIcon }}</span>{{ sc.cta }}
+                      </button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="position:absolute;right:5px;top:60px;bottom:34px;width:3px;border-radius:3px;background:rgba(15,23,42,0.06);z-index:7">
+                <div style="width:100%;border-radius:3px;background:rgba(16,185,129,0.75);height:26%;transition:top var(--duration-fast) var(--ease-linear);position:relative;top:{{ thumbTop }}"></div>
+              </div>
+
+              <div style="position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:118px;height:5px;border-radius:9999px;background:#0F172A;opacity:0.28;z-index:9"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:96px 0 120px;border-top:1px solid #E2E8F0;margin-top:40px">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:#94A3B8;margin-bottom:8px">Usage areas</div>
+        <h2 style="font-size:26px;font-weight:900;letter-spacing:-0.025em;margin:0 0 6px">Four ways to mount this component</h2>
+        <p style="font-size:14px;font-weight:500;color:#475569;margin:0 0 24px;max-width:540px">Every variant reuses the same sticky stage, rail, and phone shell. Only the narrative and the screen payload change. Switch with the pills above.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+            <div class="card-inner" onClick="{{ t.onClick }}" style="padding:16px;border-radius:18px;cursor:pointer;transition:transform var(--duration-slow) var(--ease-out),box-shadow var(--duration-slow) var(--ease-standard);border-color:{{ t.cardBorder }}" style-hover="transform:translateY(-3px);box-shadow:0 14px 30px -14px rgba(15,23,42,0.28)">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+                <span class="material-icons" style="font-size:18px;color:#10B981">{{ t.icon }}</span>
+                <span style="font-size:13.5px;font-weight:900">{{ t.label }}</span>
+              </div>
+              <div style="font-size:12px;font-weight:500;color:#64748B;line-height:1.5">{{ t.desc }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tour&quot;,&quot;onboarding&quot;,&quot;metrics&quot;,&quot;rewards&quot;],&quot;default&quot;:&quot;tour&quot;,&quot;tsType&quot;:&quot;'tour'|'onboarding'|'metrics'|'rewards'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;parallax&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.5,&quot;max&quot;:1.2,&quot;step&quot;:0.05,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;tiltDevice&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const SCREEN_H = 632;
+
+const V = [
+  {
+    id: 'tour', label: 'Feature Tour', icon: 'auto_awesome', desc: 'Marketing page hero. Each scroll beat reveals one capability on a live screen.',
+    kicker: 'Landing page', title: 'Scroll the story, the phone follows',
+    body: 'The stage pins the device while the narrative column scrolls. Screen content translates on the same timeline, so copy and UI never drift apart.',
+    steps: [
+      { eyebrow: 'Capture', title: 'Every lead lands in one inbox', body: 'Portal enquiries, walk-ins and referrals arrive pre-scored, so the first response goes out in minutes rather than days.', chips: [{icon:'bolt',label:'Auto-score'},{icon:'inbox',label:'Unified inbox'}],
+        screen: { sub:'Pipeline', title:'New leads', icon:'inbox', listLabel:'Today', cta:'Assign 4 leads', ctaIcon:'person_add',
+          hero:{label:'Open leads', value:'142', delta:'+18', note:'12 new since this morning'}, bar:0.72,
+          rows:[{icon:'apartment',name:'Marina Heights 4B',meta:'Portal · 2 min ago',tag:'Hot',cls:'badge time'},{icon:'person',name:'Deniz Aktaş',meta:'Referral · 14 min ago',tag:'New',cls:'badge success'},{icon:'call',name:'Missed call · +90 532',meta:'Walk-in list',tag:'Callback',cls:'badge tag'}] } },
+      { eyebrow: 'Qualify', title: 'Priority is decided before you open it', body: 'Budget, timeline and source combine into a single priority pill. The list re-sorts itself as new signals come in.', chips: [{icon:'filter_alt',label:'Smart sort'},{icon:'label',label:'Priority pills'}],
+        screen: { sub:'Triage', title:'Priority queue', icon:'filter_alt', listLabel:'High priority', cta:'Start triage', ctaIcon:'play_arrow',
+          hero:{label:'Qualified rate', value:'68%', delta:'+9%', note:'Up from 59% last month'}, bar:0.68,
+          rows:[{icon:'local_fire_department',name:'Cash buyer · 8.4M',meta:'Closing in 30 days',tag:'Urgent',cls:'badge danger'},{icon:'schedule',name:'Mortgage pending',meta:'Bank appointment Thu',tag:'Medium',cls:'badge tag'},{icon:'eco',name:'Browsing · no date',meta:'Nurture sequence',tag:'Low',cls:'badge success'}] } },
+      { eyebrow: 'Act', title: 'The next action is always on screen', body: 'Tasks, viewings and follow-ups roll into one footer action. Nothing waits for someone to remember it.', chips: [{icon:'task_alt',label:'One-tap tasks'},{icon:'event',label:'Auto-scheduling'}],
+        screen: { sub:'Today', title:'Your next moves', icon:'bolt', listLabel:'Scheduled', cta:'Complete first task', ctaIcon:'task_alt',
+          hero:{label:'Tasks cleared', value:'9 / 12', delta:'75%', note:'3 left before 6pm'}, bar:0.75,
+          rows:[{icon:'key',name:'Viewing · Bebek Villa',meta:'14:30 with Ela',tag:'30 min',cls:'badge time'},{icon:'mail',name:'Send offer pack',meta:'Kadıköy 2+1',tag:'Draft',cls:'badge tag'},{icon:'call',name:'Follow up Mr. Yılmaz',meta:'Second attempt',tag:'Due',cls:'badge danger'}] } },
+      { eyebrow: 'Close', title: 'Commission tracked to the signature', body: 'Deal value, split and expected payout update live, so the number on the card is the number in the bank.', chips: [{icon:'payments',label:'Live GCI'},{icon:'verified',label:'Audit trail'}],
+        screen: { sub:'Deals', title:'Closing board', icon:'verified', listLabel:'This quarter', cta:'Open commission sheet', ctaIcon:'payments',
+          hero:{label:'GCI booked', value:'$1.24M', delta:'+22%', note:'Target $1.5M by 30 Sep'}, bar:0.83,
+          rows:[{icon:'handshake',name:'Ataşehir 3+1',meta:'Contract signed',tag:'Closed',cls:'badge success'},{icon:'draw',name:'Nişantaşı loft',meta:'Awaiting signature',tag:'2 days',cls:'badge time'},{icon:'gavel',name:'Beşiktaş office',meta:'Legal review',tag:'Blocked',cls:'badge danger'}] } }
+    ]
+  },
+  {
+    id: 'onboarding', label: 'Onboarding', icon: 'route', desc: 'First-run walkthrough. The rail doubles as a step counter and the hero card carries progress.',
+    kicker: 'First run', title: 'Four screens, one continuous motion',
+    body: 'Used as onboarding, the rail becomes the step indicator and the hero bar fills as the user advances. Same component, different payload.',
+    steps: [
+      { eyebrow: 'Step 1', title: 'Tell us who you sell for', body: 'Brokerage, team size and market. Three answers set the default pipeline stages and the commission model.', chips: [{icon:'badge',label:'30 seconds'},{icon:'tune',label:'Presets'}],
+        screen: { sub:'Setup 1 of 4', title:'Your brokerage', icon:'apartment', listLabel:'Suggested', cta:'Continue', ctaIcon:'arrow_forward',
+          hero:{label:'Profile complete', value:'25%', delta:'1 / 4', note:'Two minutes to a working pipeline'}, bar:0.25,
+          rows:[{icon:'groups',name:'Team of 4–10',meta:'Most common for your city',tag:'Popular',cls:'badge success'},{icon:'person',name:'Solo agent',meta:'Single pipeline',tag:'Simple',cls:'badge tag'},{icon:'corporate_fare',name:'Multi-office',meta:'Shared lead pool',tag:'Advanced',cls:'badge tag'}] } },
+      { eyebrow: 'Step 2', title: 'Connect the sources you already use', body: 'Portals, your website form and the office phone line. Leads start flowing before the tour is over.', chips: [{icon:'hub',label:'6 integrations'},{icon:'lock',label:'Read-only scopes'}],
+        screen: { sub:'Setup 2 of 4', title:'Lead sources', icon:'hub', listLabel:'Available', cta:'Connect 2 sources', ctaIcon:'link',
+          hero:{label:'Profile complete', value:'50%', delta:'2 / 4', note:'Sources feed the inbox instantly'}, bar:0.5,
+          rows:[{icon:'language',name:'Website form',meta:'Embed one snippet',tag:'Ready',cls:'badge success'},{icon:'travel_explore',name:'Portal feed',meta:'API key required',tag:'Setup',cls:'badge tag'},{icon:'phone_in_talk',name:'Office line',meta:'Call tracking',tag:'Optional',cls:'badge tag'}] } },
+      { eyebrow: 'Step 3', title: 'Pick the rhythm of your follow-ups', body: 'A cadence template decides when reminders fire. It can be overridden per lead later.', chips: [{icon:'schedule',label:'Cadence'},{icon:'notifications',label:'Quiet hours'}],
+        screen: { sub:'Setup 3 of 4', title:'Follow-up cadence', icon:'schedule', listLabel:'Templates', cta:'Use balanced cadence', ctaIcon:'check',
+          hero:{label:'Profile complete', value:'75%', delta:'3 / 4', note:'You can change this any time'}, bar:0.75,
+          rows:[{icon:'speed',name:'Aggressive',meta:'Day 0, 1, 2, 4, 7',tag:'High touch',cls:'badge danger'},{icon:'balance',name:'Balanced',meta:'Day 0, 2, 5, 10',tag:'Default',cls:'badge success'},{icon:'spa',name:'Light',meta:'Day 0, 7, 21',tag:'Nurture',cls:'badge tag'}] } },
+      { eyebrow: 'Step 4', title: 'Your first pipeline is already populated', body: 'Sample deals demonstrate the board and are removed with one tap once real leads arrive.', chips: [{icon:'rocket_launch',label:'Ready'},{icon:'delete_sweep',label:'Clear samples'}],
+        screen: { sub:'Setup 4 of 4', title:'You are live', icon:'rocket_launch', listLabel:'First pipeline', cta:'Enter the app', ctaIcon:'rocket_launch',
+          hero:{label:'Profile complete', value:'100%', delta:'Done', note:'Everything below is editable'}, bar:1,
+          rows:[{icon:'apartment',name:'3 sample listings',meta:'Remove any time',tag:'Sample',cls:'badge tag'},{icon:'checklist',name:'Starter task list',meta:'5 tasks queued',tag:'Ready',cls:'badge success'},{icon:'school',name:'2-minute tour',meta:'Optional replay',tag:'Tip',cls:'badge tag'}] } }
+    ]
+  },
+  {
+    id: 'metrics', label: 'Case Study', icon: 'insights', desc: 'Data storytelling. Each beat pairs a claim with the exact screen the number comes from.',
+    kicker: 'Proof section', title: 'Numbers, next to the screen they came from',
+    body: 'For case studies the narrative carries the claim and the phone shows the source. Readers see the evidence without leaving the scroll.',
+    steps: [
+      { eyebrow: 'Baseline', title: 'Response time was the bottleneck', body: 'Before the rollout the median first response sat at 9 hours. Two thirds of portal enquiries went cold.', chips: [{icon:'timer',label:'9h median'},{icon:'trending_down',label:'31% contacted'}],
+        screen: { sub:'Q1 baseline', title:'Response time', icon:'timer', listLabel:'By source', cta:'View full report', ctaIcon:'description',
+          hero:{label:'Median response', value:'9h 12m', delta:'−0%', note:'Before rollout, 380 enquiries'}, bar:0.31,
+          rows:[{icon:'travel_explore',name:'Portal',meta:'11h 40m median',tag:'Worst',cls:'badge danger'},{icon:'language',name:'Website',meta:'6h 05m median',tag:'Mid',cls:'badge tag'},{icon:'group',name:'Referral',meta:'1h 20m median',tag:'Best',cls:'badge success'}] } },
+      { eyebrow: 'Change', title: 'Routing moved from manual to automatic', body: 'Leads route by area and workload. The office manager stopped assigning by hand in week two.', chips: [{icon:'alt_route',label:'Auto-routing'},{icon:'schedule_send',label:'Instant reply'}],
+        screen: { sub:'Rollout', title:'Routing rules', icon:'alt_route', listLabel:'Active rules', cta:'Edit routing', ctaIcon:'tune',
+          hero:{label:'Auto-routed', value:'94%', delta:'+94%', note:'Manual assignment retired'}, bar:0.94,
+          rows:[{icon:'map',name:'By district',meta:'12 zones mapped',tag:'Live',cls:'badge success'},{icon:'balance',name:'By workload',meta:'Caps at 20 open',tag:'Live',cls:'badge success'},{icon:'nights_stay',name:'After hours',meta:'Duty agent',tag:'Live',cls:'badge success'}] } },
+      { eyebrow: 'Result', title: 'First response fell to eleven minutes', body: 'Same headcount, same lead volume. The change came entirely from removing the handoff delay.', chips: [{icon:'bolt',label:'11 min'},{icon:'trending_up',label:'+37% contacted'}],
+        screen: { sub:'Q3 result', title:'Response time', icon:'bolt', listLabel:'By source', cta:'Compare quarters', ctaIcon:'compare_arrows',
+          hero:{label:'Median response', value:'11m', delta:'−98%', note:'After rollout, 412 enquiries'}, bar:0.96,
+          rows:[{icon:'travel_explore',name:'Portal',meta:'13m median',tag:'−98%',cls:'badge success'},{icon:'language',name:'Website',meta:'9m median',tag:'−97%',cls:'badge success'},{icon:'group',name:'Referral',meta:'4m median',tag:'−95%',cls:'badge success'}] } },
+      { eyebrow: 'Impact', title: 'Commission followed the response curve', body: 'Booked GCI rose 22% year on year, with the largest gain in the portal channel that had been slowest.', chips: [{icon:'payments',label:'+22% GCI'},{icon:'insights',label:'12-month view'}],
+        screen: { sub:'Trailing 12m', title:'Commission', icon:'insights', listLabel:'By channel', cta:'Export summary', ctaIcon:'download',
+          hero:{label:'Booked GCI', value:'$4.8M', delta:'+22%', note:'Against $3.9M prior year'}, bar:0.88,
+          rows:[{icon:'travel_explore',name:'Portal',meta:'$2.1M booked',tag:'+41%',cls:'badge success'},{icon:'language',name:'Website',meta:'$1.6M booked',tag:'+14%',cls:'badge success'},{icon:'group',name:'Referral',meta:'$1.1M booked',tag:'+6%',cls:'badge tag'}] } }
+    ]
+  },
+  {
+    id: 'rewards', label: 'Rewards', icon: 'local_fire_department', desc: 'Gamified surface. Streak grid, tier progress and prize reveal ride the same scroll timeline.',
+    kicker: 'Engagement', title: 'A streak that earns its place on screen',
+    body: 'The reward variant swaps the hero bar for a seven-day grid and lets the tier fill as the reader scrolls. Motion carries the sense of progress.',
+    steps: [
+      { eyebrow: 'Habit', title: 'Seven days, visible at a glance', body: 'The grid fills as the agent logs activity. Missing a day breaks the run, which is the whole point.', chips: [{icon:'local_fire_department',label:'Streak grid'},{icon:'today',label:'Daily reset'}],
+        screen: { sub:'This week', title:'Your streak', icon:'local_fire_department', listLabel:'Logged today', cta:'Log activity', ctaIcon:'add',
+          hero:{label:'Current streak', value:'12 days', delta:'Best 19', note:'Log one action to keep it alive'}, dots:['M','T','W','T','F','S','S'], dotsOn:5,
+          rows:[{icon:'call',name:'6 calls made',meta:'Target 5',tag:'Done',cls:'badge success'},{icon:'event',name:'1 viewing held',meta:'Target 1',tag:'Done',cls:'badge success'},{icon:'edit_note',name:'0 notes added',meta:'Target 3',tag:'Open',cls:'badge tag'}] } },
+      { eyebrow: 'Progress', title: 'Tiers move in visible increments', body: 'Every completed day advances the tier bar. The next threshold is always one honest step away.', chips: [{icon:'military_tech',label:'4 tiers'},{icon:'trending_up',label:'Weekly bump'}],
+        screen: { sub:'Season 3', title:'Tier progress', icon:'military_tech', listLabel:'Tier ladder', cta:'View tier perks', ctaIcon:'workspace_premium',
+          hero:{label:'Gold tier', value:'1,840', delta:'+240', note:'160 points to Platinum'}, bar:0.92,
+          rows:[{icon:'workspace_premium',name:'Platinum',meta:'2,000 points',tag:'Next',cls:'badge time'},{icon:'military_tech',name:'Gold',meta:'1,500 points',tag:'Current',cls:'badge success'},{icon:'shield',name:'Silver',meta:'800 points',tag:'Cleared',cls:'badge tag'}] } },
+      { eyebrow: 'Reward', title: 'The prize sheet arrives on the beat', body: 'When the tier completes, the reveal lands in the same scroll motion instead of a modal that interrupts it.', chips: [{icon:'redeem',label:'Prize sheet'},{icon:'celebration',label:'Reveal beat'}],
+        screen: { sub:'Unlocked', title:'Your reward', icon:'redeem', listLabel:'Claimable', cta:'Claim reward', ctaIcon:'redeem',
+          hero:{label:'Reward unlocked', value:'₺2,500', delta:'New', note:'Marketing budget credit'}, bar:1,
+          rows:[{icon:'campaign',name:'Featured listing',meta:'7 days boosted',tag:'Claim',cls:'badge success'},{icon:'card_giftcard',name:'Budget credit',meta:'Expires in 30 days',tag:'Claim',cls:'badge success'},{icon:'coffee',name:'Team lunch',meta:'Office of the month',tag:'Locked',cls:'badge tag'}] } },
+      { eyebrow: 'Compare', title: 'Standing, without the shaming', body: 'The board shows the top three and your own row. Positions below yours stay private.', chips: [{icon:'leaderboard',label:'Top 3 + you'},{icon:'visibility_off',label:'Private below'}],
+        screen: { sub:'Istanbul region', title:'Leaderboard', icon:'leaderboard', listLabel:'This month', cta:'Share standing', ctaIcon:'ios_share',
+          hero:{label:'Your position', value:'#4', delta:'+3', note:'120 points from third'}, bar:0.66,
+          rows:[{icon:'emoji_events',name:'Ela Demir',meta:'2,410 points',tag:'#1',cls:'badge success'},{icon:'emoji_events',name:'Kaan Şahin',meta:'2,180 points',tag:'#2',cls:'badge tag'},{icon:'person',name:'You',meta:'1,840 points',tag:'#4',cls:'badge time'}] } }
+    ]
+  }
+];
+
+class Component extends DCLogic {
+  state = { v: 0, p: 0, vh: 900 };
+
+  componentDidMount() {
+    const want = this.props.variant;
+    if (want) {
+      const i = V.findIndex(x => x.id === want);
+      if (i > -1 && i !== this.state.v) this.setState({ v: i });
+    }
+    this.bind();
+    this._bt = setInterval(() => this.bind(), 600);
+  }
+
+  componentWillUnmount() { clearInterval(this._bt); }
+
+  bind() {
+    const q = k => document.querySelector('[data-psa="' + k + '"]');
+    const sc = q('page'), ph = q('phone'), st = q('steps');
+    if (sc && sc !== this.sc) { this.sc = sc; sc.addEventListener('scroll', this.onScroll, { passive: true }); }
+    if (ph && ph !== this.ph) {
+      this.ph = ph;
+      ph.addEventListener('scroll', this.onPhoneScroll, { passive: true });
+      ph.addEventListener('wheel', () => { this.src = 'phone'; }, { passive: true });
+      ph.addEventListener('touchstart', () => { this.src = 'phone'; }, { passive: true });
+      ph.addEventListener('pointerdown', () => { this.src = 'phone'; }, { passive: true });
+    }
+    if (sc && !this._wb) {
+      this._wb = true;
+      const mark = e => { this.src = (this.ph && this.ph.contains(e.target)) ? 'phone' : 'page'; };
+      sc.addEventListener('wheel', mark, { passive: true, capture: true });
+      sc.addEventListener('touchstart', mark, { passive: true, capture: true });
+    }
+    this.st = st;
+    if (sc) {
+      const h = sc.clientHeight;
+      if (h && h !== this.state.vh) this.setState({ vh: h });
+    }
+  }
+
+  lock(who) {
+    this.src = who;
+    clearTimeout(this._lt);
+    this._lt = setTimeout(() => { this.locked = null; }, 120);
+  }
+
+  onScroll = () => {
+    const sc = this.sc, st = this.st;
+    if (!sc || !st || this.src === 'phone') return;
+    const p = (sc.scrollTop + sc.clientHeight * 0.5 - st.offsetTop) / st.offsetHeight;
+    const c = Math.max(0, Math.min(1, p));
+    if (Math.abs(c - this.state.p) > 0.001) this.setState({ p: c });
+    if (this.ph) {
+      const n = V[this.state.v].steps.length;
+      const idx = Math.max(0, Math.min(n - 1, c * n - 0.5));
+      const want = idx * SCREEN_H;
+      if (Math.abs(this.ph.scrollTop - want) > 0.5) this.ph.scrollTop = want;
+    }
+  };
+
+  onPhoneScroll = () => {
+    const ph = this.ph, sc = this.sc, st = this.st;
+    if (!ph || !sc || !st || this.src !== 'phone') return;
+    const n = V[this.state.v].steps.length;
+    const idx = ph.scrollTop / SCREEN_H;
+    const c = Math.max(0, Math.min(1, (idx + 0.5) / n));
+    if (Math.abs(c - this.state.p) > 0.001) this.setState({ p: c });
+    const want = st.offsetTop + c * st.offsetHeight - sc.clientHeight * 0.5;
+    if (Math.abs(sc.scrollTop - want) > 0.5) sc.scrollTop = want;
+  };
+
+  pick = i => () => {
+    this.setState({ v: i, p: 0 });
+    requestAnimationFrame(() => {
+      this.src = 'page';
+      if (this.ph) this.ph.scrollTop = 0;
+      if (this.sc && this.st) this.sc.scrollTo({ top: Math.max(0, this.st.offsetTop - 40), behavior: 'smooth' });
+    });
+  };
+
+  startTour = () => {
+    if (!this.sc || !this.st) return;
+    this.src = 'page';
+    this.sc.scrollTo({ top: this.st.offsetTop + this.st.offsetHeight * 0.24, behavior: 'smooth' });
+  };
+
+  resetTour = () => { this.src = 'page'; if (this.ph) this.ph.scrollTop = 0; if (this.sc) this.sc.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  renderVals() {
+    if (!this._started) {
+      this._started = true;
+      setTimeout(() => this.bind(), 0);
+      this._bt = setInterval(() => this.bind(), 500);
+    }
+    const v = V[this.state.v];
+    const n = v.steps.length;
+    const p = this.state.p;
+    const parallax = this.props.parallax ?? 1;
+    const idx = Math.max(0, Math.min(n - 1, p * n - 0.5));
+    const active = Math.round(idx);
+
+    const tabs = V.map((x, i) => ({
+      label: x.label, icon: x.icon, desc: x.desc,
+      cls: 'pill-tab' + (i === this.state.v ? ' active' : ''),
+      cardBorder: i === this.state.v ? '#10B981' : 'var(--card-border)',
+      onClick: this.pick(i)
+    }));
+
+    const steps = v.steps.map((s, i) => {
+      const d = Math.abs(i - idx);
+      const on = d < 0.5;
+      return {
+        n: String(i + 1), eyebrow: s.eyebrow, title: s.title, body: s.body, chips: s.chips,
+        op: String(Math.max(0.22, 1 - d * 0.8).toFixed(3)),
+        ty: String(Math.round(Math.max(-18, Math.min(18, (i - idx) * 14)))),
+        dot: on ? '#10B981' : '#CBD5E1',
+        dotS: on ? '1.25' : '1'
+      };
+    });
+
+    const screens = v.steps.map((s, i) => {
+      const sn = s.screen;
+      const d = Math.abs(i - idx);
+      const near = Math.max(0, 1 - d);
+      const rows = sn.rows.map((r, j) => ({
+        icon: r.icon, name: r.name, meta: r.meta, tag: r.tag, tagCls: r.cls,
+        ty: String(Math.round((1 - near) * (12 + j * 6))),
+        op: String((0.25 + near * 0.75).toFixed(3))
+      }));
+      const dots = (sn.dots || []).map((lbl, j) => {
+        const lit = j < Math.round((sn.dotsOn || 0) * Math.min(1, near + 0.35));
+        return { label: lbl, bg: lit ? '#FFFFFF' : 'rgba(255,255,255,0.22)', fg: lit ? '#047857' : 'rgba(255,255,255,0.75)' };
+      });
+      return {
+        sub: sn.sub, title: sn.title, icon: sn.icon, listLabel: sn.listLabel, cta: sn.cta, ctaIcon: sn.ctaIcon,
+        hero: sn.hero, rows, dots,
+        hasBar: sn.bar != null, hasDots: dots.length > 0,
+        barW: Math.round((sn.bar || 0) * 100 * Math.min(1, near + 0.25)) + '%',
+        op: String((0.35 + near * 0.65).toFixed(3)),
+        heroY: String(Math.round((1 - near) * 16)),
+        heroS: String((0.96 + near * 0.04).toFixed(3)),
+        heroO: String((0.4 + near * 0.6).toFixed(3))
+      };
+    });
+
+    return {
+      tabs, steps, screens,
+      heroKicker: v.kicker, heroTitle: v.title, heroBody: v.body,
+      scale: String(Math.max(0.55, Math.min(1, (this.state.vh - 104) / 700)).toFixed(3)),
+      stageH: String(Math.max(420, Math.min(712, this.state.vh - 92))),
+      trackY: String(Math.round(-idx * 632 * parallax)),
+      railH: ((active + 0.5) / n * 100).toFixed(1) + '%',
+      pctW: (p * 100).toFixed(1) + '%',
+      thumbTop: (p * 74).toFixed(1) + '%',
+      tilt: this.props.tiltDevice === false ? '0' : String((-1.4 + p * 2.8).toFixed(2)),
+      startTour: this.startTour, resetTour: this.resetTour,
+      startTourNoop: null
+    };
+  }
+}
+
+</script>
+</body>
+</html>

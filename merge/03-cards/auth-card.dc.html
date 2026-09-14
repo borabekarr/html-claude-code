@@ -1,0 +1,514 @@
+<!-- @dsCard group="Merge - cards" name="Auth Card" subtitle="-> Cards" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../styles.css">
+
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; font-family: 'Montserrat', system-ui, sans-serif; background: #fff; }
+  a { color: var(--semantic-success); text-decoration: none; }
+  a:hover { color: #059669; }
+  input::placeholder { color: #94A3B8; font-weight: 500; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 15%{transform:translateX(-7px)} 30%{transform:translateX(6px)} 45%{transform:translateX(-4px)} 60%{transform:translateX(3px)} 80%{transform:translateX(-1px)} }
+  @keyframes spin { to { transform: rotate(360deg) } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: translateY(0) } }
+  @keyframes pop { 0%{transform:scale(.4);opacity:0} 60%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+  @keyframes caret { 0%,45%{opacity:1} 55%,100%{opacity:0} }
+</style>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css"><script src="../../_ds_bundle.js"></script>
+<style>
+  /* auth-card-v2: 44px hit-layer + :focus-visible for the small custom
+     controls (tab pills, vertical chips, remember-me switch, agree
+     checkbox, show/hide-password toggle) that fall under the 44px
+     minimum on at least one axis. */
+  .ac-tab, .ac-vertical, .ac-switch, .ac-check, .ac-eye, .ac-provider { position: relative; }
+  .ac-tab::after, .ac-vertical::after, .ac-switch::after, .ac-check::after, .ac-eye::after, .ac-provider::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+  .ac-tab:focus-visible, .ac-vertical:focus-visible, .ac-switch:focus-visible,
+  .ac-check:focus-visible, .ac-eye:focus-visible, .ac-provider:focus-visible {
+    outline: 2px solid var(--brand-primary);
+    outline-offset: 2px;
+  }
+  /* every animation/transition in this component is inline-styled (rise/spin/pop/shake
+     keyframes, switch/checkbox/tab transitions) with no shared class to target, so the
+     reduced-motion guard is scoped to the artboard's own wrapper instead. */
+  @media (prefers-reduced-motion: reduce) {
+    .ac-wrap, .ac-wrap *, .ac-wrap *::before, .ac-wrap *::after {
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+
+<div class="ac-wrap" style="min-height:100%;box-sizing:border-box;padding:48px 24px 56px;display:flex;flex-direction:column;align-items:center;gap:28px;background:#fff;background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px),linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);background-size:24px 24px">
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+    <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#94A3B8">Auth Card · Variants</span>
+    <div ref="{{ segRef }}" style="position:relative;display:inline-flex;background:#F1F5F9;border-radius:9999px;padding:3px;box-shadow:inset 0 2px 4px rgba(0,0,0,0.06)">
+      <span style="{{ indicatorStyle }}"></span>
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+        <button type="button" class="ac-tab" data-active="{{ tab.active }}" onClick="{{ tab.go }}" style="{{ tab.style }}" style-active="transform:scale(0.93)">{{ tab.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="{{ shakeStyle }}">
+  <div style="width:448px;box-sizing:border-box;border-radius:42px;background:#F1F5F9;border:1px solid #E2E8F0;box-shadow:0 4px 8px rgba(15,23,42,0.10);padding:10px;display:flex">
+  <div style="flex:1;min-width:0;box-sizing:border-box;padding:28px;border-radius:32px;background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 10px 28px -8px rgba(15,23,42,0.28),0 3px 8px -2px rgba(15,23,42,0.12),inset 0 0 0 1px rgba(15,23,42,0.03);display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px">
+      <span style="width:34px;height:34px;border-radius:12px;background:var(--semantic-success);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 10px 30px -10px rgba(16,185,129,0.5),inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -2px 0 rgba(0,0,0,0.22)"><span class="material-icons" style="font-size:20px;color:#fff">auto_awesome</span></span>
+      <span style="font-size:19px;font-weight:900;letter-spacing:-0.02em;color:#0F172A">Deha</span>
+    </div>
+
+    <sc-if value="{{ isSignin }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:22px;animation:rise var(--duration-260) var(--ease-out) both">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="display:inline-flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:var(--semantic-success);width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">waving_hand</span></span><span style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Tekrar hoş geldin</span></span>
+          <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">Sign in to your Deha CRM dashboard. Your leads are already scored.</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">mail</span>Email</span>
+            <span style="position:relative;display:flex;align-items:center">
+              <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">mail</span>
+              <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="bora@deha.com" style="width:100%;box-sizing:border-box;padding:13px 14px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+            </span>
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:7px">
+            <span style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">key</span>Password</span>
+              <a href="#" onClick="{{ goReset }}" style="font-size:11px;font-weight:700;color:var(--semantic-success)">Forgot?</a>
+            </span>
+            <span style="position:relative;display:flex;align-items:center">
+              <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">lock</span>
+              <input type="{{ pwType }}" value="{{ password }}" onChange="{{ onPassword }}" placeholder="••••••••" style="width:100%;box-sizing:border-box;padding:13px 44px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+              <button type="button" class="ac-eye" onClick="{{ togglePw }}" style="position:absolute;right:8px;width:30px;height:30px;border:none;background:none;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#94A3B8;transition:background var(--duration-base),color var(--duration-base)" style-hover="background:#F1F5F9;color:#334155"><span class="material-symbols-outlined" style="font-size:18px">{{ pwIcon }}</span></button>
+            </span>
+          </label>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;padding-top:2px">
+            <span style="display:flex;align-items:center;gap:9px">
+              <button type="button" class="ac-switch" onClick="{{ toggleRemember }}" style="{{ switchStyle }}"><span style="{{ knobStyle }}"></span></button>
+              <span style="font-size:12px;font-weight:600;color:#334155">Beni hatırla</span>
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:16px;background:#ECFDF5;font-size:11px;font-weight:700;color:var(--semantic-success)"><span class="material-icons" style="font-size:13px">shield</span> 2FA ready</span>
+          </div>
+        </div>
+
+        <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#FEF2F2;animation:rise var(--duration-200) ease both">
+            <span class="material-icons" style="font-size:16px;color:var(--semantic-danger)">error</span>
+            <span style="font-size:12px;font-weight:600;color:var(--semantic-danger)">{{ errorMsg }}</span>
+          </div>
+        </sc-if>
+
+        <button type="button" onClick="{{ submit }}" style="{{ ctaStyle }}" style-hover="filter:brightness(1.06)" style-active="transform:scale(0.985)">
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin var(--duration-700) linear infinite"></span></sc-if>
+          <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size:19px;animation:pop var(--duration-320) var(--ease-spring) both">check</span></sc-if>
+          <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px">Sign In <span class="material-icons" style="font-size:17px">arrow_forward</span></span></sc-if>
+        </button>
+
+        <sc-if value="{{ showSocial }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <span style="display:flex;align-items:center;gap:12px"><span style="flex:1;height:1px;background:#E2E8F0"></span><span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#94A3B8">or continue with</span><span style="flex:1;height:1px;background:#E2E8F0"></span></span>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <button type="button" class="ac-provider" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;font-family:inherit;font-size:13px;font-weight:700;color:#334155;cursor:pointer;transition:background var(--duration-base),border-color var(--duration-base),transform var(--duration-base)" style-hover="background:#F8FAFC;border-color:#CBD5E1" style-active="transform:scale(0.97)"><span class="material-symbols-outlined" style="font-size:17px;color:#0668E1">public</span> Meta</button>
+              <button type="button" class="ac-provider" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 14px;border-radius:16px;background:#fff;border:1px solid #E2E8F0;font-family:inherit;font-size:13px;font-weight:700;color:#334155;cursor:pointer;transition:background var(--duration-base),border-color var(--duration-base),transform var(--duration-base)" style-hover="background:#F8FAFC;border-color:#CBD5E1" style-active="transform:scale(0.97)"><span class="material-symbols-outlined" style="font-size:17px;color:#25D366">chat</span> WhatsApp</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <span style="font-size:12px;font-weight:600;color:#64748B;text-align:center">Hesabın yok mu? <a href="#" onClick="{{ goSignup }}" style="font-weight:700">Create one</a></span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px;animation:rise var(--duration-260) var(--ease-out) both">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="display:inline-flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:var(--semantic-success);width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">person_add</span></span><span style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Create your account</span></span>
+          <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">14 gün ücretsiz. No card required.</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <label style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">person</span>Full name</span>
+            <span style="position:relative;display:flex;align-items:center">
+              <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">person</span>
+              <input type="text" value="{{ name }}" onChange="{{ onName }}" placeholder="Bora Yılmaz" style="width:100%;box-sizing:border-box;padding:13px 14px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+            </span>
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">alternate_email</span>Work email</span>
+            <span style="position:relative;display:flex;align-items:center">
+              <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">mail</span>
+              <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="bora@deha.com" style="width:100%;box-sizing:border-box;padding:13px 14px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+            </span>
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">key</span>Password</span>
+            <span style="position:relative;display:flex;align-items:center">
+              <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">lock</span>
+              <input type="{{ pwType }}" value="{{ password }}" onChange="{{ onPassword }}" placeholder="En az 8 karakter" style="width:100%;box-sizing:border-box;padding:13px 44px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+              <button type="button" class="ac-eye" onClick="{{ togglePw }}" style="position:absolute;right:8px;width:30px;height:30px;border:none;background:none;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:#94A3B8;transition:background var(--duration-base),color var(--duration-base)" style-hover="background:#F1F5F9;color:#334155"><span class="material-symbols-outlined" style="font-size:18px">{{ pwIcon }}</span></button>
+            </span>
+            <span style="display:flex;align-items:center;gap:10px;padding-top:4px">
+              <span style="flex:1;height:6px;border-radius:9999px;background:#E2E8F0;box-shadow:inset 0 2px 4px rgba(0,0,0,0.06);overflow:hidden"><span style="{{ strengthFill }}"></span></span>
+              <span style="{{ strengthLabelStyle }}">{{ strengthLabel }}</span>
+            </span>
+          </label>
+
+          <span style="display:flex;align-items:flex-start;gap:9px;padding-top:2px">
+            <button type="button" class="ac-check" onClick="{{ toggleAgree }}" style="{{ checkStyle }}"><span class="material-icons" style="{{ checkIconStyle }}">check</span></button>
+            <span style="font-size:12px;font-weight:500;color:#64748B;line-height:1.45">I agree to the <a href="#" style="font-weight:700">Terms</a> and <a href="#" style="font-weight:700">Privacy Policy</a>.</span>
+          </span>
+        </div>
+
+        <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#FEF2F2;animation:rise var(--duration-200) ease both">
+            <span class="material-icons" style="font-size:16px;color:var(--semantic-danger)">error</span>
+            <span style="font-size:12px;font-weight:600;color:var(--semantic-danger)">{{ errorMsg }}</span>
+          </div>
+        </sc-if>
+
+        <button type="button" onClick="{{ submit }}" style="{{ ctaStyle }}" style-hover="filter:brightness(1.06)" style-active="transform:scale(0.985)">
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin var(--duration-700) linear infinite"></span></sc-if>
+          <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size:19px;animation:pop var(--duration-320) var(--ease-spring) both">check</span></sc-if>
+          <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px">Create account <span class="material-icons" style="font-size:17px">arrow_forward</span></span></sc-if>
+        </button>
+
+        <span style="font-size:12px;font-weight:600;color:#64748B;text-align:center">Zaten üye misin? <a href="#" onClick="{{ goSignin }}" style="font-weight:700">Sign in</a></span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isOtp }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px;animation:rise var(--duration-260) var(--ease-out) both">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="display:inline-flex;align-items:center;gap:6px;align-self:flex-start;padding:5px 11px;border-radius:16px;background:#F1F5F9;font-size:11px;font-weight:700;color:#334155"><span class="material-icons" style="font-size:13px">smartphone</span> Step 2 of 2</span>
+          <span style="display:inline-flex;align-items:center;gap:10px;padding-top:6px"><span class="icon-badge icon-badge--lg" style="--icon-c:var(--semantic-success);width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">verified_user</span></span><span style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Verify it's you</span></span>
+          <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">6 haneli kodu <span style="font-weight:700;color:#334155">+90 5•• ••• 41 62</span> numarasına gönderdik.</span>
+        </div>
+
+        <div style="display:flex;gap:9px;justify-content:space-between">
+          <sc-for list="{{ otpCells }}" as="cell" hint-placeholder-count="6">
+            <input value="{{ cell.value }}" onChange="{{ cell.onChange }}" onKeyDown="{{ cell.onKeyDown }}" ref="{{ cell.ref }}" inputMode="numeric" maxLength="1" style="{{ cell.style }}" />
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#FEF2F2;animation:rise var(--duration-200) ease both">
+            <span class="material-icons" style="font-size:16px;color:var(--semantic-danger)">error</span>
+            <span style="font-size:12px;font-weight:600;color:var(--semantic-danger)">{{ errorMsg }}</span>
+          </div>
+        </sc-if>
+
+        <button type="button" onClick="{{ submit }}" style="{{ ctaStyle }}" style-hover="filter:brightness(1.06)" style-active="transform:scale(0.985)">
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin var(--duration-700) linear infinite"></span></sc-if>
+          <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size:19px;animation:pop var(--duration-320) var(--ease-spring) both">check</span></sc-if>
+          <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px">Verify code <span class="material-icons" style="font-size:17px">arrow_forward</span></span></sc-if>
+        </button>
+
+        <span style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;color:#64748B">Kod gelmedi mi? <a href="#" onClick="{{ resend }}" style="{{ resendStyle }}">{{ resendLabel }}</a></span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReset }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px;animation:rise var(--duration-260) var(--ease-out) both">
+        <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:12px 0 4px;text-align:center">
+            <span style="width:56px;height:56px;border-radius:20px;background:#ECFDF5;display:inline-flex;align-items:center;justify-content:center;animation:pop var(--duration-420) var(--ease-spring) both"><span class="material-icons" style="font-size:30px;color:var(--semantic-success)">mark_email_read</span></span>
+            <span style="font-size:22px;font-weight:900;letter-spacing:-0.02em;color:#0F172A">Check your inbox</span>
+            <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">Sıfırlama bağlantısını gönderdik. Link 30 dakika geçerli.</span>
+            <a href="#" onClick="{{ goSignin }}" style="font-size:12px;font-weight:700">Back to sign in</a>
+          </div>
+        </sc-if>
+        <sc-if value="{{ resetForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:22px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="display:inline-flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:var(--semantic-success);width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">lock_reset</span></span><span style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Reset password</span></span>
+              <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">Enter your account email and we'll send a reset link.</span>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:7px">
+              <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">mail</span>Email</span>
+              <span style="position:relative;display:flex;align-items:center">
+                <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">mail</span>
+                <input type="email" value="{{ email }}" onChange="{{ onEmail }}" placeholder="bora@deha.com" style="width:100%;box-sizing:border-box;padding:13px 14px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+              </span>
+            </label>
+            <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#FEF2F2;animation:rise var(--duration-200) ease both">
+                <span class="material-icons" style="font-size:16px;color:var(--semantic-danger)">error</span>
+                <span style="font-size:12px;font-weight:600;color:var(--semantic-danger)">{{ errorMsg }}</span>
+              </div>
+            </sc-if>
+            <button type="button" onClick="{{ submit }}" style="{{ ctaStyle }}" style-hover="filter:brightness(1.06)" style-active="transform:scale(0.985)">
+              <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin var(--duration-700) linear infinite"></span></sc-if>
+              <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px">Send reset link <span class="material-icons" style="font-size:17px">arrow_forward</span></span></sc-if>
+            </button>
+            <span style="font-size:12px;font-weight:600;color:#64748B;text-align:center"><a href="#" onClick="{{ goSignin }}" style="font-weight:700">Back to sign in</a></span>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSso }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:22px;animation:rise var(--duration-260) var(--ease-out) both">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="display:inline-flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:var(--semantic-success);width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">business_center</span></span><span style="font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1.15">Sign in with SSO</span></span>
+          <span style="font-size:13px;font-weight:500;color:#64748B;text-wrap:pretty">Kurumsal hesabınla giriş yap. Choose your workspace vertical.</span>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ verticals }}" as="v" hint-placeholder-count="4">
+            <button type="button" class="ac-vertical" onClick="{{ v.pick }}" style="{{ v.style }}" style-active="transform:scale(0.95)"><span class="material-symbols-outlined" style="font-size:15px">{{ v.icon }}</span> {{ v.label }}</button>
+          </sc-for>
+        </div>
+
+        <label style="display:flex;flex-direction:column;gap:7px">
+          <span style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.10em;color:#94A3B8;display:inline-flex;align-items:center;gap:6px"><span class="material-icons" style="font-size:14px;color:#94A3B8">business_center</span>Workspace domain</span>
+          <span style="position:relative;display:flex;align-items:center">
+            <span class="material-symbols-outlined" style="position:absolute;left:13px;font-size:18px;color:#94A3B8;pointer-events:none">business_center</span>
+            <input type="text" value="{{ domain }}" onChange="{{ onDomain }}" placeholder="acme" style="width:100%;box-sizing:border-box;padding:13px 84px 13px 41px;border-radius:22px;border:1px solid #E2E8F0;background:#fff;font-family:inherit;font-size:14px;font-weight:600;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),box-shadow var(--duration-200) var(--ease-out)" style-focus="border-color:var(--semantic-success);box-shadow:0 0 0 4px rgba(16,185,129,0.14)" style-hover="border-color:#CBD5E1" />
+            <span style="position:absolute;right:14px;font-size:13px;font-weight:700;color:#94A3B8;pointer-events:none">.deha.com</span>
+          </span>
+        </label>
+
+        <sc-if value="{{ errorMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:#FEF2F2;animation:rise var(--duration-200) ease both">
+            <span class="material-icons" style="font-size:16px;color:var(--semantic-danger)">error</span>
+            <span style="font-size:12px;font-weight:600;color:var(--semantic-danger)">{{ errorMsg }}</span>
+          </div>
+        </sc-if>
+
+        <button type="button" onClick="{{ submit }}" style="{{ ctaStyle }}" style-hover="filter:brightness(1.06)" style-active="transform:scale(0.985)">
+          <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}"><span style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;animation:spin var(--duration-700) linear infinite"></span></sc-if>
+          <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size:19px;animation:pop var(--duration-320) var(--ease-spring) both">check</span></sc-if>
+          <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span style="display:inline-flex;align-items:center;gap:8px">Continue with SSO <span class="material-icons" style="font-size:17px">arrow_forward</span></span></sc-if>
+        </button>
+
+        <span style="font-size:12px;font-weight:600;color:#64748B;text-align:center">Kurumsal hesap yok mu? <a href="#" onClick="{{ goSignin }}" style="font-weight:700">Use email instead</a></span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showTrustFooter }}" hint-placeholder-val="{{ true }}">
+      <span style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:2px;border-top:1px solid #E2E8F0;padding-top:16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:#94A3B8"><span class="material-icons" style="font-size:13px">verified_user</span> KVKK compliant · 256-bit TLS</span>
+    </sc-if>
+  </div>
+  </div>
+  </div>
+
+  <span style="font-size:11px;font-weight:600;color:#94A3B8;text-align:center;max-width:420px;text-wrap:pretty">Try it: submit with an empty field to see the error state, or fill it in for the loading → success transition.</span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:900},&quot;defaultVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signin&quot;,&quot;signup&quot;,&quot;otp&quot;,&quot;reset&quot;,&quot;sso&quot;],&quot;default&quot;:&quot;signin&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showSocial&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showTrustFooter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      variant: props.defaultVariant || 'signin',
+      email: '', password: '', name: '', domain: '',
+      showPw: false, remember: true, agree: false,
+      status: 'idle', errorMsg: '',
+      otp: ['', '', '', '', '', ''],
+      shakeKey: 0, cooldown: 0, vertical: 'Real Estate',
+      segPos: { left: 3, width: 0 }
+    };
+    this.otpRefs = [];
+    this.segEl = null;
+    this.timers = [];
+  }
+
+  componentWillUnmount() { this.timers.forEach(clearTimeout); clearInterval(this.tick); }
+
+  measure = () => {
+    const root = this.segEl;
+    if (!root) return;
+    const btn = root.querySelector('button[data-active="true"]');
+    if (!btn) return;
+    const next = { left: btn.offsetLeft, width: btn.offsetWidth };
+    this.setState(s => (s.segPos.left === next.left && s.segPos.width === next.width ? null : { segPos: next }));
+  };
+
+  componentDidMount() {
+    this.measure();
+    this.timers.push(setTimeout(this.measure, 120));
+    window.addEventListener('resize', this.measure);
+  }
+  componentDidUpdate() { this.measure(); }
+
+  go = (variant) => (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    this.setState({ variant, status: 'idle', errorMsg: '' });
+  };
+
+  fail = (msg) => this.setState(s => ({ status: 'error', errorMsg: msg, shakeKey: s.shakeKey + 1 }));
+
+  submit = () => {
+    const s = this.state;
+    if (s.status === 'loading') return;
+    if (s.variant === 'signin' && (!s.email.trim() || !s.password)) return this.fail('Email ve şifre zorunludur.');
+    if (s.variant === 'signup' && (!s.name.trim() || !s.email.trim() || s.password.length < 8)) return this.fail('Tüm alanları doldur — password min. 8 characters.');
+    if (s.variant === 'signup' && !s.agree) return this.fail('Devam etmek için şartları kabul et.');
+    if (s.variant === 'otp' && s.otp.join('').length < 6) return this.fail('6 haneli kodu tamamla.');
+    if (s.variant === 'reset' && !s.email.trim()) return this.fail('Hesap e-postanı gir.');
+    if (s.variant === 'sso' && !s.domain.trim()) return this.fail('Workspace domain gerekli.');
+    this.setState({ status: 'loading', errorMsg: '' });
+    this.timers.push(setTimeout(() => {
+      this.setState({ status: 'done' });
+      if (this.state.variant !== 'reset') {
+        this.timers.push(setTimeout(() => this.setState({ status: 'idle' }), 1600));
+      }
+    }, 1300));
+  };
+
+  resend = (e) => {
+    e.preventDefault();
+    if (this.state.cooldown > 0) return;
+    this.setState({ cooldown: 30, errorMsg: '' });
+    clearInterval(this.tick);
+    this.tick = setInterval(() => {
+      this.setState(s => {
+        if (s.cooldown <= 1) { clearInterval(this.tick); return { cooldown: 0 }; }
+        return { cooldown: s.cooldown - 1 };
+      });
+    }, 1000);
+  };
+
+  setOtp = (i) => (e) => {
+    const raw = (e.target.value || '').replace(/\D/g, '');
+    this.setState(s => {
+      const otp = s.otp.slice();
+      if (raw.length > 1) { raw.split('').slice(0, 6 - i).forEach((c, k) => { otp[i + k] = c; }); }
+      else otp[i] = raw;
+      return { otp, errorMsg: '' };
+    }, () => {
+      const next = Math.min(5, i + Math.max(1, raw.length));
+      if (raw && this.otpRefs[next]) this.otpRefs[next].focus();
+    });
+  };
+
+  otpKey = (i) => (e) => {
+    if (e.key === 'Backspace' && !this.state.otp[i] && this.otpRefs[i - 1]) this.otpRefs[i - 1].focus();
+  };
+
+  renderVals() {
+    const s = this.state;
+    const v = s.variant;
+    const pwScore = Math.min(4, (s.password.length >= 8 ? 1 : 0) + (/[A-Z]/.test(s.password) ? 1 : 0) + (/\d/.test(s.password) ? 1 : 0) + (/[^A-Za-z0-9]/.test(s.password) ? 1 : 0));
+    const strengthMap = [
+      { label: 'Weak', color: 'var(--semantic-danger)', pct: s.password ? 18 : 0 },
+      { label: 'Weak', color: 'var(--semantic-danger)', pct: 30 },
+      { label: 'Fair', color: '#EAB308', pct: 55 },
+      { label: 'Good', color: 'var(--semantic-success)', pct: 78 },
+      { label: 'Strong', color: 'var(--semantic-success)', pct: 100 }
+    ][pwScore];
+
+    const tabs = [
+      ['signin', 'Sign In'], ['signup', 'Sign Up'], ['otp', '2FA Code'], ['reset', 'Reset'], ['sso', 'SSO']
+    ].map(([id, label]) => {
+      const active = v === id;
+      return {
+        label, active, go: this.go(id),
+        style: `position:relative;z-index:1;padding:7px 16px;border-radius:9999px;font-family:inherit;font-size:12px;font-weight:${active ? 900 : 800};border:none;background:none;color:${active ? '#FFFFFF' : '#64748B'};cursor:pointer;white-space:nowrap;transition:color var(--duration-240),transform var(--duration-fast) var(--ease-out)`
+      };
+    });
+
+    const otpCells = s.otp.map((value, i) => {
+      const filled = !!value;
+      return {
+        value, onChange: this.setOtp(i), onKeyDown: this.otpKey(i),
+        ref: (el) => { this.otpRefs[i] = el; },
+        style: `width:100%;min-width:0;box-sizing:border-box;padding:14px 0;text-align:center;border-radius:20px;border:1px solid ${s.status === 'error' ? 'var(--semantic-danger)' : filled ? 'var(--semantic-success)' : '#E2E8F0'};background:${filled ? '#ECFDF5' : '#fff'};font-family:inherit;font-size:20px;font-weight:900;color:#0F172A;outline:none;transition:border-color var(--duration-200) var(--ease-out),background var(--duration-200),box-shadow var(--duration-200),transform var(--duration-200) var(--ease-spring);transform:scale(${filled ? 1.03 : 1})`
+      };
+    });
+
+    const verticals = [
+      ['Real Estate', 'home_work'], ['Healthcare', 'medical_services'], ['Hotels', 'hotel'], ['Sales Team', 'group']
+    ].map(([label, icon]) => {
+      const on = s.vertical === label;
+      return {
+        label, icon, pick: () => this.setState({ vertical: label }),
+        style: `display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:16px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:1px solid ${on ? 'transparent' : '#E2E8F0'};background:${on ? 'var(--semantic-success)' : '#fff'};color:${on ? '#fff' : '#334155'};box-shadow:${on ? '0 10px 30px -12px rgba(16,185,129,0.6),inset 0 1px 0 rgba(255,255,255,0.4)' : 'none'};transition:background var(--duration-200),color var(--duration-200),border-color var(--duration-200),box-shadow var(--duration-200),transform var(--duration-140) var(--ease-out)`
+      };
+    });
+
+    const loading = s.status === 'loading';
+    const done = s.status === 'done';
+    const ctaBg = done ? '#059669' : 'var(--semantic-success)';
+
+    return {
+      tabs, otpCells, verticals,
+      indicatorStyle: `position:absolute;top:3px;bottom:3px;left:${s.segPos.left}px;width:${s.segPos.width}px;background:#0F172A;border-radius:9999px;box-shadow:0 1px 2px rgba(0,0,0,0.18);z-index:0;transition:left var(--duration-320) var(--ease-slide-bounce),width var(--duration-320) var(--ease-out)`,
+      segRef: (el) => { this.segEl = el; },
+      shakeStyle: s.status === 'error' ? `animation:shake var(--duration-420) var(--ease-shake) both` : '',
+
+      isSignin: v === 'signin', isSignup: v === 'signup', isOtp: v === 'otp', isReset: v === 'reset', isSso: v === 'sso',
+      resetForm: v === 'reset' && !done,
+      isLoading: loading, isDone: done, isIdle: !loading && !done,
+      errorMsg: s.errorMsg || false,
+
+      email: s.email, password: s.password, name: s.name, domain: s.domain,
+      onEmail: (e) => this.setState({ email: e.target.value, errorMsg: '', status: 'idle' }),
+      onPassword: (e) => this.setState({ password: e.target.value, errorMsg: '', status: 'idle' }),
+      onName: (e) => this.setState({ name: e.target.value, errorMsg: '', status: 'idle' }),
+      onDomain: (e) => this.setState({ domain: e.target.value, errorMsg: '', status: 'idle' }),
+      pwType: s.showPw ? 'text' : 'password',
+      pwIcon: s.showPw ? 'visibility_off' : 'visibility',
+      togglePw: () => this.setState(st => ({ showPw: !st.showPw })),
+
+      toggleRemember: () => this.setState(st => ({ remember: !st.remember })),
+      switchStyle: `position:relative;width:44px;height:24px;flex:none;border:none;padding:0;border-radius:9999px;cursor:pointer;background:${s.remember ? 'var(--semantic-success)' : '#CBD5E1'};box-shadow:${s.remember ? 'inset 0 1px 0 rgba(255,255,255,0.42),inset 0 -2px 0 rgba(15,23,42,0.14)' : 'inset 0 2px 4px rgba(0,0,0,0.06)'};transition:background var(--duration-slow) var(--ease-out)`,
+      knobStyle: `position:absolute;top:3px;left:${s.remember ? 23 : 3}px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.16);transition:left var(--duration-280) var(--ease-out)`,
+
+      toggleAgree: () => this.setState(st => ({ agree: !st.agree, errorMsg: '' })),
+      checkStyle: `width:20px;height:20px;flex:none;margin-top:1px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;border:1px solid ${s.agree ? 'transparent' : '#CBD5E1'};background:${s.agree ? 'var(--semantic-success)' : '#fff'};padding:0;transition:background var(--duration-200),border-color var(--duration-200),transform var(--duration-140) var(--ease-spring)`,
+      checkIconStyle: `font-size:15px;color:#fff;transform:scale(${s.agree ? 1 : 0});transition:transform var(--duration-slow) var(--ease-spring)`,
+
+      strengthFill: `display:block;height:100%;width:${strengthMap.pct}%;border-radius:9999px;background:${strengthMap.color};transition:width var(--duration-320) var(--ease-out),background var(--duration-260)`,
+      strengthLabel: s.password ? strengthMap.label : 'Empty',
+      strengthLabelStyle: `min-width:48px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:${s.password ? strengthMap.color : '#94A3B8'};transition:color var(--duration-260)`,
+
+      resend: this.resend,
+      resendLabel: s.cooldown > 0 ? `Resend in ${s.cooldown}s` : 'Kodu tekrar gönder',
+      resendStyle: `font-weight:700;color:${s.cooldown > 0 ? '#94A3B8' : 'var(--semantic-success)'};cursor:${s.cooldown > 0 ? 'default' : 'pointer'};transition:color var(--duration-200)`,
+
+      submit: this.submit,
+      goSignin: this.go('signin'), goSignup: this.go('signup'), goReset: this.go('reset'),
+      ctaStyle: `display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:13px 20px;border-radius:16px;background:${ctaBg};color:#fff;font-family:inherit;font-weight:800;font-size:14px;border:none;cursor:${loading ? 'progress' : 'pointer'};text-shadow:0 1px 2px rgba(0,0,0,0.18);box-shadow:0 10px 30px -10px rgba(16,185,129,0.5),inset 0 1px 0 rgba(255,255,255,0.5),inset 0 -2px 0 rgba(0,0,0,0.22),inset 0 0 0 1px rgba(255,255,255,0.15);background-image:linear-gradient(to right,rgba(255,255,255,0.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,0.07) 1px,transparent 1px);background-size:14px 14px;transition:background var(--duration-240),filter var(--duration-200) var(--ease-out),transform var(--duration-200)`,
+
+      showSocial: this.props.showSocial !== false,
+      showTrustFooter: this.props.showTrustFooter !== false
+    };
+  }
+}
+</script>
+</body>
+</html>

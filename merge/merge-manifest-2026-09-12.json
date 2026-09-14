@@ -1,0 +1,402 @@
+{
+ "projectId": "9684cda3-7f54-4e07-b933-c216065cad53",
+ "builtAt": "2026-09-12",
+ "files": [
+  {
+   "path": "merge/01-pills-chips-badges/bora-capsule-pills-and-cards.dc.html",
+   "localPath": "merge/01-pills-chips-badges/bora-capsule-pills-and-cards.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/shiny-pill.dc.html",
+   "localPath": "merge/01-pills-chips-badges/shiny-pill.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/shiny-badge.dc.html",
+   "localPath": "merge/01-pills-chips-badges/shiny-badge.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/glowing-badge.dc.html",
+   "localPath": "merge/01-pills-chips-badges/glowing-badge.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/notification-badge.dc.html",
+   "localPath": "merge/01-pills-chips-badges/notification-badge.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/kbd.dc.html",
+   "localPath": "merge/01-pills-chips-badges/kbd.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/ai-chat-citationchip.dc.html",
+   "localPath": "merge/01-pills-chips-badges/ai-chat-citationchip.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/pages-citationchip.dc.html",
+   "localPath": "merge/01-pills-chips-badges/pages-citationchip.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/ai-chat-inline-citation.dc.html",
+   "localPath": "merge/01-pills-chips-badges/ai-chat-inline-citation.dc.html"
+  },
+  {
+   "path": "merge/01-pills-chips-badges/ai-chat-inline-citation--CitationChip.dc.html",
+   "localPath": "merge/01-pills-chips-badges/ai-chat-inline-citation--CitationChip.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/save-toggle-button.dc.html",
+   "localPath": "merge/02-buttons/save-toggle-button.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/save-toggle-button--SaveToggle.dc.html",
+   "localPath": "merge/02-buttons/save-toggle-button--SaveToggle.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/save-toggle-button--SaveToggleOriginal.dc.html",
+   "localPath": "merge/02-buttons/save-toggle-button--SaveToggleOriginal.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/badges-pills-savetoggle.dc.html",
+   "localPath": "merge/02-buttons/badges-pills-savetoggle.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/badges-pills-savetoggleoriginal.dc.html",
+   "localPath": "merge/02-buttons/badges-pills-savetoggleoriginal.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/pages-savetoggle.dc.html",
+   "localPath": "merge/02-buttons/pages-savetoggle.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/pages-savetoggleoriginal.dc.html",
+   "localPath": "merge/02-buttons/pages-savetoggleoriginal.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/book-a-call-button.dc.html",
+   "localPath": "merge/02-buttons/book-a-call-button.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/book-a-call-button--BookACallButton.dc.html",
+   "localPath": "merge/02-buttons/book-a-call-button--BookACallButton.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/marketing-onboarding-bookacallbutton.dc.html",
+   "localPath": "merge/02-buttons/marketing-onboarding-bookacallbutton.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/pages-bookacallbutton.dc.html",
+   "localPath": "merge/02-buttons/pages-bookacallbutton.dc.html"
+  },
+  {
+   "path": "merge/02-buttons/family-receive-button.dc.html",
+   "localPath": "merge/02-buttons/family-receive-button.dc.html"
+  },
+  {
+   "path": "merge/03-cards/cardwithimage.dc.html",
+   "localPath": "merge/03-cards/cardwithimage.dc.html"
+  },
+  {
+   "path": "merge/03-cards/image-card.dc.html",
+   "localPath": "merge/03-cards/image-card.dc.html"
+  },
+  {
+   "path": "merge/03-cards/3d-holo-card.dc.html",
+   "localPath": "merge/03-cards/3d-holo-card.dc.html"
+  },
+  {
+   "path": "merge/03-cards/offerbox.dc.html",
+   "localPath": "merge/03-cards/offerbox.dc.html"
+  },
+  {
+   "path": "merge/03-cards/mainbox.dc.html",
+   "localPath": "merge/03-cards/mainbox.dc.html"
+  },
+  {
+   "path": "merge/03-cards/auth-card.dc.html",
+   "localPath": "merge/03-cards/auth-card.dc.html"
+  },
+  {
+   "path": "merge/03-cards/ai-chat-attachments.dc.html",
+   "localPath": "merge/03-cards/ai-chat-attachments.dc.html"
+  },
+  {
+   "path": "merge/03-cards/ai-chat-attachments--AttachmentCard.dc.html",
+   "localPath": "merge/03-cards/ai-chat-attachments--AttachmentCard.dc.html"
+  },
+  {
+   "path": "merge/03-cards/ai-chat-attachmentcard.dc.html",
+   "localPath": "merge/03-cards/ai-chat-attachmentcard.dc.html"
+  },
+  {
+   "path": "merge/03-cards/pages-attachmentcard.dc.html",
+   "localPath": "merge/03-cards/pages-attachmentcard.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-action-plan.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-action-plan.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-anonymous.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-anonymous.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-checkpoint.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-checkpoint.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-confirmation.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-confirmation.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-context.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-context.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-context--ContextRing.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-context--ContextRing.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-contextring.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-contextring.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/pages-contextring.dc.html",
+   "localPath": "merge/04-ai-chat/pages-contextring.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-feedback-bar.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-feedback-bar.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-message.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-message.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-plan.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-plan.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-queue-input.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-queue-input.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-reasoning.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-reasoning.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-task.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-task.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-text-shimmer.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-text-shimmer.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chat-typing-animation.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chat-typing-animation.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ai-chatbox-and-suggestions.dc.html",
+   "localPath": "merge/04-ai-chat/ai-chatbox-and-suggestions.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/aimessagebox2.dc.html",
+   "localPath": "merge/04-ai-chat/aimessagebox2.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/aimessageboxgeneral.dc.html",
+   "localPath": "merge/04-ai-chat/aimessageboxgeneral.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/chain-of-thought.dc.html",
+   "localPath": "merge/04-ai-chat/chain-of-thought.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/ask-user-questions.dc.html",
+   "localPath": "merge/04-ai-chat/ask-user-questions.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/messagebubble.dc.html",
+   "localPath": "merge/04-ai-chat/messagebubble.dc.html"
+  },
+  {
+   "path": "merge/04-ai-chat/messagecomposer.dc.html",
+   "localPath": "merge/04-ai-chat/messagecomposer.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/slider.dc.html",
+   "localPath": "merge/05-controls-inputs/slider.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/discrete-tabs.dc.html",
+   "localPath": "merge/05-controls-inputs/discrete-tabs.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/progressive-input-stack.dc.html",
+   "localPath": "merge/05-controls-inputs/progressive-input-stack.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/passwordstrength.dc.html",
+   "localPath": "merge/05-controls-inputs/passwordstrength.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/passwordstrength--PasswordMeter.dc.html",
+   "localPath": "merge/05-controls-inputs/passwordstrength--PasswordMeter.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/foundations-passwordmeter.dc.html",
+   "localPath": "merge/05-controls-inputs/foundations-passwordmeter.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/pages-passwordmeter.dc.html",
+   "localPath": "merge/05-controls-inputs/pages-passwordmeter.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/accordion-3.dc.html",
+   "localPath": "merge/05-controls-inputs/accordion-3.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/scrollbar.dc.html",
+   "localPath": "merge/05-controls-inputs/scrollbar.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/calendar-booking.dc.html",
+   "localPath": "merge/05-controls-inputs/calendar-booking.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/filetree.dc.html",
+   "localPath": "merge/05-controls-inputs/filetree.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/table.dc.html",
+   "localPath": "merge/05-controls-inputs/table.dc.html"
+  },
+  {
+   "path": "merge/05-controls-inputs/listrownav.dc.html",
+   "localPath": "merge/05-controls-inputs/listrownav.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/alertdialog.dc.html",
+   "localPath": "merge/06-overlays-popovers/alertdialog.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/actionsheet.dc.html",
+   "localPath": "merge/06-overlays-popovers/actionsheet.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/drawer-3.dc.html",
+   "localPath": "merge/06-overlays-popovers/drawer-3.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/contextmenu.dc.html",
+   "localPath": "merge/06-overlays-popovers/contextmenu.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/tippopover.dc.html",
+   "localPath": "merge/06-overlays-popovers/tippopover.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/newfeaturepopover.dc.html",
+   "localPath": "merge/06-overlays-popovers/newfeaturepopover.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/popoveroffercold.dc.html",
+   "localPath": "merge/06-overlays-popovers/popoveroffercold.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/menudropdownanimation.dc.html",
+   "localPath": "merge/06-overlays-popovers/menudropdownanimation.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/modal-open-close-animation.dc.html",
+   "localPath": "merge/06-overlays-popovers/modal-open-close-animation.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/tooltip-open-close-animation.dc.html",
+   "localPath": "merge/06-overlays-popovers/tooltip-open-close-animation.dc.html"
+  },
+  {
+   "path": "merge/06-overlays-popovers/show-qr.dc.html",
+   "localPath": "merge/06-overlays-popovers/show-qr.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/navigation.dc.html",
+   "localPath": "merge/07-navigation-layout/navigation.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/bottomtoolbar.dc.html",
+   "localPath": "merge/07-navigation-layout/bottomtoolbar.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/left-side-pane.dc.html",
+   "localPath": "merge/07-navigation-layout/left-side-pane.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/give-feedback-left-pane.dc.html",
+   "localPath": "merge/07-navigation-layout/give-feedback-left-pane.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/topbanner.dc.html",
+   "localPath": "merge/07-navigation-layout/topbanner.dc.html"
+  },
+  {
+   "path": "merge/07-navigation-layout/herobanner2.dc.html",
+   "localPath": "merge/07-navigation-layout/herobanner2.dc.html"
+  },
+  {
+   "path": "merge/08-animations/page-shimmer-skeleton.dc.html",
+   "localPath": "merge/08-animations/page-shimmer-skeleton.dc.html"
+  },
+  {
+   "path": "merge/08-animations/page-side-by-side-animation.dc.html",
+   "localPath": "merge/08-animations/page-side-by-side-animation.dc.html"
+  },
+  {
+   "path": "merge/08-animations/panel-reveal-animation.dc.html",
+   "localPath": "merge/08-animations/panel-reveal-animation.dc.html"
+  },
+  {
+   "path": "merge/08-animations/phone-scroll-animation.dc.html",
+   "localPath": "merge/08-animations/phone-scroll-animation.dc.html"
+  },
+  {
+   "path": "merge/08-animations/slideuptext.dc.html",
+   "localPath": "merge/08-animations/slideuptext.dc.html"
+  },
+  {
+   "path": "merge/08-animations/receipt-printer.dc.html",
+   "localPath": "merge/08-animations/receipt-printer.dc.html"
+  },
+  {
+   "path": "merge/09-marketing-pricing/pricing.dc.html",
+   "localPath": "merge/09-marketing-pricing/pricing.dc.html"
+  },
+  {
+   "path": "merge/09-marketing-pricing/pricing-slider.dc.html",
+   "localPath": "merge/09-marketing-pricing/pricing-slider.dc.html"
+  },
+  {
+   "path": "merge/09-marketing-pricing/payments-free-trial.dc.html",
+   "localPath": "merge/09-marketing-pricing/payments-free-trial.dc.html"
+  },
+  {
+   "path": "merge/09-marketing-pricing/how-it-works.dc.html",
+   "localPath": "merge/09-marketing-pricing/how-it-works.dc.html"
+  },
+  {
+   "path": "merge/09-marketing-pricing/web-preview.dc.html",
+   "localPath": "merge/09-marketing-pricing/web-preview.dc.html"
+  },
+  {
+   "path": "merge/10-typography/highlighted-text.dc.html",
+   "localPath": "merge/10-typography/highlighted-text.dc.html"
+  },
+  {
+   "path": "merge/10-typography/texthighlighter.dc.html",
+   "localPath": "merge/10-typography/texthighlighter.dc.html"
+  },
+  {
+   "path": "merge/README.md",
+   "localPath": "merge/README.md"
+  }
+ ]
+}

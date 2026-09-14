@@ -1,0 +1,342 @@
+<!-- @dsCard group="Merge - navigation-layout" name="Give Feedback Left Pane" subtitle="-> new: Navigation & layout" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+  body { margin: 0; background: #F1F5F9; font-family: 'Montserrat', system-ui, sans-serif; --dx: 0px; --dy: 0px; --rot: 0deg; }
+  a { color: var(--brand-primary-600); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+  a:hover { color: var(--brand-primary-700); }
+  }
+  @keyframes gf-spin { to { transform: rotate(360deg); } }
+  @keyframes gf-pop { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+  @keyframes gf-label-in { from { opacity: 0; transform: translateY(6px) scale(0.94); } to { opacity: 1; transform: none; } }
+  @keyframes gf-conf {
+    0%   { opacity: 0; transform: translate(0,0) scale(0.4) rotate(0deg); }
+    14%  { opacity: 1; }
+    70%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(var(--rot)); }
+  }
+  @media (hover: hover) and (pointer: fine) {
+  [data-gf-cta]:hover { transform: none !important; filter: brightness(1.04); box-shadow: inset 0 1px 0 rgba(255,255,255,0.22) !important; }
+  }
+  [data-gf-cta]:active { transform: none !important; filter: brightness(0.97); }
+  [data-gf-row]:focus-visible, [data-gf-cta]:focus-visible, .pill-tab:focus-visible, .pill-priority:focus-visible {
+    outline: 2px solid var(--brand-primary); outline-offset: 2px;
+  }
+  [data-gf-row][role="button"] { position: relative; }
+  [data-gf-row][role="button"]::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-gf-knob], [data-gf-row], [data-gf-field] {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+    [style*="gf-pop"], [style*="gf-label-in"], [style*="gf-spin"], [style*="gf-conf"] {
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box;">
+
+  <div>
+    <span class="micro-label" style="display: block; margin-bottom: 6px;">Component</span>
+    <h1 class="h2" style="margin: 0;">give-feedback-left-pane</h1>
+    <p class="meta" style="margin: 5px 0 0; max-width: 520px; line-height: 1.5;">Sidebar row opens an inline feedback popover. The single action button morphs through idle, submitting and success, then resets itself.</p>
+  </div>
+
+  <div class="pills-row">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+      <button class="pill-tab" onClick="{{ v.select }}" style="cursor: pointer;">{{ v.label }}</button>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <span class="badge tag" style="font-size: 10px;">{{ stageLabel }}</span>
+    <span class="meta" style="font-size: 11px;">{{ usageNote }}</span>
+  </div>
+
+  <div style="border-radius: 18px; overflow: hidden; border: 1px solid var(--card-border); display: flex; min-height: 396px; background: var(--card-bg);">
+
+    <div style="width: 234px; flex: 0 0 234px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; padding: 14px 10px; background: #F8FAFC; border-right: 1px solid var(--card-border);">
+
+      <div data-gf-row tabindex="0" role="button" aria-pressed="{{ darkAriaPressed }}" onClick="{{ toggleTheme }}" onKeyDown="{{ onThemeKey }}" style="display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; border-radius: 12px; cursor: pointer;">
+        <div style="display: flex; align-items: center; gap: 11px;">
+          <span class="material-icons" style="font-size: 18px; color: var(--fg3);">dark_mode</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--fg2);">Dark Mode</span>
+        </div>
+        <div data-gf-track style="width: 34px; height: 20px; border-radius: 9999px; padding: 3px; box-sizing: border-box; box-shadow: inset 0 2px 4px rgba(0,0,0,0.10);">
+          <div data-gf-knob style="width: 14px; height: 14px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: transform var(--duration-240) var(--ease-spring);"></div>
+        </div>
+      </div>
+
+      <div data-gf-row data-gf-active tabindex="0" role="button" onClick="{{ togglePanel }}" onKeyDown="{{ onMenuKey }}" style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 12px; cursor: pointer; transition: background var(--duration-200), box-shadow var(--duration-200);">
+        <span class="material-icons" style="font-size: 18px; color: var(--fg1);">{{ menuIcon }}</span>
+        <span style="font-size: 13px; font-weight: 700; color: var(--fg1);">{{ menuLabel }}</span>
+      </div>
+
+      <div data-gf-row style="display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 12px; cursor: pointer;">
+        <span class="material-icons" style="font-size: 18px; color: var(--fg4);">support</span>
+        <span style="font-size: 13px; font-weight: 600; color: var(--fg4);">Help Center</span>
+      </div>
+
+      <span style="font-size: 11px; font-weight: 700; color: var(--fg4); padding: 10px 11px 0;">v1.5.69</span>
+    </div>
+
+    <div style="flex: 1; position: relative; padding: 20px; background: var(--card-bg);">
+
+      <sc-if value="{{ isClosed }}" hint-placeholder-val="{{ false }}">
+        <div style="height: 100%; display: grid; place-items: center;">
+          <p class="meta" style="max-width: 230px; text-align: center; line-height: 1.55; font-size: 12px;">Idle — nothing on the right. Click <b>{{ menuLabel }}</b> to open the popover.</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="width: 100%; max-width: 356px; animation: gf-pop var(--duration-slower) var(--ease-spring) both;">
+          <div class="card-inner" style="padding: 14px; border-radius: 18px; box-shadow: 0 18px 44px -22px rgba(15,23,42,0.26), inset 0 0 0 1px rgba(15,23,42,0.04); display: flex; flex-direction: column; gap: 10px;">
+
+            <sc-if value="{{ hasChips }}" hint-placeholder-val="{{ false }}">
+              <div class="pills-row" style="gap: 6px;">
+                <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+                  <button class="pill-priority" onClick="{{ c.select }}" style="cursor: pointer; padding: 5px 12px;">
+                    <span class="dot"></span>{{ c.label }}
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <div data-gf-field style="border: 1px solid var(--card-border); border-radius: 14px; padding: 11px 13px; transition: border-color var(--duration-200), box-shadow var(--duration-200);">
+              <textarea onInput="{{ onType }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" placeholder="{{ placeholder }}" value="{{ text }}" style="width: 100%; min-height: 104px; border: none; outline: none; resize: none; background: transparent; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--fg1); display: block;"></textarea>
+            </div>
+
+            <button data-gf-cta class="btn-green" onClick="{{ submit }}" style="width: 100%; height: 44px; border-radius: 14px; font-size: 14px; gap: 8px; overflow: hidden; position: relative;">
+              {{ ctaContent }}
+            </button>
+
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;feedback&quot;,&quot;bug&quot;,&quot;feature&quot;,&quot;rating&quot;],&quot;default&quot;:&quot;feedback&quot;,&quot;tsType&quot;:&quot;'feedback'|'bug'|'feature'|'rating'&quot;,&quot;section&quot;:&quot;Content&quot;},&quot;submitDurationMs&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1800,&quot;min&quot;:400,&quot;max&quot;:4000,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const VARIANTS = {
+  feedback: {
+    label: 'Give Feedback', menuLabel: 'Give Feedback', menuIcon: 'chat_bubble_outline',
+    placeholder: 'Tell us what you think...', cta: 'Send Feedback', ctaIcon: 'send',
+    doneLabel: 'Submitted Successfully', chips: null, usage: 'Sidebar entry point — available on every screen'
+  },
+  bug: {
+    label: 'Bug Report', menuLabel: 'Report a Bug', menuIcon: 'bug_report',
+    placeholder: 'What went wrong? Steps to reproduce...', cta: 'Send Report', ctaIcon: 'send',
+    doneLabel: 'Report Received', chips: ['Low', 'Medium', 'High', 'Blocker'], usage: 'Error states and support handoff'
+  },
+  feature: {
+    label: 'Feature Request', menuLabel: 'Request a Feature', menuIcon: 'lightbulb_outline',
+    placeholder: 'What would make this easier for you?', cta: 'Submit Request', ctaIcon: 'send',
+    doneLabel: 'Added to Roadmap', chips: ['Dashboard', 'Pipeline', 'Mobile', 'Integrations'], usage: 'Roadmap page and empty states'
+  },
+  rating: {
+    label: 'Rate Release', menuLabel: 'Rate this Release', menuIcon: 'star_outline',
+    placeholder: 'Anything we should improve?', cta: 'Send Rating', ctaIcon: 'send',
+    doneLabel: 'Rating Recorded', chips: ['1', '2', '3', '4', '5'], usage: 'Post-release prompt and onboarding end'
+  }
+};
+
+const STAGE_LABEL = { closed: 'State · idle', open: 'State · open', submitting: 'State · submitting', done: 'State · success' };
+const CONFETTI = ['#FDE047', '#F97316', '#3B82F6', '#A78BFA', '#EF4444', '#FFFFFF', '#22D3EE', '#84CC16'];
+
+class Component extends DCLogic {
+  state = { variant: this.props.variant || 'feedback', stage: 'open', text: '', chip: 0, dark: false, focus: false };
+
+  componentWillUnmount() { clearTimeout(this._t1); clearTimeout(this._t2); }
+
+  submit = () => {
+    if (this.state.stage !== 'open') return;
+    this.setState({ stage: 'submitting' });
+    const dur = this.props.submitDurationMs ?? 1800;
+    this._t1 = setTimeout(() => {
+      this.setState({ stage: 'done' });
+      this._t2 = setTimeout(() => this.setState({ stage: 'open', text: '' }), 3400);
+    }, dur);
+  };
+
+  togglePanel = () => this.setState({ stage: this.state.stage === 'closed' ? 'open' : 'closed' });
+
+  toggleTheme = () => {
+    const dark = !this.state.dark;
+    this.setState({ dark });
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  };
+
+  ctaContent() {
+    const v = VARIANTS[this.state.variant] || VARIANTS.feedback;
+    const stage = this.state.stage;
+    const wrap = (key, kids) => React.createElement('span', {
+      key,
+      style: { display: 'inline-flex', alignItems: 'center', gap: 8, position: 'relative', zIndex: 1, animation: 'gf-label-in var(--duration-260) var(--ease-spring) both' }
+    }, kids);
+
+    if (stage === 'submitting') {
+      return wrap('sub', [
+        React.createElement('span', { key: 's', style: {
+          width: 16, height: 16, borderRadius: 9999,
+          border: '2px solid rgba(255,255,255,0.28)', borderTopColor: '#fff',
+          animation: 'gf-spin var(--duration-800) var(--ease-linear) infinite', display: 'block'
+        } }),
+        React.createElement('span', { key: 't' }, 'Submitting…')
+      ]);
+    }
+
+    if (stage === 'done') {
+      const bits = [];
+      const hash = (n, k) => { const v = Math.sin(n * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+      const WAVES = 11, PER = 20, GAP = 260;
+      for (let w = 0; w < WAVES; w++) {
+        for (let j = 0; j < PER; j++) {
+          const i = w * PER + j;
+          const a = hash(i + 1, 1.7);
+          const b = hash(i + 1, 5.3);
+          const c = hash(i + 1, 9.1);
+          const ang = Math.PI * 2 * a;
+          const dist = 0.25 + b * 0.75;
+          bits.push(React.createElement('span', { key: 'b' + i, style: {
+            position: 'absolute', left: 0, top: 0,
+            width: 3 + Math.round(c * 4),
+            height: 3 + Math.round(b * 4),
+            borderRadius: i % 3 === 0 ? 9999 : 2,
+            background: CONFETTI[i % CONFETTI.length],
+            '--dx': Math.round(Math.cos(ang) * dist * 190) + 'px',
+            '--dy': Math.round(Math.sin(ang) * dist * 34) + 'px',
+            '--rot': Math.round(-320 + c * 640) + 'deg',
+            animation: `gf-conf ${560 + Math.round(c * 260)}ms var(--ease-confetti) ${w * GAP + Math.round(b * 120)}ms both`, /* motion-sweep: kept -- durations/delays are per-particle JS-computed values, not fixed CSS literals; nearest DS curve substituted for the raw cubic-bezier (delta 0.177) */
+            pointerEvents: 'none'
+          } }));
+        }
+      }
+      return React.createElement(React.Fragment, null, [
+        React.createElement('span', { key: 'conf', style: { position: 'absolute', left: '50%', top: '50%', width: 0, height: 0, zIndex: 0 } }, bits),
+        wrap('done', [
+          React.createElement('span', { key: 'i', className: 'material-icons', style: { fontSize: 18 } }, 'check'),
+          React.createElement('span', { key: 't' }, v.doneLabel)
+        ])
+      ]);
+    }
+
+    return wrap('idle', [
+      React.createElement('span', { key: 'i', className: 'material-icons', style: { fontSize: 17 } }, v.ctaIcon),
+      React.createElement('span', { key: 't' }, v.cta)
+    ]);
+  }
+
+  renderVals() {
+    const v = VARIANTS[this.state.variant] || VARIANTS.feedback;
+    const stage = this.state.stage;
+
+    const variants = Object.keys(VARIANTS).map(k => ({
+      label: VARIANTS[k].label, key: k,
+      select: () => this.setState({ variant: k, stage: 'open', text: '', chip: 0 })
+    }));
+
+    const chips = (v.chips || []).map((label, i) => ({ label, select: () => this.setState({ chip: i }) }));
+    this._sync = { variantIndex: variants.findIndex(x => x.key === this.state.variant) };
+
+    return {
+      variants, chips,
+      hasChips: !!v.chips,
+      menuLabel: v.menuLabel, menuIcon: v.menuIcon, placeholder: v.placeholder,
+      usageNote: v.usage, stageLabel: STAGE_LABEL[stage],
+      text: this.state.text,
+      isClosed: stage === 'closed',
+      isOpen: stage !== 'closed',
+      ctaContent: this.ctaContent(),
+      submit: this.submit,
+      togglePanel: this.togglePanel,
+      onMenuKey: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.togglePanel(); } },
+      toggleTheme: this.toggleTheme,
+      onThemeKey: e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.toggleTheme(); } },
+      darkAriaPressed: this.state.dark ? 'true' : 'false',
+      onFocus: () => this.setState({ focus: true }),
+      onBlur: () => this.setState({ focus: false }),
+      onType: e => this.setState({ text: e.target.value.slice(0, 500) })
+    };
+  }
+
+  componentDidMount() { this.syncDom(); }
+  componentDidUpdate() { this.syncDom(); }
+
+  syncDom() {
+    const root = document;
+    const dark = this.state.dark;
+
+    root.querySelectorAll('.pill-tab').forEach((el, i) => el.classList.toggle('active', i === this._sync.variantIndex));
+
+    root.querySelectorAll('.pill-priority').forEach((el, i) => {
+      const on = i === this.state.chip;
+      el.style.background = on ? '#0F172A' : '';
+      el.style.color = on ? '#fff' : '';
+      el.style.borderColor = on ? 'transparent' : '';
+      const dot = el.querySelector('.dot');
+      if (dot) dot.style.background = on ? '#10B981' : '#CBD5E1';
+    });
+
+    root.querySelectorAll('[data-gf-track]').forEach(track => {
+      const k = track.querySelector('[data-gf-knob]');
+      if (!k) return;
+      const pad = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      track.style.background = dark ? '#10B981' : '#E2E8F0';
+      k.style.transform = dark ? `translateX(${track.clientWidth - k.offsetWidth - pad * 2}px)` : 'translateX(0)';
+    });
+
+    const row = root.querySelector('[data-gf-active]');
+    if (row) {
+      const on = this.state.stage !== 'closed';
+      row.style.background = on ? 'var(--card-bg)' : 'transparent';
+      row.style.boxShadow = on ? '0 4px 14px -6px rgba(15,23,42,0.22), inset 0 0 0 1px rgba(15,23,42,0.06)' : 'none';
+    }
+
+    const field = root.querySelector('[data-gf-field]');
+    if (field) {
+      const on = this.state.focus;
+      field.style.borderColor = on ? '#0F172A' : 'var(--card-border)';
+      field.style.boxShadow = on ? '0 0 0 3px rgba(15,23,42,0.06)' : 'none';
+    }
+
+    const cta = root.querySelector('[data-gf-cta]');
+    if (cta) {
+      const done = this.state.stage === 'done';
+      cta.style.overflow = 'hidden';
+      cta.style.background = done ? '#10B981' : '';
+      cta.style.boxShadow = done
+        ? 'inset 0 1px 0 rgba(255,255,255,0.3), 0 10px 26px -10px rgba(16,185,129,0.6)'
+        : '';
+      cta.style.cursor = this.state.stage === 'open' ? 'pointer' : 'default';
+    }
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,588 @@
+<!-- @dsCard group="Merge - navigation-layout" name="Navigation" subtitle="-> new: Navigation & layout" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_fab.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  .icon-badge .material-symbols-outlined { font-size: 15px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+  body { margin:0; background:#F1F5F9; font-family:'Montserrat',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#10B981; text-decoration:none; }
+  a:hover { color:#059669; }
+  @keyframes nav-rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  @keyframes nav-pulse { 0%,100% { box-shadow:0 0 0 0 rgba(239,68,68,.55); } 70% { box-shadow:0 0 0 6px rgba(239,68,68,0); } }
+
+  /* 44px hit layers: shared DS button classes reused at a smaller visual size in this
+     component (.btn-primary here), plus component-local icon/nav buttons. */
+  .nav-icon-btn, .btn-primary, .nav-mega-trigger, .nav-seg-tab, .nav-side-item,
+  .nav-collapse-btn, .nav-drawer-close, .nav-bottom-tab { position: relative; }
+  .nav-icon-btn::after, .btn-primary::after, .nav-mega-trigger::after, .nav-seg-tab::after,
+  .nav-side-item::after, .nav-collapse-btn::after, .nav-drawer-close::after, .nav-bottom-tab::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  .nav-icon-btn:focus-visible, .nav-mega-trigger:focus-visible, .nav-seg-tab:focus-visible,
+  .nav-side-item:focus-visible, .nav-collapse-btn:focus-visible, .nav-drawer-close:focus-visible,
+  .nav-bottom-tab:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-icon-btn, .btn-primary, .nav-mega-trigger, .nav-seg-tab, .nav-side-item,
+    .nav-collapse-btn, .nav-drawer-close, .nav-bottom-tab,
+    [style*="transition"] { transition: none !important; }
+    [style*="animation:nav-pulse"] { animation: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:48px 40px 80px;background:#F1F5F9;background-image:var(--bg-section-grid);background-size:var(--bg-section-grid-size);">
+  <div style="max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:28px;">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#94A3B8;">Deha Design System — Bora</span>
+        <h1 style="margin:0;font-size:28px;font-weight:900;color:#0F172A;letter-spacing:-.02em;">Navigation</h1>
+        <p style="margin:0;font-size:13px;color:#64748B;max-width:520px;line-height:1.5;">One navigation component, five usage contexts. Switch context with the pills — every state, transition and hover is live.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:11px;font-weight:700;color:#64748B;">Dark</span>
+        <div class="sw-base {{ swClass }}" onClick="{{ toggleDark }}"></div>
+      </div>
+    </div>
+
+    <div class="pills-row" role="tablist" style="gap:8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button class="{{ v.cls }}" onClick="{{ v.go }}" style="cursor:pointer;gap:6px;padding:8px 16px;">
+          <span class="material-symbols-outlined" style="font-size:16px;line-height:1;">{{ v.icon }}</span>{{ v.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- ══ MARKETING ══ -->
+    <sc-if value="{{ isMarketing }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Marketing site — top bar with mega menu</div>
+        <div style="position:relative;border-radius:24px;background:#FFFFFF;border:1px solid #CBD5E1;box-shadow:0 20px 50px -30px rgba(15,23,42,.35);overflow:hidden;">
+          <div style="height:420px;background:radial-gradient(ellipse at 70% -10%, rgba(16,185,129,.14) 0%, rgba(248,250,252,1) 55%, #FFFFFF 100%);position:relative;">
+
+            <div onMouseLeave="{{ closeMega }}" style="position:relative;z-index:20;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 22px;background:rgba(255,255,255,.72);backdrop-filter:blur(20px);border-bottom:1px solid rgba(203,213,225,.7);position:relative;z-index:2;">
+              <div style="display:flex;align-items:center;gap:32px;">
+                <div style="display:flex;align-items:center;gap:9px;">
+                  <div style="width:28px;height:28px;border-radius:9px;background:#10B981;display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 0 rgba(0,0,0,.22),0 4px 12px -4px rgba(16,185,129,.6);">
+                    <span class="material-symbols-outlined" style="font-size:17px;color:#fff;font-variation-settings:'wght' 700;">graph_3</span>
+                  </div>
+                  <span style="font-size:15px;font-weight:900;color:#0F172A;letter-spacing:-.02em;">Bora</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:2px;">
+                  <sc-for list="{{ topNav }}" as="n" hint-placeholder-count="4">
+                    <button class="nav-mega-trigger" onMouseEnter="{{ n.enter }}" onClick="{{ n.enter }}" style="{{ n.st }}" style-hover="background:#F1F5F9;color:#0F172A;">
+                      {{ n.label }}<span class="material-symbols-outlined" style="{{ n.caret }}">expand_more</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <button class="btn-text" style="font-size:13px;">Sign in</button>
+                <button class="btn-primary" style="padding:9px 16px;font-size:13px;border-radius:12px;">Get started<span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span></button>
+              </div>
+            </div>
+
+            <div style="{{ megaStyle }}">
+              <div style="display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:20px;padding:20px;">
+                <div class="card-accent" style="border-radius:20px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;">
+                  <div style="position:relative;z-index:1;">
+                    <span style="font-size:10px;font-weight:900;letter-spacing:.14em;color:rgba(255,255,255,.78);">QUICK ACCESS HUB</span>
+                    <div style="font-size:17px;font-weight:900;color:#fff;margin-top:8px;line-height:1.2;">Quick access hub</div>
+                    <div style="font-size:12.5px;color:rgba(255,255,255,.88);line-height:1.5;margin-top:6px;">Manage projects in one unified workspace.</div>
+                  </div>
+                  <div style="position:relative;z-index:1;display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ hubLinks }}" as="h" hint-placeholder-count="3">
+                      <span style="display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:9999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);font-size:11.5px;font-weight:800;color:#fff;cursor:pointer;transition:background var(--duration-180);" style-hover="background:rgba(255,255,255,.34);">{{ h }}</span>
+                    </sc-for>
+                  </div>
+                </div>
+                <sc-for list="{{ megaCols }}" as="c" hint-placeholder-count="2">
+                  <div style="display:flex;flex-direction:column;gap:4px;">
+                    <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;padding:0 10px 6px;">{{ c.title }}</span>
+                    <sc-for list="{{ c.items }}" as="i" hint-placeholder-count="4">
+                      <div style="{{ i.st }}" style-hover="background:#F1F5F9;">
+                        <span class="icon-badge icon-badge--sm" style="--icon-c: {{ i.color }}; width:26px; height:26px; border-radius:100px; flex:none; margin-top:1px;"><span class="material-symbols-outlined">{{ i.icon }}</span></span>
+                        <div style="display:flex;flex-direction:column;gap:1px;min-width:0;">
+                          <span style="font-size:13px;font-weight:700;color:#0F172A;">{{ i.label }}</span>
+                          <span style="font-size:11px;color:#64748B;">{{ i.desc }}</span>
+                        </div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            </div>
+
+            <div style="padding:64px 40px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
+              <span class="badge tag" style="font-size:10.5px;">Hover “Solutions” to open the mega menu</span>
+              <div style="font-size:34px;font-weight:900;color:#0F172A;letter-spacing:-.03em;max-width:520px;line-height:1.1;">Everything your team needs, one bar away.</div>
+              <div style="font-size:13.5px;color:#64748B;max-width:440px;line-height:1.55;">The bar stays glassy over any hero. The panel drops with a spring and its rows stagger in.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ══ APP SHELL ══ -->
+    <sc-if value="{{ isApp }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Product app — segmented tabs, search, account</div>
+        <div style="border-radius:24px;background:#FFFFFF;border:1px solid #CBD5E1;box-shadow:0 20px 50px -30px rgba(15,23,42,.35);overflow:hidden;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 18px;border-bottom:1px solid #E2E8F0;background:#FFFFFF;">
+            <div style="display:flex;align-items:center;gap:18px;min-width:0;">
+              <div style="width:28px;height:28px;border-radius:9px;background:#0F172A;display:grid;place-items:center;flex-shrink:0;">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#fff;">graph_3</span>
+              </div>
+              <div class="seg" ref="{{ segRef }}">
+                <div class="seg-pill" style="{{ segPillStyle }}"></div>
+                <sc-for list="{{ appTabs }}" as="t" hint-placeholder-count="4">
+                  <button class="nav-seg-tab {{ t.cls }}" onClick="{{ t.go }}" ref="{{ t.ref }}">{{ t.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:9999px;background:#F1F5F9;box-shadow:inset 0 2px 4px rgba(0,0,0,.06);min-width:200px;transition:box-shadow var(--duration-200);" style-focus="box-shadow:inset 0 2px 4px rgba(0,0,0,.06),0 0 0 2px #10B981;">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#94A3B8;">search</span>
+                <input placeholder="Search…" style="border:none;background:none;outline:none;font-family:'Montserrat';font-size:12.5px;font-weight:600;color:#0F172A;width:100%;">
+                <span style="font-size:10px;font-weight:800;color:#94A3B8;border:1px solid #CBD5E1;border-radius:5px;padding:1px 5px;">⌘K</span>
+              </div>
+              <button class="nav-icon-btn" style="position:relative;width:36px;height:36px;border-radius:9999px;border:none;background:#F1F5F9;display:grid;place-items:center;cursor:pointer;transition:background var(--duration-180),transform var(--duration-base) var(--ease-spring);" style-hover="background:#E2E8F0;transform:scale(1.06);" style-active="transform:scale(.94);" aria-label="Notifications">
+                <span class="material-symbols-outlined" style="font-size:19px;color:#334155;">notifications</span>
+                <span style="position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:#EF4444;border:1.5px solid #fff;animation:nav-pulse 2.4s /* motion-sweep: kept */ infinite;"></span>
+              </button>
+              <div style="display:flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border-radius:9999px;background:#F1F5F9;cursor:pointer;transition:background var(--duration-180);" style-hover="background:#E2E8F0;">
+                <div style="width:28px;height:28px;border-radius:50%;background:#10B981;display:grid;place-items:center;font-size:11px;font-weight:900;color:#fff;">DK</div>
+                <span style="font-size:12px;font-weight:800;color:#0F172A;">Deha</span>
+                <span class="material-symbols-outlined" style="font-size:16px;color:#64748B;">expand_more</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 18px;border-bottom:1px solid #E2E8F0;background:#F8FAFC;">
+            <span style="font-size:11.5px;font-weight:700;color:#94A3B8;">Bora</span>
+            <span class="material-symbols-outlined" style="font-size:15px;color:#CBD5E1;">chevron_right</span>
+            <span style="font-size:11.5px;font-weight:700;color:#64748B;">Workspace</span>
+            <span class="material-symbols-outlined" style="font-size:15px;color:#CBD5E1;">chevron_right</span>
+            <span style="font-size:11.5px;font-weight:800;color:#0F172A;">{{ appTabLabel }}</span>
+          </div>
+          <div style="padding:44px 22px;display:grid;place-items:center;min-height:200px;background:#FFFFFF;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+              <span class="material-symbols-outlined" style="font-size:34px;color:#CBD5E1;">{{ appTabIcon }}</span>
+              <span style="font-size:14px;font-weight:800;color:#334155;">{{ appTabLabel }}</span>
+              <span style="font-size:12px;color:#94A3B8;">The pill slides and measures itself against each tab’s width.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ══ SIDEBAR ══ -->
+    <sc-if value="{{ isSidebar }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Dashboard — collapsible rail</div>
+        <div style="border-radius:24px;background:#FFFFFF;border:1px solid #CBD5E1;box-shadow:0 20px 50px -30px rgba(15,23,42,.35);overflow:hidden;display:flex;min-height:460px;">
+          <div style="{{ railStyle }}">
+            <div style="{{ railBrandStyle }}">
+              <div style="width:28px;height:28px;border-radius:9px;background:#10B981;display:grid;place-items:center;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 0 rgba(0,0,0,.22);">
+                <span class="material-symbols-outlined" style="font-size:17px;color:#fff;">graph_3</span>
+              </div>
+              <span style="{{ railLabelStyle }}">Bora</span>
+            </div>
+            <sc-for list="{{ sideGroups }}" as="g" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:2px;margin-top:14px;">
+                <span style="{{ g.titleStyle }}">{{ g.title }}</span>
+                <sc-for list="{{ g.items }}" as="s" hint-placeholder-count="4">
+                  <button class="nav-side-item" onClick="{{ s.go }}" style="{{ s.st }}" style-hover="background:#F1F5F9;">
+                    <span style="{{ s.accent }}"></span>
+                    <span class="material-symbols-outlined" style="{{ s.iconStyle }}">{{ s.icon }}</span>
+                    <span style="{{ s.labelStyle }}">{{ s.label }}</span>
+                    <span style="{{ s.badgeStyle }}">{{ s.badge }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </sc-for>
+            <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px;">
+              <button class="nav-collapse-btn" onClick="{{ toggleCollapse }}" style="{{ collapseBtnStyle }}" style-hover="background:#E2E8F0;">
+                <span class="material-symbols-outlined" style="{{ collapseIconStyle }}">chevron_left</span>
+                <span style="{{ railLabelStyle }}">Collapse</span>
+              </button>
+            </div>
+          </div>
+          <div style="flex:1;padding:26px;background:#F8FAFC;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+              <div>
+                <h2 style="margin:0;font-size:20px;font-weight:900;color:#0F172A;letter-spacing:-.02em;">{{ sideActive }}</h2>
+                <p style="margin:4px 0 0;font-size:12.5px;color:#64748B;">Active item keeps an emerald rail; labels fade out on collapse.</p>
+              </div>
+              <button class="btn-green">New<span class="material-symbols-outlined" style="font-size:16px;">add</span></button>
+            </div>
+            <div class="card-inner" style="flex:1;display:grid;place-items:center;">
+              <span style="font-size:12px;color:#94A3B8;">Content region</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ══ MOBILE ══ -->
+    <sc-if value="{{ isMobile }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Mobile — drawer + bottom tab bar</div>
+        <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;">
+          <div style="position:relative;width:340px;height:640px;border-radius:40px;background:#FFFFFF;border:1px solid #CBD5E1;box-shadow:0 30px 60px -30px rgba(15,23,42,.45);overflow:hidden;flex-shrink:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;">
+              <button class="nav-icon-btn" onClick="{{ openDrawer }}" style="width:40px;height:40px;border-radius:13px;border:none;background:#F1F5F9;display:grid;place-items:center;cursor:pointer;transition:transform var(--duration-base) var(--ease-spring),background var(--duration-180);" style-hover="background:#E2E8F0;" style-active="transform:scale(.92);" aria-label="Open menu">
+                <span class="material-symbols-outlined" style="font-size:21px;color:#0F172A;">menu</span>
+              </button>
+              <span style="font-size:14px;font-weight:900;color:#0F172A;">{{ mobileTab }}</span>
+              <div style="width:32px;height:32px;border-radius:50%;background:#10B981;display:grid;place-items:center;font-size:11px;font-weight:900;color:#fff;">DK</div>
+            </div>
+            <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px;">
+              <div class="card-inner" style="height:120px;display:grid;place-items:center;"><span style="font-size:12px;color:#94A3B8;">Tap the menu icon</span></div>
+              <div class="card-inner" style="height:120px;"></div>
+              <div class="card-inner" style="height:120px;"></div>
+            </div>
+
+            <div style="{{ scrimStyle }}" onClick="{{ closeDrawer }}"></div>
+            <div role="dialog" aria-modal="true" aria-label="Menu" style="{{ drawerStyle }}">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                <span style="font-size:15px;font-weight:900;color:#0F172A;">Menu</span>
+                <button class="nav-drawer-close" onClick="{{ closeDrawer }}" style="width:32px;height:32px;border-radius:10px;border:none;background:#F1F5F9;display:grid;place-items:center;cursor:pointer;" aria-label="Close menu">
+                  <span class="material-symbols-outlined" style="font-size:19px;color:#334155;">close</span>
+                </button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <sc-for list="{{ drawerItems }}" as="d" hint-placeholder-count="6">
+                  <div style="{{ d.st }}" style-hover="background:#F1F5F9;">
+                    <span class="material-symbols-outlined" style="font-size:20px;color:#10B981;">{{ d.icon }}</span>
+                    <span style="font-size:13.5px;font-weight:700;color:#0F172A;">{{ d.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <button class="btn-primary" style="margin-top:20px;width:100%;justify-content:center;padding:11px;font-size:13px;">Get started</button>
+            </div>
+
+            <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;justify-content:space-around;padding:8px 10px 16px;background:rgba(255,255,255,.86);backdrop-filter:blur(20px);border-top:1px solid #E2E8F0;">
+              <sc-for list="{{ bottomTabs }}" as="b" hint-placeholder-count="5">
+                <button class="nav-bottom-tab" onClick="{{ b.go }}" style="{{ b.st }}">
+                  <span class="material-symbols-outlined" style="{{ b.iconStyle }}">{{ b.icon }}</span>
+                  <span style="{{ b.labelStyle }}">{{ b.label }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:12px;">
+            <div class="card-inner">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Motion</span>
+              <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+                <sc-for list="{{ motionSpecs }}" as="m" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:9px;border-bottom:1px dashed #E2E8F0;">
+                    <span style="font-size:12.5px;font-weight:800;color:#0F172A;">{{ m.name }}</span>
+                    <span style="font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#64748B;text-align:right;">{{ m.spec }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ══ STATES ══ -->
+    <sc-if value="{{ isStates }}">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Anatomy — every state of a nav item</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;">
+          <sc-for list="{{ stateCards }}" as="s" hint-placeholder-count="6">
+            <div class="card-inner" style="display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:12.5px;font-weight:900;color:#0F172A;">{{ s.name }}</span>
+                <span class="badge tag">{{ s.token }}</span>
+              </div>
+              <div style="display:grid;place-items:start;padding:14px;border-radius:14px;background:#F8FAFC;box-shadow:inset 0 2px 4px rgba(0,0,0,.05);">
+                <div style="{{ s.st }}">
+                  <span class="material-symbols-outlined" style="{{ s.iconStyle }}">dashboard</span>
+                  <span style="{{ s.labelStyle }}">Dashboard</span>
+                </div>
+              </div>
+              <span style="font-size:11.5px;color:#64748B;line-height:1.5;">{{ s.desc }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div class="card-inner" style="margin-top:6px;">
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;">Transitions</span>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px 24px;margin-top:12px;">
+            <sc-for list="{{ motionSpecs }}" as="m" hint-placeholder-count="6">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:9px;border-bottom:1px dashed #E2E8F0;">
+                <span style="font-size:12.5px;font-weight:800;color:#0F172A;">{{ m.name }}</span>
+                <span style="font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:#64748B;text-align:right;">{{ m.spec }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1320,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  tabEls = {};
+  state = {
+    variant: 'marketing', mega: false, dark: false,
+    appTab: 'Overview', side: 'Dashboard', collapsed: false,
+    drawer: false, mobileTab: 'Home',
+    pill: { left: 3, width: 0 }
+  };
+
+  componentDidMount() {
+    this.measure();
+    window.addEventListener('resize', this.measure);
+    this.onKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (this.state.drawer) this.closeDrawer();
+      if (this.state.mega) this.setState({ mega: false });
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.measure); window.removeEventListener('keydown', this.onKey); }
+  componentDidUpdate(_, prev) {
+    if (prev.appTab !== this.state.appTab || prev.variant !== this.state.variant) this.measure();
+  }
+  measure = () => {
+    const el = this.tabEls[this.state.appTab];
+    if (!el || !el.offsetParent) return;
+    const p = { left: el.offsetLeft, width: el.offsetWidth };
+    if (p.left !== this.state.pill.left || p.width !== this.state.pill.width) this.setState({ pill: p });
+  };
+
+  set = (k, v) => () => this.setState({ [k]: v });
+
+  openDrawer = () => { this.drawerTrigger = document.activeElement; this.setState({ drawer: true }); };
+  closeDrawer = () => {
+    this.setState({ drawer: false });
+    if (this.drawerTrigger && typeof this.drawerTrigger.focus === 'function') this.drawerTrigger.focus();
+  };
+
+  renderVals() {
+    const s = this.state;
+    const EASE = 'var(--ease-out)';
+    const SPRING = 'var(--ease-spring-tight)';
+    const V = [
+      ['marketing', 'Marketing', 'language'],
+      ['app', 'App shell', 'dashboard'],
+      ['sidebar', 'Sidebar', 'left_panel_open'],
+      ['mobile', 'Mobile', 'smartphone'],
+      ['states', 'States', 'stacks']
+    ];
+
+    const navItem = (label, hasCaret, active) => ({
+      label,
+      enter: hasCaret ? () => this.setState({ mega: true }) : () => this.setState({ mega: false }),
+      st: `display:inline-flex;align-items:center;gap:2px;border:none;background:${active ? '#F1F5F9' : 'transparent'};`
+        + `padding:8px 13px;border-radius:10px;font-family:'Montserrat';font-size:13px;font-weight:700;`
+        + `color:${active ? '#0F172A' : '#334155'};cursor:pointer;transition:background var(--duration-180),color var(--duration-180);`,
+      caret: `font-size:16px;display:${hasCaret ? 'inline' : 'none'};transition:transform var(--duration-260) ${EASE};`
+        + `transform:rotate(${hasCaret && s.mega ? 180 : 0}deg);`
+    });
+
+    const MEGAPAL = ['#10B981', '#3B82F6', '#F97316', '#EAB308', '#0F172A', '#EF4444'];
+    const megaItem = (icon, label, desc, i) => ({
+      icon, label, desc, color: MEGAPAL[i % MEGAPAL.length],
+      st: `display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:12px;cursor:pointer;`
+        + `transition:background var(--duration-180),opacity var(--duration-320) ${EASE},transform var(--duration-320) ${EASE};`
+        + `transition-delay:${s.mega ? 60 + i * 35 : 0}ms;`
+        + `opacity:${s.mega ? 1 : 0};transform:translateY(${s.mega ? 0 : 8}px);`
+    });
+
+    const sideItem = (icon, label, badge) => {
+      const on = s.side === label;
+      return {
+        icon, label, badge: badge || '',
+        go: () => this.setState({ side: label }),
+        st: `position:relative;display:flex;align-items:center;justify-content:${s.collapsed ? 'center' : 'flex-start'};`
+          + `gap:11px;width:100%;padding:9px ${s.collapsed ? 0 : 10}px;border:none;`
+          + `border-radius:12px;background:${on ? '#ECFDF5' : 'transparent'};cursor:pointer;text-align:left;`
+          + `font-family:'Montserrat';transition:background var(--duration-180),padding var(--duration-320) ${EASE};`,
+        accent: `position:absolute;left:${s.collapsed ? -4 : -6}px;top:50%;width:3px;border-radius:9999px;background:#10B981;`
+          + `transform:translateY(-50%);height:${on ? 18 : 0}px;opacity:${on ? 1 : 0};transition:height var(--duration-260) ${SPRING},opacity var(--duration-200);`,
+        iconStyle: `font-size:20px;flex-shrink:0;color:${on ? '#10B981' : '#64748B'};transition:color var(--duration-180);`
+          + `font-variation-settings:'FILL' ${on ? 1 : 0};`,
+        labelStyle: `font-size:13px;font-weight:${on ? 800 : 600};color:${on ? '#065F46' : '#334155'};white-space:nowrap;`
+          + `display:${s.collapsed ? 'none' : 'inline'};transition:color var(--duration-180);`,
+        badgeStyle: `margin-left:auto;font-size:10px;font-weight:900;color:#fff;background:#EF4444;border-radius:9999px;`
+          + `padding:1px 7px;display:${badge && !s.collapsed ? 'inline-block' : 'none'};`
+      };
+    };
+
+    const bottomTab = (icon, label) => {
+      const on = s.mobileTab === label;
+      return {
+        icon, label,
+        go: () => this.setState({ mobileTab: label }),
+        st: `flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;border:none;`
+          + `background:none;cursor:pointer;transition:transform var(--duration-200) ${SPRING};transform:translateY(${on ? -2 : 0}px);`,
+        iconStyle: `font-size:23px;color:${on ? '#10B981' : '#94A3B8'};transition:color var(--duration-200);`
+          + `font-variation-settings:'FILL' ${on ? 1 : 0},'wght' ${on ? 600 : 400};`,
+        labelStyle: `font-size:10px;font-weight:${on ? 900 : 700};color:${on ? '#10B981' : '#94A3B8'};transition:color var(--duration-200);`
+      };
+    };
+
+    const stateRow = (bg, fg, icon, extra) => `display:inline-flex;align-items:center;gap:10px;padding:9px 13px;`
+      + `border-radius:12px;background:${bg};${extra || ''}`;
+
+    const groupTitle = `font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;`
+      + `padding:0 10px 6px;white-space:nowrap;display:${s.collapsed ? 'none' : 'block'};`;
+
+    const appTabs = ['Overview', 'Workflow', 'Checklists', 'Reports'];
+    const tabIcons = { Overview: 'donut_large', Workflow: 'account_tree', Checklists: 'checklist', Reports: 'bar_chart' };
+
+    return {
+      variants: V.map(([id, label, icon]) => ({
+        label, icon,
+        cls: 'pill-tab' + (s.variant === id ? ' active' : ''),
+        go: () => this.setState({ variant: id, mega: false })
+      })),
+      isMarketing: s.variant === 'marketing',
+      isApp: s.variant === 'app',
+      isSidebar: s.variant === 'sidebar',
+      isMobile: s.variant === 'mobile',
+      isStates: s.variant === 'states',
+
+      swClass: s.dark ? 'sw-base sw-on' : 'sw-base sw-off',
+      toggleDark: () => {
+        const d = !s.dark;
+        document.documentElement.classList.toggle('dark', d);
+        this.setState({ dark: d });
+      },
+
+      topNav: [navItem('Products', false), navItem('Solutions', true, s.mega), navItem('Pricing', false), navItem('Contact', false)],
+      closeMega: () => this.setState({ mega: false }),
+      megaStyle: `position:absolute;left:0;right:0;top:100%;z-index:15;background:rgba(255,255,255,.92);`
+        + `backdrop-filter:blur(24px);border-bottom:1px solid #E2E8F0;box-shadow:0 24px 48px -24px rgba(15,23,42,.35);`
+        + `transform-origin:top center;transition:opacity var(--duration-240) ${EASE},transform var(--duration-320) ${SPRING},visibility var(--duration-240);`
+        + `opacity:${s.mega ? 1 : 0};visibility:${s.mega ? 'visible' : 'hidden'};`
+        + `transform:translateY(${s.mega ? 0 : -10}px) scaleY(${s.mega ? 1 : .97});pointer-events:${s.mega ? 'auto' : 'none'};`,
+      hubLinks: ['Overview', 'Workflow', 'Checklists'],
+      megaCols: [
+        { title: 'Tools', items: [
+          megaItem('hub', 'Centralized workspace', 'One place for every project', 0),
+          megaItem('sync', 'Real-time sync', 'Changes land instantly', 1),
+          megaItem('notifications_active', 'Smart alerts', 'Only what matters', 2),
+          megaItem('bolt', 'Fast lookups', 'Find anything in a keystroke', 3)
+        ]},
+        { title: 'Supports', items: [
+          megaItem('help_center', 'Help center', 'Guides and answers', 4),
+          megaItem('rocket_launch', 'Getting started', 'Set up in ten minutes', 5),
+          megaItem('forum', 'Community forum', 'Ask the other teams', 6)
+        ]}
+      ],
+
+      appTabs: appTabs.map(t => ({
+        label: t,
+        cls: s.appTab === t ? 'active' : '',
+        go: () => this.setState({ appTab: t }),
+        ref: el => { this.tabEls[t] = el; }
+      })),
+      segRef: () => this.measure(),
+      segPillStyle: `left:${s.pill.left}px;width:${s.pill.width}px;`,
+      appTabLabel: s.appTab,
+      appTabIcon: tabIcons[s.appTab],
+
+      sideGroups: [
+        { title: 'Workspace', titleStyle: groupTitle,
+          items: [sideItem('dashboard', 'Dashboard'), sideItem('account_tree', 'Projects'), sideItem('checklist', 'Tasks', '4'), sideItem('bar_chart', 'Reports')] },
+        { title: 'Account', titleStyle: groupTitle,
+          items: [sideItem('group', 'Team'), sideItem('settings', 'Settings'), sideItem('help_center', 'Help')] }
+      ],
+      sideActive: s.side,
+      railStyle: `width:${s.collapsed ? 64 : 232}px;flex-shrink:0;padding:18px ${s.collapsed ? 10 : 14}px;border-right:1px solid #E2E8F0;`
+        + `background:#FFFFFF;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;`
+        + `transition:width var(--duration-320) ${EASE},padding var(--duration-320) ${EASE};`,
+      railLabelStyle: `font-size:15px;font-weight:900;color:#0F172A;white-space:nowrap;display:${s.collapsed ? 'none' : 'inline'};`,
+      railBrandStyle: `display:flex;align-items:center;justify-content:${s.collapsed ? 'center' : 'flex-start'};gap:9px;`
+        + `padding:0 ${s.collapsed ? 0 : 6}px 4px;height:32px;transition:padding var(--duration-320) ${EASE};`,
+      collapseBtnStyle: `display:flex;align-items:center;justify-content:${s.collapsed ? 'center' : 'flex-start'};gap:10px;`
+        + `padding:9px ${s.collapsed ? 0 : 10}px;border:none;border-radius:12px;background:#F1F5F9;cursor:pointer;`
+        + `font-family:'Montserrat';font-size:12.5px;font-weight:800;color:#334155;transition:background var(--duration-180),padding var(--duration-320) ${EASE};`,
+      collapseIconStyle: `font-size:19px;color:#64748B;transition:transform var(--duration-320) ${EASE};transform:rotate(${s.collapsed ? 180 : 0}deg);`,
+      toggleCollapse: () => this.setState({ collapsed: !s.collapsed }),
+
+      openDrawer: this.openDrawer,
+      closeDrawer: this.closeDrawer,
+      mobileTab: s.mobileTab,
+      scrimStyle: `position:absolute;inset:0;background:rgba(15,23,42,.42);backdrop-filter:blur(2px);z-index:30;`
+        + `transition:opacity var(--duration-260) ${EASE},visibility var(--duration-260);opacity:${s.drawer ? 1 : 0};`
+        + `visibility:${s.drawer ? 'visible' : 'hidden'};`,
+      drawerStyle: `position:absolute;top:0;bottom:0;left:0;width:272px;z-index:31;background:#FFFFFF;padding:20px 18px;`
+        + `border-right:1px solid #E2E8F0;box-shadow:24px 0 48px -24px rgba(15,23,42,.5);display:flex;flex-direction:column;`
+        + `transition:transform var(--duration-340) ${EASE};transform:translateX(${s.drawer ? 0 : -100}%);`,
+      drawerItems: [
+        ['dashboard', 'Home'], ['account_tree', 'Projects'], ['checklist', 'Tasks'],
+        ['bar_chart', 'Reports'], ['group', 'Team'], ['settings', 'Settings']
+      ].map(([icon, label], i) => ({
+        icon, label,
+        st: `display:flex;align-items:center;gap:12px;padding:11px 10px;border-radius:12px;cursor:pointer;`
+          + `transition:background var(--duration-180),opacity var(--duration-slower) ${EASE},transform var(--duration-slower) ${EASE};`
+          + `transition-delay:${s.drawer ? 80 + i * 40 : 0}ms /* motion-sweep: kept -- JS stagger step, not a transition-duration */;opacity:${s.drawer ? 1 : 0};`
+          + `transform:translateX(${s.drawer ? 0 : -14}px);`
+      })),
+      bottomTabs: [bottomTab('home', 'Home'), bottomTab('account_tree', 'Projects'), bottomTab('checklist', 'Tasks'), bottomTab('bar_chart', 'Reports'), bottomTab('person', 'Profile')],
+
+      motionSpecs: [
+        { name: 'Mega menu open', spec: '320ms · spring(.34,1.4,.64,1)' },
+        { name: 'Mega rows stagger', spec: '35ms step · 320ms ease-out' },
+        { name: 'Segmented pill', spec: '300ms · left + width' },
+        { name: 'Rail collapse', spec: '320ms · var(--ease-out)' },
+        { name: 'Drawer slide', spec: '340ms · translateX(-100% → 0)' },
+        { name: 'Press feedback', spec: 'scale(.94) · 160ms' }
+      ],
+
+      stateCards: [
+        { name: 'Default', token: 'fg2 / transparent', desc: 'Resting item. No fill, medium weight label, outlined icon.',
+          st: stateRow('transparent', '', '', ''), iconStyle: `font-size:20px;color:#64748B;`, labelStyle: `font-size:13px;font-weight:600;color:#334155;` },
+        { name: 'Hover', token: 'slate-100', desc: 'Surface lifts to slate-100 over 180ms. Cursor becomes pointer.',
+          st: stateRow('#F1F5F9'), iconStyle: `font-size:20px;color:#334155;`, labelStyle: `font-size:13px;font-weight:700;color:#0F172A;` },
+        { name: 'Active', token: 'primary-50', desc: 'Emerald tint, filled icon, 800 weight and a 3px rail on the left edge.',
+          st: stateRow('#ECFDF5', '', '', 'box-shadow:inset 3px 0 0 #10B981;'), iconStyle: `font-size:20px;color:#10B981;font-variation-settings:'FILL' 1;`, labelStyle: `font-size:13px;font-weight:800;color:#065F46;` },
+        { name: 'Focus', token: 'ring primary', desc: 'Keyboard focus draws a 2px emerald ring at 2px offset.',
+          st: stateRow('transparent', '', '', 'box-shadow:0 0 0 2px #10B981;'), iconStyle: `font-size:20px;color:#334155;`, labelStyle: `font-size:13px;font-weight:700;color:#0F172A;` },
+        { name: 'Pressed', token: 'scale .94', desc: 'Item compresses on pointer-down, releasing with the spring curve.',
+          st: stateRow('#E2E8F0', '', '', 'transform:scale(.94);'), iconStyle: `font-size:20px;color:#334155;`, labelStyle: `font-size:13px;font-weight:700;color:#0F172A;` },
+        { name: 'Disabled', token: 'opacity .45', desc: 'Non-interactive. Pointer events off, no hover surface.',
+          st: stateRow('transparent', '', '', 'opacity:.45;'), iconStyle: `font-size:20px;color:#94A3B8;`, labelStyle: `font-size:13px;font-weight:600;color:#94A3B8;` }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

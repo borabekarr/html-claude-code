@@ -1,0 +1,628 @@
+<!-- @dsCard group="Merge - controls-inputs" name="FileTree" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  html, body { background: #FFFFFF; }
+  .mono, code, pre, kbd { font-family: 'Montserrat', system-ui, sans-serif !important; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  a { color: var(--brand-primary); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+  a:hover { color: var(--brand-primary-600); }
+  }
+
+  @keyframes ft-row-in { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+  @keyframes ft-skel { 0% { background-position: -240px 0; } 100% { background-position: 240px 0; } }
+  @keyframes ft-pulse { 0%,100% { opacity: .45; } 50% { opacity: 1; } }
+
+  .ft-scroll { max-height: 300px; overflow: auto; scrollbar-width: thin; }
+  .ft-scroll::-webkit-scrollbar { width: 8px; }
+  .ft-scroll::-webkit-scrollbar-thumb { background: #D4D4D8; border-radius: 9999px; }
+
+  .ft-row {
+    position: relative; display: flex; align-items: center; gap: 8px;
+    height: 30px; padding-right: 10px; border-radius: 10px; cursor: pointer;
+    font-family: 'Montserrat'; outline: none; user-select: none;
+    animation: ft-row-in calc(var(--duration-240) * var(--anim-mult, 1)) var(--ease-out) both;
+    transition:
+      background-color calc(var(--duration-150) * var(--anim-mult, 1)),
+      box-shadow calc(var(--duration-180) * var(--anim-mult, 1)),
+      transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm);
+  }
+  .ft-dense .ft-row { height: 23px; }
+  .ft-nostagger .ft-row { animation-delay: 0ms !important; } /* motion-sweep: kept */
+  @media (hover: hover) and (pointer: fine) {
+  .ft-row:hover { background: rgba(15,23,42,0.035); }
+  }
+  .ft-row:active { transform: scale(0.994); }
+  .ft-row:focus-visible { box-shadow: 0 0 0 2px #10B981, 0 0 0 5px rgba(16,185,129,0.18); }
+  .ft-row.is-selected {
+    background: rgba(16,185,129,0.10);
+    box-shadow: none;
+  }
+  .ft-row.is-selected .ft-name { color: #047857; font-weight: 700; }
+  .ft-row.is-disabled { opacity: .45; cursor: not-allowed; }
+  @media (hover: hover) and (pointer: fine) {
+  .ft-row.is-disabled:hover { background: transparent; }
+  }
+  .ft-row.is-match .ft-name { color: #0F172A; }
+  .ft-row.is-match::after {
+    content: ''; position: absolute; left: 2px; top: 5px; bottom: 5px; width: 3px;
+    border-radius: 9999px; background: var(--brand-primary); animation: ft-pulse calc(var(--duration-1800) * var(--anim-mult, 1)) var(--ease-in-out) infinite; /* motion-sweep: kept -- nearest DS tier for original 1600ms, delta 200 */
+  }
+
+  .ft-ic { display: grid; place-items: center; flex: none; transition: color calc(var(--duration-150) * var(--anim-mult, 1)); }
+  .ft-ic .material-icons { font-size: 16px; display: block; }
+  .ft-flag { display: grid; place-items: center; width: 18px; height: 18px; color: #94A3B8; transition: color calc(var(--duration-150) * var(--anim-mult, 1)); }
+  .ft-flag .material-icons { font-size: 15px; }
+  @media (hover: hover) and (pointer: fine) {
+  .ft-row:hover .ft-flag { color: #475569; }
+  }
+  .ft-row.is-selected .ft-flag { color: #059669; }
+  html.dark .ft-flag { color: #64748B; }
+
+  .ft-guides { flex: none; align-self: stretch; }
+  .ft-guides.on {
+    background-image: linear-gradient(90deg, rgba(15,23,42,0.07) 1px, transparent 1px);
+    background-size: 18px 100%; background-position: 10px 0;
+  }
+
+  .ft-chev {
+    flex: none; width: 18px; height: 18px; display: grid; place-items: center; color: #94A3B8;
+    transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring), color calc(var(--duration-150) * var(--anim-mult, 1));
+  }
+  .ft-chev .material-icons { font-size: 16px; }
+  .ft-chev.open { transform: rotate(90deg); color: var(--brand-primary); }
+  .ft-chev.leaf { visibility: hidden; }
+  @media (hover: hover) and (pointer: fine) {
+  .ft-row:hover .ft-chev { color: #475569; }
+  }
+
+  .ft-name { font-size: 12.5px; font-weight: 600; letter-spacing: -0.005em; color: #27272A; white-space: nowrap; }
+  .ft-sub { font-size: 11px; font-weight: 600; color: #94A3B8; }
+  .ft-meta { margin-left: auto; font-family: 'Montserrat'; font-variant-numeric: tabular-nums; font-size: 10.5px; font-weight: 600; letter-spacing: 0.01em; color: #A1A1AA; white-space: nowrap; }
+
+  .ft-skel-row { display: flex; align-items: center; gap: 10px; height: 28px; padding: 0 10px; }
+  .ft-skel {
+    height: 10px; border-radius: 9999px;
+    background: linear-gradient(90deg, #E2E8F0 0%, #F1F5F9 40%, #E2E8F0 80%);
+    background-size: 240px 100%;
+    animation: ft-skel calc(var(--duration-1100) * var(--anim-mult, 1)) var(--ease-linear) infinite;
+  }
+
+  .ft-search {
+    display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 13px;
+    border-radius: 9999px; background: #F4F4F5; border: 1px solid transparent;
+    box-shadow: none;
+    transition: border-color calc(var(--duration-180) * var(--anim-mult, 1)), box-shadow calc(var(--duration-180) * var(--anim-mult, 1));
+  }
+  .ft-search:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.16); }
+  .ft-search input { border: none; outline: none; background: transparent; font-family: 'Montserrat'; font-size: 12.5px; font-weight: 600; color: #0F172A; width: 118px; }
+  .ft-search .material-icons { font-size: 17px; color: #94A3B8; }
+
+  .pill-tab { cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) {
+  .pill-tab:hover { transform: translateY(-1px); }
+  }
+  .pill-tab { transition: background calc(var(--duration-180) * var(--anim-mult,1)), color calc(var(--duration-180) * var(--anim-mult,1)), transform calc(var(--duration-base) * var(--anim-mult,1)) var(--ease-spring); }
+  .pill-tab:active { transform: scale(0.95); }
+
+  html.dark .ft-row:hover { background: rgba(255,255,255,0.06); }
+  html.dark .ft-row.is-selected { background: rgba(16,185,129,0.18); }
+  html.dark .ft-row.is-selected .ft-name { color: #6EE7B7; }
+  html.dark .ft-name { color: #E2E8F0; }
+  html.dark .ft-guides.on { background-image: linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px); }
+  html.dark .ft-search { background: #1E293B; border-color: #334155; }
+  html.dark .ft-search input { color: #F1F5F9; }
+  html.dark .ft-skel { background: linear-gradient(90deg, #1E293B 0%, #334155 40%, #1E293B 80%); }
+
+  /* .btn-glass has no 44px ::after hit layer in _ds; this page uses it at
+     36px (Expand/Collapse/Reload) and at default padding-only size (Slow
+     motion/Dark toggles), so add a component-scoped hit layer + focus-visible
+     rather than editing the shared _ds rule for one page. */
+  .btn-glass { position: relative; }
+  .btn-glass::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .btn-glass:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ft-row, .ft-row.is-match::after, .ft-ic, .ft-flag, .ft-chev, .ft-skel, .ft-search, .pill-tab {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+
+<div style="padding:24px; box-sizing:border-box; font-family:'Montserrat'; background:transparent;">
+
+  <div style="max-width:840px; margin:0 auto; display:flex; flex-direction:column; gap:14px;">
+
+    <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <span class="micro-label">Deha Design System · Components</span>
+        <h1 class="type-display" style="margin:0; font-size:26px; color:#0F172A;">File Tree</h1>
+        <p style="margin:0; max-width:440px; font-size:13px; font-weight:600; line-height:1.5; color:#64748B;">Recursive, collapsible directory view. Rows are keyboard focusable, folders animate open with a staggered reveal, and every leaf carries a slot for a status icon and metadata.</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button class="btn-glass" onClick="{{ toggleSlow }}"><span class="material-icons btn-mi">slow_motion_video</span>{{ slowLabel }}</button>
+        <button class="btn-glass" onClick="{{ toggleDark }}"><span class="material-icons btn-mi">contrast</span>{{ themeLabel }}</button>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <span class="pill-tab {{ v.cls }}" onClick="{{ v.onClick }}">{{ v.label }}</span>
+      </sc-for>
+    </div>
+
+    <div style="display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:16px; align-items:start;">
+
+      <div>
+        <div style="padding:0;">
+
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <span class="ft-ic" style="color:#10B981;"><span class="material-icons" style="font-size:22px;">account_tree</span></span>
+            <div style="display:flex; flex-direction:column; gap:1px; margin-right:auto;">
+              <span style="font-size:13px; font-weight:800; color:#0F172A;">{{ treeTitle }}</span>
+              <span class="ft-sub">{{ treeSub }}</span>
+            </div>
+            <div class="ft-search">
+              <span class="material-icons">search</span>
+              <input type="text" placeholder="Filter…" value="{{ query }}" onChange="{{ onQuery }}">
+            </div>
+            <button class="btn-glass" style="height:36px; padding:0 14px; font-size:12px;" onClick="{{ expandAll }}"><span class="material-icons btn-mi">unfold_more</span>Expand</button>
+            <button class="btn-glass" style="height:36px; padding:0 14px; font-size:12px;" onClick="{{ collapseAll }}"><span class="material-icons btn-mi">unfold_less</span>Collapse</button>
+            <button class="btn-glass" style="height:36px; padding:0 14px; font-size:12px;" onClick="{{ reload }}"><span class="material-icons btn-mi">refresh</span>Reload</button>
+          </div>
+
+          <div class="ft-scroll {{ densityCls }}" role="tree" aria-label="{{ treeTitle }}">
+
+            <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <sc-for list="{{ skeletons }}" as="s" hint-placeholder-count="7">
+                  <div class="ft-skel-row">
+                    <div class="ft-skel" style="width:{{ s.pad }}px; opacity:0;"></div>
+                    <div class="ft-skel" style="width:18px; height:18px; border-radius:6px;"></div>
+                    <div class="ft-skel" style="width:{{ s.w }}px;"></div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ showRows }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <sc-for list="{{ rows }}" as="row" hint-placeholder-count="9">
+                  <div class="ft-row {{ row.cls }}" tabindex="0" role="treeitem" aria-level="{{ row.level }}" aria-expanded="{{ row.ariaExpanded }}" aria-selected="{{ row.ariaSelected }}" onClick="{{ row.onClick }}" onKeyDown="{{ row.onKey }}" style="animation-delay:{{ row.delay }}ms;">
+                    <div class="ft-guides {{ row.guideCls }}" style="width:{{ row.indent }}px;"></div>
+                    <span class="ft-chev {{ row.chevCls }}"><span class="material-icons">chevron_right</span></span>
+                    <span class="ft-ic" style="color:{{ row.color }};"><span class="material-icons">{{ row.icon }}</span></span>
+                    <span class="ft-name">{{ row.name }}</span>
+                    <sc-if value="{{ row.hasBadge }}" hint-placeholder-val="{{ false }}">
+                      <span class="ft-flag"><span class="material-icons">{{ row.badgeIcon }}</span></span>
+                    </sc-if>
+                    <span class="ft-meta">{{ row.meta }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:28px 0;">
+                <span class="ft-ic" style="color:#CBD5E1;"><span class="material-icons" style="font-size:30px;">search_off</span></span>
+                <span style="font-size:13px; font-weight:800; color:#334155;">Nothing matches “{{ query }}”</span>
+                <span class="ft-sub">Clear the filter to see the full tree.</span>
+                <button class="btn-text" onClick="{{ clearQuery }}"><span class="material-icons btn-mi">restart_alt</span>Clear filter</button>
+              </div>
+            </sc-if>
+
+          </div>
+
+          <div style="display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-hairline);">
+            <span class="ft-meta" style="margin:0; display:inline-flex; align-items:center; gap:5px;"><span class="material-icons" style="font-size:14px;">folder</span>{{ folderCount }}</span>
+            <span class="ft-meta" style="margin:0; display:inline-flex; align-items:center; gap:5px;"><span class="material-icons" style="font-size:14px;">description</span>{{ fileCount }}</span>
+            <span style="margin-left:auto;"></span>
+            <button class="btn-green" onClick="{{ toggleDensity }}"><span class="material-icons btn-mi">density_medium</span>{{ densityLabel }}</button>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px; padding-left:24px; border-left:1px solid var(--border-hairline);">
+
+        <div>
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <span class="pills-label" style="margin:0;">Selection</span>
+            <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="ft-ic" style="color:{{ selColor }};"><span class="material-icons" style="font-size:26px;">{{ selIcon }}</span></span>
+                  <div style="display:flex; flex-direction:column; gap:2px; min-width:0;">
+                    <span style="font-size:14px; font-weight:800; color:#0F172A; word-break:break-all;">{{ selName }}</span>
+                    <span class="mono" style="word-break:break-all;">{{ selPath }}</span>
+                  </div>
+                </div>
+                <div class="pills-row">
+                  <span class="ft-sub" style="display:inline-flex; align-items:center; gap:5px;"><span class="material-icons" style="font-size:15px;">{{ selKindIcon }}</span>{{ selKind }}</span>
+                  <span class="ft-sub" style="display:inline-flex; align-items:center; gap:5px;"><span class="material-icons" style="font-size:15px;">schedule</span>{{ selTime }}</span>
+                  <sc-if value="{{ selHasBadge }}" hint-placeholder-val="{{ false }}">
+                    <span class="ft-sub" style="display:inline-flex; align-items:center; gap:5px;"><span class="material-icons" style="font-size:15px;">{{ selBadgeIcon }}</span>{{ selBadge }}</span>
+                  </sc-if>
+                </div>
+                <p style="margin:0; font-size:12px; font-weight:600; line-height:1.5; color:#64748B;">{{ selNote }}</p>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button class="btn-green" style="min-width:0;"><span class="material-icons btn-mi">open_in_new</span>Open</button>
+                  <button class="btn-discuss"><span class="material-icons" style="font-size:15px;">forum</span>Discuss</button>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noSelection }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 0;">
+                <span class="ft-ic" style="color:#CBD5E1;"><span class="material-icons" style="font-size:30px;">ads_click</span></span>
+                <span class="ft-sub">Pick a node to inspect it.</span>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span class="pills-label" style="margin:0;">Row states</span>
+            <div class="ft-row" style="animation:none; pointer-events:none;">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev leaf"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#94A3B8;"><span class="material-icons">description</span></span>
+              <span class="ft-name">Default</span>
+            </div>
+            <div class="ft-row" style="animation:none; pointer-events:none; background:rgba(15,23,42,0.045);">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev leaf"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#94A3B8;"><span class="material-icons">description</span></span>
+              <span class="ft-name">Hover</span>
+            </div>
+            <div class="ft-row is-selected" style="animation:none; pointer-events:none;">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev leaf"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#059669;"><span class="material-icons">description</span></span>
+              <span class="ft-name">Selected</span>
+            </div>
+            <div class="ft-row" style="animation:none; pointer-events:none; box-shadow:0 0 0 2px #10B981, 0 0 0 5px rgba(16,185,129,0.18);">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev leaf"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#94A3B8;"><span class="material-icons">description</span></span>
+              <span class="ft-name">Focus ring</span>
+            </div>
+            <div class="ft-row is-disabled" style="animation:none; pointer-events:none;">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev leaf"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#94A3B8;"><span class="material-icons">lock</span></span>
+              <span class="ft-name">Disabled</span>
+            </div>
+            <div class="ft-row" style="animation:none; pointer-events:none;">
+              <div class="ft-guides" style="width:6px;"></div>
+              <span class="ft-chev open"><span class="material-icons">chevron_right</span></span>
+              <span class="ft-ic" style="color:#475569;"><span class="material-icons">folder_open</span></span>
+              <span class="ft-name">Expanded folder</span>
+            </div>
+            <div class="ft-skel-row" style="padding:0;">
+              <div class="ft-skel" style="width:18px; height:18px; border-radius:6px;"></div>
+              <div class="ft-skel" style="width:110px;"></div>
+              <span class="ft-sub" style="margin-left:auto;">Loading</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:820}}">
+const ICONS = {
+  folder: ['folder', '#64748B'], folderOpen: ['folder_open', '#475569'],
+  tsx: ['code', '#94A3B8'], ts: ['code', '#94A3B8'], js: ['javascript', '#94A3B8'],
+  json: ['data_object', '#94A3B8'], md: ['article', '#94A3B8'], svg: ['image', '#94A3B8'],
+  css: ['palette', '#94A3B8'], pdf: ['picture_as_pdf', '#94A3B8'], docx: ['description', '#94A3B8'],
+  xlsx: ['table_chart', '#94A3B8'], png: ['image', '#94A3B8'], mp4: ['movie', '#94A3B8'],
+  log: ['receipt_long', '#94A3B8'], env: ['key', '#94A3B8'], user: ['person', '#94A3B8'],
+  team: ['groups', '#94A3B8'], lock: ['lock', '#94A3B8'], zip: ['folder_zip', '#94A3B8']
+};
+
+function n(name, kind, extra, children) {
+  return Object.assign({ name: name, kind: kind, children: children || null }, extra || {});
+}
+
+const TREES = {
+  repo: {
+    label: 'Repository',
+    title: 'deha-ui / packages',
+    sub: 'main · synced 4 min ago',
+    nodes: [
+      n('src', 'folder', {}, [
+        n('components', 'folder', {}, [
+          n('Button.tsx', 'tsx', { badge: 'M', badgeCls: 'tag', badgeIcon: 'edit', meta: '4.2 kB', note: 'Pill button family — green, yellow, red and the morphing delete variant.' }),
+          n('Card.tsx', 'tsx', { meta: '2.8 kB', note: 'Inner card surface built on the shared card tokens.' }),
+          n('FileTree.tsx', 'tsx', { badge: 'NEW', badgeCls: 'tag', badgeIcon: 'auto_awesome', meta: '9.6 kB', note: 'This component. Recursive tree with keyboard nav and staggered reveal.' }),
+          n('Pills.tsx', 'tsx', { meta: '3.1 kB', note: 'Priority pills, stat badges and column tags.' })
+        ]),
+        n('hooks', 'folder', {}, [
+          n('useTree.ts', 'ts', { meta: '1.4 kB', note: 'Flattening, filtering and expansion state for the tree.' }),
+          n('useTheme.ts', 'ts', { meta: '0.9 kB', note: 'Light / dark token switch.' })
+        ]),
+        n('tokens.css', 'css', { badge: 'M', badgeCls: 'tag', badgeIcon: 'edit', meta: '6.0 kB', note: 'Colour, type, spacing and motion tokens.' }),
+        n('index.ts', 'ts', { meta: '0.3 kB', note: 'Barrel export.' })
+      ]),
+      n('public', 'folder', {}, [
+        n('logo.svg', 'svg', { meta: '1.1 kB', note: 'Emerald mark, single path.' }),
+        n('grid.png', 'png', { meta: '18 kB', note: 'Background grid texture fallback.' })
+      ]),
+      n('package.json', 'json', { meta: '1.9 kB', note: 'Workspace manifest.' }),
+      n('README.md', 'md', { badge: '-34%', badgeCls: 'tag', badgeIcon: 'trending_down', meta: '7.4 kB', note: 'Docs coverage dropped after the last refactor.' })
+    ]
+  },
+  docs: {
+    label: 'Client documents',
+    title: 'Deha CRM / Documents',
+    sub: '3 clients · 12 documents',
+    nodes: [
+      n('Acme Holding', 'folder', {}, [
+        n('Valuation Report.pdf', 'pdf', { badge: 'Değerleme', badgeCls: 'tag', badgeIcon: 'home_work', meta: '2.4 MB', note: 'Signed valuation for the Levent portfolio.' }),
+        n('Contract.docx', 'docx', { badge: 'Satış', badgeCls: 'tag', badgeIcon: 'sell', meta: '640 kB', note: 'Sale agreement, awaiting counter-signature.' }),
+        n('Photos', 'folder', {}, [
+          n('exterior.png', 'png', { meta: '3.1 MB', note: 'Facade, morning light.' }),
+          n('walkthrough.mp4', 'mp4', { meta: '86 MB', note: 'Two-minute walkthrough for the listing page.' })
+        ])
+      ]),
+      n('Northwind', 'folder', {}, [
+        n('Listing Agreement.pdf', 'pdf', { badge: 'Nurture', badgeCls: 'tag', badgeIcon: 'volunteer_activism', meta: '1.2 MB', note: 'Renewal due in 14 days.' }),
+        n('Offer History.xlsx', 'xlsx', { badge: '45K GCI', badgeCls: 'tag', badgeIcon: 'payments', meta: '320 kB', note: 'Every offer logged against the property.' })
+      ]),
+      n('Templates', 'folder', {}, [
+        n('Offer Letter.docx', 'docx', { meta: '48 kB', note: 'Firm template, locked for editing.' })
+      ]),
+      n('Archive.zip', 'zip', { badge: 'Private', badgeCls: 'tag', badgeIcon: 'lock', meta: '1.8 GB', note: 'Closed deals from 2024.' })
+    ]
+  },
+  deploy: {
+    label: 'Build output',
+    title: 'Pipeline #482 · dist',
+    sub: 'Finished in 42s · 2 warnings',
+    nodes: [
+      n('dist', 'folder', {}, [
+        n('assets', 'folder', {}, [
+          n('index-4f2a.js', 'js', { badge: 'Done', badgeCls: 'tag', badgeIcon: 'task_alt', meta: '182 kB', note: 'Main bundle, gzip 61 kB.' }),
+          n('vendor-91cd.js', 'js', { badge: 'Review', badgeCls: 'col-tag review', badgeIcon: 'visibility', meta: '740 kB', note: 'Above the 500 kB budget — consider splitting.' }),
+          n('style-77ab.css', 'css', { badge: 'Done', badgeCls: 'tag', badgeIcon: 'task_alt', meta: '38 kB', note: 'Purged stylesheet.' })
+        ]),
+        n('index.html', 'md', { meta: '2 kB', note: 'Entry document with preloaded fonts.' })
+      ]),
+      n('reports', 'folder', {}, [
+        n('lighthouse.json', 'json', { badge: '+12%', badgeCls: 'tag', badgeIcon: 'trending_up', meta: '54 kB', note: 'Performance up after the font swap.' }),
+        n('build.log', 'log', { badge: 'In Progress', badgeCls: 'col-tag progress', badgeIcon: 'bolt', meta: '1.1 MB', note: 'Streaming — tail is still being written.' })
+      ]),
+      n('.env.production', 'env', { badge: 'secret', badgeCls: 'tag', badgeIcon: 'schedule', meta: 'secret', note: 'Injected at build time, never committed.' })
+    ]
+  },
+  perms: {
+    label: 'Permissions',
+    title: 'Workspace access',
+    sub: 'Inherited unless overridden',
+    nodes: [
+      n('Company', 'folder', {}, [
+        n('Finance', 'folder', { locked: true }, [
+          n('Payroll.xlsx', 'xlsx', { locked: true, badge: 'Private', badgeCls: 'tag', badgeIcon: 'lock', meta: 'no access', note: 'Restricted to the finance group.' }),
+          n('Budget 2026.xlsx', 'xlsx', { badge: 'Yüksek', badgeCls: 'tag', badgeIcon: 'star', meta: 'read', note: 'Read-only for team leads.' })
+        ]),
+        n('Design', 'folder', {}, [
+          n('Brand Kit', 'folder', {}, [
+            n('logo-mark.svg', 'svg', { badge: 'Featured', badgeCls: 'tag', badgeIcon: 'star', meta: 'write', note: 'Editable by the design team.' })
+          ]),
+          n('design-team', 'team', { badge: 'Editor', badgeCls: 'tag', badgeIcon: 'group', meta: '9 people', note: 'Group grant applied to the whole Design folder.' })
+        ])
+      ]),
+      n('elif@deha.co', 'user', { badge: 'Owner', badgeCls: 'tag', badgeIcon: 'verified_user', meta: 'admin', note: 'Full control, cannot be removed.' }),
+      n('contractors', 'team', { badge: 'Urgent', badgeCls: 'danger', badgeIcon: 'warning', meta: 'expires 3d', note: 'Temporary grant, review before it lapses.' })
+    ]
+  }
+};
+
+const TIMES = ['2 min ago', '18 min ago', 'yesterday', '3 days ago', 'last week'];
+
+class Component extends DCLogic {
+  state = {
+    variant: 'repo',
+    expanded: { repo: { 'src': 1, 'src/components': 1 }, docs: { 'Acme Holding': 1 }, deploy: { 'dist': 1, 'dist/assets': 1 }, perms: { 'Company': 1, 'Company/Design': 1 } },
+    selected: 'src/components/FileTree.tsx',
+    query: '',
+    loading: false,
+    dense: false,
+    slow: false,
+    dark: false
+  };
+
+  tree() { return TREES[this.state.variant]; }
+
+  walk(nodes, prefix, depth, out, q) {
+    const exp = this.state.expanded[this.state.variant] || {};
+    nodes.forEach(node => {
+      const path = prefix ? prefix + '/' + node.name : node.name;
+      const isFolder = node.kind === 'folder';
+      const selfHit = q ? node.name.toLowerCase().indexOf(q) >= 0 : false;
+      let kids = [];
+      if (isFolder && node.children) {
+        const open = q ? true : !!exp[path];
+        const buf = [];
+        this.walk(node.children, path, depth + 1, buf, q);
+        if (open || (q && buf.length)) kids = buf;
+        if (q && !buf.length && !selfHit) return;
+      } else if (q && !selfHit) return;
+
+      const iconKey = isFolder ? (exp[path] || q ? 'folderOpen' : 'folder') : (ICONS[node.kind] ? node.kind : 'md');
+      const ic = ICONS[iconKey] || ICONS.md;
+      out.push({ node: node, path: path, depth: depth, isFolder: isFolder, icon: ic[0], color: node.locked ? '#94A3B8' : ic[1], match: selfHit });
+      kids.forEach(k => out.push(k));
+    });
+  }
+
+  visible() {
+    const q = this.state.query.trim().toLowerCase();
+    const out = [];
+    this.walk(this.tree().nodes, '', 0, out, q);
+    return out;
+  }
+
+  allFolderPaths(nodes, prefix, out) {
+    nodes.forEach(node => {
+      const path = prefix ? prefix + '/' + node.name : node.name;
+      if (node.kind === 'folder' && node.children) { out[path] = 1; this.allFolderPaths(node.children, path, out); }
+    });
+    return out;
+  }
+
+  setExpanded(map) {
+    this.setState(s => ({ expanded: Object.assign({}, s.expanded, { [s.variant]: map }) }));
+  }
+
+  toggle(path) {
+    const cur = Object.assign({}, this.state.expanded[this.state.variant]);
+    if (cur[path]) delete cur[path]; else cur[path] = 1;
+    this.setExpanded(cur);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const st = this.state;
+    const rows = this.visible();
+    const sel = rows.filter(r => r.path === st.selected)[0] || null;
+    const q = st.query.trim();
+    let folders = 0, files = 0;
+    rows.forEach(r => { if (r.isFolder) folders++; else files++; });
+
+    return {
+      variants: Object.keys(TREES).map(k => ({
+        label: TREES[k].label,
+        cls: k === st.variant ? 'active' : '',
+        onClick: () => this.setState({ variant: k, query: '', selected: null })
+      })),
+      treeTitle: this.tree().title,
+      treeSub: this.tree().sub,
+      query: st.query,
+      onQuery: e => this.setState({ query: e.target.value }),
+      clearQuery: () => this.setState({ query: '' }),
+      loading: st.loading,
+      showRows: !st.loading && rows.length > 0,
+      isEmpty: !st.loading && rows.length === 0,
+      skeletons: [0, 1, 2, 3, 4, 5, 6].map(i => ({ pad: (i % 3) * 18 + 1, w: 90 + ((i * 37) % 120) })),
+      folderCount: folders,
+      fileCount: files,
+      densityCls: (st.dense ? 'ft-dense ' : '') + (st.slow ? '' : ''),
+      densityLabel: st.dense ? 'Comfortable' : 'Compact',
+      toggleDensity: () => this.setState(s => ({ dense: !s.dense })),
+      slowLabel: st.slow ? 'Normal speed' : 'Slow motion',
+      toggleSlow: () => {
+        const v = !st.slow;
+        document.documentElement.setAttribute('data-anim-slow', v ? 'true' : 'false');
+        this.setState({ slow: v });
+      },
+      themeLabel: st.dark ? 'Light' : 'Dark',
+      toggleDark: () => {
+        const v = !st.dark;
+        document.documentElement.classList.toggle('dark', v);
+        document.documentElement.setAttribute('data-theme', v ? 'dark' : 'light');
+        this.setState({ dark: v });
+      },
+      expandAll: () => this.setExpanded(this.allFolderPaths(this.tree().nodes, '', {})),
+      collapseAll: () => this.setExpanded({}),
+      reload: () => {
+        clearTimeout(this._t);
+        this.setState({ loading: true });
+        this._t = setTimeout(() => this.setState({ loading: false }), st.slow ? 3200 : 900);
+      },
+
+      rows: rows.map((r, i) => {
+        const nd = r.node;
+        const act = () => {
+          if (nd.locked) return;
+          if (r.isFolder) this.toggle(r.path);
+          this.setState({ selected: r.path });
+        };
+        return {
+          name: nd.name,
+          indent: 6 + r.depth * 18,
+          guideCls: r.depth > 0 ? 'on' : '',
+          level: r.depth + 1,
+          ariaExpanded: r.isFolder ? String(!!(this.state.expanded[st.variant][r.path] || q)) : null,
+          ariaSelected: r.path === st.selected ? 'true' : 'false',
+          cls: [
+            r.path === st.selected ? 'is-selected' : '',
+            nd.locked ? 'is-disabled' : '',
+            q && r.match ? 'is-match' : ''
+          ].join(' '),
+          chevCls: r.isFolder ? (this.state.expanded[st.variant][r.path] || q ? 'open' : '') : 'leaf',
+          icon: r.icon,
+          color: r.color,
+          hasBadge: !!nd.badge,
+          badge: nd.badge || '',
+          badgeCls: nd.badgeCls || 'tag',
+          badgeIcon: nd.badgeIcon || '',
+          meta: nd.meta || '',
+          delay: Math.min(i * 20, 260),
+          onClick: act,
+          onKey: e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); }
+            if (e.key === 'ArrowRight' && r.isFolder && !this.state.expanded[st.variant][r.path]) this.toggle(r.path);
+            if (e.key === 'ArrowLeft' && r.isFolder && this.state.expanded[st.variant][r.path]) this.toggle(r.path);
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              const els = Array.from(e.currentTarget.parentNode.children);
+              const idx = els.indexOf(e.currentTarget) + (e.key === 'ArrowDown' ? 1 : -1);
+              if (els[idx]) els[idx].focus();
+            }
+          }
+        };
+      }),
+
+      hasSelection: !!sel,
+      noSelection: !sel,
+      selName: sel ? sel.node.name : '',
+      selPath: sel ? sel.path : '',
+      selIcon: sel ? sel.icon : 'description',
+      selColor: sel ? sel.color : '#94A3B8',
+      selKind: sel ? (sel.isFolder ? 'Folder' : String(sel.node.kind).toUpperCase()) : '',
+      selKindIcon: sel && sel.isFolder ? 'folder' : 'insert_drive_file',
+      selTime: sel ? TIMES[sel.path.length % TIMES.length] : '',
+      selNote: sel ? (sel.node.note || 'No description recorded for this node.') : '',
+      selHasBadge: !!(sel && sel.node.badge),
+      selBadge: sel && sel.node.badge ? sel.node.badge : '',
+      selBadgeCls: sel && sel.node.badgeCls ? sel.node.badgeCls : 'tag',
+      selBadgeIcon: sel && sel.node.badgeIcon ? sel.node.badgeIcon : 'label'
+    };
+  }
+}
+
+</script>
+</body>
+</html>

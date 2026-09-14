@@ -1,0 +1,300 @@
+<!-- @dsCard group="Merge - cards" name="CardWithImage" subtitle="-> Cards" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+@keyframes cwiIn { from { opacity:0; transform:translateY(14px) scale(.98) } to { opacity:1; transform:none } }
+@keyframes cwiShimmer { from { background-position: -180% 0 } to { background-position: 280% 0 } }
+@keyframes cwiPop { 0%{transform:scale(1)} 40%{transform:scale(.86)} 70%{transform:scale(1.12)} 100%{transform:scale(1)} }
+@keyframes cwiSpin { to { transform: rotate(360deg) } }
+body { margin:0; font-family:'Montserrat', system-ui, sans-serif; background:#FFFFFF; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%); }
+html.dark body { background:#0B1220; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, #0B1220 55%); }
+a { color: var(--brand-primary-600); }
+a:hover { color: var(--brand-primary-700); }
+/* cwi-card is the click/hover shell built from inline styles below; hover uses
+   the runtime's style-hover attribute (not a real CSS :hover rule), so no
+   @media(hover) wrap is needed for it. */
+.cwi-save-btn { position: relative; }
+.cwi-save-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.cwi-save-btn:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+.pill-tab:focus-visible, .btn-discuss:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+@media (prefers-reduced-motion: reduce) {
+  [style*="animation:cwiIn"], [style*="animation:cwiShimmer"], [style*="animation:cwiSpin"], [style*="animation:{{ c.saveAnim }}"], .cwi-save-btn .material-icons {
+    animation-duration: 0.01ms !important; /* motion-sweep: kept */
+  }
+  [style*="transition:"] { transition-duration: 0.01ms !important; /* motion-sweep: kept */ }
+}
+</style>
+</helmet>
+
+<div style="padding:32px 28px 40px;display:flex;flex-direction:column;gap:22px;min-height:100%">
+
+  <div style="display:flex;flex-direction:column;gap:4px">
+    <span class="pills-label">Component</span>
+    <h1 class="type-display" style="margin:0;font-size:30px;color:var(--fg1)">Card with image</h1>
+    <p style="margin:2px 0 0;font-size:13px;font-weight:600;color:var(--fg3);max-width:60ch;text-wrap:pretty">Dark shell, inset image plate, identity footer. Switch usage areas with the pills; hover, select, save and load states are live.</p>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+    <div class="pills-row" role="tablist" style="gap:8px">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" role="tab" class="{{ t.cls }}" onClick="{{ t.onClick }}" style="cursor:pointer;font-family:'Montserrat'">{{ t.label }}</button>
+      </sc-for>
+    </div>
+    <div class="pills-row" style="gap:8px">
+      <sc-for list="{{ themeTabs }}" as="t" hint-placeholder-count="2">
+        <button type="button" class="{{ t.cls }}" onClick="{{ t.onClick }}" style="cursor:pointer;font-family:'Montserrat';gap:6px">
+          <span class="material-icons" style="font-size:14px">{{ t.icon }}</span>{{ t.label }}
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:baseline;gap:10px;margin-top:2px">
+    <h2 class="type-display" style="margin:0;font-size:17px;color:var(--fg1)">{{ variantTitle }}</h2>
+    <span style="font-size:12px;font-weight:600;color:var(--fg3)">{{ variantNote }}</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="3">
+      <div style="animation:cwiIn var(--duration-420) var(--ease-out) both;animation-delay:{{ c.delay }}">
+        <div onClick="{{ c.onSelect }}" onMouseEnter="{{ c.onEnter }}" onMouseLeave="{{ c.onLeave }}" style="box-sizing:border-box;display:flex;flex-direction:column;padding:10px;border-radius:42px;background:{{ c.shellBg }};border:1px solid {{ c.shellBorder }};cursor:pointer;box-shadow:{{ c.shellShadow }};transition:transform var(--duration-260) var(--ease-out),box-shadow var(--duration-260) var(--ease-out),background var(--duration-260) var(--ease-out)" style-hover="transform:translateY(-3px)" style-active="transform:translateY(-1px)">
+
+          <div style="position:relative;border-radius:32px;overflow:hidden;background:{{ c.plateBg }};border:1px solid {{ c.shellBorder }};box-shadow:0 10px 28px -8px rgba(15,23,42,0.28), 0 3px 8px -2px rgba(15,23,42,0.12), inset 0 0 0 1px rgba(15,23,42,0.03);aspect-ratio:4 / 3">
+            <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ c.slotId }}" shape="rounded" radius="31" fit="cover" placeholder="{{ c.slotHint }}" hint-size="100%,100%" style="position:absolute;inset:0"></x-import>
+
+            <sc-if value="{{ c.isLoading }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;background:{{ c.skelBg }};background-size:220% 100%;animation:cwiShimmer var(--duration-1800) var(--ease-linear) infinite;display:grid;place-items:center">
+                <span class="material-icons" style="font-size:26px;color:var(--slate-400);animation:cwiSpin var(--duration-900) var(--ease-linear) infinite">progress_activity</span>
+              </div>
+            </sc-if>
+
+            <div style="position:absolute;left:10px;top:10px;display:flex;gap:6px;pointer-events:none">
+              <span class="badge-event" style="box-sizing:border-box;height:26px;padding:0 12px;border-radius:100px;background-color:{{ c.badgeColor }}">
+                <span class="material-icons">{{ c.badgeIcon }}</span>{{ c.badge }}
+              </span>
+            </div>
+
+            <button type="button" aria-label="Save" class="cwi-save-btn" onClick="{{ c.onSave }}" style="right:10px;top:10px;width:32px;height:32px;display:grid;place-items:center;border:none;border-radius:9999px;cursor:pointer;background:rgba(255,255,255,0.82);backdrop-filter:blur(10px);box-shadow:inset 0 0 0 1px rgba(15,23,42,0.14),0 2px 8px rgba(15,23,42,0.18);transition:background var(--duration-180) var(--ease-out),transform var(--duration-180) var(--ease-spring);position:absolute" style-hover="transform:scale(1.08)" style-active="transform:scale(.9)">
+                <span class="material-icons" style="font-size:17px;color:{{ c.saveColor }};animation:{{ c.saveAnim }}">{{ c.saveIcon }}</span>
+            </button>
+
+            <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:14px;opacity:{{ c.ovOpacity }};transform:{{ c.ovShift }};pointer-events:none;transition:opacity var(--duration-240) var(--ease-out),transform var(--duration-260) var(--ease-out);background:linear-gradient(to top,rgba(15,23,42,0.55),transparent)">
+              <span style="font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)">{{ c.hoverMeta }}</span>
+              <span class="btn-glass" style="height:32px;padding:0 14px;font-size:12px;font-weight:800">
+                <span class="material-icons" style="font-size:15px">{{ c.ctaIcon }}</span>{{ c.cta }}
+              </span>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:9px;padding:12px 12px 4px">
+            <span class="icon-badge icon-badge--glow" style="--icon-c:{{ c.accent }};border-radius:9999px;width:28px;height:28px;font-size:15px">
+              <span class="material-icons">{{ c.avatarIcon }}</span>
+            </span>
+            <span style="flex:1;min-width:0;font-size:13px;font-weight:800;color:{{ c.footerFg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em">{{ c.title }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;padding:5px 10px;border-radius:9999px;font-size:11px;font-weight:700;color:{{ c.chipFg }};background:{{ c.chipBg }};box-shadow:inset 0 0 0 1px {{ c.chipRing }};transition:background var(--duration-180) var(--ease-out)">
+              <span class="material-icons" style="font-size:15px;opacity:.85">{{ c.visIcon }}</span>{{ c.vis }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+    <span class="pills-label">States &amp; transitions</span>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <sc-for list="{{ stateNotes }}" as="s" hint-placeholder-count="5">
+        <span class="badge tag" style="box-sizing:border-box;display:inline-flex;width:fit-content;flex:0 0 auto;height:26px;padding:0 12px;border-radius:100px;font-size:11px;font-weight:700">
+          <span class="material-icons">{{ s.icon }}</span>{{ s.label }}
+        </span>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;padding-top:4px">
+      <button type="button" class="btn-green" onClick="{{ onToggleLoading }}">
+        <span class="material-icons" style="font-size:15px">refresh</span>{{ loadLabel }}
+      </button>
+      <button type="button" class="btn-discuss" onClick="{{ onClearSelection }}">
+        <span class="material-icons" style="font-size:15px">deselect</span>Clear selection
+      </button>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;media&quot;,&quot;project&quot;,&quot;product&quot;,&quot;event&quot;,&quot;profile&quot;],&quot;default&quot;:&quot;media&quot;,&quot;tsType&quot;:&quot;'media' | 'project' | 'product' | 'event' | 'profile'&quot;},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;},&quot;ringOnSelect&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const VARIANTS = {
+  media: {
+    title: 'Media asset', note: 'launch videos, renders, cut-downs — the reference case',
+    accent: '#10B981', avatarIcon: 'movie', badge: 'VIDEO', badgeIcon: 'play_arrow', badgeColor: '#10B981',
+    cta: 'Play', ctaIcon: 'play_circle',
+    items: [
+      { title: 'Anime production - Launch video', hoverMeta: '01:24 · 4K', vis: 'Public', visIcon: 'public' },
+      { title: 'Higgsfield MCP - Teaser cut', hoverMeta: '00:38 · 1080p', vis: 'Public', visIcon: 'public' },
+      { title: 'Board reel - internal only', hoverMeta: '02:07 · 4K', vis: 'Private', visIcon: 'lock' }
+    ]
+  },
+  project: {
+    title: 'Project', note: 'workspace covers with owner and access',
+    accent: '#6366F1', avatarIcon: 'folder', badge: 'ACTIVE', badgeIcon: 'bolt', badgeColor: '#6366F1',
+    cta: 'Open', ctaIcon: 'arrow_outward',
+    items: [
+      { title: 'Bora design system v3', hoverMeta: '14 files · edited 2h ago', vis: 'Team', visIcon: 'group' },
+      { title: 'Mobile onboarding rebuild', hoverMeta: '8 files · edited today', vis: 'Team', visIcon: 'group' },
+      { title: 'Pricing page experiments', hoverMeta: '3 files · edited Jul 2', vis: 'Private', visIcon: 'lock' }
+    ]
+  },
+  product: {
+    title: 'Product', note: 'commerce tile with price and stock signal',
+    accent: '#F59E0B', avatarIcon: 'sell', badge: '€248', badgeIcon: 'local_offer', badgeColor: '#F59E0B',
+    cta: 'Add to cart', ctaIcon: 'shopping_bag',
+    items: [
+      { title: 'Deha field jacket - olive', hoverMeta: 'In stock · ships in 2d', vis: 'In stock', visIcon: 'inventory_2' },
+      { title: 'Trail runner GTX', hoverMeta: '3 left · ships in 2d', vis: 'Low', visIcon: 'trending_down' },
+      { title: 'Merino base layer', hoverMeta: 'Backorder · 3 weeks', vis: 'Sold out', visIcon: 'block' }
+    ]
+  },
+  event: {
+    title: 'Event', note: 'date-forward card for sessions and meetups',
+    accent: '#EF4444', avatarIcon: 'event', badge: 'SEP 18', badgeIcon: 'schedule', badgeColor: '#EF4444',
+    cta: 'Reserve', ctaIcon: 'confirmation_number',
+    items: [
+      { title: 'Design systems night - Istanbul', hoverMeta: '19:00 · 40 seats left', vis: 'Public', visIcon: 'public' },
+      { title: 'Motion workshop - hands on', hoverMeta: '10:00 · waitlist', vis: 'Waitlist', visIcon: 'hourglass_top' },
+      { title: 'Quarterly partner dinner', hoverMeta: '20:30 · invite only', vis: 'Invite', visIcon: 'lock' }
+    ]
+  },
+  profile: {
+    title: 'Profile', note: 'person or team card, portrait plate',
+    accent: '#0EA5E9', avatarIcon: 'person', badge: 'DESIGN', badgeIcon: 'workspace_premium', badgeColor: '#0EA5E9',
+    cta: 'Message', ctaIcon: 'chat_bubble',
+    items: [
+      { title: 'Bora Yilmaz - Design lead', hoverMeta: 'Istanbul · 6 projects', vis: 'Online', visIcon: 'circle' },
+      { title: 'Elif Kaya - Motion', hoverMeta: 'Berlin · 3 projects', vis: 'Away', visIcon: 'schedule' },
+      { title: 'Systems pod', hoverMeta: '5 members', vis: 'Team', visIcon: 'group' }
+    ]
+  }
+};
+
+const ORDER = ['media', 'project', 'product', 'event', 'profile'];
+const LABELS = { media: 'Media', project: 'Project', product: 'Product', event: 'Event', profile: 'Profile' };
+
+class Component extends DCLogic {
+  state = { variant: null, selected: {}, saved: {}, justSaved: null, loading: false, theme: null, hover: null };
+
+  get theme() { return this.state.theme || this.props.theme || 'light'; }
+
+  applyTheme() { document.documentElement.classList.toggle('dark', this.theme === 'dark'); }
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+
+  get activeKey() {
+    const k = this.state.variant || this.props.variant || 'media';
+    return VARIANTS[k] ? k : 'media';
+  }
+
+  save(id) {
+    this.setState(s => ({ saved: { ...s.saved, [id]: !s.saved[id] }, justSaved: id }));
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ justSaved: null }), 420);
+  }
+
+  componentWillUnmount() { clearTimeout(this._t); }
+
+  renderVals() {
+    const key = this.activeKey;
+    const v = VARIANTS[key];
+    const ringOn = this.props.ringOnSelect !== false;
+
+    return {
+      variantTitle: v.title,
+      variantNote: v.note,
+      loadLabel: this.state.loading ? 'Stop loading demo' : 'Show loading state',
+      onToggleLoading: () => this.setState(s => ({ loading: !s.loading })),
+      onClearSelection: () => this.setState({ selected: {} }),
+      themeTabs: [
+        { key: 'light', label: 'Light', icon: 'light_mode' },
+        { key: 'dark', label: 'Dark', icon: 'dark_mode' }
+      ].map(t => ({
+        label: t.label, icon: t.icon,
+        cls: 'pill-tab' + (this.theme === t.key ? ' dark' : ''),
+        onClick: () => this.setState({ theme: t.key })
+      })),
+      tabs: ORDER.map(k => ({
+        label: LABELS[k],
+        cls: 'pill-tab' + (k === key ? ' active' : ''),
+        onClick: () => this.setState({ variant: k })
+      })),
+      stateNotes: [
+        { icon: 'touch_app', label: 'Hover — shell lifts 3px, overlay CTA rises' },
+        { icon: 'check_circle', label: 'Selected — emerald ring + lifted glow' },
+        { icon: 'bookmark', label: 'Saved — spring pop on the bookmark' },
+        { icon: 'progress_activity', label: 'Loading — shimmer plate + spinner' },
+        { icon: 'lock', label: 'Restricted — lock chip in the footer' }
+      ],
+      cards: v.items.map((it, i) => {
+        const id = key + '-' + i;
+        const sel = !!this.state.selected[id];
+        const saved = !!this.state.saved[id];
+        const loading = this.state.loading && i === 1;
+        return {
+          ...it,
+          accent: v.accent, avatarIcon: v.avatarIcon,
+          badge: it.badge || v.badge, badgeIcon: v.badgeIcon, badgeColor: v.badgeColor,
+          cta: v.cta, ctaIcon: v.ctaIcon,
+          shellBg: this.theme === 'dark' ? '#1E293B' : '#F1F5F9',
+          shellBorder: this.theme === 'dark' ? 'rgba(255,255,255,0.08)' : '#E2E8F0',
+          plateBg: this.theme === 'dark' ? '#0F172A' : '#FFFFFF',
+          footerFg: this.theme === 'dark' ? '#F8FAFC' : '#0F172A',
+          chipFg: this.theme === 'dark' ? 'rgba(248,250,252,.92)' : '#475569',
+          chipBg: this.theme === 'dark' ? 'rgba(255,255,255,.08)' : '#F1F5F9',
+          chipRing: this.theme === 'dark' ? 'rgba(255,255,255,.12)' : 'rgba(15,23,42,.08)',
+          skelBg: this.theme === 'dark'
+            ? 'linear-gradient(100deg,#334155 20%,#475569 42%,#1E293B 62%)'
+            : 'linear-gradient(100deg,#F1F5F9 20%,#FFFFFF 42%,#E2E8F0 62%)',
+          ovOpacity: this.state.hover === id ? 1 : 0,
+          ovShift: this.state.hover === id ? 'translateY(0)' : 'translateY(8px)',
+          onEnter: () => this.setState({ hover: id }),
+          onLeave: () => this.setState(s => (s.hover === id ? { hover: null } : null)),
+          slotId: 'cwi-' + id,
+          slotHint: v.title + ' image',
+          delay: (i * 70) + 'ms', // motion-sweep: kept (per-card stagger offset)
+          isLoading: loading,
+          shellShadow: sel && ringOn
+            ? '0 0 0 3px ' + v.accent + ', 0 4px 8px rgba(15,23,42,0.10)'
+            : '0 4px 8px rgba(15,23,42,0.10)',
+          saveIcon: saved ? 'bookmark' : 'bookmark_border',
+          saveColor: saved ? v.accent : '#334155',
+          saveAnim: this.state.justSaved === id ? 'cwiPop var(--duration-380) var(--ease-spring)' : 'none',
+          onSelect: () => this.setState(s => ({ selected: { ...s.selected, [id]: !s.selected[id] } })),
+          onSave: (e) => { e.stopPropagation(); this.save(id); }
+        };
+      })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

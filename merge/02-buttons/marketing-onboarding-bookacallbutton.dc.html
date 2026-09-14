@@ -1,0 +1,306 @@
+<!-- @dsCard group="Merge - buttons" name="marketing-onboarding__BookACallButton" subtitle="-> Buttons" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+/* book-a-call-button — descendant hover/state choreography.
+   Every transition interpolates width / opacity / transform: nothing snaps.
+   Values are Deha tokens; durations respect the --anim-mult slow-down knob. */
+.bcb {
+  --bcb-h: 50px; --bcb-orb: 38px; --bcb-fs: 15px; --bcb-ic: 18px;
+  --bcb-pad: 22px; --bcb-gap: 12px;
+  --bcb-act: var(--bcb-orb);
+  --bcb-flow: var(--ease-out);
+  --bcb-spring: var(--ease-bounce-soft);
+  --bcb-press: var(--ease-press-calm);
+  --bcb-t: calc(var(--duration-560) * var(--anim-mult, 1));
+  --bcb-t-fast: calc(var(--duration-240) * var(--anim-mult, 1));
+  position: relative; box-sizing: border-box;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: var(--bcb-h); padding: 6px var(--bcb-pad) 6px 6px;
+  border: none; border-radius: 9999px;
+  font-family: 'Montserrat', sans-serif; font-size: var(--bcb-fs);
+  font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+  cursor: pointer; overflow: hidden; isolation: isolate;
+  background: #0F172A; color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.28);
+  box-shadow:
+    0 12px 30px -12px rgba(15,23,42,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -2px 0 rgba(0,0,0,0.30),
+    inset 0 0 0 1px rgba(255,255,255,0.08);
+  transition:
+    padding var(--bcb-t) var(--bcb-flow),
+    background-color var(--bcb-t) var(--bcb-flow),
+    color var(--bcb-t) var(--bcb-flow),
+    box-shadow var(--bcb-t-fast) var(--ease-standard),
+    transform calc(var(--duration-200) * var(--anim-mult, 1)) var(--bcb-press),
+    opacity var(--bcb-t-fast) var(--ease-standard);
+}
+.bcb[data-size="sm"] { --bcb-h: 40px; --bcb-orb: 30px; --bcb-fs: 13px; --bcb-ic: 16px; --bcb-pad: 18px; --bcb-gap: 9px; }
+.bcb[data-size="lg"] { --bcb-h: 60px; --bcb-orb: 46px; --bcb-fs: 17px; --bcb-ic: 22px; --bcb-pad: 28px; --bcb-gap: 14px; }
+.bcb[data-block="1"] { width: 100%; }
+
+.bcb[data-tone="emerald"] {
+  background: #10B981;
+  box-shadow:
+    0 12px 30px -12px rgba(16,185,129,0.60),
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-size: cover, 14px 14px, 14px 14px;
+}
+.bcb[data-tone="emerald"] .bcb-disc { background: #0F172A; }
+.bcb[data-tone="glass"] {
+  background: rgba(255,255,255,0.88); color: #0F172A; text-shadow: none;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 10px 24px -12px rgba(15,23,42,0.28),
+    inset 0 0 0 1px rgba(15,23,42,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -2px 0 rgba(15,23,42,0.10);
+}
+html.dark .bcb[data-tone="glass"] { background: rgba(30,41,59,0.86); color: #F1F5F9; box-shadow: 0 10px 24px -12px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.16), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3); }
+html.dark .bcb[data-tone="dark"] { background: #020617; }
+
+.bcb:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(16,185,129,0.45), 0 0 0 6px rgba(16,185,129,0.16), inset 0 1px 0 rgba(255,255,255,0.18); }
+.bcb:active { transform: scale(0.974); }
+/* data-size="sm" drops to 40px height; ::after guarantees a 44px hit target without enlarging the visible pill */
+.bcb::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+.bcb[data-hover="1"] { padding: 6px 6px 6px var(--bcb-pad); }
+
+/* ── orb: emerald call badge. Collapses its own width on hover — no reflow jump ── */
+.bcb-orb {
+  flex: none; position: relative; overflow: hidden;
+  width: var(--bcb-orb); height: var(--bcb-orb);
+  margin-right: var(--bcb-gap);
+  border-radius: 9999px;
+  transition:
+    width var(--bcb-t) var(--bcb-flow),
+    margin-right var(--bcb-t) var(--bcb-flow);
+}
+.bcb-disc {
+  position: absolute; top: 0; left: 0;
+  width: var(--bcb-orb); height: var(--bcb-orb); border-radius: 9999px;
+  background: #10B981; color: #FFFFFF;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -1.5px 0 rgba(0,0,0,0.22);
+  will-change: transform; backface-visibility: hidden;
+  transition:
+    transform var(--bcb-t) var(--bcb-flow),
+    background-color var(--bcb-t) var(--bcb-flow),
+    color var(--bcb-t) var(--bcb-flow);
+}
+/* The disc travels left through the mask; the slot closes behind it in the
+   same curve, so the pill reclaims the space instead of leaving a gap. */
+.bcb[data-hover="1"] .bcb-disc { transform: translate3d(calc(-1 * var(--bcb-orb) - 6px), 0, 0); }
+.bcb[data-hover="1"] .bcb-orb { width: 0; margin-right: 0; }
+.bcb[data-state="unavailable"] .bcb-disc { background: #EAB308; }
+.bcb[data-state="disabled"] .bcb-disc { background: #64748B; }
+.bcb[data-state="booked"] .bcb-disc { background: #FFFFFF; color: #10B981; }
+
+/* orb faces: icon / spinner / check crossfade in place */
+.bcb-face {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  opacity: 0; transform: scale(0.6) rotate(-25deg); filter: blur(2px);
+  transition:
+    opacity calc(var(--duration-280) * var(--anim-mult, 1)) var(--bcb-flow),
+    transform calc(var(--duration-420) * var(--anim-mult, 1)) var(--bcb-spring),
+    filter calc(var(--duration-280) * var(--anim-mult, 1)) var(--bcb-flow);
+}
+.bcb-face[data-on="1"] { opacity: 1; transform: none; filter: none; }
+.bcb-face .material-icons { font-size: var(--bcb-ic); }
+@keyframes bcbSpin { to { transform: rotate(360deg); } }
+.bcb-spin { width: calc(var(--bcb-ic) + 4px); height: calc(var(--bcb-ic) + 4px); }
+.bcb-spin-arc { animation: bcbSpin calc(var(--duration-900) * var(--anim-mult, 1)) var(--ease-linear) infinite; transform-origin: 16px 16px; }
+
+/* ── label: crossfades between phases, width follows content ── */
+.bcb-label { position: relative; display: grid; align-items: center; white-space: nowrap; transition: width var(--bcb-t) var(--bcb-flow); }
+.bcb-word {
+  grid-area: 1 / 1; white-space: nowrap; width: max-content; /* size to text, not to the animating container */
+  opacity: 0; transform: translateY(-70%) scale(0.94); filter: blur(3px);
+  transition:
+    opacity calc(var(--duration-260) * var(--anim-mult, 1)) var(--bcb-flow),
+    transform calc(var(--duration-420) * var(--anim-mult, 1)) var(--bcb-spring),
+    filter calc(var(--duration-260) * var(--anim-mult, 1)) var(--bcb-flow);
+  pointer-events: none;
+}
+/* the outgoing word leaves layout so the active one alone defines max-content */
+.bcb-word[data-on="0"] { position: absolute; left: 0; top: 50%; margin-top: -0.5em; transform: translateY(70%) scale(0.94); }
+.bcb-word[data-on="1"] { opacity: 1; transform: none; filter: none; }
+
+/* ── channel actions: enter from the right as the orb leaves ── */
+/* The badge rail is a clip mask: badges travel horizontally through the pill's
+   inner edge and are hidden by the mask — no fading, no scaling. */
+.bcb-actions {
+  flex: none; display: flex; align-items: center; gap: 4px;
+  width: 0; margin-left: 0; overflow: hidden; will-change: width;
+  transition:
+    width var(--bcb-t) var(--bcb-flow),
+    margin-left var(--bcb-t) var(--bcb-flow);
+}
+.bcb[data-hover="1"] .bcb-actions {
+  width: calc(var(--bcb-act) * 2 + 4px);
+  transition-delay: 0ms; /* motion-sweep: kept */
+  margin-left: var(--bcb-gap);
+}
+.bcb-act {
+  flex: none; display: grid; place-items: center;
+  width: var(--bcb-act); height: var(--bcb-act); border-radius: 9999px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1.5px 0 rgba(0,0,0,0.2);
+  transform: translate3d(calc(var(--bcb-act) * 2 + 10px), 0, 0);
+  will-change: transform; backface-visibility: hidden;
+  transition: transform var(--bcb-t) var(--bcb-flow);
+}
+.bcb-act .material-icons { font-size: calc(var(--bcb-ic) + 1px); }
+.bcb-act--a { background: #10B981; color: #FFFFFF; transition-delay: calc(45ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+.bcb-act--b { background: #FFFFFF; color: #0F172A; transition-delay: 0ms; } /* motion-sweep: kept */
+.bcb[data-hover="1"] .bcb-act { transform: translate3d(0, 0, 0); }
+.bcb[data-hover="1"] .bcb-act--a { transition-delay: 0ms; } /* motion-sweep: kept */
+.bcb[data-hover="1"] .bcb-act--b { transition-delay: calc(45ms * var(--anim-mult, 1)); } /* motion-sweep: kept */
+
+/* ── phase skins ── */
+.bcb[data-state="loading"] { cursor: progress; }
+.bcb[data-state="booked"] {
+  background: #10B981; color: #FFFFFF; cursor: default;
+  box-shadow: 0 12px 30px -10px rgba(16,185,129,0.55), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.2);
+}
+.bcb[data-state="disabled"] { opacity: 0.45; cursor: not-allowed; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10); }
+.bcb[data-state="unavailable"] { cursor: not-allowed; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bcb, .bcb-orb, .bcb-face, .bcb-word, .bcb-actions, .bcb-act { transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  .bcb-spin-arc { animation-duration: 1.6s; }
+}
+</style>
+</helmet>
+<button type="button" class="bcb" ref="{{ ref }}" data-size="{{ size }}" data-tone="{{ tone }}" data-block="{{ block }}" data-state="{{ phase }}" data-hover="{{ hoverFlag }}" aria-label="{{ aria }}" aria-busy="{{ busy }}" onClick="{{ onClick }}" onMouseEnter="{{ onEnter }}" onMouseLeave="{{ onLeave }}" onFocus="{{ onEnter }}" onBlur="{{ onLeave }}">
+  <span class="bcb-orb">
+    <span class="bcb-disc">
+      <span class="bcb-face" data-on="{{ faceIcon }}"><span class="material-icons">{{ restIcon }}</span></span>
+      <span class="bcb-face" data-on="{{ faceSpin }}">
+        <svg class="bcb-spin" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <circle cx="16" cy="16" r="12" stroke="rgba(255,255,255,0.3)" stroke-width="4" fill="none"></circle>
+          <circle class="bcb-spin-arc" cx="16" cy="16" r="12" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" stroke-dasharray="25 50"></circle>
+        </svg>
+      </span>
+      <span class="bcb-face" data-on="{{ faceCheck }}"><span class="material-icons">check</span></span>
+    </span>
+  </span>
+  <span class="bcb-label" style="width: {{ labelWidth }}">
+    <span class="bcb-word" data-on="{{ wordRest }}">{{ label }}</span>
+    <span class="bcb-word" data-on="{{ wordAlt }}">{{ altText }}</span>
+  </span>
+  <span class="bcb-actions" aria-hidden="true">
+    <span class="bcb-act bcb-act--a"><span class="material-icons">forum</span></span>
+    <span class="bcb-act bcb-act--b"><span class="material-icons">event_available</span></span>
+  </span>
+</button>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:140},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Book a call&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;bookedLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Booked · Thu 14:00&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;loadingLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Holding your slot&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;unavailableLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Fully booked this week&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;tone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;emerald&quot;,&quot;glass&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;'dark' | 'emerald' | 'glass'&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sm&quot;,&quot;md&quot;,&quot;lg&quot;],&quot;default&quot;:&quot;md&quot;,&quot;tsType&quot;:&quot;'sm' | 'md' | 'lg'&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;default&quot;,&quot;loading&quot;,&quot;booked&quot;,&quot;disabled&quot;,&quot;unavailable&quot;],&quot;default&quot;:&quot;default&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;expand&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;block&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onSelect&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { hover: false, phase: null, labelWidth: 'auto' };
+
+  componentDidMount() {
+    this.measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(this.measure);
+    this._t3 = setTimeout(this.measure, 600);
+  }
+  /* scheduled from renderVals — this runtime does not forward componentDidUpdate */
+  scheduleMeasure = () => {
+    if (this._raf) return;
+    this._raf = requestAnimationFrame(() => { this._raf = null; this.measure(); });
+  };
+  componentWillUnmount() { clearTimeout(this._t1); clearTimeout(this._t2); clearTimeout(this._t3); }
+
+  /* The label crossfades two stacked words; the wrapper animates to the
+     active word's width so the pill grows/shrinks instead of snapping. */
+  measure = () => {
+    const el = this.el;
+    if (!el) return;
+    const on = el.querySelector('.bcb-word[data-on="1"]');
+    if (!on) return;
+    const w = Math.ceil(on.offsetWidth); /* offsetWidth ignores the in-flight scale transform */
+    const next = w + 'px';
+    if (w > 0 && next !== this.state.labelWidth) this.setState({ labelWidth: next });
+  };
+
+  rootRef = (el) => {
+    this.el = el;
+    if (el) requestAnimationFrame(this.measure);
+  };
+
+  book = () => {
+    const forced = this.props.state || 'default';
+    if (forced !== 'default' || this.state.phase) return;
+    this.setState({ phase: 'loading', hover: false });
+    this._t1 = setTimeout(() => {
+      this.setState({ phase: 'booked' });
+      this._t2 = setTimeout(() => this.setState({ phase: null }), 4200);
+    }, 1700);
+  };
+
+  renderVals() {
+    const forced = this.props.state || 'default';
+    const phase = this.state.phase || forced;
+    const label = this.props.label ?? 'Book a call';
+    const alt =
+      phase === 'loading' ? (this.props.loadingLabel ?? 'Holding your slot')
+      : phase === 'booked' ? (this.props.bookedLabel ?? 'Booked · Thu 14:00')
+      : phase === 'unavailable' ? (this.props.unavailableLabel ?? 'Fully booked this week')
+      : label;
+    const showAlt = phase === 'loading' || phase === 'booked' || phase === 'unavailable';
+    this.scheduleMeasure();
+    const interactive = phase === 'default';
+    return {
+      ref: this.rootRef,
+      size: this.props.size ?? 'md',
+      tone: this.props.tone ?? 'dark',
+      block: this.props.block ? '1' : '0',
+      phase,
+      label,
+      altText: alt,
+      wordRest: showAlt ? '0' : '1',
+      wordAlt: showAlt ? '1' : '0',
+      labelWidth: this.state.labelWidth,
+      restIcon: phase === 'unavailable' ? 'schedule' : 'call',
+      faceIcon: phase === 'loading' || phase === 'booked' ? '0' : '1',
+      faceSpin: phase === 'loading' ? '1' : '0',
+      faceCheck: phase === 'booked' ? '1' : '0',
+      busy: phase === 'loading' ? 'true' : 'false',
+      aria: showAlt ? alt : label,
+      hoverFlag: this.state.hover && interactive && (this.props.expand ?? true) ? '1' : '0',
+      onClick: interactive ? (this.props.onSelect ?? this.book) : undefined,
+      onEnter: () => { if (interactive) this.setState({ hover: true }); },
+      onLeave: () => this.setState({ hover: false })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

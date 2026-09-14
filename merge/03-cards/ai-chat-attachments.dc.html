@@ -1,0 +1,251 @@
+<!-- @dsCard group="Merge - cards" name="AI Chat Attachments" subtitle="-> Cards" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+  <link rel="stylesheet" href="../../preview/_base.css">
+  <link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+  <link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+  <link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+  
+  <style>
+    body { margin: 0; background: #F8FAFC; }
+    a { color: var(--brand-primary-600); }
+    a:hover { color: var(--brand-primary-700); }
+    @keyframes attIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes attSpin { to { transform: rotate(360deg); } }
+    @keyframes attShake { 10%,90%{transform:translateX(-1px)} 30%,70%{transform:translateX(2px)} 50%{transform:translateX(-2px)} }
+    @keyframes panelIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes pulseRing { 0%{box-shadow:0 0 0 0 rgba(16,185,129,0.35)} 70%{box-shadow:0 0 0 14px rgba(16,185,129,0)} 100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} }
+    /* focus-visible: custom drop-zone (div acting as a button) and add-tile need explicit rings, DS buttons/pills already carry their own */
+    [onclick][role="button"]:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+    .att-add-tile:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+    /* .pill-tab 44px hit layer + :focus-visible now comes from the regenerated
+       data-ds ="preview/done/jsx/_pills.css" copy above (fixed at the shared
+       claude-design mirror source, this file re-inlined against it). */
+    @media (prefers-reduced-motion: reduce) {
+      [style*="animation:panelIn"], [style*="animation:pulseRing"] { animation: none !important; }
+    }
+  </style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+<div style="min-height:100vh;padding:32px 28px 48px;display:flex;flex-direction:column;align-items:center;gap:18px;font-family:var(--font-display);background:#FFFFFF;background-image:var(--bg-section-grid);background-size:var(--bg-section-grid-size)">
+
+  <div style="width:100%;max-width:780px;display:flex;flex-direction:column;gap:6px">
+    <span class="micro-label">Deha · Components</span>
+    <h1 class="h1" style="margin:0">AI Chat Attachments</h1>
+    <p class="body" style="margin:0;max-width:56ch;text-wrap:pretty">Grid attachment surface for the AI composer: previews, upload progress, failures and the sent state. Switch usage areas with the pills.</p>
+  </div>
+
+  <div class="pills-row" style="width:100%;max-width:780px">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+      <button type="button" class="pill-tab {{ tab.cls }}" onClick="{{ tab.onClick }}" style="cursor:pointer;font-family:var(--font-display);gap:6px;padding:7px 16px">
+        <span class="material-icons" style="font-size:15px;margin-right:5px">{{ tab.icon }}</span>{{ tab.label }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="width:100%;max-width:780px">
+    <div>
+      <div style="animation:panelIn var(--duration-slow) var(--ease-out) both" key="{{ tab }}">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px">
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <span class="h4">{{ panelTitle }}</span>
+            <span class="meta" style="font-weight:600">{{ panelNote }}</span>
+          </div>
+          <span class="badge tag">{{ countLabel }}</span>
+        </div>
+
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ fillDemo }}" tabindex="0" role="button" aria-label="Drop files here or click to browse" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:34px 20px;border-radius:16px;border:2px dashed {{ dropBorder }};background:{{ dropBg }};cursor:pointer;transition:border-color var(--duration-base) var(--ease-standard),background var(--duration-base) var(--ease-standard),transform var(--duration-base) var(--ease-standard);outline-offset:2px" style-hover="transform:scale(1.006)">
+            <div style="width:52px;height:52px;display:grid;place-items:center;border-radius:9999px;background:var(--brand-primary-50);color:var(--brand-primary-600);animation:pulseRing 2.2s ease-out infinite">
+              <span class="material-icons" style="font-size:26px">cloud_upload</span>
+            </div>
+            <span style="font-size:14px;font-weight:800;color:var(--fg1)">Drop files here</span>
+            <span class="meta" style="font-weight:600">PNG, JPG, PDF, CSV · up to 20 MB each</span>
+            <span class="btn-primary" style="padding:9px 16px;font-size:13px;margin-top:4px"><span class="material-icons" style="font-size:16px">attach_file</span> Browse files</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:10px">
+            <sc-for list="{{ items }}" as="it" hint-placeholder-count="4">
+              <dc-import name="AttachmentCard" hint-size="100%,132px" kind="{{ it.kind }}" state="{{ it.state }}" file-name="{{ it.name }}" removable="{{ it.removable }}" meta="{{ it.meta }}" ext="{{ it.ext }}" icon="{{ it.icon }}" icon-color="{{ it.iconColor }}" thumb-bg="{{ it.thumbBg }}" progress="{{ it.progress }}" on-remove="{{ it.onRemove }}" on-retry="{{ it.onRetry }}"></dc-import>
+            </sc-for>
+            <sc-if value="{{ showAddTile }}">
+              <button type="button" onClick="{{ addFile }}" class="att-add-tile" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;height:100%;min-height:132px;align-self:stretch;border-radius:14px;border:2px dashed var(--slate-300);background:var(--slate-50);color:var(--fg3);font-family:var(--font-display);font-size:12px;font-weight:700;cursor:pointer;transition:border-color var(--duration-base) var(--ease-standard),color var(--duration-base) var(--ease-standard),background var(--duration-base) var(--ease-standard),transform var(--duration-base) var(--ease-press-calm)" style-hover="border-color:var(--brand-primary);color:var(--brand-primary-600);background:var(--brand-primary-50);transform:translateY(-2px)" style-active="transform:scale(0.98)">
+                <span class="material-icons" style="font-size:22px">add</span> Add file
+              </button>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isComposer }}">
+          <div style="margin-top:16px;display:flex;align-items:center;gap:10px;padding:10px 10px 10px 16px;border-radius:18px;border:1px solid var(--border-hairline);background:var(--slate-50);box-shadow:var(--shadow-recessed)">
+            <span class="material-icons" style="font-size:20px;color:var(--fg4)">attach_file</span>
+            <span style="flex:1;font-size:14px;font-weight:600;color:var(--fg4)">Ask about these files…</span>
+            <span class="btn-primary" style="padding:10px 14px;border-radius:14px"><span class="material-icons" style="font-size:18px">arrow_upward</span></span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isMessage }}">
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="align-self:flex-end;max-width:80%;padding:12px 16px;border-radius:18px 18px 6px 18px;background:var(--brand-primary);color:#fff;font-size:14px;font-weight:600;box-shadow:var(--shadow-emerald-glow-sm);text-shadow:0 1px 2px rgba(0,0,0,0.18)">Summarise these and flag anything off-trend.</div>
+            <div style="align-self:flex-start;max-width:82%;padding:12px 16px;border-radius:18px 18px 18px 6px;background:var(--slate-100);color:var(--fg2);font-size:14px;font-weight:600">Reading 4 attachments… I'll compare Q3 figures against the deck.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isStates }}">
+          <div style="margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:var(--semantic-danger-bg)">
+            <span style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--semantic-danger)"><span class="material-icons" style="font-size:17px">warning</span>{{ errorNote }}</span>
+            <button type="button" onClick="{{ retryAll }}" class="pill-tab" style="cursor:pointer;font-family:var(--font-display);background:#fff">Retry all</button>
+          </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:780px;display:flex;align-items:center;gap:10px">
+    <button type="button" onClick="{{ resetDemo }}" class="pill-tab" style="cursor:pointer;font-family:var(--font-display)"><span class="material-icons" style="font-size:14px;margin-right:5px">restart_alt</span>Reset demo</button>
+    <button type="button" onClick="{{ addFile }}" class="pill-tab" style="cursor:pointer;font-family:var(--font-display)"><span class="material-icons" style="font-size:14px;margin-right:5px">upload</span>Simulate upload</button>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showAddTile&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const IMG = [
+  { kind: 'image', ext: 'PNG', thumbBg: 'linear-gradient(135deg,#34D399,#0F766E)' },
+  { kind: 'image', ext: 'JPG', thumbBg: 'linear-gradient(135deg,#93C5FD,#1E3A8A)' },
+  { kind: 'image', ext: 'PNG', thumbBg: 'linear-gradient(135deg,#FDBA74,#9A3412)' }
+];
+const NAMES = ['screenshot-2026-08.png', 'pipeline-q3.csv', 'board-deck.pdf', 'notes.md', 'listing-photo.jpg', 'forecast.xlsx'];
+
+function file(id, name, ext, icon, iconColor, meta, state, progress) {
+  return { id, name, ext, icon, iconColor, meta, state: state || 'done', progress: progress || 0, kind: 'file', thumbBg: 'linear-gradient(135deg,#F8FAFC,#E2E8F0)' };
+}
+function image(id, name, i, meta, state, progress) {
+  const t = IMG[i % IMG.length];
+  const ext = (name.split('.').pop() || 'img').toUpperCase();
+  return { id, name, ext, kind: 'image', thumbBg: t.thumbBg, icon: 'image', iconColor: '#fff', meta, state: state || 'done', progress: progress || 0 };
+}
+
+const SETS = {
+  composer: () => [
+    image(1, 'listing-hero.png', 0, '820 KB'),
+    file(2, 'pipeline-q3.csv', 'CSV', 'table_chart', '#10B981', '43 KB'),
+    file(3, 'board-deck.pdf', 'PDF', 'picture_as_pdf', '#EF4444', '4.1 MB'),
+    image(4, 'site-plan.jpg', 1, '1.6 MB')
+  ],
+  message: () => [
+    image(11, 'listing-hero.png', 0, '820 KB'),
+    file(12, 'valuation.pdf', 'PDF', 'picture_as_pdf', '#EF4444', '2.3 MB'),
+    file(13, 'leads-august.csv', 'CSV', 'table_chart', '#10B981', '88 KB'),
+    image(14, 'facade.jpg', 2, '1.1 MB')
+  ],
+  empty: () => [],
+  states: () => [
+    image(21, 'uploading-shot.png', 1, 'Uploading… 38%', 'uploading', 38),
+    file(22, 'annual-report.pdf', 'PDF', 'picture_as_pdf', '#EF4444', 'Uploading… 72%', 'uploading', 72),
+    file(23, 'archive.zip', 'ZIP', 'folder_zip', '#94A3B8', 'Too large · 24 MB', 'error'),
+    file(24, 'contract.docx', 'DOC', 'description', '#3B82F6', 'Upload failed', 'error'),
+    file(25, 'notes.md', 'MD', 'article', '#64748B', '6 KB')
+  ]
+};
+
+class Component extends DCLogic {
+  state = { tab: 'composer', lists: { composer: SETS.composer(), message: SETS.message(), empty: SETS.empty(), states: SETS.states() }, nextId: 100 };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        let touched = false;
+        const lists = {};
+        Object.keys(s.lists).forEach(k => {
+          lists[k] = s.lists[k].map(f => {
+            if (f.state !== 'uploading') return f;
+            touched = true;
+            const p = Math.min(100, f.progress + 7);
+            return p >= 100
+              ? Object.assign({}, f, { state: 'done', progress: 100, meta: f.doneMeta || '1.4 MB' })
+              : Object.assign({}, f, { progress: p, meta: 'Uploading… ' + p + '%' });
+          });
+        });
+        return touched ? { lists } : null;
+      });
+    }, 700);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  setList(fn) { this.setState(s => ({ lists: Object.assign({}, s.lists, { [s.tab]: fn(s.lists[s.tab], s) }) })); }
+
+  renderVals() {
+    const tab = this.state.tab;
+    const list = this.state.lists[tab];
+    const meta = {
+      composer: { label: 'Composer', icon: 'edit_note', title: 'Composer tray', note: 'Files staged before sending. Hover a card to remove.' },
+      message: { label: 'In message', icon: 'forum', title: 'Sent with message', note: 'Attachments rendered inside the conversation thread.' },
+      empty: { label: 'Empty / drop', icon: 'cloud_upload', title: 'Drop zone', note: 'Nothing staged yet — click the zone to simulate a drop.' },
+      states: { label: 'Upload states', icon: 'sync', title: 'Progress & failures', note: 'Uploading, complete, rejected and failed cards side by side.' }
+    };
+    const errors = list.filter(f => f.state === 'error').length;
+
+    const tabs = Object.keys(meta).map(k => ({
+      key: k, label: meta[k].label, icon: meta[k].icon,
+      cls: k === tab ? 'active' : '',
+      onClick: () => this.setState({ tab: k })
+    }));
+
+    const removable = tab !== 'message';
+    const items = list.map(f => Object.assign({}, f, {
+      removable,
+      onRemove: () => this.setList(l => l.filter(x => x.id !== f.id)),
+      onRetry: () => this.setList(l => l.map(x => x.id === f.id ? Object.assign({}, x, { state: 'uploading', progress: 5, meta: 'Uploading… 5%', doneMeta: '2.2 MB' }) : x))
+    }));
+
+    const addFile = () => {
+      this.setState(s => {
+        const id = s.nextId;
+        const n = NAMES[id % NAMES.length];
+        const f = image(id, n, id % 3, 'Uploading… 5%', 'uploading', 5);
+        f.doneMeta = '1.4 MB';
+        return { nextId: id + 1, lists: Object.assign({}, s.lists, { [s.tab]: s.lists[s.tab].concat([f]) }) };
+      });
+    };
+
+    return {
+      tab, tabs, items,
+      panelTitle: meta[tab].title,
+      panelNote: meta[tab].note,
+      countLabel: list.length ? list.length + ' attachment' + (list.length === 1 ? '' : 's') : 'Empty',
+      isEmpty: list.length === 0,
+      hasItems: list.length > 0,
+      showAddTile: tab !== 'message',
+      isComposer: tab === 'composer',
+      isMessage: tab === 'message',
+      isStates: tab === 'states' && errors > 0,
+      errorNote: errors + (errors === 1 ? ' file couldn\u2019t be uploaded' : ' files couldn\u2019t be uploaded'),
+      dropBorder: 'var(--slate-300)',
+      dropBg: 'var(--slate-50)',
+      addFile,
+      fillDemo: addFile,
+      retryAll: () => this.setList(l => l.map(x => x.state === 'error' ? Object.assign({}, x, { state: 'uploading', progress: 5, meta: 'Uploading… 5%', doneMeta: '2.2 MB' }) : x)),
+      resetDemo: () => this.setState({ lists: { composer: SETS.composer(), message: SETS.message(), empty: SETS.empty(), states: SETS.states() } })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

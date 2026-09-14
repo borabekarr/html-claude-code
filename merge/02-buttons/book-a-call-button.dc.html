@@ -1,0 +1,243 @@
+<!-- @dsCard group="Merge - buttons" name="Book a Call Button" subtitle="-> Buttons" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+@keyframes bcbRise { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+.bcb-scene { animation: bcbRise calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out) both; }
+.bcb-nav .pill-tab { cursor: pointer; }
+.bcb-nav .pill-tab:active { transform: scale(.96); }
+a { color: #10B981; text-decoration: none; }
+a:hover { color: #047857; }
+</style>
+</helmet>
+<div style="min-height:100%;box-sizing:border-box;padding:var(--space-10) 44px 64px;background:#FFFFFF;background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);background-size:24px 24px;font-family:'Montserrat',sans-serif;">
+
+  <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:22px;">
+    <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Deha Design System · Component</span>
+    <h1 style="margin:0;font-size:var(--type-h1);font-weight:var(--weight-black);letter-spacing:-0.02em;color:#0F172A;">book-a-call-button</h1>
+    <p style="margin:2px 0 0;max-width:620px;font-size:var(--type-body);font-weight:var(--weight-medium);line-height:1.6;color:#475569;text-wrap:pretty;">A pill CTA that morphs on hover: the emerald call orb exits left, two channel actions enter right. Click books a slot — loading, then confirmed. Switch usage areas with the pills.</p>
+  </div>
+
+  <div class="bcb-nav pills-row" style="margin-bottom:28px;">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="7">
+      <span class="pill-tab {{ tab.cls }}" onClick="{{ tab.go }}">{{ tab.label }}</span>
+    </sc-for>
+  </div>
+
+  <div class="bcb-scene" key="{{ tab }}">
+
+    <sc-if value="{{ isHero }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start;max-width:820px;padding:56px var(--space-12);border-radius:var(--radius-2xl);background:#FFFFFF;box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06);border:1px solid #E2E8F0;">
+        <span class="badge tag"><span class="material-icons">bolt</span> 2 slots left this week</span>
+        <h2 style="margin:0;font-size:44px;line-height:1.08;font-weight:900;letter-spacing:-0.03em;color:#0F172A;max-width:14ch;">Talk to someone who knows your market.</h2>
+        <p style="margin:0;font-size:15px;font-weight:500;color:#475569;max-width:46ch;line-height:1.6;">Twenty minutes, no deck. Bring one question about your pipeline.</p>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:10px;flex-wrap:wrap;">
+          <dc-import name="BookACallButton" size="lg" tone="dark" hint-size="220px,60px"></dc-import>
+          <button type="button" class="btn-text">See how it works <span class="material-icons btn-mi">arrow_forward</span></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isNav }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:980px;display:flex;align-items:center;justify-content:space-between;gap:var(--space-6);padding:var(--space-3) 14px 12px 24px;border-radius:var(--radius-circle);background:rgba(255,255,255,0.86);backdrop-filter:blur(20px);border:1px solid #E2E8F0;box-shadow:0 10px 30px rgba(15,23,42,0.10);">
+        <div style="display:flex;align-items:center;gap:28px;">
+          <span style="font-size:16px;font-weight:900;letter-spacing:-0.03em;color:#0F172A;">deha</span>
+          <div style="display:flex;align-items:center;gap:22px;font-size:var(--type-body-sm);font-weight:var(--weight-bold);color:#64748B;">
+            <span>Product</span><span>Pipeline</span><span>Pricing</span><span>Blog</span>
+          </div>
+        </div>
+        <dc-import name="BookACallButton" size="sm" tone="dark" hint-size="170px,40px"></dc-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+      <div style="width:420px;padding:22px;border-radius:var(--radius-2xl);background:#FFFFFF;border:1px solid #E2E8F0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);">
+          <div style="display:flex;flex-direction:column;gap:var(--space-1);">
+            <span style="font-size:16px;font-weight:800;letter-spacing:-0.02em;color:#0F172A;">Merve Aydın</span>
+            <span style="font-size:var(--type-meta);font-weight:var(--weight-semibold);color:#64748B;">Kadıköy · 3 aktif portföy</span>
+          </div>
+          <span class="badge-event" style="background-color:#F97316;"><span class="material-icons">local_fire_department</span> Hot Lead</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+          <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+          <span class="badge gci"><span>$</span> 45K GCI</span>
+        </div>
+        <div style="height:1px;background:#E2E8F0;"></div>
+        <div style="display:flex;align-items:center;gap:var(--space-2);">
+          <dc-import name="BookACallButton" size="sm" tone="emerald" label="Görüşme ayarla" booked-label="Ayarlandı · Per 14:00" hint-size="190px,40px"></dc-import>
+          <button type="button" class="btn-discuss"><span class="material-icons" style="font-size:16px;">chat</span>Discuss</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPricing }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:var(--space-4);align-items:stretch;flex-wrap:wrap;">
+        <div style="width:300px;box-sizing:border-box;padding:var(--space-6);border-radius:var(--radius-2xl);background:#FFFFFF;border:1px solid #E2E8F0;display:flex;flex-direction:column;gap:14px;box-shadow:0 1px 2px 0 rgba(0,0,0,0.05);">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Solo</span>
+          <span style="font-size:var(--type-display-2);font-weight:var(--weight-black);letter-spacing:-0.03em;color:#0F172A;line-height:1;">₺890<span style="font-size:var(--type-body-sm);font-weight:var(--weight-bold);color:#64748B;"> /ay</span></span>
+          <p style="margin:0;font-size:var(--type-body-sm);font-weight:var(--weight-medium);color:#475569;line-height:1.6;">Tek danışman, sınırsız portföy takibi.</p>
+          <div style="margin-top:auto;padding-top:6px;">
+            <dc-import name="BookACallButton" size="md" tone="glass" block="{{ true }}" label="Book a call" hint-size="100%,50px"></dc-import>
+          </div>
+        </div>
+        <div style="width:300px;box-sizing:border-box;padding:var(--space-6);border-radius:var(--radius-2xl);background:#10B981;color:#FFFFFF;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 40px -10px rgba(16,185,129,0.50), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22);background-image:linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);background-size:24px 24px;">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.75);">Takım</span>
+          <span style="font-size:var(--type-display-2);font-weight:var(--weight-black);letter-spacing:-0.03em;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.18);">₺2.400<span style="font-size:var(--type-body-sm);font-weight:var(--weight-bold);color:rgba(255,255,255,0.8);"> /ay</span></span>
+          <p style="margin:0;font-size:var(--type-body-sm);font-weight:var(--weight-medium);color:rgba(255,255,255,0.88);line-height:1.6;">Beş danışmana kadar, ortak pipeline ve raporlar.</p>
+          <div style="margin-top:auto;padding-top:6px;">
+            <dc-import name="BookACallButton" size="md" tone="dark" block="{{ true }}" label="Book a call" hint-size="100%,50px"></dc-import>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPanel }}" hint-placeholder-val="{{ true }}">
+      <div style="width:400px;box-sizing:border-box;padding:var(--space-5);border-radius:var(--radius-2xl);background:rgba(255,255,255,0.70);backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.60);box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:var(--space-4);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);">
+          <span style="font-size:var(--type-h5);font-weight:var(--weight-extrabold);letter-spacing:-0.02em;color:#0F172A;">Pick a time</span>
+          <span class="badge time"><span class="material-icons">schedule</span> 20 min</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--space-2);">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Perşembe, 4 Eylül · GMT+3</span>
+          <div class="pills-row">
+            <sc-for list="{{ slots }}" as="slot" hint-placeholder-count="5">
+              <span class="pill-tab {{ slot.cls }}" onClick="{{ slot.pick }}" style="cursor:pointer;">{{ slot.time }}</span>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span class="badge tag"><span class="material-icons">videocam</span> Google Meet</span>
+          <span class="badge tag"><span class="material-icons">person</span> Bora K.</span>
+        </div>
+        <div style="height:1px;background:#E2E8F0;"></div>
+        <dc-import name="BookACallButton" size="md" tone="dark" block="{{ true }}" label="{{ confirmLabel }}" booked-label="Confirmed · see your inbox" hint-size="100%,50px"></dc-import>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ true }}">
+      <div style="width:380px;height:600px;box-sizing:border-box;position:relative;overflow:hidden;border-radius:40px;background:#F8FAFC;border:1px solid #E2E8F0;box-shadow:0 10px 30px rgba(15,23,42,0.12);">
+        <div style="padding:52px 22px 24px;display:flex;flex-direction:column;gap:14px;">
+          <span style="font-size:24px;font-weight:900;letter-spacing:-0.03em;color:#0F172A;line-height:1.15;">Ataşehir 3+1<br>değerleme raporu</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="badge success"><span class="material-icons">trending_up</span> +12%</span>
+            <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+          </div>
+          <p style="margin:0;font-size:var(--type-body-sm);font-weight:var(--weight-medium);color:#475569;line-height:1.65;">Bölgedeki 42 benzer ilanın ortalaması ve son üç ayın satış hızı raporda yer alıyor. Detayları bir görüşmede birlikte geçelim.</p>
+          <div style="height:120px;border-radius:var(--radius-lg);background:#F1F5F9;box-shadow:inset 0 2px 4px 0 rgba(0,0,0,0.06);display:grid;place-items:center;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#94A3B8;">Rapor önizleme</div>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:14px 18px 22px;background:linear-gradient(to top, rgba(248,250,252,1) 55%, rgba(248,250,252,0));">
+          <dc-import name="BookACallButton" size="md" tone="dark" block="{{ true }}" label="Book a call" hint-size="100%,50px"></dc-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStates }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:26px;max-width:900px;">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Interactive — hover, focus, press, then click to book</span>
+          <div class="btn-row">
+            <dc-import name="BookACallButton" tone="dark" hint-size="200px,50px"></dc-import>
+            <dc-import name="BookACallButton" tone="emerald" hint-size="200px,50px"></dc-import>
+            <dc-import name="BookACallButton" tone="glass" hint-size="200px,50px"></dc-import>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Sizes — sm · md · lg</span>
+          <div class="btn-row">
+            <dc-import name="BookACallButton" size="sm" hint-size="170px,40px"></dc-import>
+            <dc-import name="BookACallButton" size="md" hint-size="200px,50px"></dc-import>
+            <dc-import name="BookACallButton" size="lg" hint-size="230px,60px"></dc-import>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">Pinned states — loading · booked · unavailable · disabled</span>
+          <div class="btn-row">
+            <dc-import name="BookACallButton" state="loading" hint-size="220px,50px"></dc-import>
+            <dc-import name="BookACallButton" state="booked" hint-size="220px,50px"></dc-import>
+            <dc-import name="BookACallButton" state="unavailable" hint-size="260px,50px"></dc-import>
+            <dc-import name="BookACallButton" state="disabled" hint-size="200px,50px"></dc-import>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <span style="font-size:var(--type-mini);font-weight:var(--weight-bold);text-transform:uppercase;letter-spacing:0.12em;color:#94A3B8;">On dark surface</span>
+          <div class="btn-row" style="padding:var(--space-6);border-radius:var(--radius-2xl);background:#0F172A;">
+            <dc-import name="BookACallButton" tone="emerald" hint-size="200px,50px"></dc-import>
+            <dc-import name="BookACallButton" tone="glass" hint-size="200px,50px"></dc-import>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const TABS = [
+  ['hero', 'Hero'],
+  ['nav', 'Navbar'],
+  ['dash', 'Lead card'],
+  ['pricing', 'Pricing'],
+  ['panel', 'Booking panel'],
+  ['mobile', 'Mobile sticky'],
+  ['states', 'States']
+];
+const SLOTS = ['09:30', '11:00', '13:30', '14:00', '16:30'];
+
+class Component extends DCLogic {
+  state = { tab: 'hero', slot: '14:00' };
+
+  renderVals() {
+    const { tab, slot } = this.state;
+    return {
+      tab,
+      tabs: TABS.map(([id, label]) => ({
+        label,
+        cls: tab === id ? 'active' : '',
+        go: () => this.setState({ tab: id })
+      })),
+      slots: SLOTS.map((time) => ({
+        time,
+        cls: slot === time ? 'active' : '',
+        pick: () => this.setState({ slot: time })
+      })),
+      confirmLabel: `Book ${slot}`,
+      isHero: tab === 'hero',
+      isNav: tab === 'nav',
+      isDash: tab === 'dash',
+      isPricing: tab === 'pricing',
+      isPanel: tab === 'panel',
+      isMobile: tab === 'mobile',
+      isStates: tab === 'states'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
