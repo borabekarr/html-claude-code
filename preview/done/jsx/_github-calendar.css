@@ -1,0 +1,467 @@
+/* ===================================================================
+   GitHub Calendar — Deha Design System
+   Contribution heatmap: emerald ramp, glossy cells, hover tooltip,
+   diagonal pop-in wave, optional "city-lights" glow.
+   =================================================================== */
+
+/* ===== Stage / shell ===== */
+/* NOTE: .gc-card is now the root element (no .shell wrapper in the component DOM).
+   These rules are inert but harmless; left for preview-page shell compatibility. */
+.shell:has(.gc-card) {
+  background: #FAFAFA;
+  box-shadow: none;
+  padding: 24px;
+  border-radius: 0;
+}
+
+html.dark .shell:has(.gc-card) {
+  background: #0A0A0A;
+}
+
+/* ===== Outer grey field (canonical grey shell) ===== */
+.gc-outer {
+  position: relative;
+  background: var(--shell-bg, #D4DCE8);
+  padding: 10px;
+  border-radius: 28px;
+  display: inline-block;
+  box-shadow: 0 10px 30px rgba(17,17,17, 0.12), 0 2px 8px rgba(17,17,17, 0.06);
+}
+
+html.dark .gc-outer {
+  background: #0A0A0A;
+  border: 1px solid var(--card-border, #232323);
+  box-shadow:
+    0 10px 30px rgba(17,17,17, 0.12),
+    0 2px 8px rgba(17,17,17, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Squircle conversion (Step 7): concentric outer/inner pair, mirrors
+   .dp-outer/.dp-panel — depth shadow migrates to filter:drop-shadow
+   (clip-path clips box-shadow); dark mode's border+inset rim is superseded
+   by the shared ring paint, re-enabled here as a solid hairline. */
+.gc-outer[data-squircle="on"] {
+  --corner-radius: 28px;
+  border: none;
+  box-shadow: none;
+  filter:
+    drop-shadow(0 10px 30px rgba(17,17,17, 0.12))
+    drop-shadow(0 2px 8px rgba(17,17,17, 0.06));
+}
+.gc-outer[data-squircle="on"]::before,
+.gc-outer[data-squircle="on"]::after {
+  content: none;
+}
+/* html.dark .gc-outer (above) sets a real border + box-shadow at equal-or-
+   higher specificity; the squircle variant needs its own dark override to
+   actually win and avoid a square-cornered line leaking past the clip-path. */
+html.dark .gc-outer[data-squircle="on"] {
+  border: none;
+  box-shadow: none;
+}
+html.dark .gc-outer[data-squircle="on"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--card-border, #232323);
+  clip-path: var(--squircle-border-path);
+}
+
+/* ===== Card ===== */
+/* R1: card-inner token recipe */
+.gc-card {
+  --cell: 12px;
+  --gap: 2px;
+  position: relative;
+  width: max-content;
+  max-width: calc(100vw - 80px);
+  background: var(--card-bg, #ffffff);
+  border: 1px solid var(--card-border, #D4D4D4);
+  border-radius: var(--card-radius, 20px);
+  padding: var(--pad-card, 16px) 26px;
+  box-shadow: inset 0 0 0 1px rgba(17,17,17, 0.04);
+}
+
+/* :not([data-squircle="on"]) keeps this scoped to the brief pre-hydration
+   paint before the squircle ref attaches -- once squircle is on, the
+   `.gc-card[data-squircle="on"] { box-shadow: none }` rule below must win
+   outright; the inner card's own ring is re-declared below since the global
+   `html [data-squircle="on"] { border: 0 }` reset would otherwise win. */
+html.dark .gc-card:not([data-squircle="on"]) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+/* Squircle conversion (Step 7): inner of the .gc-outer/.gc-card pair. */
+.gc-card[data-squircle="on"] {
+  padding: calc(var(--pad-card, 16px) + 1px) 27px;
+  --corner-radius: var(--card-radius, 20px);
+  box-shadow: none;
+}
+/* Canon (corrected): inner surfaces carry no external line in either mode --
+   the dark separator lives on .gc-outer's own ::before ring above. No
+   dark-mode border re-declaration here on purpose. */
+
+/* ===== Header ===== */
+.gc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.gc-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gc-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--brand-on-primary);
+  background-color: var(--brand-primary, var(--brand-primary-500));
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 4px 12px color-mix(in srgb, var(--brand-primary-500) 35%, transparent);
+}
+
+.gc-name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extrabold, 800);
+  font-size: 15px;
+  color: var(--fg1, #111111);
+  letter-spacing: -0.02em;
+}
+
+html.dark .gc-name {
+  color: var(--fg1-dark, #F5F5F5);
+}
+
+.gc-sub {
+  font-size: 12px;
+  color: var(--fg3, #6B6B6B);
+  margin-top: 2px;
+}
+
+.gc-total {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--fg2, #232323);
+  white-space: nowrap;
+}
+
+html.dark .gc-total {
+  color: var(--fg2-dark, #D4D4D4);
+}
+
+.gc-total b {
+  font-weight: var(--weight-extrabold, 800);
+  color: var(--fg1, #111111);
+}
+
+html.dark .gc-total b {
+  color: var(--fg1-dark, #F5F5F5);
+}
+
+/* ===== Scroller / grid ===== */
+.gc-scroller {
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.gc-scroller::-webkit-scrollbar {
+  height: 4px;
+}
+
+.gc-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gc-scroller::-webkit-scrollbar-thumb {
+  background: rgba(17,17,17, 0.15);
+  border-radius: 2px;
+}
+
+html.dark .gc-scroller::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* month labels */
+.gc-months {
+  display: grid;
+  padding-left: calc(28px + var(--gap));
+  margin-bottom: var(--gap);
+  width: max-content;
+}
+
+.gc-months span {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: var(--weight-semibold, 600);
+  color: var(--fg3, #6B6B6B);
+  letter-spacing: 0.04em;
+}
+
+/* day-of-week + grid body */
+.gc-body {
+  display: flex;
+  gap: var(--gap);
+  width: max-content;
+}
+
+.gc-dow {
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell));
+  gap: var(--gap);
+  padding-right: var(--gap);
+}
+
+.gc-dow span {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: var(--weight-semibold, 600);
+  color: var(--fg3, #6B6B6B);
+  display: grid;
+  align-items: center;
+  height: var(--cell);
+  letter-spacing: 0.04em;
+}
+
+/* main grid */
+.gc-grid {
+  display: grid;
+  grid-template-rows: repeat(7, var(--cell));
+  grid-auto-flow: column;
+  gap: var(--gap);
+  width: max-content;
+}
+
+/* ===== Cells ===== */
+.gc-cell {
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: var(--cell-r, 3px);
+  background: var(--l0);
+}
+
+.gc-cell.gc-l1 { background: var(--l1); }
+.gc-cell.gc-l2 { background: var(--l2); }
+.gc-cell.gc-l3 { background: var(--l3); }
+.gc-cell.gc-l4 { background: var(--l4); }
+
+/* glossy inset highlight on filled cells */
+.gc-cell:not(.gc-l0):not(.gc-empty) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* hover ring — inset outline (-2px offset) stays fully inside the cell bounds
+   so it never overlays or underlays neighboring cells; no z-index needed */
+.gc-cell:not(.gc-empty):hover {
+  outline: 2px solid rgba(17,17,17, 0.5);
+  outline-offset: -2px;
+  cursor: pointer;
+}
+
+/* filled cells keep the inset highlight; outline is additive via outline property */
+.gc-cell:not(.gc-l0):not(.gc-empty):hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+html.dark .gc-cell:not(.gc-empty):hover {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: -2px;
+}
+
+html.dark .gc-cell:not(.gc-l0):not(.gc-empty):hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* ===== Dark mode ramp override ===== */
+/* All --l* vars are inline on .gc-card so class-level overrides on .gc-card
+   are beaten by specificity. Target grid/legend cells directly with --dl* vars
+   which are inline but not overridden by anything. */
+html.dark .gc-cell.gc-l0 { background: var(--dl0); }
+html.dark .gc-cell.gc-l1 { background: var(--dl1); }
+html.dark .gc-cell.gc-l2 { background: var(--dl2); }
+html.dark .gc-cell.gc-l3 { background: var(--dl3); }
+html.dark .gc-cell.gc-l4 { background: var(--dl4); }
+
+html.dark .gc-legend-cell.gc-l0 { background: var(--dl0); }
+html.dark .gc-legend-cell.gc-l1 { background: var(--dl1); }
+html.dark .gc-legend-cell.gc-l2 { background: var(--dl2); }
+html.dark .gc-legend-cell.gc-l3 { background: var(--dl3); }
+html.dark .gc-legend-cell.gc-l4 { background: var(--dl4); }
+
+/* ===== City-lights glow ===== */
+.gc-card[data-glow='on'] .gc-cell.gc-l2 {
+  box-shadow: 0 0 5px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.gc-card[data-glow='on'] .gc-cell.gc-l3,
+.gc-card[data-glow='on'] .gc-cell.gc-l4 {
+  box-shadow: 0 0 9px var(--glow), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+/* ===== Pop-in entrance animation ===== */
+@keyframes gcPop {
+  from { opacity: 0; transform: scale(0.25); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .gc-card[data-anim='in'] .gc-cell {
+    animation: gcPop calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-out) both;
+    animation-delay: calc(var(--d, 0ms) * var(--anim-mult, 1)); /* motion-sweep: kept, zero-duration (delay/visibility reset), no token needed */
+  }
+}
+
+/* ===== Tooltip ===== */
+.gc-tip {
+  position: fixed;
+  transform: translate(-50%, calc(-100% - 9px));
+  background: #1C1C1C;
+  color: #fff;
+  padding: 7px 11px;
+  border-radius: 9px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 70;
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
+  box-shadow: 0 10px 24px -8px rgba(17,17,17, 0.5);
+  /* motion-family-rules step 3: tooltip family (motion-tokens.css --tooltip-dur/-ease) */
+  /* faster-exits step 4: no exit leg: tip unmounts; exit rule not applicable (no --tooltip-exit-dur leg) */
+  animation: gcTip calc(var(--tooltip-dur) * var(--anim-mult, 1)) var(--tooltip-ease);
+}
+
+html.dark .gc-tip {
+  background: #232323;
+}
+
+.gc-tip b {
+  font-weight: var(--weight-extrabold, 800);
+}
+
+.gc-tip span {
+  color: #A1A1A1;
+}
+
+.gc-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1C1C1C;
+}
+
+html.dark .gc-tip::after {
+  border-top-color: #232323;
+}
+
+@keyframes gcTip {
+  from { opacity: 0; transform: translate(-50%, calc(-100% - 3px)); }
+  to   { opacity: 1; transform: translate(-50%, calc(-100% - 9px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gc-tip { animation: none !important; }
+}
+
+/* ===== Footer ===== */
+.gc-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+/* Streak pill — event-badge style, orange/flame tone */
+.gc-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #F97316;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -2px 0 rgba(17,17,17, 0.18),
+    inset 0 0 0 1px rgba(17,17,17, 0.10);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  white-space: nowrap;
+}
+
+.gc-streak-label {
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.gc-flame {
+  color: #fff;
+  flex-shrink: 0;
+  display: block;
+  align-self: center;
+  font-size: 19px;
+}
+
+/* legend */
+.gc-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  color: var(--fg3, #6B6B6B);
+}
+
+.gc-legend-cells {
+  display: flex;
+  gap: 3px;
+}
+
+.gc-legend-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  /* background driven by the same --l* vars as grid cells; no inline style */
+  background: var(--l0);
+}
+
+.gc-legend-cell.gc-l1 { background: var(--l1); }
+.gc-legend-cell.gc-l2 { background: var(--l2); }
+.gc-legend-cell.gc-l3 { background: var(--l3); }
+.gc-legend-cell.gc-l4 { background: var(--l4); }
+
+/* Dark: gc-cell.gc-l0 and gc-legend-cell.gc-l0 are both directly overridden
+   in the html.dark dark-mode ramp block above so they match. */

@@ -1,0 +1,472 @@
+/* ==========================================================================
+   InlineEdit — inline-editable handle field
+   Port of deha-claude-design-htmls/inline-edit/inline-edit.html
+   All animation durations wrapped in calc(... * var(--anim-mult, 1)).
+   ========================================================================== */
+
+/* ---------- outer wrapper ------------------------------------------------- */
+.ie-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+/* ---------- label --------------------------------------------------------- */
+.ie-label {
+  align-self: start;
+  margin-left: 4px;
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg4, #A1A1A1);
+}
+
+/* ---------- field container ---------------------------------------------- */
+.ie-field {
+  --ie-glow: var(--brand-primary-100, var(--brand-primary-100));
+  --ie-rest: inset 0 1px 0 rgba(255,255,255,1), 0 1px 2px rgba(17,17,17,.05);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 262px;
+  max-width: 100%;
+  height: 46px;
+  padding-left: 17px;
+  padding-right: 5px;
+  border-radius: 9999px;
+  background: var(--bg-card-solid, #fff);
+  background-clip: padding-box;
+  /* Border ring paints the canonical grey shell surface (var(--shell-bg))
+     rather than relying on the ambient page background to bleed through a
+     transparent border — keeps the shell colour correct regardless of what
+     the field happens to sit on. */
+  border: 2px solid var(--shell-bg);
+  box-shadow: var(--ie-rest);
+  transition:
+    width        calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-spring),
+    border-color calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-out),
+    box-shadow   calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-out),
+    outline-color var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset var(--focus-ring-duration) var(--focus-ring-ease);
+  cursor: text;
+}
+
+html.dark .ie-field {
+  --ie-glow: color-mix(in srgb, var(--brand-primary-500) 30%, transparent);
+  --ie-rest: inset 0 1px 0 rgba(255,255,255,.06), 0 1px 2px rgba(0,0,0,.3);
+}
+
+/* Field is line-less by default; the single 1px --card-border ring lives on
+   a ::before overlay (not the element border) so the editing-mode brand-color
+   border above stays unaffected. Copies .concentric-demo-outer's ::before
+   ring pattern from cards/Cards.css, now applied in both themes so the
+   field's outer boundary is visible against the page in light mode too. */
+.ie-field[data-editing="false"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--card-border);
+  pointer-events: none;
+}
+
+.ie-field[data-editing="false"] { cursor: pointer; }
+
+.ie-field[data-editing="true"] {
+  width: 318px;
+  /* Single ring while editing: the 2px border switches to brand colour.
+     The extra 4px box-shadow glow ring that used to sit outside it has been
+     removed (was a duplicate outer ring — see F16). */
+  border-color: var(--brand-primary, var(--brand-primary-500));
+  box-shadow: var(--ie-rest);
+  /* Width springs out with overshoot; border eases in via base transition. */
+}
+
+/* saved flash on the field ring */
+.ie-field[data-saved="true"] {
+  animation: ieSaved calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out); /* no exact tier for the raw source value, --duration-560 used per recipe */
+}
+
+@keyframes ieSaved {
+  0%, 100% { box-shadow: var(--ie-rest); }
+  28%      { box-shadow: 0 0 0 6px var(--ie-glow), var(--ie-rest); }
+}
+
+/* ---------- @ prefix ----------------------------------------------------- */
+.ie-prefix {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--fg4, #A1A1A1);
+  margin-right: 1px;
+  user-select: none;
+  transition:
+    color   calc(var(--duration-200) * var(--anim-mult, 1)),
+    opacity calc(var(--duration-200) * var(--anim-mult, 1));
+}
+
+.ie-field[data-editing="true"] .ie-prefix {
+  color: var(--brand-primary-600, var(--brand-primary-600));
+}
+
+/* Fade out prefix while saved morph is showing */
+.ie-field[data-saved="true"] .ie-prefix {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------- text input --------------------------------------------------- */
+.ie-input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--fg3, #4A4A4A);
+  padding: 0;
+  transition:
+    color   calc(var(--duration-200) * var(--anim-mult, 1)),
+    opacity calc(var(--duration-200) * var(--anim-mult, 1));
+}
+
+.ie-field[data-editing="true"] .ie-input {
+  color: var(--fg1, #111111);
+}
+
+/* Fade out the input while saved morph is showing */
+.ie-field[data-saved="true"] .ie-input {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ie-input::selection {
+  background: var(--brand-primary-200, var(--brand-primary-200));
+}
+
+html.dark .ie-input::selection {
+  background: color-mix(in srgb, var(--brand-primary-500) 40%, transparent);
+}
+
+/* ---------- action button (pen <-> check morph) -------------------------- */
+.ie-act {
+  flex: none;
+  position: relative;
+  width: 35px;
+  height: 35px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: none;
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    color            calc(var(--duration-260) * var(--anim-mult, 1)),
+    box-shadow       calc(var(--duration-260) * var(--anim-mult, 1)),
+    border-color     calc(var(--duration-260) * var(--anim-mult, 1)),
+    transform        calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    opacity          calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    scale            calc(var(--duration-140) * var(--anim-mult, 1)),
+    filter           calc(var(--duration-140) * var(--anim-mult, 1)),
+    outline-color    var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset   var(--focus-ring-duration) var(--focus-ring-ease);
+}
+
+.ie-act:active { transform: scale(var(--press-chip)); }
+
+/* Hidden while saved: mirrors .ie-cancel[data-visible] fade+scale pattern.
+   Fades and scales out while Kaydedildi is showing; re-enters on exit. */
+.ie-act[data-saved="true"] {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.7);
+}
+
+/* Press/confirm state: scale down while the commit timer is pending (--duration-200). */
+.ie-act.is-confirming {
+  transform: scale(.86);
+  transition:
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    color            calc(var(--duration-260) * var(--anim-mult, 1)),
+    box-shadow       calc(var(--duration-260) * var(--anim-mult, 1)),
+    border-color     calc(var(--duration-260) * var(--anim-mult, 1)),
+    transform        calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-accel),
+    opacity          calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    scale            calc(var(--duration-140) * var(--anim-mult, 1)),
+    filter           calc(var(--duration-140) * var(--anim-mult, 1)),
+    outline-color    var(--focus-ring-duration) var(--focus-ring-ease),
+    outline-offset   var(--focus-ring-duration) var(--focus-ring-ease);
+}
+
+/* pen state */
+.ie-act[data-mode="edit"] {
+  background: var(--bg-card-solid, #fff);
+  color: var(--fg3, #4A4A4A);
+  border-color: var(--border-hairline, #ECECEC);
+  box-shadow: 0 1px 4px rgba(17,17,17,.08);
+}
+
+.ie-act[data-mode="edit"]:hover {
+  color: var(--fg1, #111111);
+  background: var(--fp-hover);
+}
+
+html.dark .ie-act[data-mode="edit"] {
+  background: color-mix(in srgb, #fff 5%, var(--bg-card-solid, #1C1C1C));
+}
+
+html.dark .ie-act[data-mode="edit"]:hover {
+  background: var(--fp-hover);
+}
+
+/* check / save state — mirrors .btn-green pill treatment */
+.ie-act[data-mode="save"] {
+  color: var(--brand-on-primary);
+  background-color: var(--brand-primary, var(--brand-primary-500));
+  background-image:
+    linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--brand-primary-500) 25%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.5),
+    inset 0 -2px 0 rgba(0,0,0,.22),
+    inset 0 0 0 1px rgba(255,255,255,.15);
+}
+
+.ie-act[data-mode="save"]:hover {
+  filter: brightness(1.05);
+}
+
+/* ---------- cancel button (X) — left of done, visible only while editing -- */
+/*
+ * Always mounted (mounted-through-exit). data-visible drives opacity+scale so
+ * entering/leaving editing mode animates the button in/out without unmounting.
+ */
+.ie-cancel {
+  flex: none;
+  position: relative;
+  width: 35px;
+  height: 35px;
+  border-radius: 9999px;
+  margin-left: 6px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #D4D4D4;
+  cursor: pointer;
+  background: none;
+  color: var(--fg4, #A1A1A1);
+  /* Hidden when not editing */
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.7);
+  transition:
+    opacity   calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-280) * var(--anim-mult, 1)) var(--ease-spring),
+    background-color calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+    color     calc(var(--duration-200) * var(--anim-mult, 1)),
+    scale     calc(var(--duration-140) * var(--anim-mult, 1)),
+    filter    calc(var(--duration-140) * var(--anim-mult, 1));
+}
+
+html.dark .ie-cancel {
+  border-color: #232323;
+}
+
+.ie-cancel[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.ie-cancel:hover {
+  background: rgba(248,113,113,.12);
+  color: #EF4444;
+}
+
+.ie-cancel:active {
+  transform: scale(var(--press-chip));
+}
+
+html.dark .ie-cancel:hover {
+  background: rgba(248,113,113,.18);
+  color: #FCA5A5;
+}
+
+/* ---------- icon glyph inside the button ---------------------------------- */
+.ie-ic {
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  line-height: 1;
+  font-variation-settings: 'wght' 500, 'opsz' 20;
+  /* Both icons are stacked atop each other via absolute positioning. */
+  position: absolute;
+}
+
+/* Save/check icon is bolder */
+.ie-ic--save {
+  font-variation-settings: 'wght' 700, 'opsz' 20;
+}
+
+/*
+ * Icon morph: cross-fade + scale between edit and check icons.
+ * Default resting state — no animation on first paint:
+ *   edit mode → edit icon visible, save icon hidden
+ *   save mode → save icon visible, edit icon hidden
+ */
+.ie-act[data-mode="edit"] .ie-ic--save { opacity: 0; pointer-events: none; }
+.ie-act[data-mode="save"] .ie-ic--edit { opacity: 0; pointer-events: none; }
+
+/*
+ * Morph animations only fire after first user interaction (data-ie-ready="true").
+ * This prevents both icons from playing ieIcIn on the initial render.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* edit icon exits (shrink+fade) when entering save mode */
+  .ie-act[data-ie-ready][data-mode="save"] .ie-ic--edit {
+    animation: ieIcOut calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-accel) forwards;
+  }
+  /* edit icon re-enters (grow+fade) when returning to edit mode */
+  .ie-act[data-ie-ready][data-mode="edit"] .ie-ic--edit {
+    animation: ieIcIn calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-spring-pop) forwards;
+  }
+  /* save icon exits (shrink+fade) when returning to edit mode */
+  .ie-act[data-ie-ready][data-mode="edit"] .ie-ic--save {
+    animation: ieIcOut calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-accel) forwards;
+  }
+  /* save icon enters (grow+fade) when entering save mode */
+  .ie-act[data-ie-ready][data-mode="save"] .ie-ic--save {
+    animation: ieIcIn calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-spring-pop) forwards;
+  }
+}
+
+/* Cross-morph keyframes: exit = shrink+fade out, enter = grow+fade in */
+@keyframes ieIcOut {
+  from { transform: scale(1);   opacity: 1; }
+  to   { transform: scale(0.4); opacity: 0; }
+}
+
+@keyframes ieIcIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ---------- footer caption slot ------------------------------------------ */
+.ie-foot {
+  height: 14px;
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+}
+
+.ie-cap {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--fg4, #A1A1A1);
+  letter-spacing: -.005em;
+  text-align: center;
+  transition: opacity calc(var(--duration-200) * var(--anim-mult, 1));
+}
+
+/* ---------- in-place saved morph (mounted-through-exit overlay) ---------- */
+/*
+ * Always mounted as an absolute overlay inside .ie-field, crossfading with
+ * the input via data-saved transitions. Reversible: saved=true eases it IN,
+ * saved=false eases it back OUT so the input fades back in smoothly after 3s.
+ */
+.ie-saved-morph {
+  position: absolute;
+  /* Symmetric padding so justify-content:center is truly centered within
+     the full field width. No padding-right bias needed -- the action button
+     is not rendered during the saved state so no overlap risk. */
+  inset: 0;
+  padding-left: 17px;
+  padding-right: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--brand-primary-600, var(--brand-primary-600));
+  letter-spacing: -.005em;
+  pointer-events: none;
+  /* Resting state: invisible and scaled slightly down */
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity   calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out),
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-spring);
+}
+
+html.dark .ie-saved-morph {
+  color: var(--brand-primary-300, var(--brand-primary-300));
+}
+
+/* Visible state when saved=true: eases in AFTER input/prefix have faded out (--duration-200). */
+.ie-field[data-saved="true"] .ie-saved-morph {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  transition-delay: calc(var(--duration-200) * var(--anim-mult, 1));
+}
+
+/* Exit from saved: input and prefix fade back in only after saved-morph is gone (--duration-200).
+   Explicit transition rewrite so only opacity is delayed; color stays instant. */
+.ie-field[data-saved="false"] .ie-input {
+  transition:
+    color   calc(var(--duration-200) * var(--anim-mult, 1)),
+    opacity calc(var(--duration-200) * var(--anim-mult, 1)) calc(var(--duration-200) * var(--anim-mult, 1));
+}
+.ie-field[data-saved="false"] .ie-prefix {
+  transition:
+    color   calc(var(--duration-200) * var(--anim-mult, 1)),
+    opacity calc(var(--duration-200) * var(--anim-mult, 1)) calc(var(--duration-200) * var(--anim-mult, 1));
+}
+
+/* saved-morph icon and cancel button icon flow inline (not stacked) */
+.ie-saved-morph .ie-ic,
+.ie-cancel .ie-ic {
+  position: static;
+  font-size: 17px;
+  font-variation-settings: 'wght' 500, 'opsz' 20;
+}
+
+.ie-saved-morph .ie-ic {
+  font-size: 15px;
+  font-variation-settings: 'wght' 700, 'opsz' 20;
+}
+
+/* ---------- reduced-motion override --------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .ie-field,
+  .ie-act,
+  .ie-prefix,
+  .ie-input,
+  .ie-ic,
+  .ie-saved-morph,
+  .ie-cap {
+    animation-duration: .001ms !important; /* motion-sweep: kept, prefers-reduced-motion !important near-zero override, intentionally literal (house pattern, see frontend-motion-contract.md) */
+    transition-duration: .001ms !important; /* motion-sweep: kept, prefers-reduced-motion !important near-zero override, intentionally literal (house pattern, see frontend-motion-contract.md) */
+  }
+
+  /* Ensure saved-morph is visible even with instant transition */
+  .ie-field[data-saved="true"] .ie-saved-morph {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

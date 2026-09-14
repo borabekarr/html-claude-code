@@ -1,0 +1,112 @@
+/* =========================================================================
+   Deha Design System — shared interactive controls
+   Canonical Segmented control (sliding pill) + Toggle switch.
+   Source of truth: components-controls.html. Link this + _controls.js into
+   any component that needs a segmented radio or an on/off toggle so they all
+   match 1:1.
+
+   Markup:
+     Segmented:  <div class="seg"><span class="seg-pill"></span>
+                   <button class="active">A</button><button>B</button></div>
+                 modifiers: .seg.compact (tighter), .seg.fill (stretch buttons)
+                 add data-seg-managed if YOUR script owns the .active class
+     Toggle:     <div class="sw-base sw-on"></div>  /  <div class="sw-base sw-off"></div>
+
+   _controls.js auto-initialises every .seg and .sw-base on the page.
+   Dark mode is handled by _darkmode.css (html.dark) for System-A components;
+   System-B ([data-theme="dark"]) components add their own pill override.
+   ========================================================================= */
+
+/* ── Segmented control — sliding active pill ── */
+.seg {
+  position: relative; display: inline-flex;
+  background: #F1F5F9; border-radius: 9999px; padding: 3px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  font-family: 'Montserrat', sans-serif;
+}
+.seg-pill {
+  position: absolute; top: 3px; bottom: 3px; left: 0; width: 0;
+  background: #0F172A; border-radius: 9999px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18); z-index: 0;
+  transition: left calc(300ms * var(--anim-mult, 1)) var(--ease-pill-switch), width calc(300ms * var(--anim-mult, 1)) var(--ease-pill-switch);
+}
+
+.seg button {
+  position: relative; z-index: 1;
+  padding: 6px 18px; border-radius: 9999px;
+  font-size: 12px; font-weight: 800; border: none; background: none;
+  color: #64748B; cursor: pointer; font-family: 'Montserrat', sans-serif;
+  white-space: nowrap;
+  transition: color calc(240ms * var(--anim-mult, 1)), transform calc(120ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+.seg button.active { color: #FFFFFF; font-weight: 900; }
+.seg button:active { transform: scale(0.93); }
+
+/* sizing modifiers */
+.seg.compact button { padding: 6px 12px; font-size: 11px; }
+.seg.fill { display: flex; }
+.seg.fill button { flex: 1; }
+
+/* accent variant — emerald active pill (brand-colored segmented) */
+.seg.accent .seg-pill {
+  background: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(16,185,129,0.4);
+}
+.seg.accent button.active { color: #FFFFFF; }
+
+/* ── Toggle switch ── */
+.sw-base {
+  width: 60px; height: 32px; border-radius: 9999px; position: relative;
+  cursor: pointer; user-select: none; display: inline-block; flex-shrink: 0;
+  transition: transform calc(140ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+.sw-base:active { transform: scale(0.95); }
+.sw-base::after {
+  content: ''; position: absolute; top: 4px; left: 4px;
+  width: 24px; height: 24px; box-sizing: border-box; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.16), inset 0 1px 0 rgba(255,255,255,1);
+  transition: left calc(280ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), width calc(220ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), background calc(200ms * var(--anim-mult, 1));
+}
+/* iOS-style knob stretch while pressed */
+.sw-base:active::after { width: 30px; }
+.sw-on:active::after { left: 26px; }
+
+/* Squash-against-the-contact-side bounce. The knob halts exactly at its rim
+   (non-overshoot ease above), then this scaleX dip-and-recover reads as the
+   knob flattening against the side it landed on. Gated behind .sw-armed so it
+   never fires on initial page load (initial markup is sw-base sw-off). */
+@keyframes sw-squash-right {
+  0%   { transform: scaleX(1); }
+  45%  { transform: scaleX(.88); }
+  75%  { transform: scaleX(1.04); }
+  100% { transform: scaleX(1); }
+}
+@keyframes sw-squash-left {
+  0%   { transform: scaleX(1); }
+  45%  { transform: scaleX(.88); }
+  75%  { transform: scaleX(1.04); }
+  100% { transform: scaleX(1); }
+}
+.sw-armed.sw-on::after {
+  transform-origin: right center;
+  animation: sw-squash-right calc(260ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+.sw-armed.sw-off::after {
+  transform-origin: left center;
+  animation: sw-squash-left calc(260ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+.sw-off { background: #CBD5E1; }
+.sw-on {
+  background: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.42),
+    inset 0 -2px 0 rgba(15,23,42,0.14),
+    inset 0 0 0 1px rgba(15,23,42,0.08);
+}
+.sw-on::after { left: 32px; }

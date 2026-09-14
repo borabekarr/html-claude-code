@@ -1,0 +1,297 @@
+/* =========================================================================
+   Shimmer — Deha Design System
+   Byte-preserved from apps/web/design-system/claude-design/raw/shimmer/shimmer.html
+   (the sh-stage, shimmer, wave, pc-, and sk-stats rule sets only; the raw
+   file's body and root scaffold is preview chrome, not part of the
+   component, same precedent as delete-button).
+   ========================================================================= */
+
+/* ---------------- stage / bezel ---------------- */
+.sh-stage {
+  padding: 12px;
+  background: #d4dce8;
+  border-radius: 34px;
+  box-shadow:
+    0 16px 56px rgba(15, 23, 42, 0.14),
+    0 3px 10px rgba(15, 23, 42, 0.07);
+}
+html.dark .sh-stage {
+  background: #1e293b;
+  box-shadow:
+    0 16px 56px rgba(0, 0, 0, 0.42),
+    0 3px 10px rgba(0, 0, 0, 0.3);
+}
+.sh-surface {
+  position: relative;
+  width: 340px;
+  background: var(--bg-card-solid);
+  border-radius: 24px;
+  padding: 28px 28px 24px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+html.dark .sh-surface {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ====================================================================
+   THE PRIMITIVE
+   A .shimmer block paints a flat base, with a soft light .wave that
+   sweeps across it. Colors come from --sk-base / --sk-hi (set per
+   preset). Duration comes from --shim-dur. Direction + variant are
+   data-attrs so the same element serves every mode.
+   ==================================================================== */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--sk-base, #e2e8f0);
+  border-radius: 8px;
+}
+.shimmer .wave {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--sk-hi, rgba(255, 255, 255, 0.85)) 50%, transparent 100%);
+  transform: translateX(-100%);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shimmer .wave {
+    animation: shimLR calc(var(--shim-dur, 1500ms /* motion-sweep: kept, 1500ms, fallback default, used <3x library-wide, >15% off nearest tier */) * var(--anim-mult, 1)) var(--ease-linear) infinite;
+  }
+  .shimmer[data-dir='rightToLeft'] .wave {
+    animation-name: shimRL;
+  }
+  .shimmer[data-dir='topToBottom'] .wave {
+    animation-name: shimTB;
+  }
+  .shimmer[data-dir='bottomToTop'] .wave {
+    animation-name: shimBT;
+  }
+  .shimmer[data-variant='pulse'] {
+    animation: shimPulse calc(var(--shim-dur, 1500ms /* motion-sweep: kept, 1500ms, fallback default, used <3x library-wide, >15% off nearest tier */) * var(--anim-mult, 1)) var(--ease-in-out) infinite;
+  }
+}
+/* vertical sweeps re-orient the gradient */
+.shimmer[data-dir='topToBottom'] .wave,
+.shimmer[data-dir='bottomToTop'] .wave {
+  background: linear-gradient(180deg, transparent 0%, var(--sk-hi, rgba(255, 255, 255, 0.85)) 50%, transparent 100%);
+}
+.shimmer[data-dir='topToBottom'] .wave,
+.shimmer[data-dir='bottomToTop'] .wave {
+  transform: translateY(-100%);
+}
+/* pulse hides the wave and breathes the whole block instead */
+.shimmer[data-variant='pulse'] .wave {
+  display: none;
+}
+
+@keyframes shimLR {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes shimRL {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes shimTB {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes shimBT {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+@keyframes shimPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.42;
+  }
+}
+
+/* fade real content in when loading finishes */
+@media (prefers-reduced-motion: no-preference) {
+  .sh-reveal {
+    animation: shReveal calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both;
+  }
+}
+@keyframes shReveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------------- demo: profile card ---------------- */
+.pc-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pc-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-circle);
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: var(--brand-primary);
+  color: #fff;
+  font-weight: var(--weight-black);
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  box-shadow:
+    0 8px 20px -8px rgba(16, 185, 129, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+.pc-id {
+  display: grid;
+  gap: 5px;
+}
+.pc-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: var(--weight-extrabold);
+  letter-spacing: -0.01em;
+  color: var(--fg1);
+  line-height: 1;
+}
+.pc-handle {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: var(--weight-semibold);
+  color: var(--fg3);
+  line-height: 1;
+}
+
+.pc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 22px 0;
+}
+.pc-stat {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 12px 4px;
+  background: var(--slate-50);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--border-hairline);
+}
+html.dark .pc-stat {
+  background: #0f1a2e;
+  box-shadow: inset 0 0 0 1px #2a3a52;
+}
+.pc-num {
+  font-size: 20px;
+  font-weight: var(--weight-black);
+  color: var(--fg1);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.pc-lab {
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--fg4);
+}
+
+.pc-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--brand-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--weight-extrabold);
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  box-shadow:
+    var(--shadow-emerald-glow-sm),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 14px 14px;
+  transition:
+    filter calc(var(--duration-200) * var(--anim-mult, 1)),
+    transform calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+.pc-btn:hover {
+  filter: brightness(1.05);
+}
+.pc-btn:active {
+  transform: scale(0.98);
+}
+
+/* skeleton-only rows */
+.sk-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 22px 0;
+}
+
+/* ---------------- demo: trigger button ---------------- */
+.sh-trigger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--brand-primary);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: var(--weight-extrabold);
+  cursor: pointer;
+  transition:
+    filter calc(var(--duration-200) * var(--anim-mult, 1)),
+    transform calc(var(--duration-fast) * var(--anim-mult, 1));
+}
+.sh-trigger:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.sh-trigger:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.sh-trigger:disabled {
+  cursor: default;
+  opacity: 0.7;
+}

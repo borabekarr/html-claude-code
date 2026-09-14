@@ -1,0 +1,29 @@
+.grid4 { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.sem { padding: 14px; border-radius: 16px; display:flex; flex-direction:column; gap: 10px; }
+.sem-pill {
+  display:inline-flex; align-items:center; gap: 6px;
+  padding: 4px 10px; border-radius: 9999px;
+  font-size: 11px; font-weight: 800; align-self:flex-start;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.18),
+    inset 0 0 0 1px rgba(17,17,17,0.10);
+  background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+.sem-dot { width: 8px; height: 8px; border-radius: 50%; }
+.sem-name { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; }
+.sem-hex  { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; opacity: 0.7; }
+.sem-use  { font-size: 11px; font-weight: 600; line-height: 1.35; opacity: 0.8; }
+
+/* Dark mode — card chrome adapts; semantic swatch backgrounds + pill colors stay unchanged */
+html.dark .card { background: var(--gray-800); background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 8%, transparent) 0%, rgba(28,28,28,1) 50%, var(--gray-800) 100%); }
+
+/* Dark mode — semantic box panels: dark-tinted bg, light readable text; badge/dot/pill untouched */
+html.dark .sem.success { background: color-mix(in oklch, var(--semantic-success), black 85%) !important; color: color-mix(in oklch, var(--semantic-success), white 55%) !important; }
+html.dark .sem.warning { background: color-mix(in oklch, var(--semantic-warning), black 85%) !important; color: color-mix(in oklch, var(--semantic-warning), white 55%) !important; }
+html.dark .sem.danger  { background: color-mix(in oklch, var(--semantic-danger), black 88%) !important; color: color-mix(in oklch, var(--semantic-danger), white 55%) !important; }
+html.dark .sem.hot     { background: color-mix(in oklch, var(--semantic-hot), black 85%) !important; color: color-mix(in oklch, var(--semantic-hot), white 55%) !important; }

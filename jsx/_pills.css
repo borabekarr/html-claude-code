@@ -1,0 +1,75 @@
+/* _pills.css — port of pills/Pills.css. Refreshed 2026-09-01 (ax-jeru-push Step 4). */
+.pills-row {
+  display:flex; align-items:center; gap: 8px; flex-wrap: wrap;
+}
+.pills-row + .pills-row { margin-top: 12px; }
+
+.pill-priority { display:inline-flex; align-items:center; gap: 6px; padding: 6px 14px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 13px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+.pill-priority .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.pill-tab { position: relative; display:inline-flex; align-items:center; padding: 6px 16px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 12px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+/* GLOBAL RULE: every .pill-tab is a tap target and must satisfy the 44px hit-layer + :focus-visible checklist item, regardless of its visible (intentionally smaller) chip size. */
+.pill-tab::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.pill-tab:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15); font-weight: 800; }
+.pill-tab.dark { background:#111111; color:#fff; font-weight: 800; border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.06); }
+
+.badge { display:inline-flex; align-items:center; gap: 6px; padding: 1px 8px; border-radius: 9999px; font-size: 11px; font-weight: 900; font-family:'Montserrat'; }
+.badge.success { background-color: var(--brand-primary-500); color: var(--brand-on-primary); box-shadow: inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.success .material-icons { font-size: 14px; font-variation-settings: 'wght' 700; }
+.badge.gci { background:var(--brand-primary-500); color: var(--brand-on-primary); border:none; padding: 4px 10px; text-shadow: 0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.time { background:#EF4444; color:#fff; padding: 3px 8px; border:none; text-shadow: 0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.time .material-icons { font-size: 12px; font-variation-settings: 'wght' 700; }
+.badge.danger { background-color:#EF4444; color:#fff; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.danger .material-icons { font-size: 14px; font-variation-settings: 'wght' 700; }
+.badge.tag { background-color:#F5F5F5; color:#232323; font-size: 11px; padding: 3px 8px; border: 1px solid #ECECEC; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05); background-image: var(--grid-texture-image-subtle); background-size: var(--grid-texture-size); }
+.badge.tag .material-icons { font-size: 13px; color: #6B6B6B; font-variation-settings: 'wght' 700; }
+
+/* Task board column tags */
+.badge.col-tag { display:inline-flex; align-items:center; gap: 6px; padding: 5px 5px 5px 9px; border-radius: 9999px; font-family:'Montserrat'; font-size: 11px; font-weight: 800; color:#fff; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 1px 0 rgba(0,0,0,0.22); box-shadow: inset 0 1px 0 rgba(255,255,255,0.30), inset 0 -1.5px 0 rgba(0,0,0,0.18), inset 0 0 0 1px rgba(0,0,0,0.06); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); }
+.badge.col-tag .material-icons { font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.40), 0 1px 0 rgba(0,0,0,0.22); }
+.badge.col-tag .count { display:inline-grid; place-items:center; min-width: 18px; height: 18px; padding: 0 6px; border-radius: 9999px; background: rgba(255,255,255,0.94); color: rgba(17,17,17,0.85); font-size: 10.5px; font-weight: 900; letter-spacing: 0; text-shadow: none; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.08), inset 0 0 0 1px rgba(0,0,0,0.05); font-variant-numeric: tabular-nums; }
+.badge.col-tag.todo     { background-color:#6B6B6B; }
+.badge.col-tag.progress { background-color:#F97316; }
+.badge.col-tag.review   { background-color:#FACC15; color:#451A03; text-shadow: none; }
+.badge.col-tag.review .material-icons { text-shadow: none; }
+.badge.col-tag.done     { background-color:var(--brand-primary-500); }
+
+.pills-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #A1A1A1; margin-bottom: 8px; display:block; }
+
+/* Event badges — glassy colored pills (fill via inline backgroundColor) */
+.badge-event { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:9999px; flex-shrink:0; color:#fff; font-size:11px; font-weight:800; font-family:'Montserrat'; text-shadow:0 1px 2px rgba(0,0,0,0.28); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -2px 0 rgba(17,17,17,0.18), inset 0 0 0 1px rgba(17,17,17,0.10); background-image: var(--grid-texture-image); background-size: var(--grid-texture-size); white-space:nowrap; }
+.badge-event .material-icons { font-size:12px; color:rgba(255,255,255,0.85); }
+
+/* Dark mode — html.dark convention */
+html.dark .pill-priority { background: #1C1C1C; border-color: #232323; color: #D4D4D4; }
+html.dark .pill-tab { background: #1C1C1C; border-color: #232323; color: #A1A1A1; }
+html.dark .pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; }
+html.dark .pill-tab.dark { background: #FFFFFF; color: #111111; border-color: transparent; }
+html.dark .badge.tag { background-color: #1C1C1C; color: #D4D4D4; border-color: #232323; background-image: var(--grid-texture-image-dark); background-size: var(--grid-texture-size); }
+html.dark .badge.tag .material-icons { color: #A1A1A1; }
+html.dark .pills-label { color: #A1A1A1; }
+html.dark .badge-event[data-tone="black"] { background-color: #FFFFFF !important; color: #111111 !important; text-shadow: none; }
+html.dark .badge-event[data-tone="black"] .material-icons { color: #111111 !important; text-shadow: none; }
+html.dark .icon-badge[data-tone="black"] { background-color: #FFFFFF !important; }
+html.dark .icon-badge[data-tone="black"] .material-icons { color: #111111 !important; text-shadow: none; }
+
+/* ===== proximity-hover fallback tokens + visual mapping (inlined from
+ * src/styles/hover-tokens.css; the mirror does not ship that file).
+ * transform/opacity only per motion checklist. ===== */
+:root {
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+}
+html.dark {
+  --fp-hover: rgba(255, 255, 255, 0.07);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-proximity] {
+    transition: transform 150ms cubic-bezier(0.23, 1, 0.32, 1), opacity 150ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform: scale(calc(1 + var(--prox, 0) * 0.014));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-proximity] { transition: none; transform: none; }
+}

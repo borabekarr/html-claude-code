@@ -1,0 +1,302 @@
+/* ===================================================================
+   AnimatedList — Deha Design System (React port)
+   Real-time push feed: absolute-slot model, spring-in entrance.
+   Tokens: Montserrat (var(--font-display)), card surface tokens.
+   Durations wrapped in calc(… * var(--anim-mult,1)).
+   =================================================================== */
+
+/* ── Outer container ──────────────────────────────────────────────── */
+.al-root {
+  font-family: var(--font-display);
+  position: relative;
+  /* height is set inline — driven by stacked row heights */
+}
+
+/* ── Individual row slot ──────────────────────────────────────────── */
+/* position:absolute, top, transition are all applied inline by AnimatedList.tsx */
+.al-row {
+  will-change: top, transform, opacity;
+}
+
+/* ── Radar surface wrapper (demo shell) ───────────────────────────── */
+.al-radar {
+  --rd-surface: linear-gradient(168deg, #FFFFFF 0%, #F6F8FB 100%);
+  --rd-card:    #FFFFFF;
+  --rd-card-bd: rgba(15,23,42,0.07);
+  --rd-shadow:
+    0 30px 70px -22px rgba(15,23,42,0.34),
+    0 8px 20px -10px rgba(15,23,42,0.16),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  --rd-cardshadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -2px 0 rgba(15,23,42,0.05),
+    0 4px 12px -6px rgba(15,23,42,0.14);
+
+  position: relative;
+  width: 404px; max-width: calc(100vw - 40px);
+  box-sizing: border-box;
+  padding: 24px 22px 22px;
+  border-radius: var(--card-radius, 36px);
+  background: var(--rd-surface);
+  border: 1px solid rgba(15,23,42,0.05);
+  box-shadow: var(--rd-shadow);
+  color: var(--fg1, #0F172A);
+  user-select: none;
+  overflow: hidden;
+}
+
+html.dark .al-radar {
+  --rd-surface: linear-gradient(168deg, #1E293B 0%, #172033 100%);
+  --rd-card:    #243449;
+  --rd-card-bd: rgba(255,255,255,0.07);
+  --rd-shadow:
+    0 30px 70px -22px rgba(0,0,0,0.7),
+    0 8px 20px -10px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  --rd-cardshadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -2px 0 rgba(0,0,0,0.3),
+    0 4px 12px -6px rgba(0,0,0,0.4);
+  border-color: rgba(255,255,255,0.06);
+}
+
+/* ── Radar header ─────────────────────────────────────────────────── */
+.al-rd-top {
+  display: flex; align-items: center; gap: 11px; margin-bottom: 16px;
+}
+.al-rd-ic {
+  width: 38px; height: 38px; border-radius: 12px;
+  flex: none; display: grid; place-items: center; color: #fff;
+  background-color: #0F172A;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.18),
+    inset 0 -2px 0 rgba(0,0,0,0.35),
+    0 4px 12px -4px rgba(15,23,42,0.5);
+  font-size: 20px;
+}
+html.dark .al-rd-ic { background-color: #060B16; }
+
+.al-rd-tt {
+  font-size: 17px; font-weight: 900; letter-spacing: -0.02em; line-height: 1;
+  color: var(--fg1, #0F172A);
+}
+.al-rd-sb {
+  font-size: 11.5px; font-weight: 700; color: var(--fg4, #94A3B8); margin-top: 4px;
+}
+
+/* ── Live badge ───────────────────────────────────────────────────── */
+.al-live {
+  margin-left: auto;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 11px 5px 9px; border-radius: 9999px;
+  font-size: 10.5px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #059669;
+  background: rgba(16,185,129,0.10);
+  box-shadow: inset 0 0 0 1px rgba(16,185,129,0.22);
+  transition:
+    opacity calc(240ms * var(--anim-mult,1)) ease,
+    filter  calc(240ms * var(--anim-mult,1)) ease;
+}
+.al-live.al-paused {
+  color: var(--fg4, #94A3B8);
+  background: var(--bg-chip, #F1F5F9);
+  box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06);
+}
+html.dark .al-live {
+  color: #34D399;
+  background: rgba(16,185,129,0.12);
+}
+html.dark .al-live.al-paused {
+  color: var(--fg4, #94A3B8);
+  background: rgba(255,255,255,0.05);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
+}
+
+.al-live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16,185,129,0.5);
+  animation: al-pulse calc(1.8s * var(--anim-mult,1)) ease-out infinite;
+}
+.al-live.al-paused .al-live-dot {
+  background: var(--fg4, #94A3B8);
+  animation: none;
+}
+@keyframes al-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(16,185,129,0.5); }
+  70%  { box-shadow: 0 0 0 7px rgba(16,185,129,0); }
+  100% { box-shadow: 0 0 0 0   rgba(16,185,129,0); }
+}
+
+/* ── Demo controls ────────────────────────────────────────────────── */
+.al-controls {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+}
+.al-push-btn {
+  flex: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 9999px;
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+  color: var(--fg3, #64748B);
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #CBD5E1);
+  cursor: pointer;
+  transition:
+    background calc(160ms * var(--anim-mult,1)),
+    color      calc(160ms * var(--anim-mult,1)),
+    transform  calc(140ms * var(--anim-mult,1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)),
+    box-shadow calc(160ms * var(--anim-mult,1));
+}
+.al-push-btn:hover {
+  background: #F8FAFC;
+  color: var(--fg1, #0F172A);
+  border-color: #94A3B8;
+}
+.al-push-btn:active {
+  transform: scale(0.96);
+}
+html.dark .al-push-btn {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.12);
+  color: var(--fg3, #64748B);
+}
+html.dark .al-push-btn:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.22);
+  color: var(--fg1, #F1F5F9);
+}
+
+/* ── Anim selector pills ──────────────────────────────────────────── */
+.al-anim-pills {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.al-anim-pill {
+  padding: 4px 10px; border-radius: 9999px;
+  font-family: var(--font-display);
+  font-size: 10px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--fg3, #64748B);
+  background: transparent;
+  border: 1px solid var(--card-border, #CBD5E1);
+  cursor: pointer;
+  transition:
+    background calc(140ms * var(--anim-mult,1)),
+    color      calc(140ms * var(--anim-mult,1)),
+    border-color calc(140ms * var(--anim-mult,1));
+}
+.al-anim-pill.al-active {
+  color: #fff;
+  background: #10B981;
+  border-color: transparent;
+  box-shadow: 0 2px 8px -2px rgba(16,185,129,0.45);
+}
+html.dark .al-anim-pill { border-color: rgba(255,255,255,0.12); color: var(--fg3, #94A3B8); }
+html.dark .al-anim-pill.al-active { color: #fff; background: #059669; }
+
+/* ── Feed area ────────────────────────────────────────────────────── */
+.al-feed { min-height: 220px; }
+
+/* ── Event card (demo renderItem) ─────────────────────────────────── */
+.al-ev {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 13px 11px 11px;
+  border-radius: 18px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, rgba(15,23,42,0.07));
+  box-shadow: var(--rd-cardshadow,
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -2px 0 rgba(15,23,42,0.05),
+    0 4px 12px -6px rgba(15,23,42,0.14)
+  );
+}
+html.dark .al-ev {
+  background: var(--card-bg, #243449);
+  border-color: var(--card-border, rgba(255,255,255,0.07));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -2px 0 rgba(0,0,0,0.3),
+    0 4px 12px -6px rgba(0,0,0,0.4);
+}
+
+.al-ev-ico {
+  width: 42px; height: 42px; border-radius: 12px; flex: none;
+  display: grid; place-items: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 0 0 1px rgba(15,23,42,0.04);
+  font-size: 20px;
+}
+html.dark .al-ev-ico {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+.al-ev--low      .al-ev-ico { background: rgba(16,185,129,0.10); color: #059669; }
+.al-ev--elevated .al-ev-ico { background: rgba(234,179,8,0.12);  color: #B7860B; }
+.al-ev--blocked  .al-ev-ico { background: rgba(239,68,68,0.10);  color: #DC2626; }
+.al-ev--review   .al-ev-ico { background: rgba(249,115,22,0.10); color: #EA580C; }
+
+html.dark .al-ev--low      .al-ev-ico { background: rgba(16,185,129,0.16); color: #34D399; }
+html.dark .al-ev--elevated .al-ev-ico { background: rgba(234,179,8,0.16);  color: #FACC15; }
+html.dark .al-ev--blocked  .al-ev-ico { background: rgba(239,68,68,0.16);  color: #F87171; }
+html.dark .al-ev--review   .al-ev-ico { background: rgba(249,115,22,0.16); color: #FB923C; }
+
+.al-ev-main { min-width: 0; flex: 1; }
+.al-ev-amt-row { display: flex; align-items: baseline; gap: 8px; }
+.al-ev-amt {
+  font-size: 15px; font-weight: 900; letter-spacing: -0.02em;
+  color: var(--fg1, #0F172A); font-variant-numeric: tabular-nums;
+}
+.al-ev-meth {
+  font-size: 11.5px; font-weight: 700; color: var(--fg4, #94A3B8);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.al-ev-sub {
+  font-size: 11.5px; font-weight: 600; color: var(--fg3, #64748B);
+  margin-top: 3px; display: flex; align-items: center; gap: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.al-ev-right {
+  flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
+}
+.al-ev-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 9999px;
+  font-size: 10px; font-weight: 900; letter-spacing: 0.03em; white-space: nowrap;
+}
+
+.al-ev--low .al-ev-pill {
+  color: #fff; background: #10B981;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow: 0 2px 8px -2px rgba(16,185,129,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.al-ev--elevated .al-ev-pill {
+  color: #92660A; background: rgba(234,179,8,0.12);
+  box-shadow: inset 0 0 0 1px rgba(234,179,8,0.3);
+}
+.al-ev--blocked .al-ev-pill {
+  color: #DC2626; background: rgba(239,68,68,0.10);
+  box-shadow: inset 0 0 0 1px rgba(239,68,68,0.28);
+}
+.al-ev--review .al-ev-pill {
+  color: #EA580C; background: rgba(249,115,22,0.10);
+  box-shadow: inset 0 0 0 1px rgba(249,115,22,0.28);
+}
+
+html.dark .al-ev--elevated .al-ev-pill { color: #FDE68A; background: rgba(234,179,8,0.16); }
+html.dark .al-ev--blocked  .al-ev-pill { color: #FCA5A5; background: rgba(239,68,68,0.16); }
+html.dark .al-ev--review   .al-ev-pill { color: #FDBA74; background: rgba(249,115,22,0.16); }
+
+.al-ev-score {
+  font-size: 10px; font-weight: 800; color: var(--fg4, #94A3B8);
+  letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+}

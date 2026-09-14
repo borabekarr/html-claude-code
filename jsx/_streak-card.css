@@ -1,0 +1,274 @@
+/* StreakCard.css — verbatim port of components-streak-card.html <style> block.
+   All class names match the prototype exactly (.streak, .sc-*, .sc-shell, etc.)
+   so no global-collision risk beyond what _base.css already establishes.
+   Prefixed entry point: .stk-root wraps the card+bezel rendering context.    */
+
+/* ── Icon font helpers (duplicated from prototype head — needed when
+      _base.css is not guaranteed to ship them) ─────────────────────── */
+.stk-root .material-symbols-outlined,
+.stk-root .material-icons {
+  font-weight: normal; font-style: normal; line-height: 1;
+  letter-spacing: normal; text-transform: none; display: inline-block;
+  white-space: nowrap; word-wrap: normal; direction: ltr;
+  -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+.stk-root .material-symbols-outlined { font-family: 'Material Symbols Outlined'; }
+.stk-root .material-icons { font-family: 'Material Icons'; }
+
+/* ── Frame (preview wrapper) ─────────────────────────────────────────── */
+.stk-root .frame {
+  padding: 40px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  background: #F8FAFC; background-image: none;
+}
+html.dark .stk-root .frame { background: #0B1220; background-image: none; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   The card owns a private --sc-* token set that flips under html.dark.
+   Emerald + flame keep their hue in both themes (the glow just reads
+   stronger on the dark surface).
+   ───────────────────────────────────────────────────────────────────── */
+.stk-root .streak {
+  --sc-surface:        linear-gradient(165deg, #FFFFFF 0%, #F4F8F7 100%);
+  --sc-border:         rgba(15,23,42,0.07);
+  --sc-shadow:         0 18px 44px -16px rgba(15,23,42,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+  --sc-glow:           0 22px 50px -20px rgba(16,185,129,0.22), 0 0 0 1px rgba(16,185,129,0.08);
+  --sc-fg1:            #0F172A;
+  --sc-fg2:            #475569;
+  --sc-fg3:            #94A3B8;
+  --sc-label:          #94A3B8;
+  --sc-divider:        rgba(15,23,42,0.08);
+  --sc-track:          #E5EBF1;
+  --sc-track-inset:    inset 0 1px 2px rgba(15,23,42,0.10);
+  --sc-empty:          #E9EEF4;
+  --sc-empty-border:   inset 0 0 0 1px rgba(15,23,42,0.05), inset 0 1px 1px rgba(15,23,42,0.04);
+  --sc-ring-track:     #DCE3EB;
+  --sc-glow-strength:  0.26;
+
+  width: 240px;
+  box-sizing: border-box;
+  padding: 16px 16px 18px;
+  border-radius: 24px;
+  background: var(--sc-surface);
+  border: 1px solid var(--sc-border);
+  box-shadow: var(--sc-shadow);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--sc-fg1);
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  transition: transform calc(320ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), box-shadow calc(320ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+  will-change: transform;
+}
+
+html.dark .stk-root .streak {
+  --sc-surface:        radial-gradient(125% 120% at 28% -12%, #334155 0%, #1E293B 58%, #0F172A 100%);
+  --sc-border:         rgba(255,255,255,0.07);
+  --sc-shadow:         0 24px 56px -18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px rgba(16,185,129,0.06);
+  --sc-glow:           0 24px 60px -22px rgba(16,185,129,0.30), 0 0 30px -10px rgba(16,185,129,0.14), inset 0 0 0 1px rgba(16,185,129,0.12);
+  --sc-fg1:            #F1F5F9;
+  --sc-fg2:            #CBD5E1;
+  --sc-fg3:            #94A3B8;
+  --sc-label:          #94A3B8;
+  --sc-divider:        rgba(255,255,255,0.08);
+  --sc-track:          #334155;
+  --sc-track-inset:    inset 0 1px 2px rgba(0,0,0,0.55);
+  --sc-empty:          #334155;
+  --sc-empty-border:   inset 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 1px rgba(0,0,0,0.4);
+  --sc-ring-track:     #475569;
+  --sc-glow-strength:  0.36;
+}
+
+/* hover: the whole grey shell (bezel + card) lifts together with the glow */
+.stk-root .sc-shell { transition: transform calc(320ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), box-shadow calc(320ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1); }
+.stk-root .sc-shell:hover { transform: translateY(-3px); box-shadow: 0 20px 44px -20px rgba(16,185,129,0.22), 0 8px 20px rgba(15,23,42,0.10); }
+html.dark .stk-root .sc-shell:hover { box-shadow: 0 22px 50px -20px rgba(16,185,129,0.30), 0 10px 22px rgba(0,0,0,0.5); }
+.stk-root .sc-shell:hover .streak { box-shadow: var(--sc-shadow), var(--sc-glow); }
+.stk-root .sc-shell.pop   { animation: scPop calc(300ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1); }
+@keyframes scPop { 0%{ transform: scale(.99);} 55%{ transform: scale(1.004);} 100%{ transform: scale(1);} }
+
+/* ── HEAD ── */
+.stk-root .sc-head { display: flex; align-items: center; gap: 11px; }
+.stk-root .sc-flame { position: relative; display: grid; place-items: center; flex-shrink: 0; }
+.stk-root .sc-flame .material-symbols-outlined {
+  font-size: 28px; line-height: 1;
+  font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 40;
+  background: linear-gradient(150deg, #FF2E54 0%, #FF5C82 48%, #FF92B4 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 0 9px rgba(255,46,84,0.55)) drop-shadow(0 0 20px rgba(255,46,84,0.30));
+}
+.stk-root .sc-head-text { display: flex; flex-direction: column; gap: 3px; }
+.stk-root .sc-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--sc-label);
+}
+.stk-root .sc-streak { display: flex; align-items: baseline; gap: 6px; }
+.stk-root .sc-streak-num { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--sc-fg1); }
+.stk-root .sc-streak-unit { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--sc-fg3); }
+.stk-root .sc-foot {
+  margin-left: auto; align-self: flex-start;
+  color: var(--sc-fg3);
+  display: grid; place-items: center;
+  transition: color calc(200ms * var(--anim-mult, 1)), filter calc(200ms * var(--anim-mult, 1));
+}
+.stk-root .sc-foot .material-symbols-outlined {
+  font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 500, 'opsz' 24;
+}
+.stk-root .sc-shell:hover .sc-foot { color: var(--sc-fg2); }
+
+.stk-root .sc-divider { height: 1px; background: var(--sc-divider); margin: 13px 0 12px; }
+
+/* ── DAY DOTS ── */
+.stk-root .sc-days { display: flex; justify-content: space-between; }
+.stk-root .sc-day { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.stk-root .sc-dot {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; position: relative;
+  transition: transform calc(200ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)), box-shadow calc(220ms * var(--anim-mult, 1));
+}
+.stk-root .sc-dot.empty { background: var(--sc-empty); box-shadow: var(--sc-empty-border); }
+.stk-root .sc-dot.done {
+  background: #10B981;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(6,78,59,0.30),
+    inset 0 0 0 1px rgba(6,78,59,0.18),
+    0 0 8px rgba(16,185,129,var(--sc-glow-strength));
+}
+.stk-root .sc-dot.done .material-icons {
+  font-size: 14px; color: #fff; font-weight: 700;
+  text-shadow: 0 1px 2px rgba(6,78,59,0.45);
+}
+.stk-root .sc-dot.active { background: transparent; box-shadow: 0 0 7px rgba(16,185,129,0.26); }
+.stk-root .sc-dot.active svg { width: 24px; height: 24px; display: block; transform: rotate(-90deg); }
+.stk-root .sc-dot.active .ring-prog {
+  transition: stroke-dashoffset calc(760ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+}
+.stk-root .sc-day-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--sc-fg3); transition: color calc(200ms * var(--anim-mult, 1));
+}
+.stk-root .sc-day.is-done .sc-day-label { color: var(--sc-fg2); }
+.stk-root .sc-day.is-active .sc-day-label { color: #10B981; }
+
+/* ── STEPS ── */
+.stk-root .sc-steps { margin-top: 16px; }
+.stk-root .sc-steps-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 8px; }
+.stk-root .sc-steps-num { display: flex; align-items: baseline; gap: 3px; }
+.stk-root .sc-steps-val { font-size: 27px; font-weight: 800; letter-spacing: -0.03em; line-height: 0.9; color: var(--sc-fg1); font-variant-numeric: tabular-nums; }
+.stk-root .sc-steps-max { font-size: 12px; font-weight: 600; color: var(--sc-fg3); }
+.stk-root .sc-pct { font-size: 14px; font-weight: 700; color: var(--sc-fg3); font-variant-numeric: tabular-nums; }
+
+.stk-root .sc-bar {
+  margin-top: 12px; height: 9px; border-radius: 999px;
+  background: var(--sc-track); box-shadow: var(--sc-track-inset);
+  overflow: hidden; position: relative;
+}
+.stk-root .sc-bar-fill {
+  width: 0; height: 100%; border-radius: 999px;
+  background: linear-gradient(90deg, #059669 0%, #10B981 55%, #34D399 100%);
+  background-image:
+    linear-gradient(90deg, #059669 0%, #10B981 55%, #34D399 100%),
+    linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(6,78,59,0.25),
+    0 0 14px rgba(16,185,129,0.65);
+  transition: width calc(760ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1);
+  position: relative;
+}
+.stk-root .sc-bar-fill::after {
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 18px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55));
+  border-radius: 999px;
+}
+.stk-root .sc-bar-fill.flash { box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(6,78,59,0.25), 0 0 26px rgba(16,185,129,0.95); }
+
+/* ─────────────────────────────────────────────────────────────────────
+   LOAD ANIMATION  (added via .anim-in once mounted)
+   ───────────────────────────────────────────────────────────────────── */
+.stk-root .streak.anim-in { animation: scCardIn calc(620ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)) both; }
+@keyframes scCardIn {
+  0%   { opacity: 0; transform: scale(.85) translateY(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.stk-root .anim-in .sc-flame { animation: scFlame calc(900ms * var(--anim-mult, 1)) ease-out calc(80ms * var(--anim-mult, 1)) both; }
+@keyframes scFlame {
+  0%   { transform: scale(.7); filter: brightness(.6); }
+  45%  { transform: scale(1.18); filter: brightness(1.35); }
+  70%  { transform: scale(.96); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+.stk-root .anim-in .sc-streak-num { animation: scNumPop calc(560ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)) calc(220ms * var(--anim-mult, 1)) both; display: inline-block; }
+@keyframes scNumPop {
+  0%   { opacity: 0; transform: scale(.5) translateY(6px); }
+  60%  { opacity: 1; transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+/* dots stagger in: checks slide up + pop, empties fade */
+.stk-root .anim-in .sc-day { animation: scDayIn calc(460ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)) both; animation-delay: calc(var(--i) * calc(70ms * var(--anim-mult, 1)) + calc(360ms * var(--anim-mult, 1))); }
+@keyframes scDayIn {
+  0%   { opacity: 0; transform: translateY(10px) scale(.6); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.stk-root .anim-in .sc-steps { animation: scFade calc(500ms * var(--anim-mult, 1)) ease-out calc(560ms * var(--anim-mult, 1)) both; }
+@keyframes scFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* update micro-states */
+.stk-root .sc-flame.flare { animation: scFlare calc(620ms * var(--anim-mult, 1)) ease-out; }
+@keyframes scFlare {
+  0%   { filter: brightness(1); transform: scale(1); }
+  25%  { filter: brightness(1.6) hue-rotate(12deg); transform: scale(1.16); }
+  100% { filter: brightness(1); transform: scale(1); }
+}
+.stk-root .sc-streak-num.num-pop { animation: scNumPop calc(640ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)); display: inline-block; }
+@keyframes scNumPop {
+  0%{transform:scale(.92);} 35%{transform:scale(1.05);} 65%{transform:scale(.98);} 100%{transform:scale(1);}
+}
+.stk-root .sc-steps-val.bump { animation: scBump calc(520ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)); display: inline-block; }
+@keyframes scBump { 0%{transform:scale(1);} 40%{transform:scale(1.08);} 100%{transform:scale(1);} }
+.stk-root .sc-dot.just-done { animation: scJustDone calc(520ms * var(--anim-mult, 1)) var(--ease-spring-soft, cubic-bezier(.32,1.32,.36,1)); }
+@keyframes scJustDone { 0%{transform:scale(.4) rotate(-20deg);} 60%{transform:scale(1.18);} 100%{transform:scale(1);} }
+
+/* ── demo controls (chrome, lives outside the component shell) ── */
+.stk-root .sc-controls { display: flex; gap: 9px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+.stk-root .sc-btn {
+  font-family: 'Montserrat'; font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+  padding: 9px 15px; border-radius: 13px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.85); color: #475569;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 8px rgba(15,23,42,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: transform calc(140ms * var(--anim-mult, 1)) cubic-bezier(.22,1,.36,1), background calc(160ms * var(--anim-mult, 1)), color calc(160ms * var(--anim-mult, 1)), border-color calc(160ms * var(--anim-mult, 1));
+}
+.stk-root .sc-btn .material-icons { font-size: 16px; }
+.stk-root .sc-btn:hover { transform: translateY(-1px); color: #0F172A; border-color: #CBD5E1; }
+.stk-root .sc-btn:active { transform: scale(0.96); }
+html.dark .stk-root .sc-btn { background: rgba(30,41,59,0.7); color: #CBD5E1; border-color: #334155; box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .stk-root .sc-btn:hover { color: #F1F5F9; border-color: #475569; background: rgba(39,52,73,0.8); }
+
+@media (max-width: 440px) {
+  .stk-root .frame { padding: 28px 14px; }
+  .stk-root .streak { width: 100%; max-width: 340px; padding: 22px 20px 24px; }
+  .stk-root .sc-steps-val { font-size: 40px; }
+  .stk-root .sc-dot, .stk-root .sc-dot.active svg { width: 32px; height: 32px; }
+}
+
+/* SAFETY NET — resting state is always the visible end-state. Once the
+   entrance is past its longest child the hook drops .anim-in, so content
+   falls back to the visible base styles even if the timeline never advanced
+   (background / frozen preview, print, PDF). Interaction animations live on
+   their own classes and keep working. */
+@media (prefers-reduced-motion: reduce) {
+  .stk-root .streak.anim-in,
+  .stk-root .anim-in .sc-flame,
+  .stk-root .anim-in .sc-streak-num,
+  .stk-root .anim-in .sc-day,
+  .stk-root .anim-in .sc-steps { animation: none !important; }
+}

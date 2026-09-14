@@ -1,0 +1,14 @@
+.ss-row { display:flex; align-items:flex-end; gap: 6px; }
+.ss-ru  { display:flex; flex-direction:column; align-items:center; gap: 6px; }
+.ss-ru-sm  { width: 55px; }
+.ss-ru-md  { width: 65px; }
+.ss-bar { background: var(--brand-primary-500); border-radius: 4px; width: 100%; }
+.ss-b1  { height: var(--space-1); }  .ss-b2 { height: var(--space-2); }  .ss-b3 { height: var(--space-3); }
+.ss-b4  { height: var(--space-4); } .ss-b5 { height: var(--space-5); } .ss-b6 { height: var(--space-6); }
+.ss-b8  { height: var(--space-8); } .ss-b10 { height: var(--space-10); } .ss-b12 { height: var(--space-12); }
+.ss-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; color: #6B6B6B; }
+.ss-role  { font-size: 10px; font-weight: 700; color: #111111; text-align:center; }
+
+/* ── Dark mode: chrome adapts, bar specimens stay ── */
+html.dark .ss-role  { color: #F5F5F5; }
+html.dark .ss-label { color: #A1A1A1; }

@@ -1,0 +1,409 @@
+/* =========================================================================
+ * mirror/styles.css -- reconstruction 2026-09-10
+ *
+ * The real `styles.css` that most exports link last (as
+ * `_ds`-path-relative `<project-id>/styles.css`) was never captured (the
+ * GitHub clone holds only .dc.html files, no CSS). This file reconstructs
+ * it well enough to close the
+ * undefined-token / unmatched-class gaps found by Step 1's static sweep
+ * (.claude/tmp/render-fix/RENDER-AUDIT.md) across THE-24, by mapping every
+ * gap to an existing Deha Design System token or class already present in
+ * this mirror (colors_and_type.css, preview/_motion-tokens.css,
+ * preview/_shared-feedback.css, preview/done/jsx/_pills.css,
+ * preview/done/jsx/_buttons.css) or in the app source
+ * (apps/web/src/styles/grid-texture.css). See TOKEN-PICKS.md for the full
+ * pick table and reasoning, including where this file's own evidence
+ * corrected the plan's abstract vocabulary guess (--r-btn/--r-btn-hover/
+ * --r-chip-bd/--r-text are colors verified by usage, not radii).
+ *
+ * Structure: one optional `/* == shared == * /` block for tokens/classes
+ * whose correct value is a single DS-wide constant shared by two or more
+ * sections (never a per-component guess), then one `/* == <slug> == * /`
+ * section per slug from RENDER-AUDIT.md, scoped to that slug's own root/
+ * wrapper markup, never bare `:root` outside the shared block.
+ * ========================================================================= */
+
+/* == shared == */
+/* Every value below is copied or aliased from an existing, verified DS
+   source file (cited per group), not guessed -- see TOKEN-PICKS.md. */
+:root {
+  /* ---- grid texture: verbatim from apps/web/src/styles/grid-texture.css
+     (consumed by preview/done/jsx/_pills.css .badge* rules and .btn-cta,
+     but defined only in the app, never shipped into this mirror). ---- */
+  --grid-texture-image:
+    linear-gradient(rgba(255, 255, 255, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.13) 1px, transparent 1px);
+  --grid-texture-image-subtle:
+    linear-gradient(rgba(17, 17, 17, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 17, 17, 0.05) 1px, transparent 1px);
+  --grid-texture-image-dark:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  --grid-texture-size: 16px 16px;
+
+  /* ---- card surface + press-scale tokens: verbatim from
+     preview/_shared-feedback.css (the file every baked .card-inner /
+     .btn-apply / .btn-discuss / .btn-delete / .btn-cta comment already
+     names as their source of truth; only missing here because that sheet
+     is not linked by every export). ---- */
+  --card-bg: #FFFFFF;
+  --card-border: #D4D4D4;
+  /* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+  --card-radius: var(--radius-xl, 20px);
+  --pad-card: var(--space-4, 16px);
+  --gap-icon-text: var(--space-2, 8px);
+  --press-card: 0.985;
+  --press-control: 0.94;
+  --press-chip: 0.90;
+
+  /* ---- CTA fill/glow: `.btn-cta`'s own comment reads "Caller sets
+     --accent (fill) and --ctaglow (shadow color)". mainbox is the one
+     live caller in THE-24 and sets --accent:#10B981 / --ctaglow:
+     rgba(16,185,129,.45) inline (confirmed in its own source.dc.html) --
+     i.e. brand-primary / a brand-glow-strength shadow. Used as the
+     default for every other (currently dead) `.btn-cta` instance. ---- */
+  --accent: var(--brand-primary);
+  --ctaglow: var(--brand-glow);
+
+  /* ---- icon-badge tint: `.icon-badge`'s own rule already reads
+     `background-color: var(--icon-c, var(--brand-primary-500))` --
+     defining --icon-c to that same fallback is a no-op restoration of the
+     component's documented default, not a new guess. ---- */
+  --icon-c: var(--brand-primary-500);
+
+  /* ---- task-footer fill: `.btn-task`'s own comment reads "Caller sets
+     --fbtn to the desired solid fill color; defaults to navy" and its
+     rules fall back to #111111 (== --gray-900) everywhere it's read.
+     notification-badge / save-toggle-button set --fbtn inline per
+     instance already (not affected); this is only the resting default
+     for any other (currently dead) `.btn-task`. ---- */
+  --fbtn: var(--gray-900);
+
+  /* ---- proximity-hover standard background: verbatim from
+     preview/done/jsx/_pills.css `:root` (light value only; dark override
+     right below, mirroring that file exactly). Restored here too because
+     --r-btn-hover (next group) aliases it, and this styles.css section is
+     now injected even into exports that never link _pills.css at all
+     (ai-chat-attachmentcard / pages-attachmentcard) -- without this, the
+     injected sheet would trade one undefined token for another. Harmless
+     duplicate where _pills.css IS already linked (identical value, this
+     sheet always inlines last). ---- */
+  --fp-hover: rgba(17, 17, 17, 0.05);
+  --hover-standard-bg: var(--fp-hover);
+
+  /* ---- `.btn-discuss` colors: verified by reading
+     preview/done/jsx/_buttons.css directly -- despite the "r-" prefix
+     reading like a radius, every one of these four is consumed as a
+     *color* (border-color / background / text color), each already
+     carrying an inline fallback that is itself an exact DS gray step.
+     Defining them to those same steps restores the component's own
+     documented default; see TOKEN-PICKS.md "Plan-vocabulary correction". */
+  --r-btn: var(--gray-500);              /* .btn-discuss:hover border-color fallback (#6B6B6B == --gray-500) */
+  --r-btn-hover: var(--hover-standard-bg); /* .btn-discuss:hover background fallback, already DS-token-backed */
+  --r-chip-bd: var(--gray-300);          /* .btn-discuss border fallback (#D4D4D4 == --gray-300) */
+  --r-text: var(--gray-900);             /* .btn-discuss color fallback (#111111 == --gray-900) */
+
+  /* ---- `.btn-apply` rest width: its own comment documents "falls back
+     to `auto`... until buttons-hook.ts pins the measured pixel width" --
+     restoring that literal documented default, not a guess. `.btn-apply`
+     is not used live by any of THE-24; this only silences the sweep. ---- */
+  --btn-apply-rest-w: auto;
+
+  /* ---- proximity-hover engine: preview/done/jsx/_pills.css already reads
+     `scale(calc(1 + var(--prox, 0) * 0.014))` -- restoring the same 0
+     default (JS sets the live value per [data-proximity] element via the
+     dy*3 / radius-80 engine; frontend-motion-contract.md). ---- */
+  --prox: 0;
+
+  /* ---- per-item stagger index: preview/_motion-tokens.css
+     `.motion-stagger-item` already reads
+     `var(--stagger-index, 0)` -- restoring that same 0 default (JS sets
+     the live per-item index; the base value only matters pre-hydration
+     or for non-staggered instances). ---- */
+  --stagger-index: 0;
+}
+html.dark { --fp-hover: rgba(255, 255, 255, 0.07); } /* verbatim from _pills.css, dark-mode --fp-hover override */
+
+/* Canonical DS utility-class restorations shared by 2+ sections below,
+   copied verbatim from preview/done/jsx/_pills.css (cited per rule) --
+   these sheets exist in the mirror but are not linked by every export, so
+   the classes below have no rule at all in those exports' own cascade. */
+
+/* menudropdownanimation + notification-badge both nest a plain
+   `.dot` span inside `.pill-priority` with only `background` set inline;
+   verbatim from _pills.css `.pill-priority .dot`. */
+.pill-priority .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* menudropdownanimation + notification-badge both use `.pills-row` as a
+   horizontal pill/tab container; verbatim from _pills.css `.pills-row`. */
+.pills-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pills-row + .pills-row { margin-top: 12px; }
+
+/* Step 5 visual-audit correction (2026-09-10, coordinator follow-up): both
+   menudropdownanimation and notification-badge mount their nav tab row as
+   `class="pill-tab {{ v.cls }}"` / `class="pill-priority"`. Step 1's static
+   sweep classified `pill-tab` as noise (it only ever appears with a
+   template-suffix in these two files' markup) and never flagged it as
+   unmatched, so Step 3 never restored it -- but the literal token
+   `pill-tab` genuinely has zero base rule in either file (only
+   `html.dark .pill-tab*` overrides exist), same for `pill-priority`'s own
+   base rule (only `.pill-priority .dot` above and `html.dark .pill-priority`
+   exist). Neither export links `preview/done/jsx/_pills.css`. Visual
+   symptom: inactive tabs render with correct inline background/border color
+   but square corners (notification-badge) or no box at all
+   (menudropdownanimation, whose markup sets no inline border/background),
+   because only the base class rule -- not the per-instance inline style --
+   carries border-radius/box-shadow/transition. Verbatim from _pills.css. */
+.pill-tab { display:inline-flex; align-items:center; padding: 6px 16px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 12px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-fade), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+.pill-tab.active { background: var(--brand-primary-500); color: var(--brand-on-primary); border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15); font-weight: 800; }
+.pill-tab.dark { background:#111111; color:#fff; font-weight: 800; border-color: transparent; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.06); }
+.pill-priority { display:inline-flex; align-items:center; gap: 6px; padding: 6px 14px; border-radius: 9999px; background: #FFFFFF; border: 1px solid #D4D4D4; font-size: 13px; font-weight: 600; color: #6B6B6B; font-family:'Montserrat'; box-shadow: inset 0 -2px 5px rgba(0,0,0,0.07), inset 0 -1px 2px rgba(0,0,0,0.04); transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear), filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear); }
+
+/* ai-chat-attachmentcard + pages-attachmentcard both use `.badge tag` as
+   an absolutely-positioned file-extension chip (background/position set
+   inline); verbatim from _pills.css `.badge` + `.badge.tag`. */
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px; border-radius: 9999px; font-size: 11px; font-weight: 900; font-family: 'Montserrat'; }
+.badge.tag { background-color: #F5F5F5; color: #232323; font-size: 11px; padding: 3px 8px; border: 1px solid #ECECEC; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05); background-image: var(--grid-texture-image-subtle); background-size: var(--grid-texture-size); }
+.badge.tag .material-icons { font-size: 13px; color: #6B6B6B; font-variation-settings: 'wght' 700; }
+
+/* == ai-chat-attachments == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-image(-dark/-subtle), --grid-texture-size, --pad-card,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by /* == shared
+   == * /, all --btn-cta / --btn-task / --btn-discuss / .card-inner
+   consumers here inherit the same DS defaults, no per-component override
+   found in this slug's own markup. No unmatched classes.
+   RESIDUAL: this export's own source.dc.html does not link
+   a styles.css sheet (verified against the tool's own DS_TAG_RE), so
+   this section cannot be inlined until that link exists -- see the
+   step debrief. */
+
+/* == ai-chat-context == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes. This export links
+   a styles.css sheet, so this reconstruction reaches it directly. */
+
+/* == ai-chat-inline-citation == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == ai-chat-queue-input == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --ctaglow, --fbtn, --gap-icon-text, --grid-texture-*,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- same gap as
+   ai-chat-attachments, see step debrief. */
+
+/* == book-a-call-button == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. `.btn-discuss` ("View tokens" button) is live in
+   this slug's own markup and is the component whose usage confirmed the
+   --r-btn/--r-btn-hover/--r-chip-bd/--r-text color mapping above. No
+   unmatched classes. Links a styles.css sheet directly. */
+
+/* == calendar-booking == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == how-it-works == */
+/* Static undefined tokens: --grid-texture-*, --prox, --stagger-index --
+   all covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == mainbox == */
+/* Static undefined tokens: --btn-apply-rest-w, --card-bg, --card-border,
+   --card-radius, --fbtn, --gap-icon-text, --grid-texture-*, --pad-card,
+   --press-card, --press-control, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. --accent/--ctaglow are NOT in this list: mainbox's
+   own `.btn-cta` sets them inline (`--accent:#10B981;
+   --ctaglow:rgba(16,185,129,.45)`), which is the live evidence behind the
+   shared --accent/--ctaglow mapping above. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == menudropdownanimation == */
+/* Static undefined tokens: --stagger-index, covered by
+   /* == shared == * /. Unmatched classes `.dot`, `.pills-row` (nested
+   `<span class="dot">` inside `<button class="pill-priority">`, plus a
+   top-level `.pills-row` tab container) -- both restored in
+   /* == shared == * / above (verbatim from _pills.css, shared with
+   notification-badge's identical usage). This export's only linked `_ds`
+   stylesheet is styles.css itself, so this is the slug most dependent on
+   this file. */
+
+/* == notification-badge == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --icon-c, --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text,
+   --stagger-index -- all covered by /* == shared == * /. Unmatched
+   classes `.dot`, `.pills-row` restored in /* == shared == * / (same
+   `.pill-priority .dot` / tab-row nesting as menudropdownanimation).
+   `.card-inner`, `.card-name`, `.card-desc` are genuinely component-local
+   (this slug's own demo-card wrapper): every visual property they need
+   (padding, font-size, weight, color, margin) is already set inline per
+   instance in this slug's own markup, so the only gap is establishing the
+   shared display font family -- the smallest rule, reusing the DS
+   typography token rather than inventing a value. */
+.card-inner, .card-name, .card-desc { font-family: var(--font-display); }
+
+/* == passwordstrength == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == payments-free-trial == */
+/* Static undefined tokens: --btn-apply-rest-w, --fbtn, --grid-texture-*,
+   --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index
+   -- all covered by /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == progressive-input-stack == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched class `.material-icons` is a FALSE
+   POSITIVE: this export's own source.dc.html already links Google's
+   `fonts.googleapis.com/icon?family=Material+Icons` stylesheet, which
+   defines `.material-icons` at runtime; the static sweep only inspects
+   inline `<style>` blocks and cannot see that external link. No rule
+   added here -- adding one risks a specificity fight with Google's own
+   CSS for zero benefit. Links a styles.css sheet directly. */
+
+/* == save-toggle-button == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. Unmatched class `.icon-badge--lg`: this
+   slug's own baked CSS is missing BOTH `.icon-badge` (base) and
+   `.icon-badge--lg` (the sweep's classMatched() only sees
+   `html.dark .icon-badge[data-tone="black"]` and treats that
+   attribute-selector variant as a match for the bare class, a known blind
+   spot) -- fixing only the modifier would leave the badge with a sized
+   but unfilled box. Both restored verbatim from the canonical block in
+   preview/incoming/popover-offer-cold/Main.dc.html (`.icon-badge` /
+   `.icon-badge--lg`), scoped to this slug only since no other slug in
+   THE-24 uses `.icon-badge` live.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge {
+  width: 30px; height: 30px; border-radius: var(--radius-sm, 8px);
+  display: grid; place-items: center; flex-shrink: 0;
+  background-color: var(--icon-c, var(--brand-primary-500));
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.20) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: cover, 16px 16px, 16px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+html.dark .icon-badge, :root[data-theme="dark"] .icon-badge {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10);
+}
+.icon-badge .material-icons,
+.icon-badge .material-symbols-outlined {
+  font-size: 16px; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  line-height: 1; display: block;
+}
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--lg { width: 38px; height: 38px; border-radius: var(--radius-md, 12px); }
+.icon-badge--lg .material-icons,
+.icon-badge--lg .material-symbols-outlined { font-size: 20px; }
+
+/* == shiny-pill == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. `.btn-discuss` ("View tokens" button) is live
+   here too (same evidence as book-a-call-button). `.btn-cta` is present
+   in this slug's baked CSS but not applied to any element in its own
+   markup (dead), so --accent/--ctaglow only silence the sweep here. No
+   unmatched classes. Links a styles.css sheet directly -- this is the
+   sanity-anchor slug from Step 1 (`--r-btn` / `--accent` both present). */
+
+/* == slideuptext == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-chip,
+   --press-control, --prox, --r-btn, --r-btn-hover, --r-chip-bd, --r-text,
+   --stagger-index -- all covered by /* == shared == * / (including
+   --press-chip, unique to this slug among THE-24). No unmatched classes.
+   Links a styles.css sheet directly. */
+
+/* == ai-chat-attachmentcard == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched classes `.badge`, `.tag`, `.material-icons`.
+   `.badge`/`.badge.tag` restored in /* == shared == * / (shared with
+   pages-attachmentcard's identical `<span class="badge tag">` usage).
+   `.material-icons` has no Google Fonts link anywhere in this export and
+   no rule can restore the actual icon glyph without hosting the font
+   file -- flagged under "needs Bora" in TOKEN-PICKS.md, no rule added.
+   RESIDUAL, more severe than the styles.css-not-linked cases above: this
+   export's source.dc.html has ZERO design-system links of any kind (no helmet,
+   no colors_and_type.css) -- this whole section cannot be inlined
+   through the current linking mechanism. See step debrief. */
+
+/* == pages-attachmentcard == */
+/* Identical to ai-chat-attachmentcard (same source, different path
+   prefix) -- same undefined token, same two unmatched classes, same
+   zero-design-system-links residual. See that section and the step debrief. */
+
+/* == pages-bookacallbutton == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --ctaglow,
+   --fbtn, --grid-texture-*, --icon-c, --prox, --r-btn, --r-btn-hover,
+   --r-chip-bd, --r-text, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes. Links
+   a styles.css sheet directly. */
+
+/* == pages-citationchip == */
+/* Static undefined tokens: --card-bg, --card-border, --grid-texture-*,
+   --press-control, --prox, --stagger-index -- all covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-contextring == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. No unmatched classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-passwordmeter == */
+/* Static undefined tokens: --grid-texture-*, --icon-c, --prox,
+   --stagger-index -- all covered by /* == shared == * /. No unmatched
+   classes.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-savetoggle == */
+/* Static undefined tokens: --accent, --btn-apply-rest-w, --card-bg,
+   --card-border, --card-radius, --ctaglow, --fbtn, --gap-icon-text,
+   --grid-texture-*, --pad-card, --press-card, --press-control, --prox,
+   --r-btn, --r-btn-hover, --r-chip-bd, --r-text, --stagger-index -- all
+   covered by /* == shared == * /. No unmatched classes (this variant does
+   not itself use `.icon-badge--lg`, unlike save-toggle-button).
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */
+
+/* == pages-savetoggleoriginal == */
+/* Static undefined tokens: --stagger-index only, covered by
+   /* == shared == * /. Unmatched class `.material-symbols-outlined` is a
+   FALSE POSITIVE: this export links Google's
+   `fonts.googleapis.com/css2?family=Material+Symbols+Outlined...`
+   stylesheet already; same reasoning as progressive-input-stack's
+   `.material-icons`, no rule added.
+   RESIDUAL: does not link a styles.css sheet -- see step debrief. */

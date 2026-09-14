@@ -1,0 +1,409 @@
+/* =========================================================================
+   Animated Header Scroll — Deha Design System
+   Byte-preserved from
+   apps/web/design-system/claude-design/raw/animated-header-scroll/animated-header-scroll.html
+
+   Scope note (packaging, not a value change): every rule below is the raw
+   source's own rule with its selector prefixed by `.device`, the raw
+   source's OWN root element class. The raw file is a standalone page whose
+   inline <style> owns bare generic selectors (`.row`, `.content`,
+   `.actions`, `.pill`, `.name`, `.meta`, `.sub`, `.time`, `.end`, `.mid`);
+   inside the app route those collide with project-wide rules already loaded
+   via src/styles/global.css (`.row` in design-system/preview/_base.css sets
+   `flex-wrap: wrap`, `html.dark .row + .row` / `html.dark .meta` in
+   _darkmode.css). Prefixing with the source's own root keeps every DOM class
+   name, the hierarchy and every declared value byte-identical while raising
+   specificity above those globals. Class names, values, durations, easings
+   and colors are otherwise untouched.
+
+   Excluded from the port (preview chrome / authoring tooling, same
+   precedent as PieChart.css's `.frame`/`.hint`/`body` scaffold and
+   ExpandableCard.css's tweaks-panel props): the raw file's `body`/`.stage`
+   radial-gradient stage and its `.controls`/`.ctl`/`.seg` tweak panel
+   (Blur / Collapse / Theme / Accent sliders). Their two authored defaults
+   that the component itself depends on — `--blur: 22px` and
+   collapseDist 92 — are carried in the component as the same literals the
+   raw source ships.
+   ========================================================================= */
+
+/* Raw source's own `* { margin: 0; padding: 0; box-sizing: border-box; }`
+   reset, scoped to the component subtree. */
+.device,
+.device * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Packaging-context normalization (not part of the raw source's rules):
+   the raw page has no Tailwind preflight, so text descendants that don't
+   declare a line-height fall back to the UA default (`normal`). The app
+   route's preflight sets an inherited 1.5, which would otherwise inflate
+   every row/label height in the feed. Same class of fix as PieChart.css /
+   ExpandableCard.css / OtpInput.css. */
+.device {
+  line-height: normal;
+}
+
+/* ---------------- Phone device ---------------- */
+.device {
+  --p: 0;            /* raw scroll progress 0..1            */
+  --pbar: 0;         /* eased bar reveal                    */
+  --ptitle: 0;       /* eased small-title reveal            */
+  --plarge: 1;       /* eased large-title presence          */
+  --blur: 22px;      /* max header blur                     */
+  --accent: #10B981;
+  --surface: #FFFFFF;
+  --surface-rgb: 255,255,255;
+  --fg1: #0F172A;
+  --fg3: #64748B;
+  --fg4: #94A3B8;
+  --chip: #F1F5F9;
+  --hairline: #E2E8F0;
+  --bezel: #0B0F19;
+
+  /* raw `body` font-family, which the standalone page inherits into the
+     device subtree */
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  position: relative;
+  width: 384px;
+  height: 712px;
+  border-radius: 54px;
+  padding: 13px;
+  background: linear-gradient(155deg, #1c2433, var(--bezel));
+  box-shadow:
+    0 50px 90px -30px rgba(8,15,30,0.55),
+    0 10px 30px -10px rgba(8,15,30,0.4),
+    inset 0 2px 2px rgba(255,255,255,0.16),
+    inset 0 -3px 6px rgba(0,0,0,0.5);
+}
+/* `.device.dark` is the raw source's own theme hook (driven by its tweak
+   panel); `html.dark .device` wires the same token block to the app's
+   own dark-mode switch with identical values. */
+.device.dark,
+html.dark .device {
+  --surface: #0F172A;
+  --surface-rgb: 15,23,42;
+  --fg1: #F1F5F9;
+  --fg3: #94A3B8;
+  --fg4: #64748B;
+  --chip: #1E293B;
+  --hairline: #233143;
+}
+
+/* The actual screen — clips everything, hosts the scroller */
+.device .screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 42px;
+  overflow: hidden;
+  background: var(--surface);
+  /* raw: 0.4s ease -> --duration-slower + --duration-instant (no exact tier) + --ease-fade */
+  transition: background calc((var(--duration-slower) + var(--duration-instant)) * var(--anim-mult, 1)) var(--ease-fade);
+}
+
+/* Scroll surface */
+.device .scroller {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.device .scroller::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ---- Pinned (collapsed) header — sits on top, blur ramps in ---- */
+.device .statusbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 44px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--fg1);
+  pointer-events: none;
+}
+.device .statusbar .dots { display: flex; align-items: center; gap: 5px; }
+.device .statusbar .ico { font-family: 'Material Icons'; font-size: 16px; }
+
+.device .pinned {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 30;
+  height: 96px;            /* status bar (44) + bar (52) */
+  border-bottom: 1px solid transparent;
+  border-image: none;
+  background: rgba(var(--surface-rgb), 0);
+  -webkit-backdrop-filter: blur(0px) saturate(160%);
+  backdrop-filter: blur(0px) saturate(160%);
+}
+/* will-change scoped to active scrolling (JS-toggled `.is-scrolling`, cleared
+   shortly after the last scroll event): backdrop-filter layer promotion is a
+   standing compositor cost, and this header is idle almost all the time —
+   only promote while the blur/background are actually changing. Not part of
+   the raw source (review fix, ds-review-heavy Step 3). */
+.device.is-scrolling .pinned {
+  will-change: backdrop-filter; /* background is a paint property, not worth the hint */
+}
+/* depth gradient that strengthens as the header solidifies */
+.device .pinned::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 100%;
+  height: 26px;
+  background: linear-gradient(to bottom, rgba(var(--surface-rgb), 0.5), rgba(var(--surface-rgb), 0));
+  opacity: var(--pbar);
+  pointer-events: none;
+}
+.device .pinned-bar {
+  position: absolute;
+  left: 0; right: 0;
+  top: 44px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  /* the whole collapsed header rises + fades in as you scroll */
+  opacity: var(--ptitle);
+  transform: translateY(calc((1 - var(--ptitle)) * 14px));
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.device .pinned-bar.revealed { pointer-events: auto; }
+.device .pinned-title {
+  min-width: 0;
+}
+.device .pinned-title .t {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--fg1);
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.device .pinned-title .s {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg3);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The hairline only appears with the blur — drawn as an inset box-shadow we fade */
+.device .pinned .rule {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: var(--hairline);
+  opacity: var(--pbar);
+}
+
+/* ---- Right component (lives in both headers) ---- */
+.device .actions { display: flex; align-items: center; gap: 10px; flex: none; }
+.device .icon-btn {
+  width: 38px; height: 38px;
+  border: none;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: var(--chip);
+  color: var(--fg1);
+  /* raw: 0.15s ease -> --duration-150 + --ease-fade */
+  transition: transform calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade),
+    filter calc(var(--duration-150) * var(--anim-mult, 1)) var(--ease-fade);
+}
+.device .icon-btn .material-icons { font-size: 21px; }
+.device .icon-btn.accent {
+  background: var(--accent);
+  color: #fff;
+  box-shadow:
+    0 8px 20px -6px color-mix(in srgb, var(--accent) 60%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.10) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .device .icon-btn:hover { filter: brightness(1.04); transform: translateY(-1px); }
+}
+.device .icon-btn:active { transform: scale(0.94); }
+
+/* ---- Large header (in scroll flow) ---- */
+.device .content { padding: 100px 20px 40px; }
+.device .large-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  /* transform + opacity moved to children so actions can animate independently */
+}
+/* Title text collapses up-left; transform-origin: left so it anchors there */
+.device .large-head-title {
+  transform-origin: left bottom;
+  opacity: var(--plarge);
+  transform: scale(calc(0.92 + 0.08 * var(--plarge)))
+             translateY(calc((1 - var(--plarge)) * -6px));
+}
+.device .large-head .eyebrow {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.device .large-head h1 {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.0;
+  color: var(--fg1);
+}
+.device .large-head .sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg3);
+  margin-top: 9px;
+}
+/* Action buttons: independent fade + rise only — no scale, no horizontal movement.
+   transform-origin: top right means the right edge is the fixed anchor. */
+.device .large-head .actions {
+  transform-origin: top right;
+  opacity: var(--plarge);
+  transform: translateY(calc((1 - var(--plarge)) * -10px));
+  will-change: opacity, transform;
+}
+
+/* ---- Feed cards ---- */
+.device .feed { display: flex; flex-direction: column; gap: 12px; }
+
+.device .hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  padding: 20px;
+  color: #fff;
+  background: var(--accent);
+  box-shadow:
+    0 18px 40px -16px color-mix(in srgb, var(--accent) 65%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.16);
+}
+.device .hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.22) 0%, transparent 55%);
+  pointer-events: none;
+}
+.device .hero .k {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+.device .hero .v { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; margin-top: 8px; line-height: 1; }
+.device .hero .row2 { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12.5px; font-weight: 700; }
+.device .hero .delta {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: rgba(255,255,255,0.22);
+  padding: 3px 9px; border-radius: 9999px;
+}
+.device .hero .delta .material-icons { font-size: 15px; }
+
+.device .row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 1px 2px rgba(15,23,42,0.04), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.device.dark .row,
+html.dark .device .row { box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04); }
+.device .av {
+  width: 42px; height: 42px; flex: none;
+  border-radius: 13px;
+  display: grid; place-items: center;
+  font-size: 14px; font-weight: 800; letter-spacing: 0.01em;
+  color: #fff;
+}
+.device .av .material-icons { font-size: 21px; }
+.device .row .mid { flex: 1; min-width: 0; }
+.device .row .name { font-size: 14.5px; font-weight: 700; color: var(--fg1); line-height: 1.2; }
+.device .row .meta { font-size: 12px; font-weight: 600; color: var(--fg3); margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.device .row .end { flex: none; text-align: right; }
+.device .row .amt { font-size: 14px; font-weight: 800; color: var(--fg1); }
+.device .row .time { font-size: 11px; font-weight: 600; color: var(--fg4); margin-top: 3px; }
+.device .pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 9999px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.01em;
+}
+.device .pill .material-icons { font-size: 13px; }
+
+/* home indicator */
+.device .home-ind {
+  position: absolute;
+  bottom: 9px; left: 50%; transform: translateX(-50%);
+  width: 134px; height: 5px; border-radius: 9999px;
+  background: var(--fg1);
+  opacity: 0.28;
+  z-index: 45;
+  pointer-events: none;
+}
+
+/* scroll hint */
+.device .scroll-hint {
+  position: absolute;
+  bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 46;
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.02em;
+  box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--accent) 60%, transparent);
+  /* raw: 0.35s ease -> --duration-150 + --duration-200 (no exact tier) + --ease-fade */
+  transition: opacity calc((var(--duration-150) + var(--duration-200)) * var(--anim-mult, 1)) var(--ease-fade),
+    transform calc((var(--duration-150) + var(--duration-200)) * var(--anim-mult, 1)) var(--ease-fade);
+  pointer-events: none;
+}
+.device .scroll-hint .material-icons { font-size: 15px;
+  /* raw: 1.4s ease-in-out -> --duration-700 x2 (no exact tier) + --ease-in-out */
+  animation: ahs-nudge calc(var(--duration-700) * 2 * var(--anim-mult, 1)) var(--ease-in-out) infinite; }
+.device .scroll-hint.hide { opacity: 0; transform: translateX(-50%) translateY(8px); }
+/* raw name `nudge`, prefixed only to keep the app's global keyframe
+   namespace collision-free (values byte-identical) */
+@keyframes ahs-nudge { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+/* infinite bobbing nudge is vestibular-trigger motion (not scroll-driven
+   direct manipulation, unlike the collapse itself); drop the movement,
+   keep the hint visible (review fix, ds-review-heavy Step 3 retry). */
+@media (prefers-reduced-motion: reduce) {
+  .device .scroll-hint .material-icons { animation: none; }
+}

@@ -1,0 +1,481 @@
+/* =========================================================================
+   Deha Design System — Core tokens
+   Source of truth: uploads/code.html (Tailwind config + inline styles)
+   ========================================================================= */
+
+/* Font loading moved to index.html <link> tags with preconnect + display=swap
+   to eliminate render-blocking @import FOUT and horizontal-layout flash. */
+
+:root {
+  /* ---------- Brand ---------- */
+  --brand-primary:        #10B981;  /* Emerald-500 — the only brand color */
+  --brand-primary-50:     #ECFDF5;
+  --brand-primary-100:    #D1FAE5;
+  --brand-primary-200:    #A7F3D0;
+  --brand-primary-300:    #6EE7B7;
+  --brand-primary-400:    #34D399;
+  --brand-primary-500:    #10B981;
+  --brand-primary-600:    #059669;
+  --brand-primary-700:    #047857;
+  --brand-primary-800:    #065F46;
+  --brand-primary-900:    #064E3B;
+  --brand-glow:           rgba(16,185,129,0.50);
+
+  /* ---------- Extra palettes (Step 8) — raw stops, authored order 1..6 ---------- */
+  --sunflower-1:  oklch(95.6% 0.126 98.7);
+  --sunflower-2:  oklch(91.8% 0.174 96.9);
+  --sunflower-3:  oklch(87.8% 0.222 93.9);
+  --sunflower-4:  oklch(82.6% 0.258 87.8);
+  --sunflower-5:  oklch(78.1% 0.264 79.7);
+  --sunflower-6:  oklch(75.2% 0.258 75.3);
+
+  --bloodymary-1: oklch(41.7% 0.178 18.8);
+  --bloodymary-2: oklch(47.6% 0.198 22.3);
+  --bloodymary-3: oklch(53.2% 0.207 24.9);
+  --bloodymary-4: oklch(58.8% 0.211 26.8);
+  --bloodymary-5: oklch(64.2% 0.210 28.3);
+  --bloodymary-6: oklch(69.5% 0.205 29.5);
+
+  --petalglow-1:  oklch(87.0% 0.072 6.9);
+  --petalglow-2:  oklch(81.2% 0.111 5.7);
+  --petalglow-3:  oklch(75.5% 0.154 6.3);
+  --petalglow-4:  oklch(70.4% 0.196 8.0);
+  --petalglow-5:  oklch(66.7% 0.227 11.0);
+  --petalglow-6:  oklch(64.3% 0.248 14.1);
+
+  --sexyblue-1:   oklch(58.7% 0.254 256.9);
+  --sexyblue-2:   oklch(64.6% 0.213 250.4);
+  --sexyblue-3:   oklch(70.5% 0.173 243.9);
+  --sexyblue-4:   oklch(76.5% 0.132 237.4);
+  --sexyblue-5:   oklch(82.4% 0.091 231.0);
+  --sexyblue-6:   oklch(88.3% 0.051 224.5);
+
+  --richgold-1:   oklch(77.2% 0.185 91.5);
+  --richgold-2:   oklch(80.5% 0.175 93.4);
+  --richgold-3:   oklch(83.9% 0.168 95.3);
+  --richgold-4:   oklch(87.2% 0.152 97.2);
+  --richgold-5:   oklch(90.6% 0.130 99.1);
+  --richgold-6:   oklch(93.9% 0.108 101.0);
+
+  /* ---------- Neutrals (Gray) — Theme Palette Lab, chroma-0 (2026-07-10) ---------- */
+  --gray-50:              #FAFAFA;
+  --gray-100:             #F5F5F5;
+  --gray-200:             #ECECEC;
+  --gray-300:             #D4D4D4;
+  --gray-400:             #A1A1A1;
+  --gray-500:             #6B6B6B;
+  --gray-600:             #4A4A4A;
+  --gray-700:             #232323;
+  --gray-800:             #1C1C1C;
+  --gray-900:             #111111;
+
+  /* --slate-* retained as aliases for existing var(--slate-*) consumers; Step 5 migrates callers to --gray-* */
+  --slate-50:             var(--gray-50);
+  --slate-100:            var(--gray-100);
+  --slate-200:            var(--gray-200);
+  --slate-300:            var(--gray-300);
+  --slate-400:            var(--gray-400);
+  --slate-500:            var(--gray-500);
+  --slate-600:            var(--gray-600);
+  --slate-700:            var(--gray-700);
+  --slate-800:            var(--gray-800);
+  --slate-900:            var(--gray-900);
+
+  /* ---------- Semantic ---------- */
+  --semantic-success:     #10B981;  /* Emerald   — low priority, growth */
+  --semantic-success-bg:  #ECFDF5;
+  --semantic-warning:     #EAB308;  /* Yellow-500 — medium priority */
+  --semantic-warning-bg:  #FEFCE8;
+  --semantic-danger:      #EF4444;  /* Red-500   — high priority, urgent */
+  --semantic-danger-bg:   #FEF2F2;
+  --semantic-hot:         #F97316;  /* Orange-500 — Hot Lead */
+  --semantic-hot-bg:      #FFF7ED;
+
+  /* ---------- Foreground / background tokens ---------- */
+  --bg-app:               #FFFFFF;
+  --bg-app-gradient:      #FFFFFF;  /* App background is FLAT white. Use --bg-section-grid for highlighted sections. */
+  --bg-section-grid:
+    linear-gradient(to right, rgba(17,17,17,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17,17,17,0.035) 1px, transparent 1px);
+  --bg-section-grid-size: 24px 24px;
+  --bg-card:              rgba(255, 255, 255, 0.70);   /* glass-light */
+  --bg-card-solid:        #FFFFFF;
+  --bg-accent:            #10B981;
+  --bg-chip:              #ECECEC;
+  --shell-bg:             #D9D9D9;  /* grey "bezel" behind component surfaces */
+
+  --fg1:                  #0A0A0A;  /* primary text — gray-900 */
+  --fg2:                  #232323;  /* strong body — gray-700 */
+  --fg3:                  #6B6B6B;  /* secondary  — gray-500 */
+  --fg4:                  #A1A1A1;  /* tertiary   — gray-400 */
+  --fg5:                  #C4C4C4;  /* quaternary — gray-300 */
+  --fg-inverse:           #FFFFFF;
+  --fg-brand:             #10B981;
+  --brand-on-primary:     #fff;  /* text color on brand-primary-filled surfaces; themes may remap */
+
+  /* ---------- Borders ---------- */
+  --border-glass:         rgba(255, 255, 255, 0.60);
+  --border-glass-dark:    rgba(255, 255, 255, 0.10);
+  --border-hairline:      #ECECEC;    /* gray-200 */
+  --border-accent:        rgba(255, 255, 255, 0.30);  /* inside emerald cards */
+
+  /* ---------- Radii ---------- */
+  --radius-xs:            6px;
+  --radius-sm:            8px;       /* tiny chips, badges */
+  --radius-md:            12px;
+  --radius-lg:            16px;      /* buttons, inner cards (rounded-2xl) */
+  --radius-xl:            20px;      /* metric cards (rounded-[20px]) */
+  --radius-2xl:           24px;      /* hero / chart cards (rounded-[24px]) */
+  --radius-pill:          16px;     /* "pill" tokens — soft rounded, used for chips/filters/badges */
+  --radius-circle:        9999px;   /* only for circular elements (avatars, dots) */
+  --corner-smoothing:     0.6;      /* Apple/Figma 60% corner smoothing factor; consumed by use-squircle */
+
+  /* ---------- Spacing (4-point) ---------- */
+  --space-0:              0;
+  --space-1:              4px;
+  --space-2:              8px;
+  --space-3:              12px;
+  --space-4:              16px;      /* page padding */
+  --space-5:              20px;
+  --space-6:              24px;      /* card-to-card gap */
+  --space-8:              32px;
+  --space-10:             40px;
+  --space-12:             48px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-glass:
+    0 4px 6px -1px rgba(0,0,0,0.10),
+    0 2px 4px -1px rgba(0,0,0,0.06),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  --shadow-glass-dark:
+    0 4px 6px -1px rgba(0,0,0,0.50),
+    0 2px 4px -1px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.10);
+  --shadow-glass-sm:
+    0 1px 2px 0 rgba(0,0,0,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.40);
+  --shadow-recessed:      inset 0 2px 4px 0 rgba(0,0,0,0.06);
+  --shadow-emerald-glow:  0 10px 40px -10px rgba(16,185,129,0.50);
+  --shadow-emerald-glow-sm: 0 10px 30px -10px rgba(16,185,129,0.50);
+
+  /* ---------- Blur ---------- */
+  --blur-glass:           20px;
+  --blur-strong:          40px;
+
+  /* ---------- Typography ---------- */
+  --font-display:         'Montserrat', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-icon:            'Material Icons';
+  --font-symbol:          'Material Symbols Outlined';
+
+  --weight-medium:        500;
+  --weight-semibold:      600;
+  --weight-bold:          700;
+  --weight-extrabold:     800;
+  --weight-black:         900;
+
+  /* Type scale — derived directly from observed values in code.html */
+  --type-display-1:       36px;   /* metric numerals (e.g. "142") */
+  --type-display-2:       30px;   /* hero numerals (e.g. "0.0%", $1.2M) */
+  --type-h1:              28px;   /* page title */
+  --type-h2:              24px;   /* big chip numbers */
+  --type-h3:              20px;   /* hero card heading */
+  --type-h4:              16px;   /* card heading */
+  --type-h5:              15px;   /* task title */
+  --type-body:            14px;
+  --type-body-sm:         13px;
+  --type-meta:            12px;   /* chip / segmented control */
+  --type-micro:           11px;   /* metric label */
+  --type-mini:            10px;   /* axis labels, sub-meta */
+
+  --leading-none:         1;
+  --leading-tight:        1.15;
+  --leading-snug:         1.35;
+  --leading-relaxed:      1.6;
+
+  --tracking-tight:      -0.02em;
+  --tracking-normal:      0;
+  --tracking-wide:        0.05em;
+  --tracking-wider:       0.10em;
+  --tracking-widest:      0.15em;
+
+  /* Animation speed multiplier. Default 1 (normal). The UI library Slow-Down
+     toggle flips data-anim-slow on the root, scaling every calc()-wrapped
+     duration and delay across the design system. */
+  --anim-mult:            1;
+}
+
+/* Slow-Down toggle: quadruples all calc(<n>ms * var(--anim-mult)) timings. */
+:root[data-anim-slow="true"] { --anim-mult: 4; }
+
+/* =========================================================================
+   Dark mode
+   ========================================================================= */
+:root[data-theme="dark"],
+.dark {
+  --bg-app:               #111111;
+  --bg-app-gradient:      #111111;
+  --bg-section-grid:
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  --bg-card:              rgba(28, 28, 28, 0.70);
+  --bg-card-solid:        #1C1C1C;
+  --bg-chip:              #111111;
+  --shell-bg:             #0A0A0A;
+
+  --fg1:                  #EDEDED;
+  --fg2:                  #D4D4D4;
+  --fg3:                  #A1A1A1;
+  --fg4:                  #6B6B6B;
+  --fg5:                  #525252;
+
+  --border-hairline:      #232323;
+}
+
+/* =========================================================================
+   Primary theme remaps — Theme Palette Lab (Step 8)
+   Attribute-scoped like data-theme; only brand-role tokens overridden.
+   No data-primary attribute (or an unrecognized value) means emerald: the
+   :root defaults above stay exactly as today.
+   ========================================================================= */
+:root[data-primary="sunflower"] {
+  --brand-primary:        var(--sunflower-4);
+  --brand-primary-50:     color-mix(in oklch, var(--sunflower-1), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--sunflower-1), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--sunflower-1), white 35%);
+  --brand-primary-300:    var(--sunflower-2);
+  --brand-primary-400:    var(--sunflower-3);
+  --brand-primary-500:    var(--sunflower-4);
+  --brand-primary-600:    var(--sunflower-5);
+  --brand-primary-700:    var(--sunflower-6);
+  --brand-primary-800:    color-mix(in oklch, var(--sunflower-6), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--sunflower-6), black 35%);
+  --bg-accent:            var(--sunflower-4);
+  --fg-brand:             var(--sunflower-4);
+  --brand-glow:           color-mix(in oklch, var(--sunflower-4), transparent 50%);
+  --brand-on-primary:     #111111;
+}
+
+:root[data-primary="bloodymary"] {
+  --brand-primary:        var(--bloodymary-3);
+  --brand-primary-50:     color-mix(in oklch, var(--bloodymary-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--bloodymary-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--bloodymary-6), white 35%);
+  --brand-primary-300:    var(--bloodymary-5);
+  --brand-primary-400:    var(--bloodymary-4);
+  --brand-primary-500:    var(--bloodymary-3);
+  --brand-primary-600:    var(--bloodymary-2);
+  --brand-primary-700:    var(--bloodymary-1);
+  --brand-primary-800:    color-mix(in oklch, var(--bloodymary-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--bloodymary-1), black 35%);
+  --bg-accent:            var(--bloodymary-3);
+  --fg-brand:             var(--bloodymary-3);
+  --brand-glow:           color-mix(in oklch, var(--bloodymary-3), transparent 50%);
+}
+
+:root[data-primary="petalglow"] {
+  --brand-primary:        var(--petalglow-4);
+  --brand-primary-50:     color-mix(in oklch, var(--petalglow-1), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--petalglow-1), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--petalglow-1), white 35%);
+  --brand-primary-300:    var(--petalglow-2);
+  --brand-primary-400:    var(--petalglow-3);
+  --brand-primary-500:    var(--petalglow-4);
+  --brand-primary-600:    var(--petalglow-5);
+  --brand-primary-700:    var(--petalglow-6);
+  --brand-primary-800:    color-mix(in oklch, var(--petalglow-6), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--petalglow-6), black 35%);
+  --bg-accent:            var(--petalglow-4);
+  --fg-brand:             var(--petalglow-4);
+  --brand-glow:           color-mix(in oklch, var(--petalglow-4), transparent 50%);
+}
+
+:root[data-primary="sexyblue"] {
+  --brand-primary:        var(--sexyblue-3);
+  --brand-primary-50:     color-mix(in oklch, var(--sexyblue-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--sexyblue-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--sexyblue-6), white 35%);
+  --brand-primary-300:    var(--sexyblue-5);
+  --brand-primary-400:    var(--sexyblue-4);
+  --brand-primary-500:    var(--sexyblue-3);
+  --brand-primary-600:    var(--sexyblue-2);
+  --brand-primary-700:    var(--sexyblue-1);
+  --brand-primary-800:    color-mix(in oklch, var(--sexyblue-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--sexyblue-1), black 35%);
+  --bg-accent:            var(--sexyblue-3);
+  --fg-brand:             var(--sexyblue-3);
+  --brand-glow:           color-mix(in oklch, var(--sexyblue-3), transparent 50%);
+}
+
+:root[data-primary="richgold"] {
+  --brand-primary:        var(--richgold-3);
+  --brand-primary-50:     color-mix(in oklch, var(--richgold-6), white 75%);
+  --brand-primary-100:    color-mix(in oklch, var(--richgold-6), white 55%);
+  --brand-primary-200:    color-mix(in oklch, var(--richgold-6), white 35%);
+  --brand-primary-300:    var(--richgold-5);
+  --brand-primary-400:    var(--richgold-4);
+  --brand-primary-500:    var(--richgold-3);
+  --brand-primary-600:    var(--richgold-2);
+  --brand-primary-700:    var(--richgold-1);
+  --brand-primary-800:    color-mix(in oklch, var(--richgold-1), black 20%);
+  --brand-primary-900:    color-mix(in oklch, var(--richgold-1), black 35%);
+  --bg-accent:            var(--richgold-3);
+  --fg-brand:             var(--richgold-3);
+  --brand-glow:           color-mix(in oklch, var(--richgold-3), transparent 50%);
+  --brand-on-primary:     #111111;
+}
+
+/* =========================================================================
+   Semantic / element-level helpers
+   Use these as classes OR copy the rules into component styles.
+   ========================================================================= */
+html, body {
+  font-family: var(--font-display);
+  color: var(--fg1);
+  background: var(--bg-app);
+  background-image: var(--bg-app-gradient);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.h1 {
+  font-size: var(--type-h1);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+  line-height: var(--leading-tight);
+}
+.h2 {
+  font-size: var(--type-h2);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.h3 {
+  font-size: var(--type-h3);
+  font-weight: var(--weight-bold);
+  color: var(--fg1);
+}
+.h4 {
+  font-size: var(--type-h4);
+  font-weight: var(--weight-bold);
+  color: var(--fg1);
+}
+.display-1 {
+  font-size: var(--type-display-1);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.display-2 {
+  font-size: var(--type-display-2);
+  font-weight: var(--weight-black);
+  line-height: var(--leading-none);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg1);
+}
+.body {
+  font-size: var(--type-body);
+  font-weight: var(--weight-medium);
+  color: var(--fg2);
+}
+.meta {
+  font-size: var(--type-meta);
+  font-weight: var(--weight-semibold);
+  color: var(--fg3);
+}
+.micro-label {
+  font-size: var(--type-micro);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--fg4);
+}
+
+/* Card primitives ----------------------------------------------------- */
+.card-glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur-strong));
+  -webkit-backdrop-filter: blur(var(--blur-strong));
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-glass);
+}
+.card-accent {
+  background: #10B981;
+  border-radius: var(--radius-2xl);
+  box-shadow:
+    var(--shadow-emerald-glow),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  color: var(--fg-inverse);
+  position: relative;
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.card-accent::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(255,255,255,0.18) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* Pill / chip --------------------------------------------------------- */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--type-meta);
+  font-weight: var(--weight-bold);
+  background: var(--bg-chip);
+  color: var(--fg2);
+}
+.pill--success { background: var(--brand-primary); color: #fff; }
+.pill--danger  { background: var(--semantic-danger-bg); color: var(--semantic-danger); }
+.pill--warning { background: var(--semantic-warning-bg); color: var(--semantic-warning); }
+
+/* Buttons ------------------------------------------------------------- */
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  background: #10B981;
+  color: var(--brand-on-primary);
+  font-weight: 800;
+  font-size: var(--type-body);
+  border: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  box-shadow:
+    var(--shadow-emerald-glow-sm),
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -2px 0 rgba(0,0,0,0.22),
+    inset 0 0 0 1px rgba(255,255,255,0.15);
+  background-image:
+    linear-gradient(to right,  rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 14px 14px;
+  cursor: pointer;
+  transition: filter 200ms cubic-bezier(.22,1,.36,1), transform 200ms;
+}
+.btn-primary:hover { filter: brightness(1.05); }
+:root[data-primary="richgold"] .btn-primary { text-shadow: none; }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-inverse {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 20px;
+  border-radius: var(--radius-lg);
+  background: #fff;
+  color: var(--brand-primary);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-body);
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+.btn-inverse:hover { background: var(--brand-primary-50); }
