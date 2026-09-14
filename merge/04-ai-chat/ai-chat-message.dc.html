@@ -1,0 +1,442 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Message" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+
+<style>
+body { background:#F8FAFC; font-family:'Montserrat',sans-serif; margin:0; }
+a { color:#059669; text-decoration:none; }
+a:hover { color:#047857; text-decoration:underline; }
+@keyframes acmIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes acmDot { 0%,80%,100% { transform:translateY(0); opacity:.35; } 40% { transform:translateY(-4px); opacity:1; } }
+@keyframes acmCaret { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+@keyframes acmSpin { to { transform:rotate(360deg); } }
+@keyframes acmPop { from { opacity:0; transform:scale(.85); } to { opacity:1; transform:scale(1); } }
+@keyframes acmSweep { 0% { transform:translateX(-100%); } 100% { transform:translateX(220%); } }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script><style>
+/* ai-chat-message v2 — component-local additions (plan: claude-design-frontend-pass).
+   Never edit inside a <style data-ds =...> block above; this is a new block. */
+.mb-btn, .mb-ai-btn, .btn-primary, .acm-reason-toggle, .acm-cite-chip {
+  position: relative;
+}
+.mb-btn::after, .mb-ai-btn::after, .btn-primary::after, .acm-reason-toggle::after, .acm-cite-chip::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+.mb-btn:focus-visible, .mb-ai-btn:focus-visible, .btn-primary:focus-visible, .acm-reason-toggle:focus-visible, .acm-cite-chip:focus-visible {
+  outline: 2px solid var(--brand-primary); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="animation:acm"] {
+    animation-duration: 0.01ms !important; /* motion-sweep: kept, reduced-motion reset floor value */
+    animation-iteration-count: 1 !important;
+  }
+  .mb-btn, .mb-ai-btn, .btn-primary, .acm-reason-toggle, .acm-cite-chip {
+    transition-duration: 0.01ms !important; /* motion-sweep: kept, reduced-motion reset floor value */
+  }
+}
+</style></helmet>
+
+<div style="min-height:100%; padding:40px 32px 72px; background:#F8FAFC; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%); font-family:'Montserrat',sans-serif;">
+  <div style="max-width:860px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
+
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.14em; color:#94A3B8;">Deha · Components</span>
+      <h1 style="margin:0; font-size:28px; font-weight:900; letter-spacing:-0.02em; color:#0F172A;">ai-chat-message</h1>
+      <p style="margin:0; max-width:60ch; font-size:14px; font-weight:500; line-height:1.6; color:#475569; text-wrap:pretty;">One message primitive for conversational surfaces: role, content, attachments, reasoning, citations and tool output — with the streaming, feedback and error states that go with them. Switch variants with the pills.</p>
+    </div>
+
+    <div class="pills-row" style="gap:8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="7">
+        <button class="{{ v.cls }}" onClick="{{ v.pick }}" style="cursor:pointer; font-family:'Montserrat'; transition:background var(--duration-base) var(--ease-out), color var(--duration-base), transform var(--duration-instant);" style-active="transform:scale(.96)">{{ v.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:10px; padding:2px 0 0;">
+      <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94A3B8;">States</span>
+      <div style="display:flex; flex-wrap:wrap; gap:6px;">
+        <sc-for list="{{ stateTags }}" as="t" hint-placeholder-count="3">
+          <span class="badge tag">{{ t }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="animation:acmIn var(--duration-360) var(--ease-out) both;" key="{{ active }}">
+
+      <!-- ── ASSISTANT ── -->
+      <sc-if value="{{ isAssistant }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="padding:2px 0;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#059669 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 12px rgba(16,185,129,.28); color:#fff; font-size:11px; font-weight:900; letter-spacing:0.02em;">AI</div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:13px; font-weight:800; color:#0F172A;">Deha Assistant</span>
+                  <span class="badge tag">gpt-4o</span>
+                  <span style="font-size:11px; font-weight:600; color:#94A3B8;">09:41</span>
+                </div>
+                <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty;">Three deals in your pipeline slipped past their expected close date this week. The largest is <strong style="font-weight:800; color:#0F172A;">Ravenna Holdings</strong> at $84,000, now 11 days overdue with no logged contact since the proposal.</div>
+                <ul style="margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:14px; font-weight:500; line-height:1.55; color:#475569;">
+                  <li>Ravenna Holdings — proposal sent, no reply</li>
+                  <li>Marlow &amp; Co — awaiting legal review</li>
+                  <li>Bright Harbor — decision maker on leave</li>
+                </ul>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                  <button class="mb-ai-btn" onClick="{{ goStreaming }}"><span class="material-icons mb-gradient-icon">auto_awesome</span><span class="mb-gradient-text">Draft follow-ups</span></button>
+                  <div style="width:1px; height:20px; background:#E2E8F0;"></div>
+                  <button class="mb-btn" onClick="{{ copy }}" title="Copy">
+                    <sc-if value="{{ copied }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="color:#059669; animation:acmPop var(--duration-240) var(--ease-bounce-glow) both;">check</span></sc-if>
+                    <sc-if value="{{ notCopied }}" hint-placeholder-val="{{ true }}"><span class="material-icons">content_copy</span></sc-if>
+                    {{ copyLabel }}
+                  </button>
+                  <button class="mb-btn" onClick="{{ goStreaming }}" title="Regenerate"><span class="material-icons">refresh</span></button>
+                  <button class="mb-btn" onClick="{{ thumbUp }}" title="Good response" style="{{ upStyle }}"><span class="material-icons" style="color: {{ upIcon }};">thumb_up</span></button>
+                  <button class="mb-btn" onClick="{{ thumbDown }}" title="Bad response" style="{{ downStyle }}"><span class="material-icons" style="color: {{ downIcon }};">thumb_down</span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── USER ── -->
+      <sc-if value="{{ isUser }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:14px; align-items:flex-end;">
+          <div style="max-width:78%; display:flex; gap:12px; align-items:flex-start; flex-direction:row-reverse;">
+            <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:#0F172A; color:#fff; font-size:11px; font-weight:900; box-shadow:inset 0 1px 0 rgba(255,255,255,.14), inset 0 -2px 0 rgba(0,0,0,.28);">EB</div>
+            <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+              <div style="background:#0F172A; color:#F8FAFC; border-radius:20px 20px 6px 20px; padding:14px 18px; font-size:15px; font-weight:500; line-height:1.55; box-shadow:inset 0 1px 0 rgba(255,255,255,.10), inset 0 -2px 0 rgba(0,0,0,.28), 0 6px 18px rgba(15,23,42,.12);">Which deals are at risk this week, and why?</div>
+              <div style="display:flex; align-items:center; gap:8px; padding:2px 6px 0;">
+                <span class="badge tag"><span class="material-icons">attach_file</span>pipeline-q3.csv</span>
+                <span style="font-size:11px; font-weight:600; color:#94A3B8;">Sent 09:40</span>
+                <span class="material-icons" style="font-size:14px; color:#10B981;">done_all</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="mb-btn"><span class="material-icons">edit</span>Edit</button>
+            <button class="mb-btn"><span class="material-icons">refresh</span>Resend</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── STREAMING ── -->
+      <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:2px 0;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#059669 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 12px rgba(16,185,129,.28); color:#fff; font-size:11px; font-weight:900;">AI</div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:12px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:13px; font-weight:800; color:#0F172A;">Deha Assistant</span>
+                  <span class="badge tag">{{ streamBadge }}</span>
+                </div>
+
+                <sc-if value="{{ isThinking }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:flex; flex-direction:column; gap:12px;">
+                    <div style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:#64748B;">
+                      <span style="display:inline-flex; gap:4px;">
+                        <i style="width:6px; height:6px; border-radius:50%; background:#10B981; animation:acmDot var(--duration-1100) var(--ease-in-out) infinite;"></i>
+                        <i style="width:6px; height:6px; border-radius:50%; background:#10B981; animation:acmDot var(--duration-1100) var(--ease-in-out) .15s infinite;"></i>
+                        <i style="width:6px; height:6px; border-radius:50%; background:#10B981; animation:acmDot var(--duration-1100) var(--ease-in-out) .3s infinite;"></i>
+                      </span>
+                      Thinking
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
+                      <div class="skel-bar w1" style="opacity:1; animation:shimmer 1.6s var(--ease-linear) infinite;"></div>
+                      <div class="skel-bar w3" style="opacity:1; animation:shimmer 1.6s var(--ease-linear) infinite;"></div>
+                      <div class="skel-bar w2" style="opacity:1; animation:shimmer 1.6s var(--ease-linear) infinite;"></div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ isTyping }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; min-height:72px; text-wrap:pretty;">{{ streamText }}<span style="display:inline-block; width:2px; height:1em; margin-left:2px; vertical-align:-2px; background:#10B981; animation:acmCaret var(--duration-900) steps(1) infinite;"></span></div>
+                </sc-if>
+
+                <sc-if value="{{ isStreamDone }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; min-height:72px; text-wrap:pretty;">{{ streamText }}</div>
+                </sc-if>
+
+                <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
+                  <sc-if value="{{ streamActive }}" hint-placeholder-val="{{ true }}">
+                    <button class="mb-btn" onClick="{{ stopStream }}"><span class="material-icons" style="color:#EF4444;">stop_circle</span>Stop</button>
+                  </sc-if>
+                  <sc-if value="{{ isStreamDone }}" hint-placeholder-val="{{ false }}">
+                    <button class="mb-btn" onClick="{{ startStream }}"><span class="material-icons">refresh</span>Regenerate</button>
+                  </sc-if>
+                  <span style="font-size:11px; font-weight:600; color:#94A3B8;">{{ streamMeta }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── REASONING ── -->
+      <sc-if value="{{ isReasoning }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:2px 0;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#059669 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 12px rgba(16,185,129,.28); color:#fff; font-size:11px; font-weight:900;">AI</div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:12px;">
+                <button class="acm-reason-toggle" onClick="{{ toggleReasoning }}" style="align-self:flex-start; display:inline-flex; align-items:center; gap:8px; padding:7px 14px 7px 12px; border-radius:9999px; border:1px solid #CBD5E1; background:#fff; cursor:pointer; font-family:'Montserrat'; font-size:12px; font-weight:800; color:#475569; box-shadow:inset 0 1px 0 rgba(255,255,255,1); transition:background var(--duration-140);" style-hover="background:#F8FAFC">
+                  <span class="material-icons mb-gradient-icon" style="font-size:15px;">psychology</span>
+                  <span>Reasoned for 6 seconds</span>
+                  <span class="material-icons" style="font-size:16px; color:#94A3B8;">{{ reasoningChevron }}</span>
+                </button>
+                <sc-if value="{{ reasoningOpen }}" hint-placeholder-val="{{ true }}">
+                  <div style="border-left:2px solid #D1FAE5; padding:2px 0 2px 16px; margin-left:6px; display:flex; flex-direction:column; gap:10px; animation:acmIn var(--duration-280) var(--ease-out) both;">
+                    <p style="margin:0; font-size:13px; font-weight:500; line-height:1.65; color:#64748B;">The user asked for risk, not a status list. Risk needs a threshold — I'll treat "expected close date passed with no contact in 7+ days" as the signal.</p>
+                    <p style="margin:0; font-size:13px; font-weight:500; line-height:1.65; color:#64748B;">Three records match. Ravenna is the outlier by value, so it should lead. Ordering the rest by days overdue rather than amount keeps the list actionable.</p>
+                  </div>
+                </sc-if>
+                <div style="height:1px; background:#E2E8F0;"></div>
+                <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty;">Ravenna Holdings is the one to act on today — $84,000, 11 days past close, silent since the proposal.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── SOURCES ── -->
+      <sc-if value="{{ isSources }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:2px 0;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#059669 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 12px rgba(16,185,129,.28); color:#fff; font-size:11px; font-weight:900;">AI</div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:12px;">
+                <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty;">Renewal rate across the enterprise tier held at 91% last quarter<sup style="color:#059669; font-weight:800;">1</sup>, while mid-market slipped four points after the pricing change<sup style="color:#059669; font-weight:800;">2</sup>.</div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94A3B8;">Sources</span>
+                  <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <sc-for list="{{ sources }}" as="s" hint-placeholder-count="3">
+                      <a href="#" class="acm-cite-chip" style="display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:9999px; border:1px solid #E2E8F0; background:#F8FAFC; text-decoration:none; transition:background var(--duration-140), border-color var(--duration-140), transform var(--duration-fast);" style-hover="background:#ECFDF5; border-color:#A7F3D0; transform:translateY(-1px)">
+                        <span style="display:grid; place-items:center; width:18px; height:18px; border-radius:9999px; background:#10B981; color:#fff; font-size:10px; font-weight:900;">{{ s.n }}</span>
+                        <span style="font-size:12px; font-weight:700; color:#334155;">{{ s.title }}</span>
+                        <span style="font-size:11px; font-weight:600; color:#94A3B8;">{{ s.meta }}</span>
+                      </a>
+                    </sc-for>
+                  </div>
+                </div>
+                <div class="ai-caveat" style="display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600; color:#94A3B8;">
+                  <span class="material-icons" style="font-size:14px;">info</span>
+                  Figures are drawn from internal reports and may lag the live dashboard.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── TOOL CALL ── -->
+      <sc-if value="{{ isTool }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:2px 0;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:linear-gradient(135deg,#6EE7B7 0%,#10B981 55%,#059669 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 4px 12px rgba(16,185,129,.28); color:#fff; font-size:11px; font-weight:900;">AI</div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:12px;">
+                <div style="position:relative; overflow:hidden; border:1px solid #E2E8F0; border-radius:16px; background:#F8FAFC; box-shadow:inset 0 1px 0 rgba(255,255,255,1);">
+                  <div style="display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #E2E8F0;">
+                    <sc-if value="{{ toolRunning }}" hint-placeholder-val="{{ true }}">
+                      <span class="material-icons" style="font-size:16px; color:#10B981; animation:acmSpin var(--duration-900) var(--ease-linear) infinite;">progress_activity</span>
+                    </sc-if>
+                    <sc-if value="{{ toolDone }}" hint-placeholder-val="{{ false }}">
+                      <span class="material-icons" style="font-size:16px; color:#059669; animation:acmPop var(--duration-260) var(--ease-bounce-glow) both;">check_circle</span>
+                    </sc-if>
+                    <span style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; font-weight:700; color:#0F172A;">query_pipeline</span>
+                    <span class="badge tag">{{ toolLabel }}</span>
+                    <button class="mb-btn" onClick="{{ runTool }}" style="margin-left:auto; padding:5px 10px; font-size:12px;"><span class="material-icons">play_arrow</span>Run again</button>
+                  </div>
+                  <div style="padding:12px 14px; display:flex; flex-direction:column; gap:8px;">
+                    <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94A3B8;">Arguments</span>
+                    <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.6; color:#475569; white-space:pre-wrap;">{ "stage": "proposal", "overdue_days": { "gte": 7 } }</pre>
+                    <sc-if value="{{ toolDone }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex; flex-direction:column; gap:8px; animation:acmIn var(--duration-slower) var(--ease-out) both;">
+                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.12em; color:#94A3B8;">Result</span>
+                        <pre style="margin:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; line-height:1.6; color:#334155; white-space:pre-wrap;">3 records · $141,500 total</pre>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{ toolRunning }}" hint-placeholder-val="{{ true }}">
+                    <div style="position:absolute; inset:0; pointer-events:none; overflow:hidden;">
+                      <div style="position:absolute; top:0; bottom:0; width:40%; background:linear-gradient(90deg, transparent, rgba(16,185,129,0.08), transparent); animation:acmSweep 1.4s var(--ease-in-out) infinite;"></div>
+                    </div>
+                  </sc-if>
+                </div>
+                <sc-if value="{{ toolDone }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:15px; font-weight:500; line-height:1.6; color:#334155; animation:acmIn var(--duration-320) var(--ease-out) var(--duration-80) both;">Three deals match. Ravenna Holdings carries $84,000 of the $141,500 at risk.</div>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ── ERROR ── -->
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:2px 0 2px 14px; border-left:2px solid #FCA5A5;">
+            <div style="display:flex; gap:14px; align-items:flex-start;">
+              <div style="flex:0 0 auto; width:34px; height:34px; border-radius:9999px; display:grid; place-items:center; background:#FEF2F2; border:1px solid #FCA5A5; color:#EF4444;"><span class="material-icons" style="font-size:18px;">priority_high</span></div>
+              <div style="flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="font-size:13px; font-weight:800; color:#0F172A;">Response interrupted</span>
+                  <span class="badge danger">timeout</span>
+                </div>
+                <div style="font-size:14px; font-weight:500; line-height:1.6; color:#475569; text-wrap:pretty;">The pipeline query took longer than 30 seconds and was cancelled. Nothing was written, and the partial answer above was discarded.</div>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:2px;">
+                  <button class="btn-primary" onClick="{{ goStreaming }}" style="padding:9px 16px; font-size:13px;"><span class="material-icons" style="font-size:16px;">refresh</span>Try again</button>
+                  <button class="mb-btn"><span class="material-icons">bug_report</span>Report</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <p style="margin:0; font-size:12px; font-weight:600; line-height:1.6; color:#94A3B8; text-wrap:pretty;">{{ note }}</p>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:940,&quot;height&quot;:720}}">
+const FULL = "Three deals slipped past their expected close date this week. Ravenna Holdings is the largest at $84,000 and has been silent for 11 days — that one needs a call today rather than another email.";
+
+const VARIANTS = [
+  { id: 'assistant', label: 'Assistant', tags: ['default', 'hover', 'copied', 'liked / disliked'], note: 'Default assistant turn. Action bar appears inline; copy confirms for 1.6s then reverts, feedback is a single-choice toggle.' },
+  { id: 'user',      label: 'User',      tags: ['sent', 'delivered', 'with attachment'], note: 'User turn is right-aligned, dark, and carries attachment and delivery metadata under the bubble.' },
+  { id: 'streaming', label: 'Streaming', tags: ['thinking', 'typing', 'stopped', 'complete'], note: 'Thinking uses the design system shimmer bars, then crossfades into a typed response with a caret. Stop halts mid-stream and leaves the partial text in place.' },
+  { id: 'reasoning', label: 'Reasoning', tags: ['collapsed', 'expanded'], note: 'Reasoning collapses behind a duration pill. Expanded, it sits on a hairline rule above the answer so the answer stays the focus.' },
+  { id: 'sources',   label: 'Sources',   tags: ['default', 'hover'], note: 'Numbered citations map to superscripts in the body. Chips lift on hover and carry the caveat line beneath.' },
+  { id: 'tool',      label: 'Tool call', tags: ['running', 'complete'], note: 'Tool output renders as an inner card: sweeping highlight while running, result block and summary on completion.' },
+  { id: 'error',     label: 'Error',     tags: ['timeout', 'retryable'], note: 'Error reuses the message frame with a danger shell so the failure reads as part of the thread, not a system banner.' },
+];
+
+class Component extends DCLogic {
+  state = { active: 'assistant', copied: false, feedback: null, reasoningOpen: true, phase: 'thinking', shown: 0, tool: 'running' };
+
+  componentWillUnmount() { this.clear(); }
+  clear() { clearTimeout(this._t); clearInterval(this._i); clearTimeout(this._c); clearTimeout(this._tool); }
+
+  pick(id) {
+    this.clear();
+    this.setState({ active: id, copied: false });
+    if (id === 'streaming') this.startStream();
+    if (id === 'tool') this.runTool();
+  }
+
+  startStream() {
+    this.clear();
+    this.setState({ phase: 'thinking', shown: 0 });
+    this._t = setTimeout(() => {
+      this.setState({ phase: 'typing' });
+      this._i = setInterval(() => {
+        this.setState(s => {
+          const n = s.shown + 2;
+          if (n >= FULL.length) { clearInterval(this._i); return { shown: FULL.length, phase: 'done' }; }
+          return { shown: n };
+        });
+      }, 24);
+    }, 1400);
+  }
+
+  runTool() {
+    clearTimeout(this._tool);
+    this.setState({ tool: 'running' });
+    this._tool = setTimeout(() => this.setState({ tool: 'done' }), 1800);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const v = VARIANTS.find(x => x.id === s.active) || VARIANTS[0];
+    const fb = (k, on, off) => s.feedback === k
+      ? { background: on.bg, borderColor: on.bd, color: on.fg, transform: 'scale(1.04)' }
+      : { color: '#475569' };
+    return {
+      active: s.active,
+      variants: VARIANTS.map(x => ({
+        label: x.label,
+        cls: 'pill-tab' + (x.id === s.active ? ' active' : ''),
+        pick: () => this.pick(x.id),
+      })),
+      stateTags: v.tags,
+      note: v.note,
+
+      isAssistant: s.active === 'assistant',
+      isUser: s.active === 'user',
+      isStreaming: s.active === 'streaming',
+      isReasoning: s.active === 'reasoning',
+      isSources: s.active === 'sources',
+      isTool: s.active === 'tool',
+      isError: s.active === 'error',
+
+      copied: s.copied,
+      notCopied: !s.copied,
+      copyLabel: s.copied ? 'Copied' : 'Copy',
+      copy: () => {
+        clearTimeout(this._c);
+        this.setState({ copied: true });
+        this._c = setTimeout(() => this.setState({ copied: false }), 1600);
+      },
+      upStyle: fb('up', { bg: '#ECFDF5', bd: '#6EE7B7', fg: '#059669' }),
+      downStyle: fb('down', { bg: '#FEF2F2', bd: '#FCA5A5', fg: '#EF4444' }),
+      upIcon: s.feedback === 'up' ? '#059669' : '#475569',
+      downIcon: s.feedback === 'down' ? '#EF4444' : '#475569',
+      thumbUp: () => this.setState(p => ({ feedback: p.feedback === 'up' ? null : 'up' })),
+      thumbDown: () => this.setState(p => ({ feedback: p.feedback === 'down' ? null : 'down' })),
+      goStreaming: () => this.pick('streaming'),
+
+      streamText: FULL.slice(0, s.shown),
+      isThinking: s.phase === 'thinking',
+      isTyping: s.phase === 'typing',
+      isStreamDone: s.phase === 'done' || s.phase === 'stopped',
+      streamActive: s.phase === 'thinking' || s.phase === 'typing',
+      mbCls: 'mb' + (s.phase === 'thinking' || s.phase === 'typing' ? ' generating' : ''),
+      streamBadge: s.phase === 'thinking' ? 'thinking' : s.phase === 'typing' ? 'streaming' : s.phase === 'stopped' ? 'stopped' : 'complete',
+      streamMeta: s.phase === 'stopped' ? 'Stopped by you' : s.phase === 'done' ? '284 tokens · 1.9s' : 'Generating…',
+      startStream: () => this.startStream(),
+      stopStream: () => { this.clear(); this.setState({ phase: 'stopped' }); },
+
+      reasoningOpen: s.reasoningOpen,
+      reasoningChevron: s.reasoningOpen ? 'expand_less' : 'expand_more',
+      toggleReasoning: () => this.setState(p => ({ reasoningOpen: !p.reasoningOpen })),
+
+      sources: [
+        { n: 1, title: 'Q3 Renewals Report', meta: 'internal · Jul 2026' },
+        { n: 2, title: 'Pricing Change Impact', meta: 'internal · Aug 2026' },
+        { n: 3, title: 'Mid-Market Churn Log', meta: 'CRM export' },
+      ],
+
+      toolRunning: s.tool === 'running',
+      toolDone: s.tool === 'done',
+      toolLabel: s.tool === 'running' ? 'running' : 'complete',
+      runTool: () => this.runTool(),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

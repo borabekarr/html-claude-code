@@ -1,0 +1,386 @@
+<!-- @dsCard group="Merge - cards" name="Image Card" subtitle="-> Cards" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; font-family: 'Montserrat', system-ui, sans-serif; background: var(--bg-app, #fff); }
+  a { color: var(--fg3, #64748B); text-decoration: underline; text-underline-offset: 2px; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: var(--brand-primary, #10B981); }
+  }
+  @keyframes ic-shimmer { from { background-position: -260px 0; } to { background-position: 340px 0; } }
+  @keyframes ic-spin { to { transform: rotate(360deg); } }
+  @keyframes ic-pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+  @keyframes ic-float { 0%,100% { transform: translate3d(0,0,0) scale(1); } 50% { transform: translate3d(0,-10px,0) scale(1.04); } }
+  @keyframes ic-drift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(14px,10px,0); } }
+  .ic-tab:focus-visible,
+  .ic-cta:focus-visible,
+  .btn-cta:focus-visible,
+  .ic-replay-btn:focus-visible {
+    outline: 2px solid var(--brand-primary, #10B981);
+    outline-offset: 2px;
+  }
+  .ic-tab,
+  .ic-replay-btn {
+    position: relative;
+  }
+  .ic-tab::after,
+  .ic-replay-btn::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ic-shimmer-skel,
+    [style*="animation"] {
+      animation: none !important;
+    }
+    [style*="transition"] {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 40px 40px 64px; box-sizing: border-box; background-image: var(--bg-section-grid); background-size: var(--bg-section-grid-size);">
+  <div style="max-width: 1180px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px;">
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <span class="micro-label">Components / New</span>
+      <h1 class="h1" style="margin: 0;">Image Card</h1>
+      <p class="body" style="margin: 0; max-width: 620px; text-wrap: pretty;">A media-led card: gradient hero, title and byline, description, caveat, and a single primary action. Switch usage areas with the pills — the card cross-fades and re-themes.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button class="{{ v.tabClass }} ic-tab" onClick="{{ v.onPick }}" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+          <span class="material-icons" style="font-size: 15px;">{{ v.icon }}</span>{{ v.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start;">
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <span class="pills-label">Live — hover, click, focus</span>
+        <div class="card-inner" onMouseEnter="{{ onEnter }}" onMouseLeave="{{ onLeave }}" style="{{ cardStyle }}">
+          <div style="{{ mediaStyle }}">
+            <div style="{{ blob1Style }}"></div>
+            <div style="{{ blob2Style }}"></div>
+            <div style="{{ glyphStyle }}">
+              <span class="material-icons" style="font-size: 44px; color: #fff;">{{ v.glyph }}</span>
+            </div>
+            <div style="{{ mediaBadgeStyle }}">
+              <span class="badge-event" style="{{ badgeStyle }}"><span class="material-icons">{{ v.badgeIcon }}</span>{{ v.badge }}</span>
+            </div>
+            <div style="{{ shimmerStyle }}"></div>
+          </div>
+
+          <div style="{{ bodyStyle }}">
+            <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
+              <h3 class="h3" style="margin: 0; font-weight: 900; letter-spacing: -0.02em;">{{ v.title }}</h3>
+              <span class="meta" style="font-weight: 600;">{{ v.by }}</span>
+            </div>
+
+            <p class="body" style="margin: 0; text-align: center; line-height: 1.55; color: var(--fg3, #64748B); text-wrap: pretty;">{{ v.desc }}</p>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;">
+              <sc-for list="{{ v.tags }}" as="t" hint-placeholder-count="3">
+                <span class="badge tag"><span class="material-icons">{{ t.icon }}</span>{{ t.label }}</span>
+              </sc-for>
+            </div>
+
+            <div style="height: 1px; background: var(--border-hairline, #E2E8F0); margin: 2px 0;"></div>
+
+            <p style="margin: 0; text-align: center; font-size: 11px; font-weight: 500; line-height: 1.5; color: var(--fg4, #94A3B8);">{{ v.caveat }} <a href="#terms">terms</a>.</p>
+
+            <button class="btn-cta ic-cta" onClick="{{ onCta }}" style="{{ ctaStyle }}">
+              <span style="{{ ctaLabelStyle }}">
+                <span class="material-icons" style="font-size: 17px;">{{ v.ctaIcon }}</span>{{ v.cta }}
+              </span>
+              <span style="{{ spinnerStyle }}"></span>
+              <span class="material-icons" style="{{ checkStyle }}">check</span>
+            </button>
+
+            <p style="margin: 0; text-align: center; font-size: 11px; font-weight: 600; color: var(--fg4, #94A3B8);">{{ v.footer }} <a href="#open">{{ v.footerLink }}</a>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; flex: 1 1 420px; min-width: 360px;">
+        <span class="pills-label">States</span>
+        <div class="card-inner" style="display: flex; flex-direction: column; gap: 18px; border-radius: 20px;">
+          <sc-for list="{{ stateRows }}" as="s" hint-placeholder-count="5">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 116px; flex: none; display: flex; flex-direction: column; gap: 2px;">
+                <span style="font-size: 12px; font-weight: 800; color: var(--fg1, #0F172A);">{{ s.name }}</span>
+                <span style="font-size: 10.5px; font-weight: 600; color: var(--fg4, #94A3B8); line-height: 1.35;">{{ s.note }}</span>
+              </div>
+              <div style="flex: 1; display: flex; align-items: center;">
+                <button class="btn-cta" style="{{ s.style }}">
+                  <span style="{{ s.labelStyle }}"><span class="material-icons" style="font-size: 17px;">{{ s.icon }}</span>{{ s.label }}</span>
+                  <span style="{{ s.spinnerStyle }}"></span>
+                  <span class="material-icons" style="{{ s.checkStyle }}">check</span>
+                </button>
+              </div>
+            </div>
+          </sc-for>
+
+          <div style="height: 1px; background: var(--border-hairline, #E2E8F0);"></div>
+
+          <div style="display: flex; align-items: flex-start; gap: 16px;">
+            <div style="width: 116px; flex: none; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 12px; font-weight: 800; color: var(--fg1, #0F172A);">Skeleton</span>
+              <span style="font-size: 10.5px; font-weight: 600; color: var(--fg4, #94A3B8); line-height: 1.35;">Media + copy loading</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div style="height: 76px; border-radius: 14px; background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 40%, #F1F5F9 80%); background-size: 600px 100%; animation: ic-shimmer var(--duration-1100) linear infinite;" class="ic-shimmer-skel"></div>
+              <div style="height: 12px; width: 55%; border-radius: 6px; background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 40%, #F1F5F9 80%); background-size: 600px 100%; animation: ic-shimmer var(--duration-1100) linear infinite;" class="ic-shimmer-skel"></div>
+              <div style="height: 12px; width: 80%; border-radius: 6px; background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 40%, #F1F5F9 80%); background-size: 600px 100%; animation: ic-shimmer var(--duration-1100) linear infinite;" class="ic-shimmer-skel"></div>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: var(--border-hairline, #E2E8F0);"></div>
+
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 116px; flex: none; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 12px; font-weight: 800; color: var(--fg1, #0F172A);">Card hover</span>
+              <span style="font-size: 10.5px; font-weight: 600; color: var(--fg4, #94A3B8); line-height: 1.35;">Lift 4px, media zoom, glow</span>
+            </div>
+            <button class="btn-glass ic-replay-btn" onClick="{{ onReload }}" style="cursor: pointer;">
+              <span class="material-icons btn-mi">refresh</span>Replay load
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:900},&quot;defaultVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;agent&quot;,&quot;product&quot;,&quot;event&quot;,&quot;person&quot;,&quot;media&quot;],&quot;default&quot;:&quot;agent&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;cardWidth&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:340,&quot;max&quot;:520,&quot;step&quot;:10,&quot;default&quot;:420,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;}}">
+const VARIANTS = [
+  {
+    id: 'agent', label: 'AI agent', icon: 'smart_toy', accent: '#10B981', glyph: 'blur_on',
+    badge: 'Third-party', badgeIcon: 'verified_user',
+    title: 'Reaper', by: 'by Liam',
+    desc: 'Find recurring work, tools, processes, and obligations that no longer justify their existence. Isolated: talks only to the owner, never joins groups.',
+    tags: [{ icon: 'bolt', label: 'Automation' }, { icon: 'lock', label: 'Isolated' }, { icon: 'update', label: 'Weekly' }],
+    caveat: 'This AI bot was created by a third-party user. It may act on your behalf. By adding it, you accept the',
+    cta: 'Add to workspace', ctaIcon: 'add_circle',
+    footer: "Didn't open? Install it, or", footerLink: 'open it'
+  },
+  {
+    id: 'product', label: 'Product', icon: 'shopping_bag', accent: '#0F172A', glyph: 'headphones',
+    badge: 'In stock', badgeIcon: 'inventory_2',
+    title: 'Bora Studio Pro', by: 'Deha Audio · $349',
+    desc: 'Reference-tuned monitors with adaptive room correction. Ships with the calibration mic and a two-year studio warranty.',
+    tags: [{ icon: 'local_shipping', label: 'Free shipping' }, { icon: 'star', label: '4.8 · 1.2k' }],
+    caveat: 'Prices include VAT. Returns accepted within 30 days of delivery under our',
+    cta: 'Add to cart', ctaIcon: 'add_shopping_cart',
+    footer: 'Delivered in 2–4 days, or', footerLink: 'pick up in store'
+  },
+  {
+    id: 'event', label: 'Event', icon: 'event', accent: '#F97316', glyph: 'campaign',
+    badge: '12 Oct · 18:00', badgeIcon: 'schedule',
+    title: 'Systems in Practice', by: 'Deha Design · Istanbul',
+    desc: 'A two-hour working session on component APIs, token hygiene, and keeping a design system honest as the product grows.',
+    tags: [{ icon: 'place', label: 'Karaköy' }, { icon: 'group', label: '48 seats' }],
+    caveat: 'Seats are released 48 hours before the session. Cancellation follows the event',
+    cta: 'Reserve a seat', ctaIcon: 'confirmation_number',
+    footer: 'Can’t attend live? The recording is', footerLink: 'here'
+  },
+  {
+    id: 'person', label: 'Profile', icon: 'person', accent: '#EAB308', glyph: 'account_circle',
+    badge: 'Available', badgeIcon: 'circle',
+    title: 'Selin Aydın', by: 'Product Designer · Deha',
+    desc: 'Works on the design system and the pipeline surfaces. Currently taking two new internal projects per quarter.',
+    tags: [{ icon: 'palette', label: 'Design systems' }, { icon: 'insights', label: 'Data UI' }],
+    caveat: 'Contact details are shared with your workspace admins under the internal directory',
+    cta: 'Send a message', ctaIcon: 'chat_bubble',
+    footer: 'Usually replies same day, or', footerLink: 'book a slot'
+  },
+  {
+    id: 'media', label: 'Course', icon: 'play_circle', accent: '#EF4444', glyph: 'movie',
+    badge: '6 lessons', badgeIcon: 'playlist_play',
+    title: 'Motion for Interfaces', by: 'with Mert Kaya',
+    desc: 'Timing, easing, and restraint. Build a motion language that survives a real product instead of a portfolio shot.',
+    tags: [{ icon: 'timer', label: '3h 20m' }, { icon: 'workspace_premium', label: 'Certificate' }],
+    caveat: 'Access does not expire. Progress syncs across devices as described in the course',
+    cta: 'Start watching', ctaIcon: 'play_arrow',
+    footer: 'Prefer to read? The transcript is', footerLink: 'available'
+  }
+];
+
+const glow = (hex, a) => {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+};
+
+class Component extends DCLogic {
+  state = { id: null, fading: false, hovered: false, cta: 'idle', loading: true };
+
+  componentDidMount() { this.timers = []; this.startLoad(); }
+  componentWillUnmount() { (this.timers || []).forEach(clearTimeout); }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  startLoad() {
+    this.setState({ loading: true });
+    this.later(() => this.setState({ loading: false }), 900);
+  }
+
+  current() {
+    const id = this.state.id || this.props.defaultVariant || 'agent';
+    return VARIANTS.find(v => v.id === id) || VARIANTS[0];
+  }
+
+  pick(id) {
+    if (id === this.current().id) return;
+    this.setState({ fading: true, cta: 'idle' });
+    this.later(() => { this.setState({ id, fading: false }); this.startLoad(); }, 170);
+  }
+
+  fireCta() {
+    if (this.state.cta !== 'idle') return;
+    this.setState({ cta: 'loading' });
+    this.later(() => this.setState({ cta: 'done' }), 1200);
+    this.later(() => this.setState({ cta: 'idle' }), 3000);
+  }
+
+  ctaStyleFor(accent, state) {
+    const wide = state === 'idle';
+    return `--accent: ${accent}; --ctaglow: ${glow(accent, 0.55)}; position: relative; width: ${wide ? '100%' : '64px'};`
+      + ` align-self: center; ${wide ? '' : 'padding: 0;'}`
+      + ` background-color: ${state === 'done' ? '#10B981' : accent};`
+      + ` transition: width var(--duration-340) var(--ease-spring-firm), background-color var(--duration-slower) ease, filter var(--duration-200), transform var(--duration-180) var(--ease-out), box-shadow var(--duration-200);`;
+  }
+  labelStyleFor(state) {
+    const on = state === 'idle';
+    return `display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;`
+      + ` opacity: ${on ? 1 : 0}; transform: scale(${on ? 1 : 0.84});`
+      + ` transition: opacity var(--duration-180) var(--ease-out), transform var(--duration-260) var(--ease-spring-firm);`;
+  }
+  spinnerStyleFor(state) {
+    const on = state === 'loading';
+    return `position: absolute; inset: 0; margin: auto; width: 20px; height: 20px; border-radius: 50%;`
+      + ` border: 2.5px solid rgba(255,255,255,0.28); border-top-color: #fff;`
+      + ` opacity: ${on ? 1 : 0}; animation: ic-spin var(--duration-800) linear infinite;`
+      + ` transition: opacity var(--duration-180) ease; pointer-events: none;`;
+  }
+  checkStyleFor(state) {
+    const on = state === 'done';
+    return `position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; color: #fff;`
+      + ` opacity: ${on ? 1 : 0}; transform: scale(${on ? 1 : 0.8});`
+      + ` animation: ${on ? 'ic-pop var(--duration-320) var(--ease-spring-firm)' : 'none'};`
+      + ` transition: opacity var(--duration-180) ease, transform var(--duration-260) var(--ease-spring-firm); pointer-events: none;`;
+  }
+
+  renderVals() {
+    const v = this.current();
+    const { fading, hovered, cta, loading } = this.state;
+    const width = this.props.cardWidth || 420;
+    const a = v.accent;
+
+    const variants = VARIANTS.map(x => ({
+      label: x.label, icon: x.icon,
+      tabClass: 'pill-tab' + (x.id === v.id ? ' active' : ''),
+      onPick: () => this.pick(x.id)
+    }));
+
+    const stateRows = ['idle', 'loading', 'done'].map(s => ({
+      name: s === 'idle' ? 'Idle' : s === 'loading' ? 'Loading' : 'Success',
+      note: s === 'idle' ? 'Hover lifts, active scales' : s === 'loading' ? 'Compresses to spinner' : 'Emerald + check pop',
+      icon: v.ctaIcon, label: v.cta,
+      style: this.ctaStyleFor(a, s) + (s === 'idle' ? ' width: 220px;' : ''),
+      labelStyle: this.labelStyleFor(s),
+      spinnerStyle: this.spinnerStyleFor(s),
+      checkStyle: this.checkStyleFor(s)
+    }));
+    stateRows.push({
+      name: 'Disabled', note: 'Not entitled / sold out',
+      icon: 'block', label: 'Unavailable',
+      style: `--accent: #CBD5E1; --ctaglow: rgba(0,0,0,0); position: relative; width: 220px; background-color: #E2E8F0; color: #94A3B8; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.06); text-shadow: none; cursor: not-allowed; pointer-events: none;`,
+      labelStyle: this.labelStyleFor('idle'),
+      spinnerStyle: this.spinnerStyleFor('x'),
+      checkStyle: this.checkStyleFor('x')
+    });
+
+    return {
+      v, variants, stateRows,
+      onEnter: () => this.setState({ hovered: true }),
+      onLeave: () => this.setState({ hovered: false }),
+      onCta: () => this.fireCta(),
+      onReload: () => this.startLoad(),
+
+      cardStyle: `width: ${width}px; padding: 0; overflow: hidden; border-radius: 26px;`
+        + ` background: var(--card-bg, #FBFBF9); border: 1px solid var(--card-border, #E2E8F0);`
+        + ` transform: translateY(${hovered ? -4 : 0}px);`
+        + ` box-shadow: 0 ${hovered ? 26 : 14}px ${hovered ? 60 : 34}px -18px ${glow(a, hovered ? 0.42 : 0.22)}, inset 0 0 0 1px rgba(15,23,42,0.04);`
+        + ` transition: transform var(--duration-slower) var(--ease-out), box-shadow var(--duration-slower) var(--ease-out);`,
+
+      mediaStyle: `position: relative; height: 210px; overflow: hidden; background: ${glow(a, 0.10)};`
+        + ` transition: background var(--duration-420) ease;`,
+
+      blob1Style: `position: absolute; width: 340px; height: 340px; left: -40px; top: -80px; border-radius: 50%;`
+        + ` background: radial-gradient(circle, ${glow(a, 0.85)} 0%, ${glow(a, 0.18)} 62%, transparent 72%);`
+        + ` filter: blur(28px); animation: ic-float 7s ease-in-out infinite;`
+        + ` transform: scale(${hovered ? 1.12 : 1}); transition: transform var(--duration-560) var(--ease-out);`,
+
+      blob2Style: `position: absolute; width: 260px; height: 260px; right: -60px; bottom: -90px; border-radius: 50%;`
+        + ` background: radial-gradient(circle, ${glow(a, 0.55)} 0%, transparent 70%);`
+        + ` filter: blur(34px); animation: ic-drift 9s ease-in-out infinite;`,
+
+      glyphStyle: `position: absolute; inset: 0; margin: auto; width: 96px; height: 96px; border-radius: 50%;`
+        + ` display: grid; place-items: center; background: ${a};`
+        + ` box-shadow: 0 14px 34px -10px ${glow(a, 0.7)}, inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.18);`
+        + ` transform: scale(${hovered ? 1.07 : 1}) translateY(${hovered ? -2 : 0}px);`
+        + ` transition: transform var(--duration-420) var(--ease-spring-firm), background var(--duration-420) ease;`,
+
+      mediaBadgeStyle: `position: absolute; top: 14px; left: 14px;`
+        + ` opacity: ${hovered ? 1 : 0.92}; transform: translateY(${hovered ? 0 : -2}px); transition: opacity var(--duration-260) ease, transform var(--duration-260) ease;`,
+      badgeStyle: `background-color: ${a};`,
+
+      shimmerStyle: `position: absolute; inset: 0; pointer-events: none;`
+        + ` background: linear-gradient(90deg, #F1F5F9 0%, #E2E8F0 45%, #F1F5F9 90%); background-size: 620px 100%;`
+        + ` animation: ic-shimmer var(--duration-1100) linear infinite;`
+        + ` opacity: ${loading ? 1 : 0}; transition: opacity var(--duration-420) ease;`,
+
+      bodyStyle: `display: flex; flex-direction: column; gap: 14px; padding: 26px 26px 22px;`
+        + ` opacity: ${fading ? 0 : 1}; transform: translateY(${fading ? 8 : 0}px);`
+        + ` transition: opacity var(--duration-200) ease, transform var(--duration-260) var(--ease-out);`,
+
+      ctaStyle: this.ctaStyleFor(a, cta),
+      ctaLabelStyle: this.labelStyleFor(cta),
+      spinnerStyle: this.spinnerStyleFor(cta),
+      checkStyle: this.checkStyleFor(cta)
+    };
+  }
+}
+
+</script>
+</body>
+</html>

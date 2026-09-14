@@ -1,0 +1,413 @@
+<!-- @dsCard group="Merge - animations" name="Page Shimmer Skeleton" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_metric-circle.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+<style>
+@keyframes sk-sweep { 0% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+@keyframes sk-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes sk-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes sk-bar { from { transform: scaleY(0.05); } to { transform: scaleY(1); } }
+body { margin: 0; background: #F8FAFC; --sk-bg: linear-gradient(90deg, #EEF2F7 0%, #E2E8F0 22%, #F8FAFC 42%, #E2E8F0 62%, #EEF2F7 100%); --sk-a: sk-sweep 1500ms linear infinite; } /* motion-sweep: kept -- JS-driven token resting default (undefined-tokens fix); shimmer sweep has no matching DS duration tier */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } /* motion-sweep: kept -- reduced-motion floor, not a real timing value */
+}
+.ps-btn-44 { position: relative; }
+.ps-btn-44::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:32px 28px 56px;font-family:'Montserrat',sans-serif;background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%)">
+<div style="max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+
+  <header style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="badge" style="background:#10B981;color:#fff;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15);padding:3px 9px;letter-spacing:0.04em"><span class="material-icons">auto_awesome</span> NEW</span>
+      <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#94A3B8">ui/unlumen/shimmer-skeleton</span>
+    </div>
+    <h1 style="margin:0;font-size:28px;font-weight:900;letter-spacing:-0.02em;color:#0F172A">Page Shimmer Skeleton</h1>
+    <p style="margin:0;max-width:620px;font-size:14px;font-weight:500;line-height:1.6;color:#475569;text-wrap:pretty">A loading placeholder that mirrors the shape of the content it replaces. Each variant swaps its skeleton for the real card, pills, tags and buttons once data arrives.</p>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between">
+    <div class="pills-row" role="tablist">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="6">
+        <span class="pill-tab" style="{{ tab.style }}" onClick="{{ tab.onClick }}" role="tab">{{ tab.label }}</span>
+      </sc-for>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn-primary ps-btn-44" style="padding:9px 16px;font-size:13px" onClick="{{ reload }}"><span class="material-icons" style="font-size:16px">refresh</span> Reload</button>
+    </div>
+  </div>
+
+  <div style="{{ skVars }}" class="card-inner">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--card-border)">
+      <div>
+        <span class="pills-label" style="margin:0">{{ variantKicker }}</span>
+        <div style="font-size:15px;font-weight:800;color:#0F172A;margin-top:4px">{{ variantTitle }}</div>
+      </div>
+      <span class="badge tag" style="{{ statusStyle }}"><span class="material-icons">{{ statusIcon }}</span> {{ statusLabel }}</span>
+    </div>
+
+    <!-- CARD -->
+    <sc-if value="{{ isCard }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ three }}" as="i" hint-placeholder-count="3">
+            <div class="card-inner" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="height:120px;border-radius:14px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="display:flex;gap:8px">
+                <div style="height:20px;width:64px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+                <div style="height:20px;width:48px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              </div>
+              <div style="height:16px;width:78%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:12px;width:100%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:12px;width:58%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:40px;width:132px;border-radius:14px;margin-top:4px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ listings }}" as="it" hint-placeholder-count="3">
+            <div class="card-inner" style="padding:16px;display:flex;flex-direction:column;gap:10px;animation:sk-in var(--duration-compact) var(--ease-out) both">
+              <div style="height:120px;border-radius:14px;background:linear-gradient(135deg,#D1FAE5,#A7F3D0);display:grid;place-items:center;color:#047857"><span class="material-icons" style="font-size:34px">home_work</span></div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <span class="badge" style="background:#10B981;color:#fff;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15);padding:3px 9px"><span class="material-icons">trending_up</span> {{ it.delta }}</span>
+                <span class="badge tag"><span class="material-icons">sell</span> {{ it.tag }}</span>
+              </div>
+              <div style="font-size:15px;font-weight:800;color:#0F172A">{{ it.title }}</div>
+              <div style="font-size:12px;font-weight:500;line-height:1.5;color:#64748B">{{ it.desc }}</div>
+              <button class="btn-primary ps-btn-44" style="align-self:flex-start;margin-top:4px;padding:10px 16px;font-size:13px"><span class="material-icons" style="font-size:16px">visibility</span> View detail</button>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- LIST -->
+    <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ five }}" as="i" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--card-border);border-radius:16px">
+              <div style="width:44px;height:44px;flex:none;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+                <div style="height:14px;width:42%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+                <div style="height:11px;width:66%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              </div>
+              <div style="height:22px;width:80px;flex:none;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ leads }}" as="p" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--card-border);border-radius:16px;background:var(--card-bg);animation:sk-in var(--duration-compact) var(--ease-out) both">
+              <div style="width:44px;height:44px;flex:none;border-radius:9999px;background:#ECFDF5;color:#047857;display:grid;place-items:center;font-weight:900;font-size:14px">{{ p.initials }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:14px;font-weight:800;color:#0F172A">{{ p.name }}</div>
+                <div style="font-size:12px;font-weight:500;color:#64748B;margin-top:2px">{{ p.meta }}</div>
+              </div>
+              <span class="pill-priority"><span class="dot" style="{{ p.dotStyle }}"></span> {{ p.priority }}</span>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- TABLE -->
+    <sc-if value="{{ isTable }}" hint-placeholder-val="{{ false }}">
+      <div style="border:1px solid var(--card-border);border-radius:16px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;padding:12px 16px;background:#F1F5F9">
+          <sc-for list="{{ cols }}" as="c" hint-placeholder-count="4">
+            <span class="pills-label" style="margin:0">{{ c }}</span>
+          </sc-for>
+        </div>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ six }}" as="i" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;padding:14px 16px;border-top:1px solid var(--card-border);align-items:center">
+              <div style="height:13px;width:74%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:13px;width:52%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:22px;width:104px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:13px;width:44%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;padding:14px 16px;border-top:1px solid var(--card-border);align-items:center;background:var(--card-bg);animation:sk-in var(--duration-sweep) var(--ease-out) both">
+              <span style="font-size:13px;font-weight:700;color:#0F172A">{{ r.deal }}</span>
+              <span style="font-size:13px;font-weight:600;color:#475569">{{ r.owner }}</span>
+              <span class="badge col-tag" style="{{ r.stageStyle }}"><span class="material-icons">bolt</span> {{ r.stage }}</span>
+              <span style="font-size:13px;font-weight:800;color:#059669;font-variant-numeric:tabular-nums">{{ r.value }}</span>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- PROFILE -->
+    <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="height:120px;border-radius:20px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+          <div style="display:flex;align-items:flex-end;gap:16px;margin-top:-58px;padding:0 20px">
+            <div style="width:92px;height:92px;border-radius:9999px;border:4px solid #fff;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px;padding-bottom:6px">
+              <div style="height:18px;width:180px;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:12px;width:120px;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+            <div style="height:40px;width:120px;border-radius:14px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+          </div>
+          <div style="display:flex;gap:8px;padding:0 20px">
+            <sc-for list="{{ four }}" as="i" hint-placeholder-count="4">
+              <div style="height:24px;width:78px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:18px;animation:sk-in var(--duration-compact) var(--ease-out) both">
+          <div class="card-accent" style="height:120px;border-radius:20px;padding:0"></div>
+          <div style="display:flex;align-items:flex-end;gap:16px;margin-top:-58px;padding:0 20px;flex-wrap:wrap">
+            <div style="width:92px;height:92px;border-radius:9999px;border:4px solid #fff;background:#ECFDF5;color:#047857;display:grid;place-items:center;font-size:28px;font-weight:900">EA</div>
+            <div style="flex:1;min-width:180px;padding-bottom:6px">
+              <div style="font-size:20px;font-weight:900;color:#0F172A;letter-spacing:-0.02em">Elif Aydın</div>
+              <div style="font-size:12px;font-weight:600;color:#64748B;margin-top:3px">Senior Broker · Istanbul</div>
+            </div>
+            <button class="btn-primary ps-btn-44" style="padding:11px 18px;font-size:13px"><span class="material-icons" style="font-size:16px">chat_bubble</span> Message</button>
+          </div>
+          <div class="pills-row" style="padding:0 20px">
+            <span class="badge gci"><span>$</span> 45K GCI</span>
+            <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+            <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+            <span class="badge tag"><span class="material-icons">volunteer_activism</span> Nurture</span>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- DASHBOARD -->
+    <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+          <sc-for list="{{ four }}" as="i" hint-placeholder-count="4">
+            <div class="card-inner" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:12px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+                <div style="height:11px;width:84px;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              </div>
+              <div style="height:34px;width:104px;border-radius:8px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:20px;width:62px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="4">
+            <div class="card-inner" style="padding:16px;display:flex;flex-direction:column;gap:10px;animation:sk-in var(--duration-sweep) var(--ease-out) both">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:12px;background:#ECFDF5;color:#047857;display:grid;place-items:center"><span class="material-icons" style="font-size:19px">{{ m.icon }}</span></div>
+                <span class="pills-label" style="margin:0">{{ m.label }}</span>
+              </div>
+              <div style="font-size:32px;font-weight:900;letter-spacing:-0.02em;color:#0F172A;line-height:1">{{ m.value }}</div>
+              <span class="badge" style="background:#10B981;color:#fff;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15);padding:3px 9px;align-self:flex-start"><span class="material-icons">trending_up</span> {{ m.delta }}</span>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- CHART -->
+    <sc-if value="{{ isChart }}" hint-placeholder-val="{{ false }}">
+      <div class="card-inner" style="padding:18px">
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="height:14px;width:150px;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+              <div style="height:22px;width:96px;border-radius:9999px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:12px;height:200px">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+                <div style="{{ b.skStyle }}"></div>
+              </sc-for>
+            </div>
+            <div style="height:11px;width:100%;border-radius:6px;background:var(--sk-bg);background-size:200% 100%;animation:var(--sk-a)"></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:16px;animation:sk-in var(--duration-compact) var(--ease-out) both">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div style="font-size:15px;font-weight:800;color:#0F172A">Closed volume · last 8 weeks</div>
+              <span class="badge" style="background:#10B981;color:#fff;box-shadow:inset 0 -2px 5px rgba(0,0,0,0.14), inset 0 -1px 0 rgba(255,255,255,0.15);padding:3px 9px"><span class="material-icons">trending_up</span> +18.4%</span>
+            </div>
+            <div style="display:flex;align-items:flex-end;gap:12px;height:200px">
+              <sc-for list="{{ bars }}" as="b" hint-placeholder-count="8">
+                <div style="{{ b.liveStyle }}"></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:#94A3B8;letter-spacing:0.1em">
+              <sc-for list="{{ weeks }}" as="w" hint-placeholder-count="8">
+                <span>{{ w }}</span>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:14px">
+    <sc-for list="{{ notes }}" as="n" hint-placeholder-count="3">
+      <div class="card-inner" style="flex:1 1 260px;padding:14px 16px">
+        <span class="pills-label" style="margin:0">{{ n.k }}</span>
+        <div style="font-size:12px;font-weight:500;line-height:1.55;color:#475569;margin-top:6px">{{ n.v }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;speedMs&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1500,&quot;min&quot;:600,&quot;max&quot;:3000,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Animation&quot;},&quot;baseColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#EEF2F7&quot;,&quot;options&quot;:[&quot;#EEF2F7&quot;,&quot;#E2E8F0&quot;,&quot;#ECFDF5&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Animation&quot;},&quot;highlightColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F8FAFC&quot;,&quot;options&quot;:[&quot;#F8FAFC&quot;,&quot;#FFFFFF&quot;,&quot;#D1FAE5&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Animation&quot;}}">
+const TABS = [
+  { id: 'card', label: 'Card grid', kicker: 'Variant · card', title: 'Listing cards' },
+  { id: 'list', label: 'List rows', kicker: 'Variant · list', title: 'Lead list' },
+  { id: 'table', label: 'Table', kicker: 'Variant · table', title: 'Pipeline table' },
+  { id: 'profile', label: 'Profile', kicker: 'Variant · profile', title: 'Agent profile header' },
+  { id: 'dash', label: 'Metrics', kicker: 'Variant · metrics', title: 'Dashboard KPIs' },
+  { id: 'chart', label: 'Chart', kicker: 'Variant · chart', title: 'Volume chart' },
+];
+
+const BAR_H = [42, 58, 36, 74, 62, 88, 70, 96];
+
+class Component extends DCLogic {
+  state = { tab: 'card', loading: true };
+
+  componentDidMount() { this.arm(); }
+  componentWillUnmount() { clearTimeout(this.t); }
+
+  arm() {
+    clearTimeout(this.t);
+    this.t = setTimeout(() => this.setState({ loading: false }), 2400);
+  }
+
+  reload = () => { this.setState({ loading: true }); this.arm(); };
+
+  pick = (tab) => () => { this.setState({ tab, loading: true }); this.arm(); };
+
+  renderVals() {
+    const { tab, loading } = this.state;
+    const dur = this.props.speedMs ?? 1500;
+    const base = this.props.baseColor ?? '#EEF2F7';
+    const hi = this.props.highlightColor ?? '#F8FAFC';
+    const mid = '#E2E8F0';
+
+    const anim = `sk-sweep ${dur}ms linear infinite`;
+
+    const skVars = {
+      padding: 18,
+      '--sk-bg': `linear-gradient(90deg, ${base} 0%, ${mid} 22%, ${hi} 42%, ${mid} 62%, ${base} 100%)`,
+      '--sk-a': anim,
+    };
+
+    const active = TABS.find(t => t.id === tab) || TABS[0];
+
+    const tabStyle = (on) => on
+      ? { background: '#10B981', color: '#fff', borderColor: 'transparent', fontWeight: 800, cursor: 'pointer', boxShadow: 'inset 0 -2px 5px rgba(0,0,0,0.15), inset 0 -1px 0 rgba(255,255,255,0.15)' }
+      : { cursor: 'pointer' };
+
+    return {
+      skVars,
+      loading, ready: !loading,
+      reload: this.reload,
+      tabs: TABS.map(t => ({ ...t, style: tabStyle(t.id === tab), onClick: this.pick(t.id) })),
+
+      variantKicker: active.kicker,
+      variantTitle: active.title,
+      statusLabel: loading ? 'Loading' : 'Loaded',
+      statusIcon: loading ? 'hourglass_top' : 'task_alt',
+      statusStyle: loading ? {} : { background: '#ECFDF5', color: '#047857', borderColor: '#A7F3D0' },
+
+      isCard: tab === 'card', isList: tab === 'list', isTable: tab === 'table',
+      isProfile: tab === 'profile', isDash: tab === 'dash', isChart: tab === 'chart',
+
+      three: [0, 1, 2], four: [0, 1, 2, 3], five: [0, 1, 2, 3, 4], six: [0, 1, 2, 3, 4, 5],
+
+      listings: [
+        { title: 'Nişantaşı 3+1 loft', desc: 'Renovated duplex, south facing, 148 m² with roof terrace.', delta: '+12%', tag: 'Satış' },
+        { title: 'Kadıköy sea-view flat', desc: 'Two bedrooms, walking distance to the ferry terminal.', delta: '+6%', tag: 'Kiralama' },
+        { title: 'Beşiktaş office floor', desc: 'Open-plan 320 m² floor, fitted, ready for handover.', delta: '+21%', tag: 'Ticari' },
+      ],
+
+      leads: [
+        { initials: 'MK', name: 'Mert Kaya', meta: 'Villa search · budget ₺8.4M', priority: 'Yüksek', dotStyle: { background: '#EF4444' } },
+        { initials: 'SD', name: 'Selin Demir', meta: 'Valuation requested · Ataşehir', priority: 'Orta', dotStyle: { background: '#EAB308' } },
+        { initials: 'AT', name: 'Ali Tunç', meta: 'Follow-up call scheduled Friday', priority: 'Düşük', dotStyle: { background: '#10B981' } },
+        { initials: 'GY', name: 'Gökçe Yılmaz', meta: 'Contract review in progress', priority: 'Yüksek', dotStyle: { background: '#EF4444' } },
+        { initials: 'BO', name: 'Burak Öz', meta: 'Nurture sequence · week 3', priority: 'Orta', dotStyle: { background: '#EAB308' } },
+      ],
+
+      cols: ['Deal', 'Owner', 'Stage', 'Value'],
+      rows: [
+        { deal: 'Nişantaşı loft', owner: 'Elif A.', stage: 'Review', value: '₺4.2M', stageStyle: { background: '#FACC15', color: '#451A03', textShadow: 'none', justifySelf: 'start' } },
+        { deal: 'Kadıköy flat', owner: 'Mert K.', stage: 'Progress', value: '₺2.8M', stageStyle: { background: '#F97316', justifySelf: 'start' } },
+        { deal: 'Beşiktaş floor', owner: 'Selin D.', stage: 'Done', value: '₺11.6M', stageStyle: { background: '#10B981', justifySelf: 'start' } },
+        { deal: 'Bebek townhouse', owner: 'Ali T.', stage: 'Todo', value: '₺9.1M', stageStyle: { background: '#64748B', justifySelf: 'start' } },
+        { deal: 'Şişli retail unit', owner: 'Gökçe Y.', stage: 'Progress', value: '₺3.4M', stageStyle: { background: '#F97316', justifySelf: 'start' } },
+        { deal: 'Maslak plot', owner: 'Burak Ö.', stage: 'Done', value: '₺18.0M', stageStyle: { background: '#10B981', justifySelf: 'start' } },
+      ],
+
+      metrics: [
+        { icon: 'insights', label: 'Closed volume', value: '₺48.2M', delta: '+18.4%' },
+        { icon: 'groups', label: 'Active leads', value: '142', delta: '+9' },
+        { icon: 'task_alt', label: 'Win rate', value: '31%', delta: '+4pt' },
+        { icon: 'schedule', label: 'Avg. cycle', value: '26d', delta: '-3d' },
+      ],
+
+      weeks: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+      bars: BAR_H.map((h, i) => ({
+        skStyle: {
+          flex: 1, height: `${h}%`, borderRadius: 10,
+          background: 'var(--sk-bg)', backgroundSize: '200% 100%',
+          animation: 'var(--sk-a)', animationDelay: `${i * 90}ms`, // JS-computed stagger delay /* motion-sweep: kept */
+        },
+        liveStyle: {
+          flex: 1, height: `${h}%`, borderRadius: 10,
+          background: 'linear-gradient(180deg, #34D399, #10B981)',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5), 0 6px 18px -8px rgba(16,185,129,0.7)',
+          transformOrigin: 'bottom',
+          animation: `sk-bar var(--duration-entrance) var(--ease-out) ${i * 60}ms both`, // 600ms nearest DS tier to source 620ms; stagger delay is JS timing /* motion-sweep: kept */
+        },
+      })),
+
+      notes: [
+        { k: 'Shape parity', v: 'Every placeholder matches the height, radius and column layout of the element it stands in for, so nothing shifts when data lands.' },
+        { k: 'Transition', v: 'Skeletons leave instantly; real content enters with a 400ms rise-and-fade, and chart bars grow from the baseline in sequence.' },
+        { k: 'Sweep timing', v: 'One 1.5s left-to-right pass across every placeholder in the group, so the whole block reads as a single loading surface.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

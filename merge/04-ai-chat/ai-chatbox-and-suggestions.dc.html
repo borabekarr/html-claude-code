@@ -1,0 +1,390 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chatbox and Suggestions" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F1F5F9; font-family: 'Montserrat', sans-serif; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; text-decoration: underline; }
+  @keyframes panelInA { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes panelInB { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes suggIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes micPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.35); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
+  @keyframes dotBlink { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+  @media (prefers-reduced-motion: reduce) {
+    [style*="panelInA"], [style*="panelInB"], [style*="suggIn"], [style*="micPulse"], [style*="dotBlink"] { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; } /* motion-sweep: kept */
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 44px 32px 64px; background: #F1F5F9; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F1F5F9 55%); font-family: 'Montserrat', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 28px;">
+
+  <div style="width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 6px;">
+    <span class="micro-label">Deha Design System · AI</span>
+    <h1 class="h1" style="margin: 0;">AI Chatbox &amp; Suggestions</h1>
+    <p class="body" style="margin: 0; max-width: 560px; text-wrap: pretty;">One composer, five placements. Focus, type, send — the box morphs into its generating skeleton and settles back with a Done badge.</p>
+  </div>
+
+  <div class="pills-row" style="width: 100%; max-width: 900px;">
+    <sc-for list="{{ variantPills }}" as="v" hint-placeholder-count="5">
+      <button type="button" class="{{ v.cls }}" onClick="{{ v.onClick }}" style="cursor: pointer; gap: 6px; padding: 7px 16px;">
+        <span class="material-icons" style="font-size: 15px;">{{ v.icon }}</span>
+        {{ v.label }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="{{ panelStyle }}">
+
+    <sc-if value="{{ isContext }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px solid #E2E8F0;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+          <span class="h4">Ayşe Demir</span>
+          <span class="meta">Beşiktaş · 3+1 · ₺8.4M budget</span>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <span class="badge-event" style="background-color: #F97316;"><span class="material-icons">local_fire_department</span> Hot</span>
+          <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showThread }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+        <div style="align-self: flex-end; max-width: 74%; padding: 11px 15px; border-radius: 18px 18px 6px 18px; background: #0F172A; color: #fff; font-size: 14px; font-weight: 600; line-height: 1.45; box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -2px 0 rgba(0,0,0,0.22);">How did Beşiktaş perform last month?</div>
+        <div style="align-self: flex-start; max-width: 82%; padding: 13px 16px; border-radius: 18px 18px 18px 6px; background: #fff; border: 1px solid #E2E8F0; font-size: 14px; font-weight: 500; color: #334155; line-height: 1.55; box-shadow: 0 1px 2px rgba(15,23,42,0.05), inset 0 1px 0 rgba(255,255,255,1);">
+          14 new leads, 4 viewings booked and one offer at ₺7.9M. Conversion is up 12% against July, driven mostly by the Levent referral flow.
+          <div style="display: flex; gap: 6px; margin-top: 10px;">
+            <span class="badge-event" style="background-color: #10B981;"><span class="material-icons">trending_up</span> +12%</span>
+            <span class="badge gci"><span>$</span> 45K GCI</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div class="mb-shell">
+      <div class="mb {{ phase }}" style="{{ boxStyle }}">
+        <div class="mb-stack">
+          <textarea class="mb-input" placeholder="{{ placeholder }}" value="{{ text }}" onChange="{{ onInput }}" onFocus="{{ onFocus }}" onBlur="{{ onBlur }}" style="{{ inputStyle }}"></textarea>
+          <div class="mb-skel">
+            <div class="skel-bar w1"></div>
+            <div class="skel-bar w2"></div>
+            <div class="skel-bar w3"></div>
+          </div>
+        </div>
+        <div class="mb-toolbar">
+          <div class="mb-tools-left">
+            <button type="button" class="mb-btn" style="padding: 8px; border-radius: 9999px;" title="Attach">
+              <span class="material-icons" style="font-size: 17px;">attach_file</span>
+            </button>
+            <sc-if value="{{ showMode }}" hint-placeholder-val="{{ true }}">
+              <button type="button" class="{{ modeCls }}" onClick="{{ onMode }}" style="cursor: pointer; gap: 6px; padding: 7px 14px;">
+                <span class="material-icons" style="font-size: 16px;">{{ modeIcon }}</span>
+                {{ modeLabel }}
+              </button>
+            </sc-if>
+          </div>
+          <div class="mb-tools-right">
+            <div class="mb-ai-slot">
+              <button type="button" class="mb-ai-btn" onClick="{{ onSend }}">
+                <span class="material-symbols-outlined mb-gradient-icon">neurology</span>
+                <span class="mb-gradient-text">Ask Jeru</span>
+              </button>
+              <span class="mb-gen-label">
+                <span class="material-symbols-outlined mb-gradient-icon">neurology</span>
+                <span class="mb-gradient-text">Generating…</span>
+              </span>
+              <span class="mb-done-badge">
+                <svg class="mb-done-check" width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Done
+              </span>
+            </div>
+            <button type="button" class="mb-btn" onClick="{{ onMic }}" style="{{ micStyle }}" title="Voice input">
+              <span class="material-icons" style="font-size: 17px;">mic</span>
+            </button>
+            <button type="button" class="mb-send" onClick="{{ onSend }}" style="{{ sendStyle }}">
+              <span class="material-icons">arrow_upward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ micOn }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-left: 8px;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #EF4444; animation: dotBlink 1.1s ease-in-out infinite;"></span>
+        <span class="meta" style="color: #EF4444;">Listening…</span>
+      </div>
+    </sc-if>
+
+    <div style="{{ suggWrapStyle }}">
+      <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+        <button type="button" class="mb-btn" onClick="{{ s.onClick }}" style="{{ s.style }}" style-hover="{{ s.hoverStyle }}">
+          <span style="display: grid; place-items: center; flex: none;">
+            <span class="material-icons" style="font-size: 17px; color: #0F172A;">{{ s.icon }}</span>
+          </span>
+          <span style="font-size: 13px; font-weight: 700; color: #0F172A; white-space: nowrap;">{{ s.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding: 11px 14px; border-radius: 14px; background: #FEF2F2; border: 1px solid #FECACA;">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #EF4444;">
+          <span class="material-icons" style="font-size: 17px;">error_outline</span>
+          Jeru couldn’t reach the model. Nothing was sent.
+        </span>
+        <button type="button" class="btn-discuss" onClick="{{ onRetry }}" style="cursor: pointer;">
+          <span class="material-icons" style="font-size: 15px;">refresh</span>
+          Retry
+        </button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top: 22px; padding-top: 18px; border-top: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 10px;">
+        <span class="pills-label" style="margin: 0;">Force a state</span>
+        <div class="pills-row">
+          <sc-for list="{{ statePills }}" as="p" hint-placeholder-count="6">
+            <button type="button" class="{{ p.cls }}" onClick="{{ p.onClick }}" style="cursor: pointer;">{{ p.label }}</button>
+          </sc-for>
+        </div>
+        <span class="hint" style="text-align: left; margin-top: 4px;">{{ stateHint }}</span>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <span class="hint">Type something, then hit <kbd>Ask Jeru</kbd> or the send arrow to run the full generate → done cycle.</span>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;hero&quot;,&quot;compact&quot;,&quot;docked&quot;,&quot;context&quot;,&quot;states&quot;],&quot;default&quot;:&quot;hero&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;generateMs&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2400,&quot;min&quot;:600,&quot;max&quot;:6000,&quot;step&quot;:200,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;showCaveat&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const V = {
+  hero: {
+    label: 'Hero / empty state', icon: 'auto_awesome', max: 900,
+    placeholder: 'Ask Jeru anything about your pipeline…', minHeight: 84,
+    mode: { label: 'Prospect', icon: 'travel_explore' }, suggRow: true, caveat: true,
+    sugg: [
+      { icon: 'edit_note', label: 'Draft a follow-up for Ayşe' },
+      { icon: 'insights', label: "Summarize this week's pipeline" },
+      { icon: 'home_work', label: 'Find comps near Beşiktaş' },
+    ],
+  },
+  compact: {
+    label: 'Compact / sidebar', icon: 'view_sidebar', max: 400,
+    placeholder: 'Ask about this view…', minHeight: 52,
+    mode: null, suggRow: false, caveat: false,
+    sugg: [
+      { icon: 'bolt', label: 'Next best action' },
+      { icon: 'schedule', label: 'What changed today?' },
+    ],
+  },
+  docked: {
+    label: 'Docked in a thread', icon: 'forum', max: 720,
+    placeholder: 'Reply to Jeru…', minHeight: 60,
+    mode: { label: 'Pipeline', icon: 'insights' }, suggRow: true, caveat: true, thread: true,
+    sugg: [
+      { icon: 'compare_arrows', label: 'Compare with last quarter' },
+      { icon: 'mail', label: 'Draft the email' },
+    ],
+  },
+  context: {
+    label: 'In-context on a record', icon: 'contact_page', max: 560,
+    placeholder: 'Ask about Ayşe Demir…', minHeight: 60,
+    mode: null, suggRow: false, caveat: false, card: true,
+    sugg: [
+      { icon: 'local_fire_department', label: 'Why is this lead hot?' },
+      { icon: 'sell', label: 'Suggest a list price' },
+      { icon: 'edit_note', label: 'Write listing copy' },
+    ],
+  },
+  states: {
+    label: 'States & transitions', icon: 'animation', max: 720,
+    placeholder: 'Ask Jeru anything about your pipeline…', minHeight: 84,
+    mode: { label: 'Prospect', icon: 'travel_explore' }, suggRow: true, caveat: false, states: true,
+    sugg: [
+      { icon: 'edit_note', label: 'Draft a follow-up for Ayşe' },
+      { icon: 'insights', label: "Summarize this week's pipeline" },
+    ],
+  },
+};
+
+const STATES = [
+  { key: 'idle', label: 'Idle', hint: 'Resting surface — hairline border, no glow.' },
+  { key: 'focus', label: 'Focused', hint: 'Emerald ring fades in over 250ms; send stays dimmed until there is text.' },
+  { key: 'typing', label: 'Typing', hint: 'Send arrow lifts to full contrast as soon as the field has content.' },
+  { key: 'generating', label: 'Generating', hint: 'Input blurs out, skeleton bars stagger in and shimmer, box breathes with an emerald glow.' },
+  { key: 'done', label: 'Done', hint: 'Check draws itself, the AI slot outlines emerald, then everything settles back to idle.' },
+  { key: 'error', label: 'Error', hint: 'Danger ring plus an inline retry — the message is never lost.' },
+];
+
+class Component extends DCLogic {
+  state = {
+    variant: 'hero', text: '', focused: false, phase: '', error: false,
+    micOn: false, modeOn: true, forced: 'idle', tick: 0,
+  };
+  timers = [];
+
+  componentDidMount() {
+    const start = this.props.startVariant;
+    if (start && V[start] && start !== this.state.variant) this.setState({ variant: start });
+  }
+  componentWillUnmount() { this.clear(); }
+  clear() { this.timers.forEach(clearTimeout); this.timers = []; }
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  pick(variant) {
+    this.clear();
+    this.setState((s) => ({
+      variant, tick: s.tick + 1, phase: '', error: false, micOn: false,
+      text: '', focused: false, forced: 'idle',
+    }));
+  }
+
+  send() {
+    if (this.state.phase) return;
+    if (!this.state.text.trim()) {
+      this.clear();
+      this.setState({ error: true, focused: true });
+      this.later(() => this.setState({ error: false }), 2600);
+      return;
+    }
+    const ms = Math.max(600, this.props.generateMs ?? 2400);
+    this.clear();
+    this.setState({ phase: 'generating', error: false, micOn: false, forced: 'generating' });
+    this.later(() => {
+      this.setState({ phase: 'exiting done' });
+      this.later(() => {
+        this.setState({ phase: 'done', forced: 'done' });
+        this.later(() => {
+          this.setState({ phase: 'done-out' });
+          this.later(() => this.setState({ phase: '', forced: 'idle' }), 720);
+        }, 1300);
+      }, 660);
+    }, ms);
+  }
+
+  force(key) {
+    this.clear();
+    const base = { forced: key, phase: '', error: false, micOn: false, focused: false };
+    if (key === 'idle') this.setState({ ...base, text: '' });
+    else if (key === 'focus') this.setState({ ...base, text: '', focused: true });
+    else if (key === 'typing') this.setState({ ...base, focused: true, text: 'Draft a follow-up for Ayşe Demir about the Beşiktaş viewing' });
+    else if (key === 'generating') this.setState({ ...base, text: 'Draft a follow-up for Ayşe Demir', phase: 'generating' });
+    else if (key === 'done') this.setState({ ...base, text: 'Draft a follow-up for Ayşe Demir', phase: 'done' });
+    else this.setState({ ...base, text: 'Draft a follow-up for Ayşe Demir', error: true });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const cfg = V[s.variant] || V.hero;
+    const hasText = s.text.trim().length > 0;
+
+    const boxStyle = s.error
+      ? { borderColor: '#EF4444', boxShadow: '0 0 0 4px rgba(239,68,68,0.12), 0 8px 24px rgba(239,68,68,0.16), inset 0 1px 0 rgba(255,255,255,1)' }
+      : s.focused
+        ? { borderColor: '#10B981', boxShadow: '0 0 0 4px rgba(16,185,129,0.12), 0 8px 24px rgba(16,185,129,0.14), inset 0 1px 0 rgba(255,255,255,1)' }
+        : {};
+
+    const panelStyle = {
+      width: '100%', maxWidth: cfg.max,
+      animation: `${s.tick % 2 ? 'panelInB' : 'panelInA'} var(--duration-360) var(--ease-out) both`,
+    };
+    if (cfg.card) {
+      Object.assign(panelStyle, {
+        background: '#fff', border: '1px solid #E2E8F0', borderRadius: 24,
+        padding: 20, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,1)',
+      });
+    }
+
+    const suggWrapStyle = {
+      display: 'flex', gap: 10, marginTop: 14,
+      flexDirection: cfg.suggRow ? 'row' : 'column',
+      flexWrap: cfg.suggRow ? 'wrap' : 'nowrap',
+      alignItems: cfg.suggRow ? 'center' : 'stretch',
+    };
+
+    return {
+      variantPills: Object.keys(V).map((k) => ({
+        key: k, label: V[k].label, icon: V[k].icon,
+        cls: `pill-tab${k === s.variant ? ' active' : ''}`,
+        onClick: () => this.pick(k),
+      })),
+      statePills: STATES.map((st) => ({
+        label: st.label,
+        cls: `pill-tab${st.key === s.forced ? ' active' : ''}`,
+        onClick: () => this.force(st.key),
+      })),
+      stateHint: (STATES.find((st) => st.key === s.forced) || STATES[0]).hint,
+
+      panelStyle, boxStyle, suggWrapStyle,
+      phase: s.phase,
+      placeholder: cfg.placeholder,
+      text: s.text,
+      inputStyle: {
+        minHeight: cfg.minHeight, resize: 'none', border: 'none', outline: 'none',
+        background: 'transparent', display: 'block',
+      },
+      onInput: (e) => this.setState({ text: e.target.value, error: false, forced: e.target.value ? 'typing' : 'focus' }),
+      onFocus: () => this.setState({ focused: true }),
+      onBlur: () => this.setState({ focused: false }),
+
+      showMode: !!cfg.mode,
+      modeLabel: cfg.mode ? cfg.mode.label : '',
+      modeIcon: cfg.mode ? cfg.mode.icon : '',
+      modeCls: `pill-tab${s.modeOn ? ' active' : ''}`,
+      onMode: () => this.setState((p) => ({ modeOn: !p.modeOn })),
+
+      micOn: s.micOn,
+      micStyle: s.micOn
+        ? { padding: 8, borderRadius: 9999, borderColor: '#EF4444', color: '#EF4444', animation: 'micPulse 1.4s ease-out infinite' }
+        : { padding: 8, borderRadius: 9999 },
+      onMic: () => this.setState((p) => ({ micOn: !p.micOn })),
+
+      onSend: () => this.send(),
+      sendStyle: hasText || s.phase ? {} : { background: '#CBD5E1', boxShadow: 'none' },
+
+      suggestions: cfg.sugg.map((x, i) => ({
+        icon: x.icon, label: x.label,
+        style: {
+          gap: 8, padding: '8px 16px', borderRadius: 9999,
+          justifyContent: cfg.suggRow ? 'center' : 'flex-start',
+          animation: `suggIn var(--duration-420) var(--ease-bounce-glow) ${60 + i * 70}ms both`, /* motion-sweep: kept (per-item stagger delay, computed) */
+        },
+        hoverStyle: { background: '#F8FAFC', borderColor: '#10B981' },
+        onClick: () => this.setState({ text: x.label, focused: true, error: false, forced: 'typing' }),
+      })),
+
+      isContext: !!cfg.card,
+      showThread: !!cfg.thread,
+      isStates: !!cfg.states,
+      isError: s.error,
+      withCaveat: (this.props.showCaveat ?? true) && !!cfg.caveat,
+    };
+  }
+}
+</script>
+</body>
+</html>

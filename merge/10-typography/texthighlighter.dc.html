@@ -1,0 +1,385 @@
+<!-- @dsCard group="Merge - typography" name="TextHighlighter" subtitle="-> Foundations: Type Display" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Icons&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  a { color: var(--brand-primary-600); text-decoration: none; }
+  a:hover { color: var(--brand-primary-700); }
+  body { margin: 0; }
+</style>
+
+<style>
+  /* v2 component-owned rules (texthighlighter): focus-visible + reduced-motion */
+  #th-root button:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  /* 44px hit layer for the small tab/utility pill buttons without enlarging the visible chip */
+  #th-root button { position: relative; }
+  #th-root button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (prefers-reduced-motion: reduce) {
+    #th-root [data-hl] { transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+    #th-root .card-glass, #th-root button { transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  }
+</style></helmet>
+
+<div id="th-root" style="min-height:100vh;background:var(--bg-app);padding:40px 40px 64px;font-family:var(--font-display);box-sizing:border-box">
+  <div style="max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="pill pill--success">Component</span>
+        <span class="meta">Deha DS · animation primitive</span>
+      </div>
+      <h1 class="h1" style="margin:0">TextHighlighter</h1>
+      <p class="body" style="margin:0;max-width:620px;text-wrap:pretty">A marker sweep behind inline text. Triggered by hover, viewport entry, or code, with four sweep directions and a shared emerald marker token.</p>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px" role="tablist">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+        <sc-if value="{{ tab.active }}" hint-placeholder-val="{{ true }}">
+          <button class="pill pill--success" onClick="{{ tab.onClick }}" style="border:none;cursor:pointer;padding:8px 14px;font-family:var(--font-display);box-shadow:var(--shadow-emerald-glow-sm);transition:transform var(--duration-200) var(--ease-press-calm)" style-active="transform:scale(0.97)">{{ tab.label }}</button>
+        </sc-if>
+        <sc-if value="{{ tab.inactive }}" hint-placeholder-val="{{ false }}">
+          <button class="pill" onClick="{{ tab.onClick }}" style="border:1px solid var(--border-hairline);cursor:pointer;padding:8px 14px;background:var(--bg-card-solid);font-family:var(--font-display);transition:background var(--duration-180) var(--ease-standard),transform var(--duration-200) var(--ease-press-calm)" style-hover="background:var(--bg-chip)" style-active="transform:scale(0.97)">{{ tab.label }}</button>
+        </sc-if>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isHover }}" hint-placeholder-val="{{ true }}">
+      <div class="card-glass" style="padding:32px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="micro-label">Trigger · hover</span>
+          <h2 class="h3" style="margin:0">Reveals under the cursor</h2>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ hoverLines }}" as="line" hint-placeholder-count="3">
+            <p class="body" style="margin:0;font-size:var(--type-h4);line-height:var(--leading-relaxed)">{{ line.pre }}<span style="{{ line.style }}" style-hover="background-size:100% 100%">{{ line.mark }}</span>{{ line.post }}</p>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--border-hairline)">
+          <span class="pill" style="margin-top:16px">enter → sweep in</span>
+          <span class="pill" style="margin-top:16px">leave → sweep out</span>
+          <span class="pill" style="margin-top:16px">450ms · ease-out</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isInView }}" hint-placeholder-val="{{ false }}">
+      <div class="card-glass" style="padding:32px;display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="micro-label">Trigger · in view</span>
+          <h2 class="h3" style="margin:0">Fires once the line enters the viewport</h2>
+          <p class="meta" style="margin:4px 0 0">Scroll the panel below.</p>
+        </div>
+        <div ref="{{ scrollRef }}" onScroll="{{ iv.onScroll }}" style="height:300px;overflow-y:auto;border:1px solid var(--border-hairline);border-radius:var(--radius-lg);background:var(--bg-card-solid);box-shadow:var(--shadow-recessed)">
+          <div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+            <p class="meta" style="margin:0">↓ keep scrolling</p>
+            <div style="height:260px;border-radius:var(--radius-md);background-image:var(--bg-section-grid);background-size:var(--bg-section-grid-size)"></div>
+            <p class="body" style="margin:0;font-size:var(--type-h3);line-height:var(--leading-snug)" ref="{{ targetRef }}">Retention rose <span data-hl="iv" style="{{ iv.style }}">18 points this quarter</span> without new spend.</p>
+            <div style="height:220px;border-radius:var(--radius-md);background-image:var(--bg-section-grid);background-size:var(--bg-section-grid-size)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span class="pill">enters view · 700ms</span>
+          <span class="pill" data-el="ivstate">waiting</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isControlled }}" hint-placeholder-val="{{ false }}">
+      <div class="card-glass" style="padding:32px;display:flex;flex-direction:column;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="micro-label">Trigger · controlled</span>
+          <h2 class="h3" style="margin:0">Driven from code</h2>
+        </div>
+        <p class="body" style="margin:0;font-size:var(--type-h3);line-height:var(--leading-snug)">Every deal in the pipeline is <span data-hl="ctl" style="{{ ctl.style }}">scored, ranked and routed</span> before your first coffee.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="btn-primary" onClick="{{ ctl.play }}" style="font-family:var(--font-display)">Highlight</button>
+          <button onClick="{{ ctl.reset }}" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:var(--radius-lg);border:1px solid var(--border-hairline);background:var(--bg-card-solid);color:var(--fg2);font-family:var(--font-display);font-weight:var(--weight-semibold);font-size:var(--type-body);cursor:pointer;transition:background var(--duration-180) var(--ease-standard),transform var(--duration-200) var(--ease-press-calm)" style-hover="background:var(--bg-chip)" style-active="transform:scale(0.98)">Reset</button>
+          <button onClick="{{ ctl.toggleLoop }}" style="display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:var(--radius-lg);border:1px solid var(--border-hairline);background:var(--bg-card-solid);color:var(--fg2);font-family:var(--font-display);font-weight:var(--weight-semibold);font-size:var(--type-body);cursor:pointer;transition:background var(--duration-180) var(--ease-standard)" style-hover="background:var(--bg-chip)" data-el="looplabel">Loop: off</button>
+          <span class="pill" data-el="ctlstate">state: idle</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDirections }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+        <sc-for list="{{ dirs }}" as="d" hint-placeholder-count="4">
+          <div class="card-glass" style="padding:24px;display:flex;flex-direction:column;gap:16px;cursor:pointer;transition:transform var(--duration-240) var(--ease-standard)" style-hover="transform:translateY(-2px)" onClick="{{ d.onClick }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+              <span class="micro-label">{{ d.label }}</span>
+              <span class="pill">{{ d.hint }}</span>
+            </div>
+            <p class="body" style="margin:0;font-size:var(--type-h4);line-height:var(--leading-relaxed)"><span data-hl="{{ d.key }}" style="{{ d.style }}">{{ d.mark }}</span></p>
+            <span class="meta">Click to replay</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTags }}" hint-placeholder-val="{{ false }}">
+      <div class="card-glass" style="padding:32px;display:flex;flex-direction:column;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="micro-label">Applied · pills &amp; tags</span>
+          <h2 class="h3" style="margin:0">The same sweep at chip scale</h2>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ tags }}" as="t" hint-placeholder-count="6">
+            <span class="pill" style="{{ t.style }}" style-hover="background-size:100% 100%">{{ t.label }}</span>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;padding-top:20px;border-top:1px solid var(--border-hairline)">
+          <span class="micro-label">In a task row</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;border:1px solid var(--border-hairline);border-radius:var(--radius-lg);background:var(--bg-card-solid);box-shadow:var(--shadow-glass-sm)">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:var(--type-h5);font-weight:var(--weight-bold);color:var(--fg1)">Follow up with <span style="{{ row.style }}" style-hover="background-size:100% 100%">Norduna Group</span></span>
+              <span class="meta">Due today · 14:30</span>
+            </div>
+            <span class="pill pill--warning">Medium</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isContext }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card-accent" style="padding:36px;display:flex;flex-direction:column;gap:16px">
+          <span class="micro-label" style="color:rgba(255,255,255,0.75)">Hero statement</span>
+          <p style="margin:0;position:relative;z-index:1;font-size:32px;line-height:var(--leading-tight);font-weight:var(--weight-black);letter-spacing:var(--tracking-tight);color:#fff;max-width:620px;text-wrap:pretty">Close the quarter with <span data-hl="hero" style="{{ hero.style }}">nothing left in the backlog</span>.</p>
+          <div style="display:flex;gap:12px;position:relative;z-index:1;flex-wrap:wrap">
+            <button class="btn-inverse" onClick="{{ hero.replay }}" style="font-family:var(--font-display);cursor:pointer">Replay sweep</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+          <div class="card-glass" style="padding:28px;display:flex;flex-direction:column;gap:14px">
+            <span class="micro-label">Testimonial</span>
+            <p class="body" style="margin:0;font-size:var(--type-h4);line-height:var(--leading-relaxed)">“We replaced four dashboards with one board and <span style="{{ quote.style }}" style-hover="background-size:100% 100%">cut reporting time by 70%</span>.”</p>
+            <span class="meta">Ilke Demir · Head of Revenue</span>
+          </div>
+          <div class="card-glass" style="padding:28px;display:flex;flex-direction:column;gap:14px">
+            <span class="micro-label">Metric caption</span>
+            <span class="display-1">$1.2M</span>
+            <p class="body" style="margin:0;line-height:var(--leading-relaxed)">Weighted pipeline, <span style="{{ metric.style }}" style-hover="background-size:100% 100%">up 12% week over week</span>.</p>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:880}}">
+const POS = { ltr: 'left center', rtl: 'right center', ttb: 'center top', btt: 'center bottom' };
+const CLOSED = { ltr: '0% 100%', rtl: '0% 100%', ttb: '100% 0%', btt: '100% 0%' };
+const DIRS = { iv: 'ltr', ctl: 'ltr', hero: 'ltr', d_ltr: 'ltr', d_rtl: 'rtl', d_ttb: 'ttb', d_btt: 'btt' };
+
+class Component extends DCLogic {
+  state = {
+    variant: 'hover',
+  };
+
+  ctlLoop = false;
+  ivSeen = false;
+
+  scrollRef = React.createRef();
+  targetRef = React.createRef();
+
+  componentDidMount() { setTimeout(() => this.afterSwitch(this.state.variant), 80); }
+  componentWillUnmount() { clearTimeout(this.loopT); clearTimeout(this.loopT2); }
+
+  open = {};
+
+  gen = {};
+
+  set(key, val, tries, myGen) {
+    if (myGen === undefined) { this.gen[key] = (this.gen[key] || 0) + 1; myGen = this.gen[key]; }
+    if (myGen !== this.gen[key]) return;
+    this.open[key] = val ? 1 : 0;
+    const el = document.querySelector('[data-hl="' + key + '"]');
+    if (!el) {
+      if (val && (tries || 0) < 30) requestAnimationFrame(() => this.set(key, val, (tries || 0) + 1, myGen));
+      return;
+    }
+    el.style.backgroundSize = val ? '100% 100%' : CLOSED[DIRS[key] || 'ltr'];
+    if (key === 'hero') el.style.color = val ? 'var(--brand-primary-800)' : '#FFFFFF';
+    if (val && (tries || 0) < 150) requestAnimationFrame(() => this.set(key, val, (tries || 0) + 1, myGen));
+  }
+
+  setAll(map) { Object.keys(map).forEach((k) => this.set(k, map[k])); }
+
+  isOpen(key) { return !!this.open[key]; }
+
+  label(name, text) {
+    const el = document.querySelector('[data-el="' + name + '"]');
+    if (el) el.textContent = text;
+  }
+
+  afterSwitch(v) {
+    clearTimeout(this.loopT);
+    clearTimeout(this.loopT2);
+    this.ivSeen = false;
+    if (v === 'dirs') {
+      this.setAll({ d_ltr: 0, d_rtl: 0, d_ttb: 0, d_btt: 0 });
+      this.loopT = setTimeout(() => this.setAll({ d_ltr: 1, d_rtl: 1, d_ttb: 1, d_btt: 1 }), 420);
+    }
+    if (v === 'context') {
+      this.set('hero', 0);
+      this.loopT = setTimeout(() => this.set('hero', 1), 420);
+    }
+    if (v === 'inview') { this.set('iv', 0); this.label('ivstate', 'waiting'); }
+    if (v === 'controlled') { this.set('ctl', 0); this.label('ctlstate', 'state: idle'); }
+  }
+
+  replay(key) { this.set(key, 0); setTimeout(() => this.set(key, 1), 220); }
+
+  hl(key, dir, dur, color, extra) {
+    const open = this.isOpen(key);
+    // dur (ms) is the sweep's own design timing; mapped to the nearest DS duration token
+    // rather than tokenized to a fixed value, so each trigger keeps its distinct pacing.
+    const DUR_TOKEN = { 400: 'var(--duration-400)', 450: 'var(--duration-480)', 500: 'var(--duration-480)', 600: 'var(--duration-entrance)', 650: 'var(--duration-700)', 700: 'var(--duration-700)', 800: 'var(--duration-800)' };
+    const durVar = DUR_TOKEN[dur] || (dur + 'ms /* motion-sweep: kept */');
+    return {
+      key: key,
+      style: Object.assign({
+        padding: '2px 3px',
+        margin: '0 -3px',
+        borderRadius: '6px',
+        fontWeight: 700,
+        color: 'var(--fg1)',
+        backgroundRepeat: 'no-repeat',
+        backgroundImage: 'linear-gradient(' + color + ',' + color + ')',
+        backgroundPosition: POS[dir],
+        backgroundSize: open ? '100% 100%' : CLOSED[dir],
+        transition: 'background-size ' + durVar + ' var(--ease-out), color var(--duration-slower)'
+      }, extra || {}),
+      onClick: () => this.replay(key)
+    };
+  }
+
+  checkInView() {
+    const root = this.scrollRef.current, el = this.targetRef.current;
+    if (!root || !el || this.ivSeen) return;
+    const r = root.getBoundingClientRect(), t = el.getBoundingClientRect();
+    if (t.top < r.bottom - 40 && t.bottom > r.top + 40) {
+      this.ivSeen = true;
+      this.set('iv', 1);
+      this.label('ivstate', 'triggered');
+    }
+  }
+
+  runCtl() {
+    clearTimeout(this.loopT);
+    this.set('ctl', 1);
+    this.label('ctlstate', 'state: highlighted');
+    if (this.ctlLoop) {
+      this.loopT = setTimeout(() => {
+        this.set('ctl', 0);
+        this.label('ctlstate', 'state: idle');
+        this.loopT2 = setTimeout(() => this.runCtl(), 600);
+      }, 1400);
+    }
+  }
+
+  renderVals() {
+    const mk = '#A7F3D0';
+    const v = this.state.variant;
+    const tabDefs = [
+      ['hover', 'Hover'], ['inview', 'In view'], ['controlled', 'Controlled'],
+      ['dirs', 'Directions'], ['tags', 'Pills & tags'], ['context', 'In context']
+    ];
+
+    const hoverCopy = [
+      ['Deals move faster when the board ', 'shows only what changed', ' since your last login.'],
+      ['Every note, call and email is ', 'stitched into one timeline', ' automatically.'],
+      ['Forecasts update ', 'the moment a stage changes', ', not overnight.']
+    ];
+
+    const dirDefs = [
+      ['ltr', 'left → right', 'ltr', 'Default sweep'],
+      ['rtl', 'right → left', 'rtl', 'Mirrored'],
+      ['ttb', 'top → bottom', 'ttb', 'Fills downward'],
+      ['btt', 'bottom → top', 'btt', 'Rises up']
+    ];
+
+    const tagLabels = ['Hot lead', 'Enterprise', 'Renewal', 'Q3 target', 'Champion', 'At risk'];
+
+    return {
+      tabs: tabDefs.map(([id, label]) => ({
+        id, label, active: v === id, inactive: v !== id,
+        onClick: () => { this.setState({ variant: id }); setTimeout(() => this.afterSwitch(id), 80); }
+      })),
+      isHover: v === 'hover', isInView: v === 'inview', isControlled: v === 'controlled',
+      isDirections: v === 'dirs', isTags: v === 'tags', isContext: v === 'context',
+
+      hoverLines: hoverCopy.map(([pre, mark, post], i) => ({
+        pre, mark, post, ...this.hl('h' + i, 'ltr', 450, mk)
+      })),
+
+      scrollRef: this.scrollRef,
+      targetRef: this.targetRef,
+      iv: {
+        ...this.hl('iv', 'ltr', 700, mk, { fontWeight: 900 }),
+        onScroll: () => this.checkInView()
+      },
+
+      ctl: {
+        ...this.hl('ctl', 'ltr', 600, mk, { padding: '2px 4px', margin: '0 -4px', fontWeight: 900 }),
+        play: () => this.runCtl(),
+        reset: () => {
+          clearTimeout(this.loopT); clearTimeout(this.loopT2);
+          this.set('ctl', 0); this.label('ctlstate', 'state: idle');
+        },
+        toggleLoop: () => {
+          this.ctlLoop = !this.ctlLoop;
+          this.label('looplabel', this.ctlLoop ? 'Loop: on' : 'Loop: off');
+          if (!this.ctlLoop) { clearTimeout(this.loopT); clearTimeout(this.loopT2); }
+        }
+      },
+
+      dirs: dirDefs.map(([key, label, dir, hint]) => ({
+        label, hint, mark: 'A marker that sweeps ' + label,
+        ...this.hl('d_' + key, dir, 650, mk)
+      })),
+
+      tags: tagLabels.map((label, i) => ({
+        label,
+        ...this.hl('t' + i, i % 2 ? 'rtl' : 'ltr', 400, mk, {
+          cursor: 'default', margin: 0, padding: '6px 12px', borderRadius: 'var(--radius-pill)',
+          border: '1px solid var(--border-hairline)', backgroundColor: 'var(--bg-card-solid)'
+        })
+      })),
+      row: this.hl('row', 'ltr', 450, '#FEF08A'),
+
+      hero: {
+        ...this.hl('hero', 'ltr', 800, '#ECFDF5', {
+          padding: '2px 6px', margin: '0 -6px', fontWeight: 900,
+          color: this.isOpen('hero') ? 'var(--brand-primary-800)' : '#FFFFFF', textShadow: 'none'
+        }),
+        replay: () => this.replay('hero')
+      },
+      quote: this.hl('quote', 'ltr', 500, mk),
+      metric: this.hl('metric', 'btt', 500, '#A7F3D0')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

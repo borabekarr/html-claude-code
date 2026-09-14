@@ -1,0 +1,318 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Slider" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+
+<style>
+  body { margin: 0; background: var(--bg-app); font-family: 'Montserrat', system-ui, sans-serif; }
+  body, button, input, select, textarea { font-family: 'Montserrat', system-ui, sans-serif; }
+  h1, h2, h3, h4 { font-family: 'Montserrat', system-ui, sans-serif; font-weight: 900; }
+  .material-icons { font-family: 'Material Icons'; }
+  .material-symbols-outlined, .ms { font-family: 'Material Symbols Outlined'; }
+  a { color: var(--brand-primary-600); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: var(--brand-primary-700); text-decoration: underline; }
+  }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: normal; line-height: 1; }
+
+  .sl-track { position: relative; }
+  .sl-track::before {
+    content: ""; position: absolute; inset: -11px 0; pointer-events: auto;
+  }
+  .sl-track:focus-visible {
+    outline: 2px solid var(--brand-primary); outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sl-track * { transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="padding: 40px 48px 64px; display: flex; flex-direction: column; gap: 24px; color: var(--fg1);">
+  <div style="display: flex; flex-direction: column; gap: 6px;">
+    <div style="font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg4);">Bora · Controls</div>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.02em;">Slider</h1>
+    <p style="margin: 0; font-size: 13px; font-weight: 500; color: var(--fg3);">Continuous, stepped and range. Emerald fill, inset track.</p>
+  </div>
+
+  <div style="width: 380px; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 16px; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05); padding: 22px; display: flex; flex-direction: column; gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Probability</span><span style="color: var(--brand-primary); font-weight: 800;">70%</span></div>
+      <div style="height: 8px; border-radius: 9999px; background: #F1F5F9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); position: relative;">
+        <div style="width: 70%; height: 100%; border-radius: 9999px; background: var(--brand-primary); box-shadow: 0 2px 8px -1px rgba(16,185,129,0.6);"></div>
+        <span style="position: absolute; left: 70%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 9999px; background: var(--bg-card-solid); border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Priority</span><span style="color: var(--semantic-hot); font-weight: 800;">High</span></div>
+      <div style="display: flex; gap: 4px;">
+        <div style="flex: 1; height: 8px; border-radius: 9999px; background: var(--semantic-hot);"></div>
+        <div style="flex: 1; height: 8px; border-radius: 9999px; background: var(--semantic-hot);"></div>
+        <div style="flex: 1; height: 8px; border-radius: 9999px; background: var(--semantic-hot);"></div>
+        <div style="flex: 1; height: 8px; border-radius: 9999px; background: #F1F5F9;"></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Deal size</span><span style="color: var(--fg1); font-weight: 800;">€20K – €80K</span></div>
+      <div style="height: 8px; border-radius: 9999px; background: #F1F5F9; box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); position: relative;">
+        <div style="position: absolute; left: 20%; right: 20%; height: 100%; border-radius: 9999px; background: var(--brand-primary);"></div>
+        <span style="position: absolute; left: 20%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 9999px; background: var(--bg-card-solid); border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+        <span style="position: absolute; left: 80%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 9999px; background: var(--bg-card-solid); border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Notch slider · stepped</span><span style="color: var(--brand-primary); font-weight: 800; font-size: 13px;">{{ stepLabel }}</span></div>
+
+      <div style="display: flex; flex-direction: row; align-items: center; width: 288px; height: 22px;">
+        <div ref="{{ trackRef }}" class="sl-track" onPointerDown="{{ onPointerDown }}" onKeyDown="{{ onKeyDown }}" role="slider" tabindex="0" aria-label="Probability step" aria-valuemin="0" aria-valuemax="4" aria-valuenow="{{ stepAriaNow }}" aria-valuetext="{{ stepLabel }}" style="position: relative; flex: 1; height: 22px; border-radius: 100px; background: linear-gradient(0deg, rgba(15,23,42,0.06), rgba(15,23,42,0.06)), #E2E8F0; box-shadow: inset 0px -0.5px 1px rgba(255,255,255,0.3), inset 0px -0.5px 1px rgba(255,255,255,0.25), inset 1px 1.5px 4px rgba(15,23,42,0.08), inset 1px 1.5px 4px rgba(15,23,42,0.10); cursor: grab; touch-action: none; user-select: none; overflow: hidden;">
+          <div style="{{ fillStyle }}"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 0 11px; pointer-events: none;">
+            <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="5">
+              <span style="{{ dot.style }}"></span>
+            </sc-for>
+          </div>
+          <div style="position: absolute; width: 100px; height: 60px; left: calc(50% - 50px); top: calc(50% - 30px); background: #E5E5E5; mix-blend-mode: overlay; opacity: 0.4; filter: blur(20px); border-radius: 500px; pointer-events: none;"></div>
+          <div style="{{ knobStyle }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Notch slider · risk scale</span><span style="{{ riskLabelStyle }}">{{ riskLabel }}</span></div>
+
+      <div style="display: flex; flex-direction: row; align-items: center; width: 288px; height: 22px;">
+        <div ref="{{ riskTrackRef }}" class="sl-track" onPointerDown="{{ onRiskPointerDown }}" onKeyDown="{{ onRiskKeyDown }}" role="slider" tabindex="0" aria-label="Risk scale" aria-valuemin="0" aria-valuemax="4" aria-valuenow="{{ riskAriaNow }}" aria-valuetext="{{ riskAriaText }}" style="position: relative; flex: 1; height: 22px; border-radius: 100px; background: linear-gradient(0deg, rgba(15,23,42,0.06), rgba(15,23,42,0.06)), #E2E8F0; box-shadow: inset 0px -0.5px 1px rgba(255,255,255,0.3), inset 0px -0.5px 1px rgba(255,255,255,0.25), inset 1px 1.5px 4px rgba(15,23,42,0.08), inset 1px 1.5px 4px rgba(15,23,42,0.10); cursor: grab; touch-action: none; user-select: none; overflow: hidden;">
+          <div style="{{ riskFillStyle }}"></div>
+          <div style="position: absolute; left: 0; right: 0; top: 0; height: 22px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; padding: 0 11px; pointer-events: none;">
+            <sc-for list="{{ riskDots }}" as="dot" hint-placeholder-count="5">
+              <span style="{{ dot.style }}"></span>
+            </sc-for>
+          </div>
+          <div style="position: absolute; width: 100px; height: 60px; left: calc(50% - 50px); top: calc(50% - 30px); background: #E5E5E5; mix-blend-mode: overlay; opacity: 0.4; filter: blur(20px); border-radius: 500px; pointer-events: none;"></div>
+          <div style="{{ riskKnobStyle }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px; opacity: 0.45;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--fg3);"><span>Forecast weight</span><span style="font-weight: 800;">Locked</span></div>
+      <div style="height: 8px; border-radius: 9999px; background: #F1F5F9; position: relative;">
+        <div style="width: 40%; height: 100%; border-radius: 9999px; background: #CBD5E1;"></div>
+        <span style="position: absolute; left: 40%; top: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; border-radius: 9999px; background: #F8FAFC; border: 1px solid #E2E8F0;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { step: 2, dragging: false, riskStep: 2, riskDragging: false };
+  STEPS = ['Cold', 'Warm', 'Active', 'Hot', 'Closing'];
+  RISK = ['Critical', 'High', 'Elevated', 'Stable', 'Healthy'];
+  RISK_COLORS = ['var(--semantic-danger)', 'var(--semantic-hot)', 'var(--semantic-warning)', 'var(--brand-primary)', 'var(--brand-primary)'];
+
+  constructor(props) {
+    super(props);
+    this.trackRef = React.createRef();
+    this.riskTrackRef = React.createRef();
+    this.onPointerDown = this.onPointerDown.bind(this);
+    this.onPointerMove = this.onPointerMove.bind(this);
+    this.onPointerUp = this.onPointerUp.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onRiskPointerDown = this.onRiskPointerDown.bind(this);
+    this.onRiskPointerMove = this.onRiskPointerMove.bind(this);
+    this.onRiskPointerUp = this.onRiskPointerUp.bind(this);
+    this.onRiskKeyDown = this.onRiskKeyDown.bind(this);
+  }
+
+  onKeyDown(e) {
+    const n = this.STEPS.length - 1;
+    let step = this.state.step;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') step = Math.min(n, step + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') step = Math.max(0, step - 1);
+    else if (e.key === 'Home') step = 0;
+    else if (e.key === 'End') step = n;
+    else return;
+    e.preventDefault();
+    this.setState({ step });
+  }
+
+  onRiskKeyDown(e) {
+    const n = this.RISK.length - 1;
+    let riskStep = this.state.riskStep;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') riskStep = Math.min(n, riskStep + 1);
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') riskStep = Math.max(0, riskStep - 1);
+    else if (e.key === 'Home') riskStep = 0;
+    else if (e.key === 'End') riskStep = n;
+    else return;
+    e.preventDefault();
+    this.setState({ riskStep });
+  }
+
+  riskStepFromEvent(e) {
+    const el = this.riskTrackRef.current;
+    if (!el) return this.state.riskStep;
+    const r = el.getBoundingClientRect();
+    const pad = 11;
+    const usable = Math.max(1, r.width - pad * 2);
+    const t = (e.clientX - r.left - pad) / usable;
+    const n = this.RISK.length - 1;
+    return Math.max(0, Math.min(n, Math.round(t * n)));
+  }
+  onRiskPointerDown(e) {
+    e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId);
+    this.setState({ riskDragging: true, riskStep: this.riskStepFromEvent(e) });
+    window.addEventListener('pointermove', this.onRiskPointerMove);
+    window.addEventListener('pointerup', this.onRiskPointerUp);
+  }
+  onRiskPointerMove(e) {
+    const riskStep = this.riskStepFromEvent(e);
+    if (riskStep !== this.state.riskStep) this.setState({ riskStep });
+  }
+  onRiskPointerUp() {
+    this.setState({ riskDragging: false });
+    window.removeEventListener('pointermove', this.onRiskPointerMove);
+    window.removeEventListener('pointerup', this.onRiskPointerUp);
+  }
+
+  stepFromEvent(e) {
+    const el = this.trackRef.current;
+    if (!el) return this.state.step;
+    const r = el.getBoundingClientRect();
+    const pad = 11;
+    const usable = Math.max(1, r.width - pad * 2);
+    const t = (e.clientX - r.left - pad) / usable;
+    const n = this.STEPS.length - 1;
+    return Math.max(0, Math.min(n, Math.round(t * n)));
+  }
+
+  onPointerDown(e) {
+    e.currentTarget.setPointerCapture && e.currentTarget.setPointerCapture(e.pointerId);
+    this.setState({ dragging: true, step: this.stepFromEvent(e) });
+    window.addEventListener('pointermove', this.onPointerMove);
+    window.addEventListener('pointerup', this.onPointerUp);
+  }
+  onPointerMove(e) {
+    const step = this.stepFromEvent(e);
+    if (step !== this.state.step) this.setState({ step });
+  }
+  onPointerUp() {
+    this.setState({ dragging: false });
+    window.removeEventListener('pointermove', this.onPointerMove);
+    window.removeEventListener('pointerup', this.onPointerUp);
+  }
+  componentWillUnmount() { this.onPointerUp(); }
+
+  riskVals(ease, springEase) {
+    const { riskStep, riskDragging } = this.state;
+    const n = this.RISK.length - 1;
+    const pct = (riskStep / n) * 100;
+    const posCalc = 'calc(11px + ' + pct + '% - ' + (pct / 100) * 22 + 'px)';
+    const stops = this.RISK_COLORS
+      .map((c, i) => c + ' ' + ((i / (this.RISK_COLORS.length - 1)) * 100).toFixed(1) + '%')
+      .join(', ');
+    const posTransition = riskDragging ? 'none' : 'width var(--duration-260) ' + ease;
+    const knobTransition = riskDragging ? 'none' : 'left var(--duration-260) ' + ease + ', transform var(--duration-180) ' + springEase;
+    return {
+      riskTrackRef: this.riskTrackRef,
+      onRiskPointerDown: this.onRiskPointerDown,
+      onRiskKeyDown: this.onRiskKeyDown,
+      riskAriaNow: riskStep,
+      riskAriaText: this.RISK[riskStep],
+      riskLabel: this.RISK[riskStep],
+      riskLabelStyle: 'font-weight: 800; font-size: 13px; color: ' + this.RISK_COLORS[riskStep],
+      riskDots: this.RISK.map((_, i) => ({
+        style: 'width: 6px; height: 6px; border-radius: 9999px; background: ' +
+          (i <= riskStep ? 'rgba(255,255,255,0.6)' : 'rgba(15,23,42,0.16)') +
+          '; transition: background var(--duration-200) var(--ease-linear)'
+      })),
+      riskFillStyle: [
+        'position: absolute', 'left: 0', 'top: 0', 'bottom: 0',
+        'width: calc(' + posCalc + ' + 11px)',
+        'border-radius: 100px',
+        'background-image: linear-gradient(90deg, ' + stops + ')',
+        'background-size: 288px 100%',
+        'background-repeat: no-repeat',
+        'box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -1px 2px rgba(15,23,42,0.18)',
+        'transition: ' + posTransition,
+        'pointer-events: none'
+      ].join('; '),
+      riskKnobStyle: [
+        'position: absolute', 'top: 50%',
+        'left: ' + posCalc,
+        'width: 18px', 'height: 18px',
+        'border-radius: 100px',
+        'background: #FFFFFF',
+        'transform: translate(-50%, -50%) scale(' + (riskDragging ? 1.08 : 1) + ')',
+        'box-shadow: 0 1px 3px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.12)',
+        'z-index: 3',
+        'transition: ' + knobTransition,
+        'pointer-events: none'
+      ].join('; ')
+    };
+  }
+
+  renderVals() {
+    const { step, dragging } = this.state;
+    const n = this.STEPS.length - 1;
+    const pct = (step / n) * 100;
+    const posCalc = 'calc(11px + ' + pct + '% - ' + (pct / 100) * 22 + 'px)';
+    const ease = 'var(--ease-out)';
+    const springEase = 'var(--ease-spring)';
+    const posTransition = dragging ? 'none' : 'width var(--duration-260) ' + ease;
+    const knobTransition = dragging ? 'none' : 'left var(--duration-260) ' + ease + ', transform var(--duration-180) ' + springEase;
+    return {
+      dots: this.STEPS.map((_, i) => ({
+        style: 'width: 6px; height: 6px; border-radius: 9999px; background: ' +
+          (i <= step ? 'rgba(255,255,255,0.55)' : 'rgba(15,23,42,0.16)') +
+          '; transition: background var(--duration-200) var(--ease-linear)'
+      })),
+      fillStyle: [
+        'position: absolute', 'left: 0', 'top: 0', 'bottom: 0',
+        'width: calc(' + posCalc + ' + 11px)',
+        'border-radius: 100px',
+        'background: var(--brand-primary)',
+        'box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 2px rgba(4,120,87,0.35)',
+        'transition: ' + posTransition,
+        'pointer-events: none'
+      ].join('; '),
+      knobStyle: [
+        'position: absolute', 'top: 50%',
+        'left: ' + posCalc,
+        'width: 18px', 'height: 18px',
+        'border-radius: 100px',
+        'background: #FFFFFF',
+        'transform: translate(-50%, -50%) scale(' + (dragging ? 1.08 : 1) + ')',
+        'box-shadow: 0 1px 3px rgba(15,23,42,0.18), 0 2px 8px rgba(15,23,42,0.12)',
+        'z-index: 3',
+        'transition: ' + knobTransition,
+        'pointer-events: none'
+      ].join('; '),
+      ...this.riskVals(ease, springEase),
+      stepLabel: this.STEPS[step],
+      stepAriaNow: step,
+      trackRef: this.trackRef,
+      onPointerDown: this.onPointerDown,
+      onKeyDown: this.onKeyDown
+    };
+  }
+}
+</script>
+</body>
+</html>

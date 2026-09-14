@@ -1,0 +1,387 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Reasoning" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_multisteps.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+body { margin: 0; background: #F8FAFC; }
+@keyframes rzTextShimmer { 0% { background-position: -180% 0; } 100% { background-position: 180% 0; } }
+@keyframes rzLineIn { from { opacity: 0; transform: translateY(6px); filter: blur(1.5px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes rzCaret { 0%, 45% { opacity: 1; } 55%, 100% { opacity: 0; } }
+@keyframes rzOrbit { to { transform: rotate(360deg); } }
+@keyframes rzDot { 0%, 100% { transform: scale(.7); opacity: .35; } 50% { transform: scale(1); opacity: 1; } }
+@keyframes rzPop { from { opacity: 0; transform: scale(.86) translateY(4px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.rz-thinking-label {
+  background: linear-gradient(90deg, #94A3B8 0%, #0F172A 45%, #10B981 55%, #94A3B8 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: rzTextShimmer calc(var(--duration-1800) * var(--anim-mult, 1)) linear infinite;
+}
+.rz-head:hover { background: #F8FAFC; }
+.rz-line { animation: rzLineIn calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+.rz-tool { animation: rzPop calc(var(--duration-380) * var(--anim-mult, 1)) var(--ease-slide-bounce) both; }
+@media (prefers-reduced-motion: reduce) {
+  .rz-thinking-label, .rz-line, .rz-tool,
+  [style*="rzOrbit"], [style*="rzDot"], [style*="rzCaret"] { animation-duration: 0.01ms !important; /* motion-sweep: kept */ }
+}
+.rz-head::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.rz-head:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.mb-btn, .mb-ai-btn, .pill-priority { position: relative; }
+.mb-btn::after, .mb-ai-btn::after, .pill-priority::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.mb-btn:focus-visible, .mb-ai-btn:focus-visible, .pill-priority:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; box-sizing: border-box; padding: 40px 28px 64px; display: flex; flex-direction: column; align-items: center; gap: 22px; font-family: 'Montserrat', system-ui, sans-serif; background: #F8FAFC; background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%);">
+
+  <div style="width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 8px;">
+    <span class="micro-label">Deha · AI Elements</span>
+    <h1 class="h1" style="margin: 0;">Chat Reasoning</h1>
+    <p class="body" style="margin: 0; max-width: 56ch; text-wrap: pretty;">A collapsible reasoning trace. It opens while the model thinks, streams the trace as it arrives, then collapses itself into a one-line summary when the answer is ready.</p>
+  </div>
+
+  <div style="width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 12px;">
+    <span class="pills-label" style="margin: 0;">Usage area</span>
+    <div class="pills-row">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button class="pill-tab {{ v.cls }}" onClick="{{ v.onPick }}" style="cursor: pointer; gap: 6px;">
+          <span class="material-icons" style="font-size: 15px; margin-right: 5px;">{{ v.icon }}</span>{{ v.label }}
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="width: 100%; max-width: 760px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <span class="pills-label" style="margin: 0;">{{ variantName }}</span>
+      <span class="meta" style="font-weight: 600;">{{ variantNote }}</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="mb-btn" onClick="{{ onReplay }}"><span class="material-icons">replay</span>Replay</button>
+      <button class="mb-btn" onClick="{{ onSlow }}"><span class="material-icons">{{ slowIcon }}</span>{{ slowLabel }}</button>
+    </div>
+  </div>
+
+  <div style="width: 100%; display: flex; justify-content: center;">
+    <div style="width: 100%; max-width: {{ stageWidth }}; transition: max-width var(--duration-expand) var(--ease-out);">
+
+      <div style="display: flex; align-items: flex-start; gap: 12px;">
+        <sc-if value="{{ showAvatar }}" hint-placeholder-val="{{ true }}">
+          <div style="flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #10B981; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22), 0 6px 18px -8px rgba(16,185,129,.6);">
+            <span class="material-icons" style="font-size: 18px;">auto_awesome</span>
+          </div>
+        </sc-if>
+
+        <div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+
+          <div>
+            <div style="background: transparent; border: none; box-shadow: none; overflow: hidden;">
+
+              <button class="rz-head" onClick="{{ onToggle }}" style="position: relative; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 8px 4px; border: none; border-radius: 12px; background: transparent; cursor: pointer; text-align: left; font-family: 'Montserrat', sans-serif; transition: background var(--duration-base) var(--ease-standard);">
+                <span style="position: relative; flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #ECFDF5; color: #059669; box-shadow: inset 0 0 0 1px rgba(16,185,129,.18);">
+                  <span class="material-icons" style="font-size: 16px;">{{ headIcon }}</span>
+                  <span style="position: absolute; inset: -3px; border-radius: 50%; border: 1.5px solid transparent; border-top-color: #10B981; opacity: {{ orbitOpacity }}; animation: rzOrbit calc(1.1s * var(--anim-mult, 1)) linear infinite;"></span>
+                </span>
+                <span class="{{ labelCls }}" style="font-size: 13.5px; font-weight: 800; color: #0F172A; letter-spacing: -0.01em;">{{ headLabel }}</span>
+                <sc-if value="{{ isBusy }}" hint-placeholder-val="{{ true }}">
+                  <span style="display: inline-flex; gap: 3px; align-items: center;">
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: #10B981; animation: rzDot calc(1s * var(--anim-mult, 1)) ease-in-out infinite;"></span>
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: #10B981; animation: rzDot calc(1s * var(--anim-mult, 1)) ease-in-out .16s infinite;"></span>
+                    <span style="width: 4px; height: 4px; border-radius: 50%; background: #10B981; animation: rzDot calc(1s * var(--anim-mult, 1)) ease-in-out .32s infinite;"></span>
+                  </span>
+                </sc-if>
+                <span style="flex: 1 1 auto;"></span>
+                <sc-if value="{{ showTiming }}" hint-placeholder-val="{{ true }}">
+                  <span class="badge tag" style="opacity: {{ timingOpacity }}; transition: opacity var(--duration-slower) var(--ease-fade);"><span class="material-icons">schedule</span>{{ timing }}</span>
+                </sc-if>
+                <span class="material-icons" style="font-size: 20px; color: #94A3B8; transform: rotate({{ chevron }}deg); transition: transform var(--duration-380) var(--ease-out);">expand_more</span>
+              </button>
+
+              <div style="max-height: {{ bodyMax }}; opacity: {{ bodyOpacity }}; overflow: hidden; transition: max-height var(--duration-expand) var(--ease-out), opacity var(--duration-280) var(--ease-fade);">
+                <div style="padding: 12px 0 4px 14px; margin-left: 12px; display: flex; flex-direction: column; gap: 12px; border-left: 2px solid #E2E8F0;">
+
+                  <sc-if value="{{ showTools }}" hint-placeholder-val="{{ true }}">
+                    <div class="pills-row">
+                      <sc-for list="{{ tools }}" as="t" hint-placeholder-count="3">
+                        <span class="badge tag rz-tool" style="padding: 5px 10px; animation-delay: {{ t.delay }};"><span class="material-icons">{{ t.icon }}</span>{{ t.label }}</span>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ showSteps }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: flex; flex-direction: column; gap: 0;">
+                      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+                        <div style="display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; align-items: start;">
+                          <div style="display: flex; flex-direction: column; align-items: center; gap: 0; height: 100%;">
+                            <span style="width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: {{ s.dotBg }}; color: {{ s.dotFg }}; box-shadow: inset 0 0 0 1px {{ s.ring }}; transition: background var(--duration-320) var(--ease-standard), color var(--duration-320) var(--ease-standard), box-shadow var(--duration-320) var(--ease-standard);">
+                              <span class="material-icons" style="font-size: 13px;">{{ s.icon }}</span>
+                            </span>
+                            <span style="flex: 1 1 auto; width: 2px; min-height: 14px; border-radius: 2px; background: {{ s.lineBg }}; transition: background var(--duration-380) var(--ease-standard);"></span>
+                          </div>
+                          <div style="padding-bottom: 12px;">
+                            <div style="font-size: 12.5px; font-weight: 700; color: {{ s.fg }}; transition: color var(--duration-320) var(--ease-standard);">{{ s.label }}</div>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ hasTrace }}" hint-placeholder-val="{{ true }}">
+                    <div style="display: flex; flex-direction: column; gap: 9px;">
+                      <sc-for list="{{ lines }}" as="ln" hint-placeholder-count="2">
+                        <p class="rz-line" style="margin: 0; font-size: 13px; font-weight: 500; line-height: 1.62; color: #475569; text-wrap: pretty;">{{ ln.text }}<span style="display: {{ ln.caret }}; width: 2px; height: 13px; margin-left: 3px; vertical-align: -2px; background: #10B981; animation: rzCaret 1s steps(1) infinite;"></span></p>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+
+                  <sc-if value="{{ isThinkingOnly }}" hint-placeholder-val="{{ true }}">
+                    <div class="mb-skel" style="position: static; inset: auto; min-height: 0; padding: 0; gap: 9px;">
+                      <span class="skel-bar w1" style="opacity: 1; animation: shimmer calc(1.6s /* motion-sweep: kept, 1600ms, matches skel-bar shimmer tier already used at line 2127 */ * var(--anim-mult, 1)) var(--ease-linear) infinite;"></span>
+                      <span class="skel-bar w3" style="opacity: 1; animation: shimmer calc(1.6s /* motion-sweep: kept, 1600ms, matches skel-bar shimmer tier already used at line 2127 */ * var(--anim-mult, 1)) var(--ease-linear) infinite;"></span>
+                      <span class="skel-bar w2" style="opacity: 1; animation: shimmer calc(1.6s /* motion-sweep: kept, 1600ms, matches skel-bar shimmer tier already used at line 2127 */ * var(--anim-mult, 1)) var(--ease-linear) infinite;"></span>
+                    </div>
+                  </sc-if>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <sc-if value="{{ showAnswer }}" hint-placeholder-val="{{ true }}">
+            <div style="opacity: {{ answerOpacity }}; transform: translateY({{ answerY }}); transition: opacity var(--duration-420) var(--ease-fade), transform var(--duration-420) var(--ease-out); display: flex; flex-direction: column; gap: 12px; padding: 0 2px;">
+              <p style="margin: 0; font-size: 14.5px; font-weight: 500; line-height: 1.6; color: #0F172A; text-wrap: pretty;">Start with <strong style="font-weight: 800;">Beşiktaş</strong> — the offer response is due Thursday, so it is the only item with a hard deadline. Kadıköy comes second on expected value, Şişli last.</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button class="mb-ai-btn"><span class="material-icons mb-gradient-icon">bolt</span><span class="mb-gradient-text">Draft the outreach</span></button>
+                <button class="mb-btn"><span class="material-icons">content_copy</span>Copy</button>
+                <button class="mb-btn"><span class="material-icons">thumb_up</span></button>
+              </div>
+            </div>
+          </sc-if>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px;">
+    <span class="pills-label" style="margin: 0;">State</span>
+    <div class="pills-row">
+      <sc-for list="{{ phases }}" as="p" hint-placeholder-count="4">
+        <button class="pill-priority" onClick="{{ p.onPick }}" style="cursor: pointer; opacity: {{ p.opacity }}; transform: scale({{ p.scale }}); transition: opacity var(--duration-240) var(--ease-standard), transform var(--duration-240) var(--ease-slide-bounce);">
+          <span class="dot" style="background: {{ p.color }};"></span>{{ p.label }}
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:900},&quot;autoCollapse&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;thinkingDelay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:1400,&quot;min&quot;:200,&quot;max&quot;:4000,&quot;step&quot;:100,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;streamSpeed&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:45,&quot;min&quot;:10,&quot;max&quot;:160,&quot;step&quot;:5,&quot;unit&quot;:&quot;ms/word&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;showTiming&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+const TRACE = [
+  "The user is asking which of three active listings to push in this week's outreach.",
+  "Kadıköy carries the highest GCI potential at $45K, but the seller has not confirmed a valuation date, so the timeline is soft.",
+  "Beşiktaş is further along: an offer is on the table and the response is due Thursday. Ignoring it is the costliest mistake here.",
+  "So I rank by hard deadline first, then by expected value — Beşiktaş, Kadıköy, Şişli."
+];
+
+const VARIANTS = [
+  { id: 'chat',    label: 'Chat message', icon: 'forum',        width: '640px', note: 'Assistant turn in the main thread — trace above the answer.' },
+  { id: 'compact', label: 'Compact row',  icon: 'view_agenda',  width: '520px', note: 'Dense history list — collapsed by default, timing badge only.' },
+  { id: 'steps',   label: 'Stepped',      icon: 'account_tree', width: '640px', note: 'Long multi-stage reasoning — step timeline above the trace.' },
+  { id: 'tools',   label: 'With tools',   icon: 'build',        width: '640px', note: 'Retrieval runs — tool calls tagged inside the trace.' },
+  { id: 'panel',   label: 'Side panel',   icon: 'vertical_split', width: '360px', note: 'Narrow inspector rail — no avatar, no answer block.' }
+];
+
+const STEPS = [
+  { label: 'Read 3 active listings', icon: 'description' },
+  { label: 'Compare GCI vs. deadline', icon: 'insights' },
+  { label: 'Check pending offer dates', icon: 'event_available' },
+  { label: 'Rank and summarise', icon: 'task_alt' }
+];
+
+const TOOLS = [
+  { label: 'crm.listings', icon: 'storage' },
+  { label: 'calendar.deadlines', icon: 'event' },
+  { label: '3 records', icon: 'layers' }
+];
+
+const WORDS = TRACE.map(p => p.split(' '));
+const TOTAL = WORDS.reduce((n, w) => n + w.length, 0);
+
+class Component extends DCLogic {
+  state = { variant: 'chat', phase: 'idle', words: 0, secs: 0, open: false, userOpen: null, slow: false };
+
+  componentDidMount() { this.run(); }
+  componentWillUnmount() { this.clearAll(); }
+
+  clearAll() {
+    clearTimeout(this.t1); clearTimeout(this.t2);
+    clearInterval(this.iv); clearInterval(this.tick);
+  }
+
+  stream(fromWords) {
+    const mult = this.state.slow ? 4 : 1;
+    const step = (this.props.streamSpeed ?? 45) * mult;
+    const start = Date.now();
+    const base = fromWords || 0;
+    this.iv = setInterval(() => {
+      const n = base + Math.floor((Date.now() - start) / step);
+      if (n >= TOTAL) { clearInterval(this.iv); this.setState({ words: TOTAL }); this.finish(); return; }
+      this.setState({ words: n });
+    }, 60);
+  }
+
+  run() {
+    this.clearAll();
+    const mult = this.state.slow ? 4 : 1;
+    const delay = (this.props.thinkingDelay ?? 1400) * mult;
+    const t0 = Date.now();
+    this.setState({ phase: 'thinking', words: 0, secs: 0, open: true, userOpen: null });
+    this.tick = setInterval(() => this.setState({ secs: (Date.now() - t0) / 1000 / mult }), 100);
+    this.t1 = setTimeout(() => { this.setState({ phase: 'streaming' }); this.stream(0); }, delay);
+  }
+
+  finish() {
+    clearInterval(this.tick);
+    const mult = this.state.slow ? 4 : 1;
+    const collapse = this.props.autoCollapse ?? true;
+    this.t2 = setTimeout(() => {
+      this.setState(s => ({ phase: 'done', open: collapse ? false : s.open }));
+    }, 700 * mult);
+  }
+
+  setPhase(id) {
+    this.clearAll();
+    if (id === 'thinking' || id === 'streaming') {
+      if (id === 'thinking') { this.setState({ phase: 'thinking', words: 0, secs: 0.9, open: true, userOpen: null }); return; }
+      const from = Math.round(TOTAL * 0.55);
+      this.setState({ phase: 'streaming', words: from, secs: 3.2, open: true, userOpen: null });
+      const t0 = Date.now();
+      this.tick = setInterval(() => this.setState({ secs: 3.2 + (Date.now() - t0) / 1000 }), 100);
+      this.stream(from);
+      return;
+    }
+    if (id === 'idle') { this.setState({ phase: 'idle', words: 0, secs: 0, open: false, userOpen: null }); return; }
+    this.setState({ phase: 'done', words: TOTAL, secs: 6.4, open: false, userOpen: null });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const v = VARIANTS.find(x => x.id === s.variant) || VARIANTS[0];
+    const busy = s.phase === 'thinking' || s.phase === 'streaming';
+    const progress = s.words / TOTAL;
+    const open = s.userOpen === null ? s.open : s.userOpen;
+
+    let revealed = s.words;
+    const lines = [];
+    if (s.phase !== 'idle' && s.phase !== 'thinking') {
+      for (let i = 0; i < WORDS.length && revealed > 0; i++) {
+        const take = Math.min(revealed, WORDS[i].length);
+        const last = take < WORDS[i].length;
+        lines.push({ text: WORDS[i].slice(0, take).join(' '), caret: last ? 'inline-block' : 'none' });
+        revealed -= take;
+      }
+    }
+
+    const headLabel = s.phase === 'idle' ? 'Show reasoning'
+      : s.phase === 'thinking' ? 'Thinking…'
+      : s.phase === 'streaming' ? 'Reasoning…'
+      : 'Thought for ' + s.secs.toFixed(1) + 's';
+
+    const stepVals = STEPS.map((st, i) => {
+      const band = (i + 1) / STEPS.length;
+      const done = s.phase === 'done' || progress >= band;
+      const active = !done && (progress >= i / STEPS.length) && s.phase !== 'idle';
+      return {
+        label: st.label,
+        icon: done ? 'check' : st.icon,
+        dotBg: done ? '#10B981' : active ? '#ECFDF5' : '#F1F5F9',
+        dotFg: done ? '#FFFFFF' : active ? '#059669' : '#94A3B8',
+        ring: done ? 'rgba(16,185,129,.35)' : active ? 'rgba(16,185,129,.30)' : 'rgba(15,23,42,.06)',
+        lineBg: done ? '#A7F3D0' : '#E2E8F0',
+        fg: done ? '#0F172A' : active ? '#334155' : '#94A3B8'
+      };
+    });
+
+    const toolCount = s.phase === 'done' ? TOOLS.length : Math.min(TOOLS.length, Math.ceil(progress * TOOLS.length));
+    const answered = s.phase === 'done';
+
+    return {
+      variants: VARIANTS.map(x => ({
+        label: x.label, icon: x.icon,
+        cls: x.id === s.variant ? 'active' : '',
+        onPick: () => { this.setState({ variant: x.id }, () => this.run()); }
+      })),
+      phases: [
+        { id: 'idle', label: 'Idle', color: '#94A3B8' },
+        { id: 'thinking', label: 'Thinking', color: '#EAB308' },
+        { id: 'streaming', label: 'Streaming', color: '#10B981' },
+        { id: 'done', label: 'Done', color: '#0F172A' }
+      ].map(p => ({
+        label: p.label, color: p.color,
+        opacity: s.phase === p.id ? 1 : 0.55,
+        scale: s.phase === p.id ? 1.04 : 1,
+        onPick: () => this.setPhase(p.id)
+      })),
+      variantName: v.label,
+      variantNote: v.note,
+      stageWidth: v.width,
+      showAvatar: v.id !== 'panel' && v.id !== 'compact',
+      showAnswer: v.id === 'chat' || v.id === 'tools',
+      answerOpacity: answered ? 1 : 0,
+      answerY: answered ? '0px' : '8px',
+      showSteps: v.id === 'steps' && s.phase !== 'idle',
+      steps: stepVals,
+      showTools: v.id === 'tools' && toolCount > 0,
+      tools: TOOLS.slice(0, toolCount).map((t, i) => ({ label: t.label, icon: t.icon, delay: (i * 90) + 'ms' })),
+      hasTrace: lines.length > 0,
+      lines,
+      isThinkingOnly: s.phase === 'thinking',
+      headIcon: s.phase === 'done' ? 'check_circle' : 'psychology',
+      headLabel,
+      labelCls: s.phase === 'thinking' || s.phase === 'streaming' ? 'rz-thinking-label' : '',
+      isBusy: busy && v.id !== 'compact',
+      orbitOpacity: busy ? 1 : 0,
+      showTiming: (this.props.showTiming ?? true) && (v.id === 'compact' || s.phase === 'done'),
+      timingOpacity: s.phase === 'idle' ? 0 : 1,
+      timing: busy ? s.secs.toFixed(1) + 's' : s.secs.toFixed(1) + 's · ' + TOTAL + ' tokens',
+      chevron: open ? 180 : 0,
+      bodyMax: open ? '1200px' : '0px',
+      bodyOpacity: open ? 1 : 0,
+      onToggle: () => this.setState(st => ({ userOpen: !(st.userOpen === null ? st.open : st.userOpen) })),
+      onReplay: () => this.run(),
+      slowIcon: s.slow ? 'fast_forward' : 'slow_motion_video',
+      slowLabel: s.slow ? 'Normal speed' : 'Slow motion',
+      onSlow: () => {
+        const next = !s.slow;
+        document.documentElement.setAttribute('data-anim-slow', next ? 'true' : 'false');
+        this.setState({ slow: next }, () => this.run());
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>

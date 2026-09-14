@@ -1,0 +1,287 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Feedback Bar" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+
+<style>
+  html, body { margin: 0; background: #F8FAFC; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+
+  /* Action button — glow-only hover, tinted by intent (--fb-c) */
+  .fbx { --fb-c: 100,116,139; display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 30px; padding: 0 10px; border-radius: 9999px; border: 1px solid transparent; background: transparent; color: #64748B; font-family: 'Montserrat'; font-size: 12px; font-weight: 700; cursor: pointer; transition: color var(--duration-200) var(--ease-out), background var(--duration-200) var(--ease-out), border-color var(--duration-200) var(--ease-out), box-shadow var(--duration-240) var(--ease-out); position: relative; }
+  .fbx .material-icons { font-size: 17px; color: inherit; transition: color var(--duration-200) var(--ease-out); }
+  .fbx--icon { width: 30px; padding: 0; }
+  .fbx:hover { color: rgb(var(--fb-c)); background: rgba(var(--fb-c), 0.10); border-color: rgba(var(--fb-c), 0.28); box-shadow: 0 0 0 3px rgba(var(--fb-c), 0.10), 0 0 14px -2px rgba(var(--fb-c), 0.45); }
+  .fbx:active { background: rgba(var(--fb-c), 0.18); }
+  .fbx:focus-visible { outline: 2px solid rgb(var(--fb-c)); outline-offset: 2px; }
+  .fbx.on { color: rgb(var(--fb-c)); background: rgba(var(--fb-c), 0.12); border-color: rgba(var(--fb-c), 0.32); box-shadow: 0 0 0 3px rgba(var(--fb-c), 0.10); }
+  .fbx--up   { --fb-c: 16,185,129; }
+  .fbx--down { --fb-c: 239,68,68; }
+  .fbx--copy { --fb-c: 16,185,129; }
+  html.dark .fbx { color: #94A3B8; }
+
+  /* Reason tag — glow-only hover in danger tint, solid when chosen */
+  .fbtag { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 9999px; background: rgba(241,245,249,0.7); border: 1px solid transparent; font-family: 'Montserrat'; font-size: 11.5px; font-weight: 700; color: #64748B; cursor: pointer; transition: color var(--duration-200), background var(--duration-200), border-color var(--duration-200), box-shadow var(--duration-240); }
+  .fbtag:focus-visible { outline: 2px solid #EF4444; outline-offset: 2px; }
+  .fbtag:hover { color: #DC2626; border-color: rgba(239,68,68,0.4); box-shadow: 0 0 0 3px rgba(239,68,68,0.10), 0 0 14px -3px rgba(239,68,68,0.5); }
+  .fbtag.on { background: #EF4444; color: #fff; border-color: transparent; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -2px 0 rgba(15,23,42,0.16), 0 0 14px -4px rgba(239,68,68,0.7); }
+  html.dark .fbtag { background: #1E293B; border-color: #334155; color: #94A3B8; }
+
+  .fbta { width: 100%; box-sizing: border-box; min-height: 62px; resize: none; border: 1px solid #CBD5E1; border-radius: 14px; padding: 10px 12px; font-family: 'Montserrat'; font-size: 13px; font-weight: 500; color: #0F172A; background: #fff; outline: none; box-shadow: var(--shadow-recessed); transition: border-color var(--duration-200), box-shadow var(--duration-240); }
+  .fbta:focus-visible { border-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.16); outline: 2px solid #10B981; outline-offset: 2px; }
+  .fbta:focus { border-color: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.16); }
+  .fbta::placeholder { color: #94A3B8; font-weight: 600; }
+  html.dark .fbta { background: #0F172A; border-color: #334155; color: #F1F5F9; }
+
+  .btn-green[disabled] { opacity: .4; cursor: default; box-shadow: none; }
+  .btn-green[disabled]:hover, .btn-green[disabled]:active { transform: none; box-shadow: none; }
+
+  /* Demo-only state pills — small */
+  .fbseg { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 9999px; border: 1px solid transparent; background: rgba(241,245,249,0.7); font-family: 'Montserrat'; font-size: 11px; font-weight: 700; color: #64748B; cursor: pointer; transition: color var(--duration-180), background var(--duration-180), border-color var(--duration-180), box-shadow var(--duration-slow); }
+  .fbseg:focus-visible { outline: 2px solid #059669; outline-offset: 2px; }
+  .fbseg:hover { color: #059669; background: rgba(16,185,129,0.10); box-shadow: 0 0 12px -3px rgba(16,185,129,0.45); }
+  .fbseg.on { background: #0F172A; color: #fff; }
+  html.dark .fbseg { background: #1E293B; color: #94A3B8; }
+
+  /* no scale-up on the DS green button — colour/glow only */
+  .btn-green:hover { transform: none; box-shadow: 0 0 18px -4px rgba(16,185,129,0.6), inset 0 1px 0 rgba(255,255,255,0.16); }
+  .btn-green:active { transform: none; }
+
+  @keyframes fbspin { to { transform: rotate(360deg); } }
+
+  /* 44px hit layers (rule set: button under 44px in either axis) */
+  .fbtag, .fbseg { position: relative; }
+  .fbx::after, .fbtag::after, .fbseg::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fbx, .fbx .material-icons, .fbtag, .fbta, .fbseg,
+    [style*="fbspin"] {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+<div style="min-height:100vh;padding:40px 28px 48px;box-sizing:border-box;background:#F8FAFC;background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%);font-family:'Montserrat';display:flex;flex-direction:column;align-items:center;gap:22px">
+
+  <div style="width:100%;max-width:680px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:5px">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8">Deha · Components</span>
+      <h1 style="margin:0;font-size:24px;font-weight:900;letter-spacing:-0.02em;color:#0F172A">AiChatFeedbackBar</h1>
+      <p style="margin:0;font-size:13px;font-weight:600;color:#64748B;max-width:50ch;text-wrap:pretty">Sits under an assistant reply: vote, copy, regenerate, and collect a reason inline.</p>
+    </div>
+    <button class="fbx fbx--icon" onClick="{{ toggleTheme }}" title="Toggle theme"><span class="material-icons">{{ themeIcon }}</span></button>
+  </div>
+
+  <div style="width:100%;max-width:680px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div class="icon-badge icon-badge--glow" style="--icon-c:#10B981"><span class="material-icons">auto_awesome</span></div>
+      <p style="margin:2px 0 0;font-size:14px;font-weight:500;line-height:1.65;color:#334155;text-wrap:pretty">Your pipeline closed 14 deals this month, up 22% from July. The biggest lift came from inbound demos booked within two hours of signup — those convert at roughly twice the rate of next-day follow-ups.</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;padding-left:42px">
+
+      <span style="height:1px;background:#E2E8F0;margin:0 0 2px"></span>
+
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+        <button class="{{ upCls }}" onClick="{{ onUp }}" aria-label="Good response"><span class="material-icons">thumb_up</span></button>
+        <button class="{{ downCls }}" onClick="{{ onDown }}" aria-label="Bad response"><span class="material-icons">thumb_down</span></button>
+        <button class="{{ copyCls }}" onClick="{{ onCopy }}" aria-label="Copy answer"><span class="material-icons">{{ copyIcon }}</span></button>
+        <button class="fbx fbx--icon" onClick="{{ onRegen }}" aria-label="Regenerate"><span class="material-icons" style="{{ regenStyle }}">refresh</span></button>
+        <span style="flex:1"></span>
+        <span class="db-fade-in" style="font-size:11.5px;font-weight:700;color:{{ noteColor }}">{{ note }}</span>
+      </div>
+
+      <sc-if value="{{ showForm }}" hint-placeholder-val="{{ true }}">
+        <div class="db-fade-in" style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:16px;border:1px solid #E2E8F0;background:#fff">
+          <span style="font-size:12px;font-weight:800;color:#0F172A">What was off about this answer?</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ tags }}" as="t" hint-placeholder-count="5">
+              <button class="{{ t.cls }}" onClick="{{ t.onClick }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+          <textarea class="fbta" placeholder="Optional: what would a better answer look like?" value="{{ text }}" onChange="{{ onText }}"></textarea>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <button class="fbx" onClick="{{ onCancel }}">Cancel</button>
+            <button class="btn-green grid-texture" style="height:32px;min-width:96px" onClick="{{ onSubmit }}" disabled="{{ submitDisabled }}">
+              <span class="material-icons" style="{{ sendIconStyle }}">{{ sendIcon }}</span>{{ submitLabel }}
+            </button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showError }}">
+        <div class="db-fade-in" style="display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#DC2626">
+          <span class="material-icons" style="font-size:16px">error_outline</span>
+          Couldn't send — your note is kept.
+          <button class="fbx fbx--down" onClick="{{ onRetry }}">Retry</button>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:680px;margin-top:8px;padding-top:16px;border-top:1px solid #E2E8F0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8">States</span>
+    <sc-for list="{{ stateJumps }}" as="s" hint-placeholder-count="6">
+      <button class="{{ s.cls }}" onClick="{{ s.onClick }}">{{ s.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:620}}">
+const TAGS = [
+  { id: 'wrong', label: 'Incorrect' },
+  { id: 'unhelpful', label: 'Not helpful' },
+  { id: 'long', label: 'Too long' },
+  { id: 'context', label: 'Missed context' },
+  { id: 'tone', label: 'Wrong tone' }
+];
+
+const STATES = [
+  { id: 'idle', label: 'Idle' },
+  { id: 'up', label: 'Upvoted' },
+  { id: 'form', label: 'Reason form' },
+  { id: 'sending', label: 'Sending' },
+  { id: 'sent', label: 'Sent' },
+  { id: 'error', label: 'Error' }
+];
+
+class Component extends DCLogic {
+  state = { phase: 'idle', vote: null, tags: [], text: '', copied: false, regen: false, dark: false };
+
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._c); clearTimeout(this._r); }
+  set(p) { this.setState(p); }
+  reset() { this.set({ phase: 'idle', vote: null, tags: [], text: '' }); }
+
+  up() {
+    if (this.state.vote === 'up') return this.reset();
+    this.set({ vote: 'up', phase: 'sent' });
+  }
+
+  down() {
+    if (this.state.vote === 'down') return this.reset();
+    this.set({ vote: 'down', phase: 'form' });
+  }
+
+  submit() {
+    this.set({ phase: 'sending' });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.set({ phase: 'sent' }), 1300);
+  }
+
+  copy() {
+    this.set({ copied: true });
+    clearTimeout(this._c);
+    this._c = setTimeout(() => this.set({ copied: false }), 1800);
+  }
+
+  regen() {
+    this.set({ regen: true });
+    clearTimeout(this._r);
+    this._r = setTimeout(() => this.setState({ regen: false, phase: 'idle', vote: null, tags: [], text: '' }), 850);
+  }
+
+  toggleTag(id) {
+    const has = this.state.tags.indexOf(id) !== -1;
+    this.set({ tags: has ? this.state.tags.filter(t => t !== id) : this.state.tags.concat([id]) });
+  }
+
+  jump(id) {
+    if (id === 'idle') return this.reset();
+    if (id === 'up') return this.set({ phase: 'sent', vote: 'up', tags: [], text: '' });
+    if (id === 'form') return this.set({ phase: 'form', vote: 'down' });
+    if (id === 'sending') return this.set({ phase: 'sending', vote: 'down', tags: ['wrong'] });
+    if (id === 'sent') return this.set({ phase: 'sent', vote: 'down', tags: ['wrong'] });
+    if (id === 'error') return this.set({ phase: 'error', vote: 'down', tags: ['wrong'] });
+  }
+
+  theme() {
+    const next = !this.state.dark;
+    document.documentElement.classList.toggle('dark', next);
+    document.documentElement.setAttribute('data-theme', next ? 'dark' : 'light');
+    this.set({ dark: next });
+  }
+
+  activeState() {
+    const s = this.state;
+    if (s.phase === 'sent') return s.vote === 'up' ? 'up' : 'sent';
+    return s.phase;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const sending = s.phase === 'sending';
+    let note = '';
+    let noteColor = '#94A3B8';
+    if (s.copied) { note = 'Copied'; noteColor = '#059669'; }
+    else if (s.regen) { note = 'Regenerating…'; noteColor = '#64748B'; }
+    else if (s.phase === 'sent') { note = s.vote === 'up' ? 'Glad it helped' : 'Thanks — noted'; noteColor = '#059669'; }
+
+    return {
+      upCls: 'fbx fbx--icon fbx--up' + (s.vote === 'up' ? ' on' : ''),
+      downCls: 'fbx fbx--icon fbx--down' + (s.vote === 'down' ? ' on' : ''),
+      copyCls: 'fbx fbx--icon fbx--copy' + (s.copied ? ' on' : ''),
+      copyIcon: s.copied ? 'check' : 'content_copy',
+      regenStyle: s.regen ? 'animation: fbspin var(--duration-700) linear' : '',
+      note, noteColor,
+
+      showForm: s.phase === 'form' || sending,
+      showError: s.phase === 'error',
+      tags: TAGS.map(t => ({
+        label: t.label,
+        cls: 'fbtag' + (s.tags.indexOf(t.id) !== -1 ? ' on' : ''),
+        onClick: () => this.toggleTag(t.id)
+      })),
+      text: s.text,
+      submitLabel: sending ? 'Sending' : 'Send',
+      sendIcon: sending ? 'autorenew' : 'send',
+      sendIconStyle: 'font-size:15px' + (sending ? ';animation: fbspin var(--duration-900) linear infinite' : ''),
+      submitDisabled: sending || (!s.tags.length && !s.text.trim()),
+
+      onUp: () => this.up(),
+      onDown: () => this.down(),
+      onCopy: () => this.copy(),
+      onRegen: () => this.regen(),
+      onCancel: () => this.reset(),
+      onSubmit: () => this.submit(),
+      onRetry: () => this.submit(),
+      onText: e => this.set({ text: e.target.value }),
+
+      stateJumps: STATES.map(x => ({
+        label: x.label,
+        cls: 'fbseg' + (this.activeState() === x.id ? ' on' : ''),
+        onClick: () => this.jump(x.id)
+      })),
+      toggleTheme: () => this.theme(),
+      themeIcon: s.dark ? 'light_mode' : 'dark_mode'
+    };
+  }
+}
+</script>
+</body>
+</html>

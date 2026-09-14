@@ -1,0 +1,508 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Text Shimmer" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-caveat.css">
+
+<style>
+body { margin:0; background:#F8FAFC; font-family:'Montserrat',sans-serif; }
+a { color: var(--brand-primary-600); text-decoration: none; }
+a:hover { color: var(--brand-primary-700); }
+
+/* ── ai-chat-text-shimmer core ───────────────────────────── */
+.aits {
+  --aits-base: #94A3B8;
+  --aits-hi: #0F172A;
+  --aits-dur: 2s;
+  --aits-spread: 22%;
+  display: inline-block;
+  background-image: linear-gradient(90deg,
+    var(--aits-base) 0%,
+    var(--aits-base) calc(50% - var(--aits-spread)),
+    var(--aits-hi) 50%,
+    var(--aits-base) calc(50% + var(--aits-spread)),
+    var(--aits-base) 100%);
+  background-size: 260% 100%;
+  background-repeat: repeat-x;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: aitsSweep calc(var(--aits-dur) * var(--anim-mult, 1)) linear infinite;
+}
+@keyframes aitsSweep { from { background-position: 100% center; } to { background-position: 0% center; } }
+
+/* emerald brand flavour */
+.aits.brand { --aits-base: #A7F3D0; --aits-hi: #047857; }
+.aits.onDark { --aits-base: #475569; --aits-hi: #F1F5F9; }
+.aits.subtle { --aits-base: #CBD5E1; --aits-hi: #64748B; }
+
+/* paused / settled state — text resolves to solid ink */
+.aits.settled {
+  animation: none;
+  background-image: none;
+  color: var(--fg1);
+  -webkit-text-fill-color: currentColor;
+  transition: color calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-fade);
+}
+
+/* enter / exit transitions between shimmer states */
+@keyframes aitsIn  { from { opacity:0; transform: translateY(6px); filter: blur(3px); } to { opacity:1; transform:none; filter:none; } }
+@keyframes aitsOut { from { opacity:1; transform:none; filter:none; } to { opacity:0; transform: translateY(-6px); filter: blur(3px); } }
+.aits-in  { animation: aitsIn  calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+.aits-out { animation: aitsOut calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-standard) both; }
+
+/* orb that precedes the shimmering label */
+@keyframes aitsOrb { 0%,100% { transform: scale(1); opacity:.85; } 50% { transform: scale(1.18); opacity:1; } }
+.aits-orb { animation: aitsOrb calc(1.5s * var(--anim-mult, 1)) ease-in-out infinite; }
+@keyframes aitsRing { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+.aits-ring { animation: aitsRing calc(1.1s * var(--anim-mult, 1)) linear infinite; }
+
+@keyframes aitsCaret { 0%,45% { opacity:1; } 50%,95% { opacity:0; } }
+.aits-caret { animation: aitsCaret calc(1s * var(--anim-mult, 1)) steps(1) infinite; }
+
+@keyframes aitsRowIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+.aits-row-in { animation: aitsRowIn calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-bounce-glow) both; }
+@media (prefers-reduced-motion: reduce) {
+  .aits { animation: none !important; color: var(--fg1) !important; -webkit-text-fill-color: currentColor !important; } /* falls back to the settled state, per the component's own documented rule */
+  .aits-in, .aits-out, .aits-orb, .aits-ring, .aits-caret, .aits-row-in { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+}
+
+/* 44px hit layers for tap targets under 44px that _ds/ does not already cover */
+.mb-btn, .mb-ai-btn, .mb-send, .pill-priority, .btn-primary { position: relative; }
+.mb-btn::after, .mb-ai-btn::after, .mb-send::after, .pill-priority::after, .btn-primary::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+.mb-btn:focus-visible, .mb-ai-btn:focus-visible, .mb-send:focus-visible, .pill-priority:focus-visible {
+  outline: 2px solid var(--brand-primary); outline-offset: 2px;
+}
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script></helmet>
+
+<div style="min-height:100%; padding:40px 32px 64px; background:#F8FAFC; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%); font-family:'Montserrat',sans-serif; box-sizing:border-box;">
+  <div style="max-width:880px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
+
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span class="badge tag" style="letter-spacing:0.08em; text-transform:uppercase;">Component</span>
+        <span class="badge success"><span class="material-icons" style="font-size:13px;">auto_awesome</span>New</span>
+      </div>
+      <h1 style="margin:0; font-size:28px; font-weight:900; letter-spacing:-0.02em; color:#0F172A;">ai-chat-text-shimmer</h1>
+      <p style="margin:0; max-width:56ch; font-size:14px; font-weight:500; line-height:1.6; color:#64748B; text-wrap:pretty;">A light sweeps across the label while the model works, then the text settles into solid ink. Use it anywhere a wait has no measurable progress.</p>
+    </div>
+
+    <div class="pills-row" role="tablist" style="gap:8px;">
+      <button class="{{ tabChat }}" onClick="{{ goChat }}" type="button">Chat thinking</button>
+      <button class="{{ tabSteps }}" onClick="{{ goSteps }}" type="button">Reasoning steps</button>
+      <button class="{{ tabInline }}" onClick="{{ goInline }}" type="button">Inline &amp; controls</button>
+      <button class="{{ tabCompose }}" onClick="{{ goCompose }}" type="button">Composer</button>
+      <button class="{{ tabAnatomy }}" onClick="{{ goAnatomy }}" type="button">Anatomy</button>
+    </div>
+
+    <!-- ── Variant 1 · Chat thinking ─────────────────────────── -->
+    <sc-if value="{{ isChat }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:contents;">
+          <div style="display:flex; flex-direction:column; gap:16px;">
+
+            <div style="display:flex; justify-content:flex-end;">
+              <div style="max-width:70%; background:#0F172A; color:#fff; padding:11px 16px; border-radius:18px 18px 4px 18px; font-size:14px; font-weight:600; line-height:1.5; box-shadow:inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -2px 0 rgba(0,0,0,0.22);">Which three listings should I follow up on this week?</div>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:flex-start;">
+              <div style="width:32px; height:32px; flex:0 0 32px; border-radius:50%; display:grid; place-items:center; background:#10B981; color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), 0 6px 16px -6px rgba(16,185,129,0.6);">
+                <span class="material-icons aits-orb" style="font-size:17px;">auto_awesome</span>
+              </div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:10px; padding-top:5px;">
+                <div style="min-height:22px; font-size:15px; font-weight:700; line-height:1.45;">
+                  <span class="{{ chatLabelCls }}" style="{{ chatShimmerStyle }}">{{ chatLabel }}</span>
+                </div>
+                <sc-if value="{{ chatAnswered }}" hint-placeholder-val="{{ false }}">
+                  <div class="aits-in" style="display:flex; flex-direction:column; gap:10px;">
+                    <p style="margin:0; font-size:14px; font-weight:500; line-height:1.65; color:#334155; text-wrap:pretty;">Three are worth your Tuesday. Maple Ridge has been sitting nine days past its price-drop window, Harborview picked up twelve saved-searches since Friday, and the Delacroix offer expires Thursday at noon.</p>
+                    <div class="pills-row">
+                      <span class="badge tag"><span class="material-icons">home_work</span>Maple Ridge</span>
+                      <span class="badge tag"><span class="material-icons">trending_up</span>Harborview</span>
+                      <span class="badge time"><span class="material-icons">schedule</span>Delacroix · 2d</span>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+
+            <div style="height:1px; background:#E2E8F0;"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+              <span style="font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#94A3B8;">{{ chatStateLabel }}</span>
+              <div style="display:flex; gap:8px;">
+                <button class="mb-btn" onClick="{{ runChat }}" type="button"><span class="material-icons">play_arrow</span>Run</button>
+                <button class="mb-btn" onClick="{{ resetChat }}" type="button"><span class="material-icons">restart_alt</span>Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="margin:0; font-size:12px; font-weight:600; color:#94A3B8;">idle → thinking → drafting → settled. The label never jumps: each phrase crossfades in place and the sweep keeps its rhythm across the swap.</p>
+      </div>
+    </sc-if>
+
+    <!-- ── Variant 2 · Reasoning steps ───────────────────────── -->
+    <sc-if value="{{ isSteps }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:contents;">
+          <div style="display:flex; flex-direction:column; gap:14px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <span style="font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Working</span>
+              <span class="badge tag"><span class="material-icons">bolt</span>{{ stepProgress }}</span>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+              <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+                <div class="aits-row-in" style="display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:14px; background:{{ s.bg }};">
+                  <span class="material-icons {{ s.iconCls }}" style="font-size:18px; color:{{ s.iconColor }};">{{ s.icon }}</span>
+                  <span class="{{ s.textCls }}" style="font-size:14px; font-weight:700; {{ s.textStyle }}">{{ s.label }}</span>
+                  <span style="flex:1;"></span>
+                  <span style="font-size:11px; font-weight:700; color:#94A3B8; font-variant-numeric:tabular-nums;">{{ s.meta }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex; gap:8px; padding-top:2px;">
+              <button class="mb-btn" onClick="{{ runSteps }}" type="button"><span class="material-icons">play_arrow</span>Replay</button>
+            </div>
+          </div>
+        </div>
+        <p style="margin:0; font-size:12px; font-weight:600; color:#94A3B8;">Only the active row shimmers. Completed rows drop to solid slate with a check; pending rows stay at 45% opacity so the eye lands on the live one.</p>
+      </div>
+    </sc-if>
+
+    <!-- ── Variant 3 · Inline & controls ─────────────────────── -->
+    <sc-if value="{{ isInline }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:contents;">
+          <div style="display:flex; flex-direction:column; gap:22px;">
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">In a button</span>
+                <div class="pills-row">
+                  <button class="mb-ai-btn" type="button" style="pointer-events:auto;"><span class="material-icons mb-gradient-icon">auto_awesome</span><span class="aits brand">Extending…</span></button>
+                  <button class="mb-btn" type="button"><span class="material-icons aits-ring">autorenew</span><span class="aits">Summarising</span></button>
+                  <button class="btn-primary" type="button" style="padding:8px 16px; border-radius:9999px; font-size:13px;"><span class="material-icons" style="font-size:16px;">check</span>Apply</button>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">In pills &amp; tags</span>
+                <div class="pills-row">
+                  <span class="pill-tab"><span class="aits subtle">Scoring leads</span></span>
+                  <span class="badge tag"><span class="material-icons aits-orb" style="color:#10B981;">auto_awesome</span><span class="aits">Enriching</span></span>
+                  <span class="pill-priority"><span class="dot aits-orb" style="background:#10B981;"></span><span class="aits">Matching buyers</span></span>
+                  <span class="badge success"><span class="material-icons">check</span>Ready</span>
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Inline in a sentence</span>
+                <p style="margin:0; font-size:14px; font-weight:500; line-height:1.7; color:#334155;">Pipeline health is <span class="aits brand" style="font-weight:800;">being recalculated</span> against the last 90 days of closings, and the forecast will refresh automatically.</p>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">On a dark surface</span>
+                <div style="background:#0F172A; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:10px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);">
+                  <span class="material-icons aits-orb" style="font-size:18px; color:#34D399;">auto_awesome</span>
+                  <span class="aits onDark" style="font-size:15px; font-weight:700;">Drafting the follow-up email</span>
+                </div>
+              </div>
+
+              <div style="height:1px; background:#E2E8F0;"></div>
+
+              <div style="display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start;">
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Speed</span>
+                  <div class="pills-row">
+                    <button class="{{ spdSlow }}" onClick="{{ setSlow }}" type="button">Slow</button>
+                    <button class="{{ spdNormal }}" onClick="{{ setNormal }}" type="button">Normal</button>
+                    <button class="{{ spdFast }}" onClick="{{ setFast }}" type="button">Fast</button>
+                  </div>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Spread</span>
+                  <div class="pills-row">
+                    <button class="{{ sprTight }}" onClick="{{ setTight }}" type="button">Tight</button>
+                    <button class="{{ sprWide }}" onClick="{{ setWide }}" type="button">Wide</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:16px; padding:22px; display:grid; place-items:center; box-shadow:inset 0 2px 4px rgba(0,0,0,0.04);">
+                <span class="aits" style="{{ previewStyle }} font-size:20px; font-weight:800;">Thinking through your pipeline</span>
+              </div>
+          </div>
+        </div>
+        <p style="margin:0; font-size:12px; font-weight:600; color:#94A3B8;">The shimmer inherits font size and weight from its host, so it drops into a button, a pill or running body copy without a wrapper.</p>
+      </div>
+    </sc-if>
+
+    <!-- ── Variant 4 · Composer ──────────────────────────────── -->
+    <sc-if value="{{ isCompose }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="mb-shell">
+          <div class="{{ mbCls }}">
+            <div class="mb-stack">
+              <div class="mb-input" style="min-height:84px;">Draft a follow-up to the Harborview buyers, warm but brief, and mention the Thursday deadline.</div>
+              <div class="mb-skel">
+                <div class="skel-bar w1"></div>
+                <div class="skel-bar w2"></div>
+                <div class="skel-bar w3"></div>
+              </div>
+            </div>
+            <div class="mb-toolbar">
+              <div class="mb-tools-left">
+                <button class="mb-btn" type="button"><span class="material-icons">attach_file</span>Attach</button>
+                <span class="{{ composeStatusCls }}" style="font-size:13px; font-weight:800;">{{ composeStatus }}</span>
+              </div>
+              <div class="mb-tools-right">
+                <div class="mb-ai-slot">
+                  <button class="mb-ai-btn" onClick="{{ runCompose }}" type="button"><span class="material-icons mb-gradient-icon">auto_awesome</span><span class="mb-gradient-text">Extend with AI</span></button>
+                  <span class="mb-gen-label"><span class="material-icons mb-gradient-icon aits-orb">auto_awesome</span><span class="aits brand">Generating</span></span>
+                  <span class="mb-done-badge"><svg class="mb-done-check" width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6.5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>Done</span>
+                </div>
+                <button class="mb-send" type="button"><span class="material-icons">arrow_upward</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="hint">Press <kbd>Extend with AI</kbd> — the label shimmers in the same slot the button vacates, then hands over to the done check.</p>
+      </div>
+    </sc-if>
+
+    <!-- ── Variant 5 · Anatomy ───────────────────────────────── -->
+    <sc-if value="{{ isAnatomy }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div style="display:contents;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px;">
+
+            <div style="border:1px solid #E2E8F0; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#F8FAFC;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Default</span>
+              <span class="aits" style="font-size:15px; font-weight:700;">Thinking</span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">slate-400 → slate-900</span>
+            </div>
+
+            <div style="border:1px solid #E2E8F0; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#F8FAFC;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Brand</span>
+              <span class="aits brand" style="font-size:15px; font-weight:700;">Thinking</span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">emerald-200 → emerald-700</span>
+            </div>
+
+            <div style="border:1px solid #E2E8F0; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#F8FAFC;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Subtle</span>
+              <span class="aits subtle" style="font-size:15px; font-weight:700;">Thinking</span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">slate-300 → slate-500</span>
+            </div>
+
+            <div style="border:1px solid #334155; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#0F172A;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#64748B;">On dark</span>
+              <span class="aits onDark" style="font-size:15px; font-weight:700;">Thinking</span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">slate-600 → slate-100</span>
+            </div>
+
+            <div style="border:1px solid #E2E8F0; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#F8FAFC;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Settled</span>
+              <span class="aits settled" style="font-size:15px; font-weight:700;">Thinking</span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">animation halts, ink solid</span>
+            </div>
+
+            <div style="border:1px solid #E2E8F0; border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#F8FAFC;">
+              <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">With caret</span>
+              <span style="font-size:15px; font-weight:700;"><span class="aits">Streaming</span><span class="aits-caret" style="color:#10B981;">▍</span></span>
+              <span class="mono" style="font-family:ui-monospace,Menlo,monospace; font-size:11px; color:#64748B;">token stream in progress</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:contents;">
+          <div style="display:flex; flex-direction:column; gap:14px; padding-top:8px; border-top:1px solid #E2E8F0;">
+            <span style="font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#94A3B8;">Rules</span>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;">
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span class="material-icons" style="font-size:18px; color:#10B981;">check_circle</span>
+                <p style="margin:0; font-size:13px; font-weight:500; line-height:1.6; color:#334155;">Use for indeterminate waits under about ten seconds. Past that, switch to a progress bar with a count.</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span class="material-icons" style="font-size:18px; color:#10B981;">check_circle</span>
+                <p style="margin:0; font-size:13px; font-weight:500; line-height:1.6; color:#334155;">One shimmer per surface. Two competing sweeps read as a broken screen.</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span class="material-icons" style="font-size:18px; color:#EF4444;">cancel</span>
+                <p style="margin:0; font-size:13px; font-weight:500; line-height:1.6; color:#334155;">Never shimmer content the user can read. It is for labels about the wait, not for the answer itself.</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <span class="material-icons" style="font-size:18px; color:#EF4444;">cancel</span>
+                <p style="margin:0; font-size:13px; font-weight:500; line-height:1.6; color:#334155;">Do not pair with a spinner in the same row. Pick the orb or the sweep.</p>
+              </div>
+            </div>
+            <div class="ai-caveat" style="display:flex; gap:8px; align-items:center; font-size:12px; font-weight:600; color:#64748B;">
+              <span class="material-icons" style="font-size:15px; color:#94A3B8;">info</span>
+              Respects prefers-reduced-motion by falling back to the settled state.
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;chat&quot;,&quot;steps&quot;,&quot;inline&quot;,&quot;compose&quot;,&quot;anatomy&quot;],&quot;default&quot;:&quot;chat&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+const SPEEDS = { slow: '3.2s', normal: '2s', fast: '1.1s' };
+const SPREADS = { tight: '12%', wide: '30%' };
+
+const STEP_DEFS = [
+  { label: 'Reading 214 pipeline records', meta: '0.4s' },
+  { label: 'Scoring follow-up urgency', meta: '1.1s' },
+  { label: 'Cross-checking buyer matches', meta: '0.8s' },
+  { label: 'Writing the shortlist', meta: '0.6s' }
+];
+
+class Component extends DCLogic {
+  state = {
+    tab: this.props.defaultVariant || 'chat',
+    speed: 'normal',
+    spread: 'tight',
+    chat: 'thinking',
+    step: 0,
+    compose: 'idle'
+  };
+
+  timers = [];
+
+  componentDidMount() { this.runChat(); this.runSteps(); }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+
+  later(fn, ms) { this.timers.push(setTimeout(fn, ms)); }
+
+  runChat = () => {
+    this.setState({ chat: 'thinking' });
+    this.later(() => this.setState({ chat: 'drafting' }), 2400);
+    this.later(() => this.setState({ chat: 'done' }), 4600);
+  };
+  resetChat = () => this.setState({ chat: 'idle' });
+
+  runSteps = () => {
+    this.setState({ step: 0 });
+    STEP_DEFS.forEach((_, i) => this.later(() => this.setState({ step: i + 1 }), (i + 1) * 1300));
+  };
+
+  runCompose = () => {
+    if (this.state.compose !== 'idle') return;
+    this.setState({ compose: 'generating' });
+    this.later(() => this.setState({ compose: 'exiting' }), 3200);
+    this.later(() => this.setState({ compose: 'done' }), 3900);
+    this.later(() => this.setState({ compose: 'done-out' }), 6100);
+    this.later(() => this.setState({ compose: 'idle' }), 6900);
+  };
+
+  tab(name) { return 'pill-tab' + (this.state.tab === name ? ' active' : ''); }
+  seg(group, name) { return 'pill-tab' + (this.state[group] === name ? ' active' : ''); }
+
+  renderVals() {
+    const s = this.state;
+    const dur = SPEEDS[s.speed];
+    const spread = SPREADS[s.spread];
+
+    const chatLabels = {
+      idle: 'Ask anything about your pipeline',
+      thinking: 'Thinking',
+      drafting: 'Drafting your shortlist',
+      done: 'Here is what I found'
+    };
+    const chatStates = {
+      idle: 'Idle — no sweep',
+      thinking: 'Thinking — sweep at 2s',
+      drafting: 'Drafting — label swapped mid-sweep',
+      done: 'Settled — solid ink'
+    };
+    const active = s.chat === 'thinking' || s.chat === 'drafting';
+
+    const steps = STEP_DEFS.map((d, i) => {
+      const done = i < s.step;
+      const isActive = i === s.step;
+      return {
+        label: d.label,
+        meta: done ? d.meta : (isActive ? 'running' : '—'),
+        icon: done ? 'check_circle' : (isActive ? 'auto_awesome' : 'radio_button_unchecked'),
+        iconCls: isActive ? 'aits-orb' : '',
+        iconColor: done ? '#10B981' : (isActive ? '#059669' : '#CBD5E1'),
+        bg: isActive ? '#ECFDF5' : 'transparent',
+        textCls: isActive ? 'aits brand' : '',
+        textStyle: done ? 'color:#0F172A;' : (isActive ? '' : 'color:#CBD5E1;'),
+      };
+    });
+
+    return {
+      isChat: s.tab === 'chat',
+      isSteps: s.tab === 'steps',
+      isInline: s.tab === 'inline',
+      isCompose: s.tab === 'compose',
+      isAnatomy: s.tab === 'anatomy',
+      tabChat: this.tab('chat'),
+      tabSteps: this.tab('steps'),
+      tabInline: this.tab('inline'),
+      tabCompose: this.tab('compose'),
+      tabAnatomy: this.tab('anatomy'),
+      goChat: () => this.setState({ tab: 'chat' }),
+      goSteps: () => { this.setState({ tab: 'steps' }); this.runSteps(); },
+      goInline: () => this.setState({ tab: 'inline' }),
+      goCompose: () => this.setState({ tab: 'compose' }),
+      goAnatomy: () => this.setState({ tab: 'anatomy' }),
+
+      chatLabel: chatLabels[s.chat],
+      chatStateLabel: chatStates[s.chat],
+      chatLabelCls: 'aits aits-in' + (active ? '' : ' settled'),
+      chatShimmerStyle: `--aits-dur:${dur}; --aits-spread:${spread};`,
+      chatAnswered: s.chat === 'done',
+      runChat: this.runChat,
+      resetChat: this.resetChat,
+
+      steps,
+      stepProgress: `${Math.min(s.step, STEP_DEFS.length)} of ${STEP_DEFS.length}`,
+      runSteps: this.runSteps,
+
+      spdSlow: this.seg('speed', 'slow'),
+      spdNormal: this.seg('speed', 'normal'),
+      spdFast: this.seg('speed', 'fast'),
+      sprTight: this.seg('spread', 'tight'),
+      sprWide: this.seg('spread', 'wide'),
+      setSlow: () => this.setState({ speed: 'slow' }),
+      setNormal: () => this.setState({ speed: 'normal' }),
+      setFast: () => this.setState({ speed: 'fast' }),
+      setTight: () => this.setState({ spread: 'tight' }),
+      setWide: () => this.setState({ spread: 'wide' }),
+      previewStyle: `--aits-dur:${dur}; --aits-spread:${spread};`,
+
+      mbCls: 'mb' + (s.compose === 'idle' ? '' : ' ' + s.compose),
+      composeStatus: s.compose === 'generating' ? 'Extending your draft' : (s.compose === 'done' ? 'Draft extended' : ''),
+      composeStatusCls: s.compose === 'generating' ? 'aits brand' : 'aits settled',
+      runCompose: this.runCompose
+    };
+  }
+}
+
+</script>
+</body>
+</html>

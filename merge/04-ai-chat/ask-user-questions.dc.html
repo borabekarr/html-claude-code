@@ -1,0 +1,557 @@
+<!-- @dsCard group="Merge - ai-chat" name="Ask User Questions" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #EAEAEA; margin: 0; }
+  .auq-page .card { padding: 0; background: none; }
+  @keyframes auqEnterA { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes auqEnterB { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+  @keyframes auqPop { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  @keyframes auqDone { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes auqRing { from { box-shadow: 0 0 0 0 rgba(16,185,129,.35); } to { box-shadow: 0 0 0 14px rgba(16,185,129,0); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .auq-card, .auq-dot, .auq-dot .material-icons, .auq-back, .auq-chat, .auq-chatgo,
+    .auq-row, .auq-body.animA > *, .auq-body.animB > *, .auq-body > *,
+    .auq-row.sel .auq-chip, .auq-ta, .auq-go, .auq-done, .auq-tick, .pill-tab {
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+  }
+
+  .auq-wrap { --hair:#E8ECF1; --spring:var(--ease-out);
+    --ink:#0F172A; --muted:#64748B; --faint:#94A3B8;
+    font-family:'Montserrat'; color: var(--ink); min-height:100%;
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center; gap:28px;
+    padding: 56px 24px 72px; background:#EAEAEA; }
+  .auq-head { text-align:center; max-width:640px; }
+  .auq-eyebrow { font-size:10px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+  .auq-head h1 { font-size:28px; font-weight:900; letter-spacing:-.02em; margin:10px 0 8px; }
+  .auq-head p { margin:0; font-size:14px; font-weight:500; color:var(--muted); line-height:1.55; text-wrap:pretty; }
+
+  /* auq-* hit layers: .auq-back / .auq-skip / .auq-chatgo / .auq-row are all
+     under 44px on at least one axis; ::after grows the tap target without
+     enlarging the visible control (44px hit-layer rule). */
+  .auq-back, .auq-skip, .auq-chatgo, .auq-row { position: relative; }
+  .auq-back::after, .auq-skip::after, .auq-chatgo::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%;
+    width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  /* the probe measures ::after specifically, so the hit layer needs that slot;
+     the divider hairline (originally ::after) moved to ::before below. */
+  .auq-row::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%;
+    width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  .auq-back:focus-visible, .auq-skip:focus-visible, .auq-chatgo:focus-visible, .auq-row:focus-visible {
+    outline: 2px solid var(--brand-primary); outline-offset: 2px;
+  }
+
+  .auq-picker { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:760px; }
+  .auq-picker button { cursor:pointer; }
+  .auq-picker .pill-tab:hover { border-color:#94A3B8; }
+  .auq-picker .pill-tab.active:hover { border-color:transparent; }
+
+  .auq-stage { width:100%; max-width:560px; display:flex; flex-direction:column; gap:14px; }
+  .auq-shell { box-sizing:border-box; border-radius:42px; background:#F1F5F9; border:1px solid #E2E8F0;
+    box-shadow: 0 4px 8px rgba(15,23,42,.10); padding:10px; display:flex; }
+  .auq-card { position:relative; flex:1; min-width:0; background:#fff; border-radius:32px; overflow:hidden;
+    border:1px solid #E2E8F0;
+    box-shadow: inset 0 0 0 1px rgba(15,23,42,.03), 0 10px 28px -8px rgba(15,23,42,.28), 0 3px 8px -2px rgba(15,23,42,.12);
+    transition: box-shadow var(--duration-320) var(--spring); }
+  .auq-steps { display:flex; align-items:center; gap:6px; }
+  .auq-dot { width:20px; height:20px; border-radius:9999px; display:grid; place-items:center; flex:0 0 auto;
+    background:#F1F5F9; box-shadow: inset 0 0 0 1px rgba(15,23,42,.08);
+    transition: background var(--duration-260) var(--spring), box-shadow var(--duration-260) var(--spring), transform var(--duration-260) var(--ease-card-pop); }
+  .auq-dot .material-icons { font-size:13px; color:#fff; transform:scale(0); transition: transform var(--duration-280) var(--ease-card-pop); }
+  .auq-dot.is-done { background:var(--semantic-success); box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 2px 8px -1px rgba(16,185,129,.55); }
+  .auq-dot.is-done .material-icons { transform:scale(1); }
+  .auq-dot.is-skipped { background:#fff; box-shadow: inset 0 0 0 1px #E2E8F0; }
+  .auq-dot.is-current { background:#fff; box-shadow: inset 0 0 0 2px var(--semantic-success), 0 0 0 4px rgba(16,185,129,.14); transform:scale(1.08); }
+  .auq-back { display:inline-flex; align-items:center; gap:5px; border:none; background:transparent;
+    font-family:inherit; font-size:12.5px; font-weight:800; color:#475569; padding:5px 10px; border-radius:9999px;
+    cursor:pointer; transition: background var(--duration-base) ease; }
+  .auq-back:hover { background:#F1F5F9; }
+  .auq-back .material-icons { font-size:15px; }
+  .auq-chat { display:flex; align-items:center; gap:9px; margin:2px 18px 0; padding:8px 10px 8px 12px;
+    border-radius:9999px; background:#F8FAFC; box-shadow: inset 0 0 0 1px rgba(15,23,42,.06);
+    transition: box-shadow var(--duration-200) ease, background var(--duration-200) ease; }
+  .auq-chat:focus-within { background:#fff; box-shadow: inset 0 0 0 1px var(--semantic-success), 0 0 0 4px rgba(16,185,129,.12); }
+  .auq-chatin { flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:inherit;
+    font-size:13px; font-weight:600; color:var(--ink); }
+  .auq-chatin::placeholder { color:#94A3B8; font-weight:500; }
+  .auq-chatgo { width:28px; height:28px; flex:0 0 auto; border:none; border-radius:9999px; cursor:pointer;
+    display:grid; place-items:center; color:#fff; background:var(--semantic-success);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.18);
+    transition: transform var(--duration-base) var(--spring), filter var(--duration-base) ease; }
+  .auq-chatgo:hover { filter:brightness(1.06); }
+  .auq-chatgo:active { transform:scale(.92); }
+  .auq-chatgo .material-icons { font-size:16px; }
+
+  .auq-top { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 18px 0; }
+  .auq-count { margin-left:auto; flex:0 0 auto; white-space:nowrap; font-family:'Montserrat', system-ui, sans-serif; font-size:11px; font-weight:900; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); font-variant-numeric:tabular-nums; }
+  .auq-skip { display:inline-flex; align-items:center; gap:5px; border:none; background:transparent; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--faint);
+    padding:5px 10px; margin-right:-6px; border-radius:var(--radius-circle); cursor:pointer; transition: background var(--duration-base) ease, color var(--duration-base) ease; }
+  .auq-skip:hover { background:#F1F5F9; color:#475569; }
+  .auq-skip .material-icons { font-size:15px; }
+
+
+  .auq-q { padding:14px 18px 10px; font-size:19px; font-weight:800; letter-spacing:-.015em; line-height:1.35; text-wrap:pretty; margin:0; }
+  .auq-body { padding:0 18px 14px; display:flex; flex-direction:column; gap:0; }
+  .auq-body.animA > * { animation: auqEnterA var(--duration-420) var(--spring) both; }
+  .auq-body.animB > * { animation: auqEnterB var(--duration-420) var(--spring) both; }
+  .auq-body > *:nth-child(1) { animation-delay: 20ms; /* motion-sweep: kept */ }
+  .auq-body > *:nth-child(2) { animation-delay: 65ms; /* motion-sweep: kept */ }
+  .auq-body > *:nth-child(3) { animation-delay: 110ms; /* motion-sweep: kept */ }
+  .auq-body > *:nth-child(4) { animation-delay: 155ms; /* motion-sweep: kept */ }
+  .auq-body > *:nth-child(5) { animation-delay: var(--duration-200); }
+
+  .auq-row { display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; margin:0; text-align:left;
+    background:transparent; border:none; border-radius:10px; padding:12px 10px;
+    font-family:inherit; cursor:pointer; position:relative;
+    transition: background 170ms ease, transform 170ms var(--spring); /* motion-sweep: kept (no 170ms token) */ }
+  .auq-row::before { content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:var(--hair); }
+  .auq-body > *:last-child .auq-row::before, .auq-row:last-child::before { display:none; }
+  .auq-row:hover { background:#F8FAFC; }
+  .auq-row:active { transform: scale(.99); }
+  .auq-row.sel { background:rgba(16,185,129,.07); }
+  .auq-copy { flex:1; min-width:0; display:flex; align-items:baseline; gap:8px; order:1; }
+  .auq-row.stacked { padding:14px 10px; }
+  .auq-row.stacked .auq-copy { flex-direction:column; align-items:flex-start; gap:3px; }
+  .auq-t { font-size:14px; font-weight:800; color:var(--ink); letter-spacing:-.01em; }
+  .auq-d { font-size:12.5px; font-weight:500; color:var(--faint); line-height:1.5; text-wrap:pretty; }
+  .auq-row.sel .auq-d { color:#64748B; }
+
+  .auq-chip { order:2; flex-shrink:0; width:22px; height:22px; border-radius:7px; display:grid; place-items:center;
+    background:#F1F5F9; color:var(--faint); font-size:11px; font-weight:800; font-variant-numeric:tabular-nums;
+    box-shadow: inset 0 -1px 0 rgba(15,23,42,.06), inset 0 0 0 1px rgba(15,23,42,.05);
+    transition: background var(--duration-180) ease, color var(--duration-180) ease, box-shadow var(--duration-180) ease; }
+  .auq-row.chipleft .auq-chip { order:0; }
+  .auq-row:hover .auq-chip { background:#E2E8F0; color:#475569; }
+  .auq-row.sel .auq-chip { background:var(--semantic-success); color:#fff; animation: auqPop var(--duration-320) var(--spring);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.18), 0 2px 8px -1px rgba(16,185,129,.55); }
+  .auq-chip .material-icons { font-size:15px; }
+  .auq-chip.multi { border-radius:9999px; }
+
+  .auq-go { order:3; flex-shrink:0; width:22px; height:22px; display:grid; place-items:center; color:#CBD5E1;
+    opacity:0; transform: translateX(-4px); transition: opacity var(--duration-180) ease, transform var(--duration-slow) var(--spring); }
+  .auq-go .material-icons { font-size:17px; }
+  .auq-row:hover .auq-go { opacity:1; transform:none; }
+  .auq-row.sel .auq-go { opacity:1; transform:none; color:var(--semantic-success); }
+
+  .auq-ta { width:100%; box-sizing:border-box; resize:none; border:1px solid #E8ECF1; border-radius:14px;
+    background:#fff; padding:12px 14px; font-family:inherit; font-size:14px; font-weight:600; color:var(--ink);
+    line-height:1.5; outline:none; transition: border-color var(--duration-180) ease, box-shadow var(--duration-180) ease, background var(--duration-180) ease; }
+  .auq-ta::placeholder { color:#CBD5E1; font-weight:500; }
+  .auq-ta:focus { border-color:var(--semantic-success); box-shadow: 0 0 0 4px rgba(16,185,129,.13); }
+  .auq-ta.err { border-color:#EF4444; box-shadow: 0 0 0 4px rgba(239,68,68,.12); }
+  .auq-otherrow { display:flex; align-items:flex-start; gap:12px; padding:12px 0 2px; }
+  .auq-otherrow .auq-chip { margin-top:10px; }
+
+  .auq-foot { display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 18px 18px; border-top:1px solid var(--hair); }
+  .auq-err { font-size:12.5px; font-weight:700; color:#EF4444; display:flex; align-items:center; gap:6px; }
+  .auq-err .material-icons { font-size:15px; }
+  .auq-submit { margin-left:auto; padding:10px 16px; font-size:13px; border-radius:12px; }
+  .auq-submit[disabled] { opacity:.4; cursor:not-allowed; filter:grayscale(.35); box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22); }
+  .auq-kbd { font-size:10.5px; font-weight:800; opacity:.75; padding:2px 6px; border-radius:6px;
+    background:rgba(255,255,255,.22); letter-spacing:.02em; }
+
+  .auq-done { padding:24px 18px; animation: auqDone var(--duration-expand) var(--spring) both; }
+  .auq-tick { width:44px; height:44px; border-radius:9999px; background:var(--semantic-success); color:#fff; display:grid; place-items:center;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 6px 18px -6px rgba(16,185,129,.8); animation: auqRing var(--duration-900) ease-out var(--duration-200) 2; }
+  .auq-done h3 { margin:16px 0 4px; font-size:19px; font-weight:900; letter-spacing:-.02em; }
+  .auq-done p { margin:0 0 18px; font-size:13px; font-weight:500; color:var(--muted); }
+  .auq-sum { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .auq-sumrow { display:flex; align-items:flex-start; justify-content:space-between; gap:16px;
+    padding:11px 14px; border-radius:14px; background:#F8FAFC; box-shadow: inset 0 0 0 1px rgba(15,23,42,.05); }
+  .auq-sumq { font-size:12px; font-weight:700; color:var(--faint); flex:1; min-width:0; text-wrap:pretty; }
+  .auq-sumv { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; max-width:58%; }
+
+  .auq-meta { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+  .auq-meta .badge.tag { font-weight:700; }
+  .auq-sumv .badge { position:static; inset:auto; z-index:auto; display:inline-flex; flex-direction:row;
+    width:auto; height:auto; text-align:left; }
+  .badge.auq-pos { background:var(--semantic-success); color:#fff; padding:3px 9px;
+    box-shadow: inset 0 -2px 5px rgba(0,0,0,.14), inset 0 -1px 0 rgba(255,255,255,.15); }
+</style>
+</helmet>
+<div class="auq-wrap">
+  <div class="auq-head">
+    <div class="auq-eyebrow">Component</div>
+    <h1>AskUserQuestions</h1>
+    <p>Stepped question flow with 2–5 options, single or multi-select, inline other input, optional skip, and multi-question navigation.</p>
+  </div>
+
+  <div class="auq-picker">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="9">
+      <button class="{{ v.cls }}" onClick="{{ v.onClick }}">{{ v.label }}</button>
+    </sc-for>
+  </div>
+
+  <div class="auq-stage">
+    <div class="auq-shell">
+    <div class="auq-card">
+
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div class="auq-done">
+          <div class="auq-tick"><span class="material-icons">check</span></div>
+          <h3>All set</h3>
+          <p>Here is what we captured from this flow.</p>
+          <div class="auq-sum">
+            <sc-for list="{{ summary }}" as="s" hint-placeholder-count="3">
+              <div class="auq-sumrow">
+                <span class="auq-sumq">{{ s.q }}</span>
+                <span class="auq-sumv">
+                  <sc-for list="{{ s.vals }}" as="val" hint-placeholder-count="1">
+                    <span class="{{ val.cls }}">{{ val.text }}</span>
+                  </sc-for>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+          <button class="btn-inverse" onClick="{{ restart }}"><span class="material-icons" style="font-size:17px">replay</span>Run it again</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isAsking }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div class="auq-top">
+            <div class="auq-steps">
+              <sc-for list="{{ stepDots }}" as="d" hint-placeholder-count="3">
+                <span class="{{ d.cls }}"><span class="material-icons">check</span></span>
+              </sc-for>
+            </div>
+            <span class="auq-count">Question {{ humanIndex }} of {{ total }}</span>
+            <sc-if value="{{ canBack }}" hint-placeholder-val="{{ false }}">
+              <button class="auq-back" onClick="{{ back }}"><span class="material-icons">arrow_back</span>Back</button>
+            </sc-if>
+            <sc-if value="{{ skippable }}" hint-placeholder-val="{{ true }}">
+              <button class="auq-skip" onClick="{{ skip }}"><span class="material-icons">redo</span>{{ skipLabel }}</button>
+            </sc-if>
+          </div>
+          <h3 class="auq-q">{{ title }}</h3>
+          <div class="{{ bodyCls }}">
+            <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+              <button class="{{ o.cls }}" onClick="{{ o.onClick }}">
+                <span class="{{ o.chipCls }}">{{ o.chipText }}</span>
+                <span class="auq-copy">
+                  <span class="auq-t">{{ o.title }}</span>
+                  <span class="auq-d">{{ o.description }}</span>
+                </span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ showOther }}" hint-placeholder-val="{{ false }}">
+              <div class="auq-otherrow">
+                <sc-if value="{{ showOtherChip }}" hint-placeholder-val="{{ false }}">
+                  <span class="auq-chip">{{ otherChipText }}</span>
+                </sc-if>
+                <textarea class="{{ taCls }}" rows="{{ taRows }}" placeholder="{{ otherPlaceholder }}" value="{{ draft }}" onChange="{{ onDraft }}" onKeyDown="{{ onDraftKey }}"></textarea>
+              </div>
+            </sc-if>
+          </div>
+          <div class="auq-chat">
+            <span class="icon-badge icon-badge--sm" style="--icon-c:#3B82F6;width:24px;height:24px;border-radius:100px"><span class="material-icons">forum</span></span>
+            <input class="auq-chatin" placeholder="Chat about it — ask or add context…" value="{{ note }}" onChange="{{ onNote }}" onKeyDown="{{ onNoteKey }}" />
+            <button class="auq-chatgo" onClick="{{ sendNote }}" aria-label="Send"><span class="material-icons">arrow_upward</span></button>
+          </div>
+          <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ false }}">
+            <div class="auq-foot">
+              <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+                <span class="auq-err"><span class="material-icons">error_outline</span>{{ error }}</span>
+              </sc-if>
+              <button class="btn-primary auq-submit" disabled="{{ submitDisabled }}" onClick="{{ submit }}">{{ submitLabel }}<span class="auq-kbd">⌃↵</span></button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:820,&quot;height&quot;:720}}">
+class Component extends DCLogic {
+  presets = {
+    default: {
+      label: "Default", tags: ["single-select", "3 questions", "skippable"],
+      questions: [
+        { id: "use", title: "How do you plan to use Fluid Functionalism?", options: [
+          { id: "designer", title: "Designer", description: "Prototyping flows and pages" },
+          { id: "engineer", title: "Engineer", description: "Shipping production UI" },
+          { id: "pm", title: "PM", description: "Aligning the team on patterns" },
+          { id: "founder", title: "Founder", description: "Bootstrapping a product" } ] },
+        { id: "stack", title: "What are you building with?", options: [
+          { id: "next", title: "Next.js", description: "App router" },
+          { id: "vite", title: "Vite", description: "SPA or library" },
+          { id: "remix", title: "Remix", description: "Full-stack routes" } ] },
+        { id: "when", title: "When do you need it shipped?", options: [
+          { id: "week", title: "This week", description: "Prototype deadline" },
+          { id: "month", title: "This month", description: "Normal sprint" },
+          { id: "later", title: "No rush", description: "Exploring for now" } ] }
+      ]
+    },
+    multi_question: {
+      label: "Multiple questions", tags: ["4 questions", "progress", "single-select"],
+      questions: [
+        { id: "role", title: "What's your role?", options: [
+          { id: "designer", title: "Designer", description: "Visual / interaction" },
+          { id: "engineer", title: "Engineer", description: "Frontend / backend" },
+          { id: "pm", title: "PM", description: "Product / program" },
+          { id: "research", title: "Researcher", description: "User / market research" } ] },
+        { id: "team", title: "How big is your team?", options: [
+          { id: "solo", title: "Just me", description: "Solo builder" },
+          { id: "small", title: "2–10", description: "Small product team" },
+          { id: "large", title: "10+", description: "Multiple squads" } ] },
+        { id: "surface", title: "Which surface comes first?", options: [
+          { id: "web", title: "Web app", description: "Desktop-first" },
+          { id: "mobile", title: "Mobile web", description: "Touch-first" },
+          { id: "both", title: "Both", description: "Responsive from day one" } ] },
+        { id: "goal", title: "What does success look like?", options: [
+          { id: "speed", title: "Ship faster", description: "Fewer decisions per screen" },
+          { id: "consistency", title: "Stay consistent", description: "One vocabulary across teams" },
+          { id: "quality", title: "Raise the bar", description: "Motion and polish by default" } ] }
+      ]
+    },
+    multi_select: {
+      label: "Multi-select", tags: ["multiSelect", "Continue button", "⌃↵"],
+      questions: [
+        { id: "features", title: "Which features should we prioritize?", multiSelect: true, options: [
+          { id: "dark", title: "Dark mode", description: "System-aware theme switching" },
+          { id: "a11y", title: "Accessibility", description: "Screen-reader and keyboard support" },
+          { id: "perf", title: "Performance", description: "Faster initial load" },
+          { id: "i18n", title: "Translations", description: "Multi-language support" } ] },
+        { id: "channels", title: "Where should we announce releases?", multiSelect: true, options: [
+          { id: "email", title: "Email", description: "Monthly digest" },
+          { id: "x", title: "X", description: "Short changelog posts" },
+          { id: "rss", title: "RSS", description: "Machine readable" } ] },
+        { id: "docs", title: "What kind of docs help most?", multiSelect: true, nextLabel: "Finish", options: [
+          { id: "recipes", title: "Recipes", description: "Copy-paste patterns" },
+          { id: "api", title: "API tables", description: "Every prop documented" },
+          { id: "video", title: "Walkthroughs", description: "Short screen recordings" } ] }
+      ]
+    },
+    with_other: {
+      label: "With other", tags: ["allowOther", "inline textarea", "Enter submits"],
+      questions: [
+        { id: "blocker", title: "What's blocking you most right now?", allowOther: true,
+          otherPlaceholder: "Describe in your own words…", options: [
+          { id: "scope", title: "Scope", description: "Too much on the plate" },
+          { id: "review", title: "Review", description: "Waiting on feedback" },
+          { id: "infra", title: "Infra", description: "Tooling slows me down" } ] },
+        { id: "help", title: "What would unblock you fastest?", allowOther: true, options: [
+          { id: "template", title: "A template", description: "Start from something real" },
+          { id: "pairing", title: "Pairing", description: "An hour with someone who knows it" } ] },
+        { id: "followup", title: "Should we follow up?", options: [
+          { id: "yes", title: "Yes", description: "Email me" },
+          { id: "no", title: "No thanks", description: "I'll reach out" } ] }
+      ]
+    },
+    free_text: {
+      label: "Free text", tags: ["freeText", "auto-focus", "multiline"],
+      questions: [
+        { id: "workspace", title: "What should we call your workspace?", freeText: true,
+          freeTextPlaceholder: "Type your answer…" },
+        { id: "why", title: "What are you hoping to build first?", freeText: true,
+          freeTextPlaceholder: "A dashboard, an assistant, a marketing site…" },
+        { id: "notes", title: "Anything else we should know?", freeText: true, nextLabel: "Finish",
+          freeTextPlaceholder: "Optional context for the team…" }
+      ]
+    },
+    free_text_validation: {
+      label: "Free text validation", tags: ["freeTextValidate", "single line", "inline error"],
+      questions: [
+        { id: "email", title: "Your work email?", freeText: true, freeTextMultiline: false, skippable: false,
+          nextLabel: "Finish", freeTextPlaceholder: "you@company.com",
+          validate: (v) => { if (!v.trim()) return "Enter an email address to continue."; return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? null : "That doesn't look like a valid email address."; } }
+      ]
+    },
+    skippable: {
+      label: "Skippable", tags: ["skippable", "skipLabel", "skipped answers"],
+      questions: [
+        { id: "tenure", title: "How long have you been using the product?", options: [
+          { id: "week", title: "Less than a week", description: "Just getting started" },
+          { id: "months", title: "A few months", description: "Comfortable with basics" },
+          { id: "year", title: "Over a year", description: "Power user" } ] },
+        { id: "freq", title: "How often do you open it?", options: [
+          { id: "daily", title: "Daily", description: "Part of the routine" },
+          { id: "weekly", title: "Weekly", description: "When a project needs it" },
+          { id: "rarely", title: "Rarely", description: "Once in a while" } ] },
+        { id: "rec", title: "Would you recommend it?", options: [
+          { id: "yes", title: "Yes", description: "Already have" },
+          { id: "maybe", title: "Maybe", description: "With caveats" },
+          { id: "no", title: "Not yet", description: "Needs work" } ] }
+      ],
+      skipLabel: "Skip this one"
+    },
+  };
+
+  state = { variant: "default", index: 0, answers: {}, notes: {}, draft: "", error: null, anim: 0, done: false };
+
+  componentDidMount() {
+    this._key = (e) => {
+      if (this.state.done) return;
+      const q = this.q();
+      if (!q) return;
+      const tag = (e.target.tagName || "").toLowerCase();
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); this.submit(); return; }
+      if (tag === "textarea" || tag === "input") return;
+      if (q.freeText) return;
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= (q.options || []).length) { e.preventDefault(); this.pick(q, q.options[n - 1].id); }
+    };
+    window.addEventListener("keydown", this._key);
+  }
+  componentWillUnmount() { window.removeEventListener("keydown", this._key); }
+
+  preset() { return this.presets[this.state.variant]; }
+  q() { return this.preset().questions[this.state.index]; }
+  ans(id) { return this.state.answers[id] || { questionId: id, selectedIds: [], otherText: "", skipped: false }; }
+  setAns(id, patch) {
+    this.setState(s => ({ answers: Object.assign({}, s.answers, { [id]: Object.assign(this.ans(id), patch) }) }));
+  }
+
+  advance() {
+    const last = this.state.index >= this.preset().questions.length - 1;
+    this.setState(s => ({ done: last, index: last ? s.index : s.index + 1, draft: "", error: null, anim: 1 - s.anim }));
+  }
+  pick(q, oid) {
+    if (q.multiSelect) {
+      const cur = this.ans(q.id).selectedIds.slice();
+      const i = cur.indexOf(oid);
+      if (i >= 0) cur.splice(i, 1); else cur.push(oid);
+      this.setAns(q.id, { selectedIds: cur, skipped: false });
+    } else {
+      this.setAns(q.id, { selectedIds: [oid], otherText: this.state.draft, skipped: false });
+      setTimeout(() => this.advance(), 180);
+    }
+  }
+  submit() {
+    const q = this.q(); if (!q) return;
+    if (q.freeText) {
+      const v = this.state.draft;
+      const err = q.validate ? q.validate(v) : null;
+      if (err) { this.setState({ error: err }); return; }
+      this.setAns(q.id, { otherText: v.trim(), skipped: false });
+      this.advance(); return;
+    }
+    if (q.multiSelect) {
+      if (!this.ans(q.id).selectedIds.length) return;
+      this.advance(); return;
+    }
+    if (q.allowOther && this.state.draft.trim()) {
+      this.setAns(q.id, { selectedIds: [], otherText: this.state.draft.trim(), skipped: false });
+      this.advance();
+    }
+  }
+  skip() { const q = this.q(); this.setAns(q.id, { selectedIds: [], skipped: true }); this.advance(); }
+
+  renderVals() {
+    const p = this.preset(), qs = p.questions, q = this.q(), s = this.state;
+    const variants = Object.keys(this.presets).map(k => ({
+      label: this.presets[k].label,
+      cls: "pill-tab" + (k === s.variant ? " active" : ""),
+      onClick: () => this.setState({ variant: k, index: 0, answers: {}, notes: {}, draft: "", error: null, done: false, anim: 1 - s.anim })
+    }));
+
+    const stepDots = qs.map((qq, i) => {
+      const aa = s.answers[qq.id];
+      const answered = !!aa && !aa.skipped && ((aa.selectedIds || []).length > 0 || !!aa.otherText);
+      const skipped = !!aa && aa.skipped;
+      return { cls: "auq-dot" + (answered ? " is-done" : skipped ? " is-skipped" : (!s.done && i === s.index) ? " is-current" : "") };
+    });
+    const base = { variants, stepDots, isDone: s.done, isAsking: !s.done,
+      restart: () => this.setState({ index: 0, answers: {}, notes: {}, draft: "", error: null, done: false, anim: 1 - s.anim }) };
+
+    if (s.done) {
+      base.summary = qs.map(qq => {
+        const a = this.ans(qq.id);
+        let vals = [];
+        if (a.skipped) vals = [{ text: "Skipped", cls: "badge tag" }];
+        else {
+          vals = (a.selectedIds || []).map(id => ({
+            text: ((qq.options || []).find(o => o.id === id) || {}).title || id,
+            cls: "badge auq-pos" }));
+          if (a.otherText) vals.push({ text: a.otherText, cls: "badge tag" });
+        }
+        if (!vals.length) vals = [{ text: "No answer", cls: "badge tag" }];
+        return { q: qq.title, vals };
+      });
+      return base;
+    }
+
+    const a = this.ans(q.id);
+    const chipLeft = true;
+    const stacked = true;
+    const rowBase = "auq-row" + (chipLeft ? " chipleft" : "") + (stacked ? " stacked" : "");
+
+    const options = (q.freeText ? [] : (q.options || [])).map((o, i) => {
+      const sel = a.selectedIds.indexOf(o.id) >= 0;
+      return { title: o.title, description: o.description,
+        cls: rowBase + (sel ? " sel" : ""),
+        chipCls: "auq-chip" + (q.multiSelect ? " multi" : ""),
+        chipText: sel ? "✓" : String(i + 1),
+        onClick: () => this.pick(q, o.id) };
+    });
+
+    const showOther = !!(q.allowOther || q.freeText);
+    const multiline = q.freeText ? (q.freeTextMultiline !== false) : true;
+    const showFooter = !!(q.multiSelect || q.freeText);
+    const last = s.index >= qs.length - 1;
+    const submitLabel = q.nextLabel || (last ? "Finish" : "Continue");
+    const submitDisabled = q.multiSelect ? a.selectedIds.length === 0 : false;
+
+    return Object.assign(base, {
+      humanIndex: s.index + 1, total: qs.length, title: q.title,
+      canBack: s.index > 0,
+      back: () => this.setState(st => ({ index: Math.max(0, st.index - 1), draft: "", error: null, anim: 1 - st.anim })),
+      note: s.notes[q.id] || "",
+      onNote: (e) => this.setState(st => ({ notes: Object.assign({}, st.notes, { [q.id]: e.target.value }) })),
+      onNoteKey: (e) => { if (e.key === "Enter") { e.preventDefault(); e.target.blur(); } },
+      sendNote: () => {},
+      skippable: q.skippable !== false && p.skipLabel !== null,
+      skipLabel: p.skipLabel || "Skip",
+      skip: () => this.skip(),
+      bodyCls: "auq-body " + (s.anim ? "animA" : "animB"),
+      options, showOther,
+      showOtherChip: !q.freeText && !!q.allowOther,
+      otherChipText: String((q.options || []).length + 1),
+      otherPlaceholder: q.freeText ? (q.freeTextPlaceholder || "Type your answer…") : (q.otherPlaceholder || "Describe in your own words…"),
+      taCls: "auq-ta" + (s.error ? " err" : ""),
+      taRows: multiline ? 3 : 1,
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value, error: null }),
+      onDraftKey: (e) => {
+        if (e.key === "Enter" && !e.shiftKey && (!multiline || e.metaKey || e.ctrlKey)) { e.preventDefault(); this.submit(); }
+      },
+      showFooter, error: s.error, submitLabel, submitDisabled, submit: () => this.submit()
+    });
+  }
+}
+
+</script>
+</body>
+</html>

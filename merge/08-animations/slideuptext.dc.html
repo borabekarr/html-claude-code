@@ -1,0 +1,301 @@
+<!-- @dsCard group="Merge - animations" name="SlideUpText" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: var(--bg-app); }
+  @keyframes su-rise { from { transform: translateY(115%); opacity: 0.2; } to { transform: translateY(0); opacity: 1; } }
+  @keyframes su-fade { from { opacity: 0; } to { opacity: 1; } }
+  .su-hover .su-in { transition: transform var(--duration-420) var(--ease-standard); }
+  @media (hover: hover) and (pointer: fine) {
+    .su-hover:hover .su-in { transform: translateY(-100%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .su-hover .su-in { transition: none; }
+    .su-anim { animation-duration: 0.01ms !important; animation-delay: 0ms !important; } /* motion-sweep: kept */
+  }
+  button.pill, button.btn-inverse, button.su-replay { position: relative; }
+  button.pill::after, button.btn-inverse::after, button.su-replay::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%;
+    width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  button.pill:focus-visible, button.btn-inverse:focus-visible, input[type="range"]:focus-visible {
+    outline: 2px solid var(--brand-primary); outline-offset: 2px;
+  }
+</style>
+</helmet>
+
+<div style="min-height:100vh; padding:40px 32px 64px; font-family:var(--font-display); background:var(--bg-app); background-image:var(--bg-section-grid); background-size:var(--bg-section-grid-size)">
+  <div style="max-width:900px; margin:0 auto; display:flex; flex-direction:column; gap:24px">
+
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; flex-direction:column; gap:8px">
+        <div class="micro-label">Component</div>
+        <div class="h1" style="font-size:34px">Slide Up Text</div>
+        <div class="body" style="max-width:520px">Text reveal that rises from a clipped baseline, staggered across words, characters or lines.</div>
+      </div>
+      <button class="btn-primary su-replay" onClick="{{ replay }}" style="align-self:center">
+        <span class="material-symbols-outlined" style="font-size:18px">replay</span>Replay
+      </button>
+    </div>
+
+    <div style="display:flex; flex-wrap:wrap; gap:8px">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="5">
+        <button class="pill" onClick="{{ tab.onClick }}" style="{{ tab.style }}" style-hover="filter:brightness(1.03)">{{ tab.label }}</button>
+      </sc-for>
+    </div>
+
+    <div class="card-glass" style="padding:32px; min-height:320px; display:flex; flex-direction:column; gap:24px; background:var(--bg-card-solid)">
+
+      <sc-if value="{{ isPlayground }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:28px">
+          <div style="min-height:120px; display:flex; align-items:center">
+            <div class="h1" style="font-size:40px; line-height:1.15">{{ playgroundText }}</div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; border-top:1px solid var(--border-hairline); padding-top:24px">
+            <div style="display:flex; flex-direction:column; gap:10px">
+              <div class="micro-label">Split</div>
+              <div style="display:flex; gap:6px">
+                <sc-for list="{{ splitOpts }}" as="o" hint-placeholder-count="3">
+                  <button class="pill" onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px">
+              <div class="micro-label">From</div>
+              <div style="display:flex; gap:6px">
+                <sc-for list="{{ fromOpts }}" as="o" hint-placeholder-count="3">
+                  <button class="pill" onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px">
+              <div class="micro-label">Stagger {{ staggerLabel }}</div>
+              <input type="range" min="0" max="0.2" step="0.01" value="{{ stagger }}" onChange="{{ setStagger }}" style="width:100%; accent-color:var(--brand-primary)">
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isHero }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:20px; padding:20px 0">
+          <span class="pill" style="align-self:flex-start; background:var(--brand-primary-50); color:var(--brand-primary-700)">Landing hero</span>
+          <div style="font-size:52px; font-weight:900; letter-spacing:-0.02em; line-height:1.1; color:var(--fg1)">{{ heroLine }}</div>
+          <div class="body" style="font-size:16px; max-width:460px">{{ heroSub }}</div>
+          <div style="display:flex; gap:12px; padding-top:8px">
+            <button class="btn-primary">Get started</button>
+            <button class="btn-inverse" style="border:1px solid var(--border-hairline)">Read docs</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isCard }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px">
+          <sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+            <div style="border:1px solid var(--border-hairline); border-radius:var(--radius-xl); padding:20px; display:flex; flex-direction:column; gap:12px; background:var(--bg-card-solid); box-shadow:var(--shadow-glass-sm); transition:transform var(--duration-240) var(--ease-out), box-shadow var(--duration-240) var(--ease-fade)" style-hover="transform:translateY(-3px); box-shadow:var(--shadow-glass)">
+              <div style="display:flex; align-items:center; justify-content:space-between">
+                <span class="pill" style="{{ c.tagStyle }}">{{ c.tag }}</span>
+                <span class="meta">{{ c.meta }}</span>
+              </div>
+              <div class="h4">{{ c.title }}</div>
+              <div class="body" style="font-size:13px">{{ c.body }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMetric }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px">
+          <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="3">
+            <div style="border-radius:var(--radius-xl); padding:22px; background:var(--bg-chip); display:flex; flex-direction:column; gap:8px">
+              <div class="micro-label">{{ m.label }}</div>
+              <div style="font-size:36px; font-weight:900; letter-spacing:-0.02em; color:var(--fg1)">{{ m.value }}</div>
+              <span class="pill" style="align-self:flex-start; background:var(--brand-primary); color:#fff">{{ m.delta }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isButton }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:24px; padding:12px 0">
+          <div class="body">Hover state — the label slides up and its duplicate follows in.</div>
+          <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
+            <button class="btn-primary su-hover" style="overflow:hidden; padding:14px 24px">{{ hoverPrimary }}</button>
+            <button class="btn-inverse su-hover" style="overflow:hidden; border:1px solid var(--border-hairline); padding:14px 24px">{{ hoverGhost }}</button>
+            <span class="pill su-hover" style="overflow:hidden; cursor:pointer; padding:8px 14px">{{ hoverPill }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--border-hairline); border-radius:var(--radius-lg); background:var(--bg-card-solid)">
+              <span class="material-symbols-outlined" style="font-size:20px; color:var(--brand-primary)">{{ r.icon }}</span>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:14px; font-weight:700; color:var(--fg1)">{{ r.title }}</div>
+                <div class="meta" style="font-weight:600">{{ r.sub }}</div>
+              </div>
+              <span class="pill" style="{{ r.tagStyle }}">{{ r.tag }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <div class="meta" style="text-align:center">split · from · stagger · delay — replay to re-run any variant</div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:980,&quot;height&quot;:760}}">
+const EASE = getComputedStyle(document.documentElement).getPropertyValue('--ease-standard').trim();
+
+class Component extends DCLogic {
+  state = { tab: 'playground', split: 'words', from: 'first', stagger: 0.06, run: 0 };
+
+  componentDidMount() { this.setState({ run: 1 }); }
+
+  slide(text, opts) {
+    const o = opts || {};
+    const split = o.split || 'words';
+    const from = o.from || 'first';
+    const stagger = o.stagger == null ? 0.05 : o.stagger;
+    const delay = o.delay || 0;
+    const dur = o.duration || 0.55;
+    const lines = String(text).split('\n');
+    const key = o.key + '|' + this.state.run + '|' + split + '|' + from + '|' + stagger;
+
+    const units = [];
+    lines.forEach((line, li) => {
+      if (li > 0) units.push({ br: true });
+      if (split === 'lines') { units.push({ t: line }); return; }
+      const words = line.split(' ').filter(w => w.length);
+      words.forEach((w, wi) => {
+        if (split === 'characters') {
+          Array.from(w).forEach(ch => units.push({ t: ch, tight: true }));
+          if (wi < words.length - 1) units.push({ t: '\u00A0', tight: true });
+        } else units.push({ t: w });
+      });
+    });
+
+    const anim = units.filter(u => !u.br);
+    const n = anim.length;
+    let i = 0;
+    const children = units.map((u, idx) => {
+      if (u.br) return React.createElement('span', { key: 'b' + idx, style: { flexBasis: '100%', height: 0 } });
+      const k = i++;
+      let order = k;
+      if (from === 'last') order = n - 1 - k;
+      else if (from === 'center') order = Math.abs(k - (n - 1) / 2);
+      const d = delay + order * stagger;
+      return React.createElement('span', {
+        key: idx,
+        style: { display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', paddingBottom: '0.08em', marginRight: u.tight ? 0 : '0.26em' }
+      }, React.createElement('span', {
+        className: 'su-anim',
+        style: {
+          display: 'inline-block',
+          animation: `su-rise ${dur}s ${EASE} ${d}s both`
+        }
+      }, u.t));
+    });
+
+    return React.createElement('span', { key, style: { display: 'inline-flex', flexWrap: 'wrap', alignItems: 'flex-end', lineHeight: 1.18, rowGap: '0.12em' } }, children);
+  }
+
+  hover(text) {
+    const wrap = { display: 'inline-block', overflow: 'hidden', verticalAlign: 'bottom', height: '1.2em', lineHeight: '1.2em' };
+    const row = { display: 'block', height: '1.2em', lineHeight: '1.2em' };
+    return React.createElement('span', { style: wrap },
+      React.createElement('span', { className: 'su-in', style: { display: 'block' } },
+        React.createElement('span', { style: row }, text),
+        React.createElement('span', { style: row }, text)));
+  }
+
+  pillStyle(active) {
+    return active
+      ? 'background:var(--brand-primary); color:#fff; border:1px solid transparent; cursor:pointer; box-shadow:var(--shadow-emerald-glow-sm); transition:background-color var(--duration-200) ' + EASE + ', color var(--duration-200) ' + EASE + ', border-color var(--duration-200) ' + EASE + ', box-shadow var(--duration-200) ' + EASE
+      : 'background:var(--bg-chip); color:var(--fg2); border:1px solid var(--border-hairline); cursor:pointer; transition:background-color var(--duration-200) ' + EASE + ', color var(--duration-200) ' + EASE + ', border-color var(--duration-200) ' + EASE;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const set = (k, v) => () => this.setState({ [k]: v, run: s.run + 1 });
+
+    const tabDefs = [
+      ['playground', 'Playground'], ['hero', 'Hero headline'], ['card', 'Card reveal'],
+      ['metric', 'Metrics'], ['button', 'Button hover'], ['list', 'List stagger']
+    ];
+
+    const cardTag = (bg, fg) => `background:${bg}; color:${fg}`;
+
+    return {
+      tabs: tabDefs.map(([id, label]) => ({ label, onClick: set('tab', id), style: this.pillStyle(s.tab === id) + '; padding:8px 14px; font-size:13px' })),
+      splitOpts: ['words', 'characters', 'lines'].map(v => ({ label: v, onClick: set('split', v), style: this.pillStyle(s.split === v) + '; padding:6px 12px' })),
+      fromOpts: ['first', 'last', 'center'].map(v => ({ label: v, onClick: set('from', v), style: this.pillStyle(s.from === v) + '; padding:6px 12px' })),
+      stagger: s.stagger,
+      staggerLabel: s.stagger.toFixed(2) + 's',
+      setStagger: e => this.setState({ stagger: parseFloat(e.target.value), run: s.run + 1 }),
+      replay: () => this.setState({ run: s.run + 1 }),
+
+      isPlayground: s.tab === 'playground',
+      isHero: s.tab === 'hero',
+      isCard: s.tab === 'card',
+      isMetric: s.tab === 'metric',
+      isButton: s.tab === 'button',
+      isList: s.tab === 'list',
+
+      playgroundText: this.slide('You can just\nship things.', { key: 'pg', split: s.split, from: s.from, stagger: s.stagger }),
+
+      heroLine: this.slide('Pipeline that\nmoves itself.', { key: 'hero', split: 'words', stagger: 0.07 }),
+      heroSub: this.slide('Every deal, every follow-up, every signal in one surface.', { key: 'sub', split: 'words', stagger: 0.02, delay: 0.35, duration: 0.45 }),
+
+      cards: [
+        { tag: 'Hot lead', tagStyle: cardTag('var(--semantic-hot-bg)', 'var(--semantic-hot)'), meta: '2h ago', title: this.slide('Northwind Retail', { key: 'c1t', stagger: 0.05 }), body: this.slide('Renewal call booked for Thursday.', { key: 'c1b', stagger: 0.015, delay: 0.2, duration: 0.4 }) },
+        { tag: 'Won', tagStyle: cardTag('var(--brand-primary)', '#fff'), meta: 'Yesterday', title: this.slide('Halcyon Group', { key: 'c2t', stagger: 0.05, delay: 0.1 }), body: this.slide('Contract signed at $84k ARR.', { key: 'c2b', stagger: 0.015, delay: 0.3, duration: 0.4 }) }
+      ],
+
+      metrics: [
+        { label: 'Pipeline', value: this.slide('$1.2M', { key: 'm1', split: 'characters', stagger: 0.05 }), delta: '+12%' },
+        { label: 'Deals won', value: this.slide('142', { key: 'm2', split: 'characters', stagger: 0.05, delay: 0.12 }), delta: '+8%' },
+        { label: 'Win rate', value: this.slide('38.4%', { key: 'm3', split: 'characters', stagger: 0.05, delay: 0.24 }), delta: '+3.1%' }
+      ],
+
+      hoverPrimary: this.hover('Create deal'),
+      hoverGhost: this.hover('Preview'),
+      hoverPill: this.hover('Filters'),
+
+      rows: [
+        { icon: 'call', title: this.slide('Call Priya Nair', { key: 'r1', stagger: 0.03 }), sub: this.slide('Discovery · 15 min', { key: 'r1s', stagger: 0.02, delay: 0.1, duration: 0.4 }), tag: 'High', tagStyle: cardTag('var(--semantic-danger-bg)', 'var(--semantic-danger)') },
+        { icon: 'mail', title: this.slide('Send revised quote', { key: 'r2', stagger: 0.03, delay: 0.12 }), sub: this.slide('Northwind Retail', { key: 'r2s', stagger: 0.02, delay: 0.22, duration: 0.4 }), tag: 'Medium', tagStyle: cardTag('var(--semantic-warning-bg)', 'var(--semantic-warning)') },
+        { icon: 'event', title: this.slide('Prep QBR deck', { key: 'r3', stagger: 0.03, delay: 0.24 }), sub: this.slide('Due Friday', { key: 'r3s', stagger: 0.02, delay: 0.34, duration: 0.4 }), tag: 'Low', tagStyle: cardTag('var(--brand-primary-50)', 'var(--brand-primary-700)') },
+        { icon: 'task_alt', title: this.slide('Log demo notes', { key: 'r4', stagger: 0.03, delay: 0.36 }), sub: this.slide('Halcyon Group', { key: 'r4s', stagger: 0.02, delay: 0.46, duration: 0.4 }), tag: 'Done', tagStyle: cardTag('var(--bg-chip)', 'var(--fg3)') }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

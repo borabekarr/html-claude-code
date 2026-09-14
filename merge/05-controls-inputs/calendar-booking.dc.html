@@ -1,0 +1,387 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Calendar Booking" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #EAEAEA; margin: 0; }
+  .bk-page .card { padding: 0; background: none; }
+  .bk-wrap { --hair: #E8ECF1; --spring: var(--ease-out);
+    font-family: var(--font-display); color: var(--fg1);
+    min-height: 100%; display: flex; align-items: center; justify-content: center;
+    padding: 48px 24px; background: #EAEAEA; }
+  .bk-card { width: 100%; max-width: 880px; background: #fff; border-radius: var(--radius-2xl);
+    box-shadow: 0 1px 2px rgba(15,23,42,.05), 0 24px 60px -20px rgba(15,23,42,.18);
+    overflow: hidden; transition: max-width var(--duration-entrance) var(--spring), box-shadow var(--duration-400) var(--ease-out); }
+  .bk-card.is-done { max-width: 560px; }
+  .bk-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 548px; }
+  .bk-pane { padding: 28px 30px 26px; display: flex; flex-direction: column; }
+  .bk-pane.left { border-right: 1px solid var(--hair); }
+  .bk-avatar { width: 44px; height: 44px; border-radius: var(--radius-circle); background: var(--brand-primary);
+    box-shadow: var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,.5);
+    display: grid; place-items: center; color: #fff; font-weight: 900; font-size: 18px; }
+  .bk-title { font-size: var(--type-h4); font-weight: 900; letter-spacing: var(--tracking-tight); margin: 16px 0 5px; display: flex; align-items: center; gap: 10px; }
+  .bk-sub { font-size: var(--type-body-sm); color: var(--fg3); font-weight: 500; margin: 0 0 20px; }
+  .bk-fields { display: flex; flex-direction: column; gap: 14px; }
+  .bk-label { font-size: var(--type-body-sm); font-weight: 900; color: var(--fg2); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .bk-input { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--hair);
+    border-radius: 18px; padding: 0 14px; height: 44px;
+    transition: border-color var(--duration-180) var(--ease-out), box-shadow var(--duration-180) var(--ease-out); }
+  .bk-input:focus-within { border-color: var(--brand-primary); box-shadow: 0 0 0 4px rgba(16,185,129,.14); }
+  .bk-input .material-icons { font-size: 18px; color: var(--fg4); }
+  .bk-input input { flex: 1; border: 0; outline: 0; background: transparent; font-family: inherit;
+    font-size: var(--type-body); font-weight: 600; color: var(--fg1); min-width: 0; }
+  .bk-input input::placeholder { color: var(--fg4); font-weight: 500; }
+  .bk-input input:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .bk-phone { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
+  .bk-cc { display: flex; align-items: center; gap: 6px; height: 44px; padding: 0 12px; border: 1px solid var(--hair);
+    border-radius: 18px; font-size: var(--type-body); font-weight: 700; cursor: pointer; background: #fff; }
+  .bk-cc .material-icons { font-size: 18px; color: var(--fg4); }
+  .bk-foot { margin-top: auto; padding-top: 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .bk-ghost { position: relative; border: 1px solid var(--hair); background: #fff; border-radius: var(--radius-lg); padding: 12px 20px;
+    font-family: inherit; font-size: var(--type-body); font-weight: 700; color: var(--fg2); cursor: pointer;
+    transition: background var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-press-calm); }
+  .bk-ghost:active { transform: scale(.97); }
+  .bk-ghost:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .bk-cta { position: relative; transition: opacity var(--duration-slow) var(--ease-out), filter var(--duration-200) var(--ease-press-calm), transform var(--duration-200) var(--ease-press-calm); }
+  .bk-cta::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .bk-cta[disabled] { opacity: .38; cursor: not-allowed; box-shadow: none; filter: grayscale(.4); }
+  .bk-cta .material-icons { font-size: 18px; }
+
+  /* right pane */
+  .bk-calwrap { position: relative; flex: 1; display: flex; flex-direction: column; }
+  .bk-cal { transition: filter var(--duration-560) var(--spring), opacity var(--duration-420) var(--ease-out), transform var(--duration-560) var(--spring);
+    display: flex; flex-direction: column; flex: 1; }
+  .bk-cal.locked { filter: blur(9px); opacity: .55; transform: scale(.985); pointer-events: none; user-select: none; }
+  .bk-lock { position: absolute; inset: 0; display: grid; place-items: center; z-index: 3; padding: 24px;
+    transition: opacity var(--duration-380) var(--ease-out), transform var(--duration-560) var(--spring); }
+  .bk-lock.hide { opacity: 0; transform: scale(.94) translateY(-6px); pointer-events: none; }
+  .bk-lockcard { background: #fff; border: 1px solid var(--hair); border-radius: var(--radius-xl); padding: 24px 28px;
+    text-align: center; max-width: 320px; box-shadow: 0 18px 40px -16px rgba(15,23,42,.25); }
+  .bk-lockcard h4 { margin: 0 0 8px; font-size: var(--type-h4); font-weight: 800; }
+  .bk-lockcard p { margin: 0; font-size: var(--type-body-sm); color: var(--fg3); font-weight: 500; line-height: 1.5; }
+  .bk-calhead { display: flex; align-items: center; justify-content: space-between; margin: 26px 0 18px; }
+  .bk-month { font-size: var(--type-h4); font-weight: 800; }
+  .bk-nav { display: flex; gap: 6px; }
+  .bk-navbtn { position: relative; width: 34px; height: 34px; border-radius: 12px; border: 1px solid var(--hair); background: #fff;
+    display: inline-flex; align-items: center; justify-content: center; padding: 0; line-height: 0; cursor: pointer; color: var(--fg2);
+    transition: background var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-press-calm); }
+  .bk-navbtn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .bk-navbtn .material-icons { font-size: 20px; line-height: 1; display: block; }
+  .bk-navbtn:active { transform: scale(.92); }
+  .bk-navbtn:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .bk-dow { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
+  .bk-dow span { text-align: center; font-size: var(--type-mini); font-weight: 800; letter-spacing: var(--tracking-wider);
+    text-transform: uppercase; color: var(--fg4); }
+  .bk-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+  .bk-days.slide-l { animation: bkSlideL var(--duration-340) var(--spring); }
+  .bk-days.slide-r { animation: bkSlideR var(--duration-340) var(--spring); }
+  @keyframes bkSlideL { from { opacity: 0; transform: translateX(14px); } }
+  @keyframes bkSlideR { from { opacity: 0; transform: translateX(-14px); } }
+  .bk-day { position: relative; height: 40px; border: 0; background: transparent; border-radius: var(--radius-md); cursor: pointer;
+    font-family: inherit; font-size: var(--type-body); font-weight: 700; color: var(--fg2);
+    transition: background var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out), transform var(--duration-200) var(--ease-press-calm), box-shadow var(--duration-200) var(--ease-out); }
+  .bk-day::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .bk-day.dim { color: var(--fg4); opacity: .45; pointer-events: none; }
+  .bk-day.on { background: var(--brand-primary); color: #fff; transform: scale(1.04);
+    box-shadow: var(--shadow-emerald-glow-sm), inset 0 1px 0 rgba(255,255,255,.4); }
+  .bk-day.today { box-shadow: inset 0 0 0 1px var(--brand-primary-300); }
+  .bk-day:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .bk-slots { margin-top: 20px; border-top: 1px solid var(--hair); padding-top: 16px;
+    animation: bkRise var(--duration-420) var(--spring) both; }
+  @keyframes bkRise { from { opacity: 0; transform: translateY(10px); } }
+  .bk-slotgrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+  .bk-slot { position: relative; padding: 10px 6px; border-radius: var(--radius-md); border: 1px solid var(--hair); background: #fff;
+    font-family: inherit; font-size: var(--type-body-sm); font-weight: 700; color: var(--fg2); cursor: pointer;
+    animation: bkPop var(--duration-320) var(--spring) both; animation-delay: var(--d, 0ms); /* motion-sweep: kept */
+    transition: background var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out), transform var(--duration-180) var(--ease-press-calm); }
+  @keyframes bkPop { from { opacity: 0; transform: translateY(8px) scale(.96); } }
+  .bk-slot::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .bk-slot.on { background: var(--brand-primary); border-color: var(--brand-primary); color: #fff;
+    box-shadow: var(--shadow-emerald-glow-sm); }
+  .bk-slot:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset); }
+  .bk-tz { margin-top: auto; padding-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .bk-tz .material-icons { font-size: 16px; }
+
+  /* success */
+  .bk-done { padding: 32px; animation: bkDone var(--duration-560) var(--spring) both; }
+  @keyframes bkDone { from { opacity: 0; transform: translateY(14px) scale(.97); } }
+  .bk-check { width: 56px; height: 56px; border-radius: var(--radius-circle); background: var(--brand-primary);
+    display: grid; place-items: center; color: #fff; box-shadow: var(--shadow-emerald-glow);
+    animation: bkCheck var(--duration-entrance) var(--spring) both 80ms; /* motion-sweep: kept */ }
+  @keyframes bkCheck { 0% { transform: scale(.3); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+  .bk-check .material-icons { font-size: 30px; animation: bkGlyph var(--duration-400) var(--ease-out) both 340ms; /* motion-sweep: kept */ }
+  @keyframes bkGlyph { from { opacity: 0; transform: scale(.5) rotate(-20deg); } }
+  .bk-inner { border: 1px solid var(--hair); border-radius: var(--radius-xl); padding: 18px 20px; background: #fff;
+    animation: bkRise var(--duration-expand) var(--spring) both; }
+  .bk-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 9px 0;
+    font-size: var(--type-body); }
+  .bk-row + .bk-row { border-top: 1px solid var(--slate-50); }
+  .bk-row .k { color: var(--fg3); font-weight: 600; }
+  .bk-row .v { font-weight: 700; text-align: right; }
+  .bk-donefoot { display: flex; align-items: center; gap: 10px; margin-top: 22px;
+    animation: bkRise var(--duration-480) var(--spring) both 220ms; /* motion-sweep: kept */ }
+  .bk-donefoot .bk-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; font-size: var(--type-body-sm); }
+  .bk-donefoot .material-icons { font-size: 17px; color: var(--fg3); }
+  @media (max-width: 860px) { .bk-grid { grid-template-columns: 1fr; } .bk-pane.left { border-right: 0; border-bottom: 1px solid var(--hair); } }
+  @media (hover: hover) and (pointer: fine) {
+    .bk-ghost:hover { background: var(--slate-50); }
+    .bk-navbtn:hover { background: var(--slate-50); }
+    .bk-day:hover { background: var(--brand-primary-50); color: var(--brand-primary-700); }
+    .bk-slot:hover { border-color: var(--brand-primary-300); background: var(--brand-primary-50); color: var(--brand-primary-700); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bk-card, .bk-input, .bk-ghost, .bk-cta, .bk-cal, .bk-lock, .bk-navbtn, .bk-day, .bk-slot {
+      transition-duration: 0.01ms !important; /* motion-sweep: kept */
+    }
+    .bk-days.slide-l, .bk-days.slide-r, .bk-slots, .bk-slot, .bk-done, .bk-check, .bk-check .material-icons, .bk-inner, .bk-donefoot {
+      animation-duration: 0.01ms !important; /* motion-sweep: kept */
+      animation-delay: 0ms !important; /* motion-sweep: kept */
+    }
+  }
+</style>
+</helmet>
+<div class="bk-wrap">
+  <div class="bk-card {{ cardCls }}">
+
+    <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+      <div class="bk-grid">
+        <div class="bk-pane left">
+          <div class="bk-avatar">EC</div>
+          <h2 class="bk-title"><span class="icon-badge icon-badge--lg" style="--icon-c:#10B981;width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">event_available</span></span>Book Your Call</h2>
+          <p class="bk-sub">30 Min Discovery Call with Elite Coaching Pros</p>
+
+          <div class="bk-fields">
+            <div>
+              <label class="bk-label"><span class="material-icons" style="font-size:15px;color:var(--fg4)">badge</span>First name</label>
+              <div class="bk-input">
+                <input placeholder="Ali" value="{{ first }}" onInput="{{ onFirst }}">
+              </div>
+            </div>
+            <div>
+              <label class="bk-label"><span class="material-icons" style="font-size:15px;color:var(--fg4)">mail</span>Email address</label>
+              <div class="bk-input">
+                <span class="material-icons">mail_outline</span>
+                <input placeholder="you@company.com" value="{{ email }}" onInput="{{ onEmail }}">
+              </div>
+            </div>
+            <div>
+              <label class="bk-label"><span class="material-icons" style="font-size:15px;color:var(--fg4)">call</span>Phone number</label>
+              <div class="bk-phone">
+                <div class="bk-cc">🇺🇸 +1 <span class="material-icons">expand_more</span></div>
+                <div class="bk-input">
+                  <input placeholder="(555) 123-4567" value="{{ phone }}" onInput="{{ onPhone }}">
+                </div>
+              </div>
+            </div>
+            <div>
+              <label class="bk-label"><span class="material-icons" style="font-size:15px;color:var(--fg4)">alternate_email</span>Instagram username</label>
+              <div class="bk-input">
+                <span class="material-icons">alternate_email</span>
+                <input placeholder="Enter here" value="{{ insta }}" onInput="{{ onInsta }}">
+              </div>
+            </div>
+          </div>
+
+          <div class="bk-foot">
+            <button class="bk-ghost" onClick="{{ reset }}">Cancel</button>
+            <button class="btn-primary bk-cta" disabled="{{ ctaDisabled }}" onClick="{{ confirm }}">
+              <span>{{ ctaLabel }}</span>
+              <span class="material-icons">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bk-pane">
+          <div class="bk-calwrap">
+            <div class="bk-cal {{ calCls }}">
+              <div class="h4" style="display:flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:#3B82F6;width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">calendar_month</span></span>Select a Date &amp; Time</div>
+              <div class="bk-calhead">
+                <button class="bk-navbtn" onClick="{{ prevMonth }}"><span class="material-icons">chevron_left</span></button>
+                <span class="bk-month">{{ monthLabel }}</span>
+                <button class="bk-navbtn" onClick="{{ nextMonth }}"><span class="material-icons">chevron_right</span></button>
+              </div>
+              <div class="bk-dow">
+                <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+              </div>
+              <div class="bk-days {{ slideCls }}" key="{{ monthKey }}">
+                <sc-for list="{{ cells }}" as="c" hint-placeholder-count="35">
+                  <button class="{{ c.cls }}" onClick="{{ c.pick }}">{{ c.d }}</button>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ hasDate }}" hint-placeholder-val="{{ false }}">
+                <div class="bk-slots">
+                  <div class="micro-label">{{ dateLabel }}</div>
+                  <div class="bk-slotgrid">
+                    <sc-for list="{{ slots }}" as="s" hint-placeholder-count="6">
+                      <button class="{{ s.cls }}" style="{{ s.style }}" onClick="{{ s.pick }}">{{ s.t }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+
+            </div>
+
+            <div class="bk-lock {{ lockCls }}">
+              <div class="bk-lockcard">
+                <h4>Please fill out the forms first</h4>
+                <p>Before booking the call, you need to fill out your name and email or phone</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+      <div class="bk-done">
+        <div class="bk-check"><span class="material-icons">check</span></div>
+        <h2 class="bk-title"><span class="icon-badge icon-badge--lg" style="--icon-c:#10B981;width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">task_alt</span></span>You're all set!</h2>
+        <p class="bk-sub">Check your email and phone for booking details. We'll text you 1 day before and 15 minutes before your call</p>
+
+        <div class="bk-inner" style="margin-bottom:12px">
+          <div class="k" style="font-size:var(--type-body-sm);color:var(--fg3);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px"><span class="icon-badge icon-badge--sm" style="--icon-c:#3B82F6;width:22px;height:22px;border-radius:100px;flex-shrink:0"><span class="material-icons">person</span></span>Your details</div>
+          <div style="font-size:var(--type-body);font-weight:700">{{ whoLabel }}</div>
+        </div>
+
+        <div class="bk-inner" style="animation-delay:90ms"><!-- motion-sweep: kept -->
+          <div class="h4" style="margin-bottom:6px;display:flex;align-items:center;gap:10px"><span class="icon-badge icon-badge--lg" style="--icon-c:#F97316;width:32px;height:32px;border-radius:100px;flex-shrink:0"><span class="material-icons">call</span></span>Call details</div>
+          <div class="bk-row"><span class="k">Name</span><span class="v">30 Min Discovery Call</span></div>
+          <div class="bk-row"><span class="k">With</span><span class="v">Ali Mamedgasanov</span></div>
+          <div class="bk-row"><span class="k">Date</span><span class="v">{{ doneDate }}</span></div>
+          <div class="bk-row"><span class="k">Time</span><span class="v">{{ doneTime }}</span></div>
+        </div>
+
+        <div class="bk-donefoot">
+          <button class="bk-ghost"><span class="material-icons">calendar_today</span> Add to Calendar</button>
+          <button class="bk-ghost"><span class="material-icons">autorenew</span> Resend</button>
+          <button class="btn-primary bk-cta" style="margin-left:auto" onClick="{{ reset }}">Finish &amp; Close</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:760}}">
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DOWF = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+class Component extends DCLogic {
+  state = {
+    first: '', email: '', phone: '', insta: '',
+    y: 2026, m: 8, day: null, slot: null,
+    dir: '', view: 'form', busy: false, clock: ''
+  };
+
+  componentDidMount() {
+    this.tick();
+    this._t = setInterval(() => this.tick(), 30000);
+  }
+  componentWillUnmount() { clearInterval(this._t); }
+  tick() {
+    this.setState({ clock: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) });
+  }
+
+  valid() {
+    const s = this.state;
+    const email = /\S+@\S+\.\S+/.test(s.email);
+    const phone = s.phone.replace(/\D/g, '').length >= 7;
+    return s.first.trim().length > 1 && (email || phone);
+  }
+
+  shift(n) {
+    const d = new Date(this.state.y, this.state.m + n, 1);
+    this.setState({ y: d.getFullYear(), m: d.getMonth(), day: null, slot: null, dir: n > 0 ? 'slide-l' : 'slide-r' });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const ok = this.valid();
+    const first = new Date(s.y, s.m, 1);
+    const lead = first.getDay();
+    const dim = new Date(s.y, s.m + 1, 0).getDate();
+    const prevDim = new Date(s.y, s.m, 0).getDate();
+    const today = new Date();
+
+    const cells = [];
+    for (let i = lead - 1; i >= 0; i--) cells.push({ d: prevDim - i, out: true });
+    for (let d = 1; d <= dim; d++) cells.push({ d, out: false });
+    while (cells.length % 7 !== 0) cells.push({ d: cells.length - (lead + dim) + 1, out: true });
+
+    const cellVals = cells.map((c, i) => {
+      const past = !c.out && new Date(s.y, s.m, c.d) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const cls = ['bk-day',
+        (c.out || past) ? 'dim' : '',
+        (!c.out && c.d === s.day) ? 'on' : '',
+        (!c.out && c.d === today.getDate() && s.m === today.getMonth() && s.y === today.getFullYear() && c.d !== s.day) ? 'today' : ''
+      ].filter(Boolean).join(' ');
+      return { key: i, d: c.d, cls, pick: () => { if (!c.out && !past) this.setState({ day: c.d, slot: null }); } };
+    });
+
+    const times = ['9:00 AM','9:30 AM','10:00 AM','11:00 AM','1:00 PM','1:30 PM','2:00 PM','3:30 PM','4:00 PM'];
+    const slots = times.map((t, i) => ({
+      key: t, t,
+      cls: 'bk-slot' + (s.slot === t ? ' on' : ''),
+      style: { '--d': (i * 35) + 'ms' },
+      pick: () => this.setState({ slot: t })
+    }));
+
+    const sel = s.day ? new Date(s.y, s.m, s.day) : null;
+    const dateLabel = sel ? DOWF[sel.getDay()] + ', ' + MONTHS[s.m] + ' ' + s.day : '';
+    const who = (s.first || 'Guest') + (s.email ? ' (' + s.email + ')' : s.phone ? ' (' + s.phone + ')' : '');
+
+    return {
+      first: s.first, email: s.email, phone: s.phone, insta: s.insta,
+      onFirst: e => this.setState({ first: e.target.value }),
+      onEmail: e => this.setState({ email: e.target.value }),
+      onPhone: e => this.setState({ phone: e.target.value }),
+      onInsta: e => this.setState({ insta: e.target.value }),
+      isForm: s.view === 'form', isDone: s.view === 'done',
+      cardCls: s.view === 'done' ? 'is-done' : '',
+      calCls: ok ? '' : 'locked',
+      lockCls: ok ? 'hide' : '',
+      monthLabel: MONTHS[s.m] + ' ' + s.y,
+      monthKey: s.y + '-' + s.m,
+      slideCls: s.dir,
+      prevMonth: () => this.shift(-1),
+      nextMonth: () => this.shift(1),
+      cells: cellVals,
+      hasDate: !!s.day,
+      dateLabel, slots,
+      clock: s.clock,
+      ctaDisabled: !(ok && s.day && s.slot) || s.busy,
+      ctaLabel: s.busy ? 'Booking…' : 'Continue',
+      confirm: () => {
+        if (!(ok && s.day && s.slot)) return;
+        this.setState({ busy: true });
+        setTimeout(() => this.setState({ busy: false, view: 'done' }), 700);
+      },
+      reset: () => this.setState({ view: 'form', day: null, slot: null, busy: false }),
+      whoLabel: who,
+      doneDate: sel ? DOWF[sel.getDay()] + ', ' + MONTHS[s.m] + ' ' + s.day + ', ' + s.y : '',
+      doneTime: s.slot ? s.slot + ' – 30 min (CET)' : ''
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Queue Input" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+
+<style>
+  body { background: #F8FAFC; margin: 0; font-family: 'Montserrat', sans-serif; }
+  .q-card { animation: qIn .34s var(--ease-bounce-glow) /* motion-sweep: kept, no 340ms tier */; }
+  .q-card.exiting { animation: qOut var(--duration-260) var(--ease-standard) both; pointer-events: none; overflow: hidden; }
+  .q-card.sending { animation: qPulse .5s var(--ease-out) both /* motion-sweep: kept, no 500ms tier */; }
+  .q-shift { transition: transform var(--duration-slow) var(--ease-out); }
+  .q-drag { transition: box-shadow var(--duration-180) var(--ease-fade); box-shadow: 0 12px 24px -6px rgba(15,23,42,.28), 0 2px 6px rgba(15,23,42,.10) !important; cursor: grabbing; border-color: #CBD5E1 !important; }
+  .q-shift { will-change: transform; }
+  .q-drag .q-tools { opacity: 1; }
+  .q-ghost-in { animation: ghostRise .46s var(--ease-bounce-glow) /* motion-sweep: kept, 460ms is ApplyButton-scoped --duration-expand, not reused here; curve is nearest-family (.34,1.14,.64,1) approximated by --ease-bounce-glow (.34,1.18,.64,1), no exact token */; }
+  .q-list { animation: listIn var(--duration-280) var(--ease-out); }
+  .q-stack-row { animation: listIn var(--duration-slower) var(--ease-out); }
+  @keyframes ghostRise { 0% { opacity: 0; transform: translateY(20px) scaleX(.9); } 55% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+  @keyframes listIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  .q-card:hover .q-tools { opacity: 1; transform: translateY(0); }
+  .q-tools { opacity: 0; transform: translateY(2px); transition: opacity var(--duration-180) var(--ease-fade), transform var(--duration-180) var(--ease-fade); }
+  .q-icon-btn:hover { background: #F1F5F9 !important; }
+  .q-icon-btn:active { transform: scale(.9); }
+  @keyframes qIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes qOut {
+    0%   { opacity: 1; max-height: 44px; transform: none; }
+    40%  { opacity: .45; max-height: 34px; transform: translateX(12px) scale(.99); }
+    100% { opacity: 0; max-height: 0; margin-top: -8px; padding-top: 0; padding-bottom: 0; border-width: 0; transform: translateX(24px) scale(.97); }
+  }
+  @keyframes qPulse { 0% { transform: scale(1); } 40% { transform: scale(1.015); box-shadow: 0 0 0 4px rgba(16,185,129,.16); } 100% { opacity: 0; transform: translateY(-14px) scale(.98); } }
+  @keyframes draftIn { from { opacity: 0; } to { opacity: 1; } }
+  a { color: var(--brand-primary-600); }
+  a:hover { color: var(--brand-primary-700); }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script><style>
+/* ai-chat-queue-input v2 — component-local additions (plan: claude-design-frontend-pass).
+   Never edit inside a <style data-ds =...> block above; this is a new block. */
+.mb-btn, .mb-send, .q-icon-btn, .qi-commit-btn {
+  position: relative;
+}
+.mb-btn::after, .mb-send::after, .q-icon-btn::after, .qi-commit-btn::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+.mb-btn:focus-visible, .mb-send:focus-visible, .q-icon-btn:focus-visible, .qi-commit-btn:focus-visible {
+  outline: 2px solid var(--brand-primary); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mb-btn, .mb-send, .q-icon-btn, .qi-commit-btn, [style*="transition:transform"] {
+    transition-duration: 0.01ms !important; /* motion-sweep: kept, reduced-motion reset floor value */
+  }
+}
+</style></helmet>
+
+<div style="min-height:100vh; padding:40px 24px 64px; display:flex; flex-direction:column; align-items:center; gap:28px; background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.07) 0%, #F8FAFC 55%);">
+
+  <div style="width:100%; max-width:620px; display:flex; flex-direction:column; gap:6px;">
+    <span class="micro-label">Component</span>
+    <h1 class="h1" style="margin:0;">ai-chat-queue-input</h1>
+    <p class="body" style="margin:6px 0 0; max-width:520px; text-wrap:pretty;">Build a queue of messages before you commit them. Add, reorder, edit and delete — nothing leaves until you send.</p>
+  </div>
+
+  <div style="width:100%; max-width:620px; display:flex; flex-direction:column; gap:10px;">
+    <span class="pills-label" style="margin:0;">Usage area</span>
+    <div class="pills-row">
+      <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+        <button class="{{ tab.cls }}" onClick="{{ tab.onClick }}" style="cursor:pointer; font-family:'Montserrat';">{{ tab.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="width:100%; max-width:620px;">
+    <div class="mb-shell">
+      <div class="{{ boxCls }}">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="badge tag"><span class="material-icons">{{ variantIcon }}</span> {{ variantLabel }}</span>
+            <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ true }}">
+              <span class="badge success"><span class="material-icons">layers</span> {{ queueCount }} queued</span>
+            </sc-if>
+          </div>
+          <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ false }}">
+            <button class="mb-btn" onClick="{{ onClearAll }}" style="padding:5px 11px; font-size:12px;">
+              <span class="material-icons">delete_sweep</span> Clear
+            </button>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ showStack }}" hint-placeholder-val="{{ true }}">
+          <div class="q-stack-row" style="display:flex; align-items:flex-end; gap:8px; padding:22px 2px 12px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:1px; padding-bottom:6px; flex-shrink:0; min-width:22px;">
+              <span class="material-icons" style="font-size:17px; color:#94A3B8;">subdirectory_arrow_right</span>
+              <sc-if value="{{ hasOverflow }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:11px; font-weight:900; color:#94A3B8; font-variant-numeric:tabular-nums; line-height:1;">{{ queueCount }}</span>
+              </sc-if>
+            </div>
+            <div style="position:relative; flex:1; min-width:0;">
+              <sc-if value="{{ hasGhost2 }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; left:0; right:0; bottom:0; height:40px; transform:translateY(-16px) scaleX(.94); z-index:0;"><div class="q-ghost-in" style="height:100%; border-radius:9999px; background:#F8FAFC; border:1px solid #E2E8F0;"></div></div>
+              </sc-if>
+              <sc-if value="{{ hasGhost1 }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; left:0; right:0; bottom:0; height:40px; transform:translateY(-8px) scaleX(.975); z-index:1;"><div class="q-ghost-in" style="height:100%; border-radius:9999px; background:#F1F5F9; border:1px solid #E2E8F0;"></div></div>
+              </sc-if>
+              <div class="{{ frontCls }}" onClick="{{ onExpand }}" style="position:relative; z-index:2; display:flex; align-items:center; gap:8px; height:40px; padding:0 6px 0 16px; border-radius:9999px; background:#F1F5F9; border:1px solid #E2E8F0; box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 1px 2px rgba(15,23,42,.05); cursor:pointer;">
+                <span style="flex:1; min-width:0; font-size:13.5px; font-weight:600; color:#334155; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ frontText }}</span>
+                <div class="q-tools" style="display:flex; align-items:center; gap:2px; flex-shrink:0;">
+                  <button class="q-icon-btn" onClick="{{ onEditFront }}" title="Edit" style="display:grid; place-items:center; width:28px; height:28px; border:none; background:transparent; border-radius:9999px; cursor:pointer;">
+                    <span class="material-icons" style="font-size:15px; color:#64748B;">edit</span>
+                  </button>
+                  <button class="q-icon-btn" onClick="{{ onDeleteFront }}" title="Delete" style="display:grid; place-items:center; width:28px; height:28px; border:none; background:transparent; border-radius:9999px; cursor:pointer;">
+                    <span class="material-icons" style="font-size:15px; color:#EF4444;">close</span>
+                  </button>
+                  <button class="q-icon-btn" onClick="{{ onExpand }}" title="Manage queue" style="display:grid; place-items:center; width:28px; height:28px; border:none; background:transparent; border-radius:9999px; cursor:pointer;">
+                    <span class="material-icons" style="font-size:16px; color:#64748B;">unfold_more</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showList }}" hint-placeholder-val="{{ false }}">
+          <div class="q-list" style="display:flex; flex-direction:column; gap:8px; padding-bottom:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 2px;">
+              <span class="pills-label" style="margin:0;">Queue order</span>
+              <button class="mb-btn" onClick="{{ onCollapse }}" style="padding:4px 10px; font-size:11px;">
+                <span class="material-icons">unfold_less</span> Collapse
+              </button>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px; max-height:256px; overflow-y:{{ listOverflow }}; box-sizing:border-box; padding:10px; margin:0 -10px;">
+            <sc-for list="{{ cards }}" as="it" hint-placeholder-count="2">
+              <div class="{{ it.cls }}" style="display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #E2E8F0; border-radius:14px; padding:9px 10px; box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 1px 2px rgba(15,23,42,.05); transform:translateY({{ it.dy }}px); z-index:{{ it.z }}; position:relative;">
+                <span class="material-icons" onPointerDown="{{ it.onHandleDown }}" onPointerMove="{{ it.onHandleMove }}" onPointerUp="{{ it.onHandleUp }}" onPointerCancel="{{ it.onHandleUp }}" style="font-size:16px; color:#CBD5E1; cursor:grab; padding:6px 2px; min-width:20px; min-height:20px; text-align:center; touch-action:none;">drag_indicator</span>
+                <span style="display:grid; place-items:center; min-width:18px; height:18px; border-radius:9999px; background:#F1F5F9; color:#64748B; font-size:10px; font-weight:900;">{{ it.order }}</span>
+                <sc-if value="{{ it.editing }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:1; min-width:0; display:flex; align-items:center; gap:6px; border:1px solid #CBD5E1; border-radius:10px; padding:3px 3px 3px 9px; background:#F8FAFC; box-shadow:inset 0 1px 2px rgba(15,23,42,.06);">
+                    <input value="{{ editText }}" onChange="{{ onEditChange }}" onKeyDown="{{ onEditKey }}" onBlur="{{ onEditCommit }}" ref="{{ editRef }}" style="flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:'Montserrat'; font-size:13.5px; font-weight:600; color:#0F172A;">
+                    <button class="qi-commit-btn" onMouseDown="{{ onEditCommitNow }}" title="Done" style="display:grid; place-items:center; width:26px; height:26px; flex-shrink:0; border:none; border-radius:9999px; background:#10B981; color:#fff; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.5), inset 0 -2px 0 rgba(0,0,0,.22), 0 2px 8px -2px rgba(16,185,129,.6);">
+                      <span class="material-icons" style="font-size:15px;">check</span>
+                    </button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ it.reading }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex:1; min-width:0; font-size:13.5px; font-weight:600; color:#334155; line-height:1.45; text-wrap:pretty; word-break:break-word;">{{ it.text }}</span>
+                </sc-if>
+                <div class="q-tools" style="display:flex; align-items:center; gap:2px; flex-shrink:0;">
+                  <button class="q-icon-btn" onClick="{{ it.onEdit }}" title="Edit" style="display:grid; place-items:center; width:28px; height:28px; border:none; background:transparent; border-radius:9px; cursor:pointer; transition:transform var(--duration-fast) var(--ease-out);">
+                    <span class="material-icons" style="font-size:15px; color:#64748B;">edit</span>
+                  </button>
+                  <button class="q-icon-btn" onClick="{{ it.onDelete }}" title="Delete" style="display:grid; place-items:center; width:28px; height:28px; border:none; background:transparent; border-radius:9px; cursor:pointer; transition:transform var(--duration-fast) var(--ease-out);">
+                    <span class="material-icons" style="font-size:15px; color:#EF4444;">close</span>
+                  </button>
+                </div>
+              </div>
+            </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div class="mb-stack">
+          <textarea class="mb-input" value="{{ draft }}" onChange="{{ onDraftChange }}" onKeyDown="{{ onDraftKey }}" placeholder="{{ placeholder }}" style="min-height:64px; resize:none;"></textarea>
+        </div>
+
+        <div class="mb-toolbar">
+          <div class="mb-tools-left">
+            <sc-for list="{{ actions }}" as="a" hint-placeholder-count="2">
+              <button class="mb-btn"><span class="material-icons">{{ a.icon }}</span> {{ a.label }}</button>
+            </sc-for>
+          </div>
+          <div class="mb-tools-right">
+            <button class="mb-btn" onClick="{{ onQueue }}" disabled="{{ draftEmpty }}" style="opacity:{{ queueBtnOpacity }};">
+              <span class="material-icons">add</span> Queue
+            </button>
+            <button class="mb-send" onClick="{{ onSend }}" title="{{ sendTitle }}" style="opacity:{{ sendOpacity }};">
+              <span class="material-icons">{{ sendIcon }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint" style="margin-top:12px;">
+      <kbd>Enter</kbd> queues · <kbd>⌘</kbd>+<kbd>Enter</kbd> sends all · <kbd>⌫</kbd> on empty pops the last
+    </p>
+  </div>
+
+  <div style="width:100%; max-width:620px; display:flex; flex-direction:column; gap:8px;">
+    <span class="pills-label" style="margin:0;">{{ variantLabel }} — what this variant changes</span>
+    <div style="display:flex; flex-direction:column; gap:6px; background:#fff; border:1px solid #E2E8F0; border-radius:16px; padding:14px 16px; box-shadow:inset 0 1px 0 rgba(255,255,255,1), 0 1px 2px rgba(15,23,42,.05);">
+      <sc-for list="{{ notes }}" as="n" hint-placeholder-count="3">
+        <div style="display:flex; align-items:flex-start; gap:8px;">
+          <span class="material-icons" style="font-size:15px; color:var(--brand-primary); margin-top:1px;">check_circle</span>
+          <span style="font-size:13px; font-weight:600; color:#475569; line-height:1.5; text-wrap:pretty;">{{ n.text }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:900}}">
+const VARIANTS = {
+  coder: {
+    label: 'AI coding agent', icon: 'terminal',
+    placeholder: 'Describe the next change… Enter to queue it behind the current run.',
+    actions: [{ icon: 'attach_file', label: 'Context' }, { icon: 'alt_route', label: 'Branch' }],
+    seed: ['Extract the queue reducer into its own hook', 'Add keyboard shortcuts for reorder (alt+↑/↓)'],
+    notes: [
+      'Queue survives a running generation — new instructions land after the agent finishes the current step.',
+      'Each queued item can carry its own file context chip.',
+      'Send dispatches the batch in order; the agent reads them as one plan.'
+    ]
+  },
+  support: {
+    label: 'Support reply', icon: 'support_agent',
+    placeholder: 'Draft a reply… queue follow-ups so the customer gets them in one burst.',
+    actions: [{ icon: 'bolt', label: 'Macro' }, { icon: 'person', label: 'Customer' }],
+    seed: ['Thanks for flagging this — I can reproduce it on 2.4.1.', 'A fix ships Thursday; I will confirm here once it is live.'],
+    notes: [
+      'Agents compose several short messages, review the whole thread, then release it at once.',
+      'Editing is non-destructive until send, so nothing half-written reaches the customer.',
+      'Reorder to lead with the answer and follow with context.'
+    ]
+  },
+  crm: {
+    label: 'CRM task batch', icon: 'home_work',
+    placeholder: 'Add a task for this lead… Enter to stack it.'  ,
+    actions: [{ icon: 'sell', label: 'Deal' }, { icon: 'schedule', label: 'Due' }],
+    seed: ['Call Ayşe about the Beşiktaş valuation', 'Send comparables PDF', 'Book viewing for Saturday 11:00'],
+    notes: [
+      'One field creates a whole task batch instead of a modal per task.',
+      'Order in the queue becomes task order in the pipeline column.',
+      'Clear all is one tap if the call changes direction mid-note.'
+    ]
+  },
+  email: {
+    label: 'Email compose', icon: 'mail',
+    placeholder: 'Write a paragraph… each queued entry becomes a block in the email.',
+    actions: [{ icon: 'title', label: 'Subject' }, { icon: 'group', label: 'To' }],
+    seed: ['Short recap of where the deal stands.'],
+    notes: [
+      'Queued entries render as ordered paragraphs, so structure is drag-and-droppable.',
+      'Blocks stay editable inline until the message is sent.',
+      'Send flushes the queue into a single outgoing email.'
+    ]
+  }
+};
+
+let uid = 100;
+
+class Component extends DCLogic {
+  state = {
+    variant: 'coder',
+    draft: '',
+    queue: VARIANTS.coder.seed.map(t => ({ id: ++uid, text: t })),
+    editingId: null,
+    editText: '',
+    removing: [],
+    sending: false,
+    drag: null,
+    expanded: false
+  };
+
+  cfg() { return VARIANTS[this.state.variant]; }
+
+  setVariant = (key) => this.setState({
+    variant: key, draft: '', editingId: null, removing: [], sending: false, expanded: false,
+    queue: VARIANTS[key].seed.map(t => ({ id: ++uid, text: t }))
+  });
+
+  queueDraft = () => {
+    const t = this.state.draft.trim();
+    if (!t) return;
+    this.setState(s => ({ queue: [...s.queue, { id: ++uid, text: t }], draft: '' }));
+  };
+
+  remove = (id) => {
+    this.setState(s => ({ removing: [...s.removing, id] }));
+    setTimeout(() => this.setState(s => ({
+      queue: s.queue.filter(q => q.id !== id),
+      removing: s.removing.filter(x => x !== id),
+      editingId: s.editingId === id ? null : s.editingId
+    })), 280);
+  };
+
+  clearAll = () => {
+    const ids = this.state.queue.map(q => q.id);
+    this.setState(s => ({ removing: [...s.removing, ...ids] }));
+    setTimeout(() => this.setState({ queue: [], removing: [], editingId: null }), 300);
+  };
+
+  send = () => {
+    if (this.state.sending) return;
+    const items = this.state.draft.trim()
+      ? [...this.state.queue, { id: ++uid, text: this.state.draft.trim() }]
+      : this.state.queue;
+    if (!items.length) return;
+    this.setState({ queue: items, draft: '', editingId: null, sending: true });
+    setTimeout(() => this.setState({ queue: [], sending: false }), 620);
+  };
+
+  startEdit = (it) => this.setState({ editingId: it.id, editText: it.text });
+
+  commitEdit = () => {
+    const { editingId, editText } = this.state;
+    if (editingId == null) return;
+    const t = editText.trim();
+    this.setState(s => ({
+      editingId: null,
+      queue: t ? s.queue.map(q => q.id === editingId ? { ...q, text: t } : q) : s.queue
+    }));
+    if (!t) this.remove(editingId);
+  };
+
+  reorder = (fromId, overId) => {
+    if (fromId == null || fromId === overId) return;
+    this.setState(s => {
+      const q = [...s.queue];
+      const a = q.findIndex(x => x.id === fromId), b = q.findIndex(x => x.id === overId);
+      if (a < 0 || b < 0) return null;
+      q.splice(b, 0, q.splice(a, 1)[0]);
+      return { queue: q };
+    });
+  };
+
+  renderVals() {
+    const s = this.state, cfg = this.cfg();
+    const draftEmpty = !s.draft.trim();
+    const canSend = (s.queue.length > 0 || !draftEmpty) && !s.sending;
+
+    const d = s.drag;
+    const cards = s.queue.map((it, i) => {
+      const isDragged = d && d.id === it.id;
+      let dy = 0;
+      if (isDragged) dy = d.dy;
+      else if (d) {
+        if (d.over > d.from && i > d.from && i <= d.over) dy = -d.rowH;
+        else if (d.over < d.from && i >= d.over && i < d.from) dy = d.rowH;
+      }
+      const cls = ['q-card', isDragged ? 'q-drag' : 'q-shift'];
+      if (s.removing.includes(it.id)) cls.push('exiting');
+      if (s.sending) cls.push('sending');
+      return {
+        id: it.id, text: it.text, cls: cls.join(' '), dy, z: isDragged ? 30 : 1,
+        order: d ? (isDragged ? d.over + 1 : (dy < 0 ? i : dy > 0 ? i + 2 : i + 1)) : i + 1,
+        editing: s.editingId === it.id, reading: s.editingId !== it.id,
+        onHandleDown: (e) => {
+          e.preventDefault();
+          const card = e.currentTarget.parentElement;
+          const rowH = card.getBoundingClientRect().height + 8;
+          try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+          this.setState({ drag: { id: it.id, startY: e.clientY, dy: 0, from: i, over: i, rowH } });
+        },
+        onHandleMove: (e) => {
+          const dr = this.state.drag;
+          if (!dr || dr.id !== it.id) return;
+          const raw = e.clientY - dr.startY;
+          const dyNow = Math.max(-dr.from * dr.rowH, Math.min((s.queue.length - 1 - dr.from) * dr.rowH, raw));
+          const over = Math.max(0, Math.min(s.queue.length - 1, dr.from + Math.round(dyNow / dr.rowH)));
+          if (dyNow !== dr.dy || over !== dr.over) this.setState({ drag: { ...dr, dy: dyNow, over } });
+        },
+        onHandleUp: () => {
+          const dr = this.state.drag;
+          if (!dr) return;
+          this.setState(st => {
+            const q = [...st.queue];
+            q.splice(dr.over, 0, q.splice(dr.from, 1)[0]);
+            return { queue: q, drag: null };
+          });
+        },
+        onEdit: () => this.startEdit(it),
+        onDelete: () => this.remove(it.id)
+      };
+    });
+
+    return {
+      tabs: Object.keys(VARIANTS).map(k => ({
+        key: k, label: VARIANTS[k].label,
+        cls: 'pill-tab' + (k === s.variant ? ' active' : ''),
+        onClick: () => this.setVariant(k)
+      })),
+      cards,
+      notes: cfg.notes.map(text => ({ text })),
+      actions: cfg.actions,
+      variantLabel: cfg.label,
+      variantIcon: cfg.icon,
+      placeholder: cfg.placeholder,
+      boxCls: 'mb' + (s.sending ? ' generating' : ''),
+      draft: s.draft,
+      editText: s.editText,
+      draftEmpty,
+      queueBtnOpacity: draftEmpty ? 0.45 : 1,
+      sendOpacity: canSend ? 1 : 0.4,
+      sendIcon: s.sending ? 'autorenew' : 'arrow_upward',
+      sendTitle: canSend ? 'Send all queued messages' : 'Queue is empty',
+      hasQueue: s.queue.length > 0,
+      hasCards: cards.length > 0,
+      showStack: cards.length > 0 && !s.expanded,
+      showList: cards.length > 0 && s.expanded,
+      listOverflow: s.queue.length > 4 ? 'auto' : 'visible',
+      hasGhost1: s.queue.length > 1,
+      hasGhost2: s.queue.length > 2,
+      hasOverflow: s.queue.length > 1,
+      frontText: s.queue.length ? s.queue[0].text : '',
+      frontCls: 'q-card' + (s.sending ? ' sending' : ''),
+      onExpand: () => this.setState({ expanded: true }),
+      onCollapse: () => this.setState({ expanded: false, editingId: null }),
+      onEditFront: (e) => { e.stopPropagation(); if (s.queue.length) { this.setState({ expanded: true }); this.startEdit(s.queue[0]); } },
+      onDeleteFront: (e) => { e.stopPropagation(); if (s.queue.length) this.remove(s.queue[0].id); },
+      queueCount: s.queue.length,
+      onDraftChange: (e) => this.setState({ draft: e.target.value }),
+      onDraftKey: (e) => {
+        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); this.send(); }
+        else if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.queueDraft(); }
+        else if (e.key === 'Backspace' && !s.draft && s.queue.length) {
+          e.preventDefault();
+          const last = s.queue[s.queue.length - 1];
+          this.setState({ draft: last.text });
+          this.remove(last.id);
+        }
+      },
+      onEditChange: (e) => this.setState({ editText: e.target.value }),
+      onEditKey: (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); this.commitEdit(); }
+        if (e.key === 'Escape') this.setState({ editingId: null });
+      },
+      editRef: (el) => { if (el && el !== this._editEl) { this._editEl = el; el.focus(); el.select(); } if (!el) this._editEl = null; },
+      onEditCommit: this.commitEdit,
+      onEditCommitNow: (e) => { e.preventDefault(); this.commitEdit(); },
+      onQueue: this.queueDraft,
+      onSend: this.send,
+      onClearAll: this.clearAll
+    };
+  }
+}
+
+</script>
+</body>
+</html>

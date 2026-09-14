@@ -1,0 +1,424 @@
+<!-- @dsCard group="Merge - marketing-pricing" name="Pricing" subtitle="-> new: Marketing & pricing" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_type-display.css">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  body { margin: 0; font-family: 'Montserrat', system-ui, sans-serif; background: #F8FAFC; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes pr-spin { to { transform: rotate(360deg); } }
+  @keyframes pr-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes pr-shimmer { from { background-position: 0% 50%; } to { background-position: 200% 50%; } }
+  .pr-panel { animation: pr-rise calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out) both; }
+  .pr-card { transition: transform var(--duration-260) var(--ease-out), box-shadow var(--duration-260) var(--ease-out), border-color var(--duration-200) var(--ease-out); position: relative; }
+  @media (hover: hover) and (pointer: fine) {
+    .pr-card:hover { transform: translateY(-4px); }
+  }
+  .pr-feat { animation: pr-rise calc(var(--duration-340) * var(--anim-mult, 1)) var(--ease-out) both; }
+  .pills-seg button, .btn-inverse, .btn-glass, .btn-cta, .btn-primary { position: relative; }
+  .pills-seg button::after, .btn-inverse::after, .btn-glass::after, .btn-cta::after, .btn-primary::after {
+    content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+  }
+  .pills-seg button:focus-visible,
+  .pr-card[role="button"]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: var(--focus-ring-offset);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pr-panel, .pr-feat { animation: none !important; }
+    .pr-card, .pills-seg-pill, [style*="pr-spin"] { transition: none !important; }
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; padding: 40px 32px 64px; background: #F8FAFC; font-family: 'Montserrat', sans-serif;">
+  <div style="max-width: 1120px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px;">
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <span class="micro-label">Component · Pricing</span>
+      <h1 class="h1" style="margin: 0; font-size: 34px;">Plans that scale with the team</h1>
+      <p class="body" style="margin: 0; max-width: 560px; line-height: 1.55; text-wrap: pretty;">One pricing component, five surfaces. Switch usage area with the pills below — every variant is built from the same tokens, cards, pills and buttons.</p>
+    </div>
+
+    <div class="pills-row" style="gap: 8px;">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="5">
+        <button class="{{ v.cls }}" onClick="{{ v.go }}" style="cursor: pointer;">{{ v.label }}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isTiers }}" hint-placeholder-val="{{ true }}">
+      <div class="pr-panel" style="display: flex; flex-direction: column; gap: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+          <div class="pills-seg">
+            <div class="pills-seg-pill" style="left: {{ segLeft }}; width: {{ segWidth }};"></div>
+            <button class="{{ mCls }}" onClick="{{ setMonthly }}">Monthly</button>
+            <button class="{{ yCls }}" onClick="{{ setYearly }}">Yearly</button>
+          </div>
+          <span class="badge success" style="padding: 5px 12px;"><span class="material-icons" style="font-size: 14px;">savings</span>Save 20% yearly</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start;">
+          <sc-for list="{{ plans }}" as="p" hint-placeholder-count="3">
+            <div style="position: relative; padding-top: 12px;">
+              <div class="pr-card {{ p.cardCls }}" onClick="{{ p.select }}" onKeyDown="{{ p.onKey }}" role="button" tabindex="0" aria-pressed="{{ p.selected }}" style="padding: 24px; cursor: pointer; box-shadow: {{ p.shadow }};">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="icon-badge" style="--icon-c: {{ p.accent }};"><span class="material-icons">{{ p.icon }}</span></span>
+                    <span style="font-size: 15px; font-weight: 800; color: {{ p.fgStrong }};">{{ p.name }}</span>
+                  </div>
+                  <span style="display: {{ p.badgeShow }}; font-size: 10px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 9999px; background: rgba(255,255,255,0.92); color: #047857;">Popular</span>
+                </div>
+
+                <p style="margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: {{ p.fgMuted }};">{{ p.desc }}</p>
+
+                <div style="margin-top: 18px; height: 46px; overflow: hidden;">
+                  <div style="transition: transform var(--duration-420) var(--ease-slide-bounce); transform: {{ priceShift }};">
+                    <div style="height: 46px; display: flex; align-items: baseline; gap: 6px;">
+                      <span class="type-display" style="font-size: 40px; color: {{ p.fgStrong }};">{{ p.monthly }}</span>
+                      <span style="font-size: 12px; font-weight: 700; color: {{ p.fgMuted }};">/ seat / mo</span>
+                    </div>
+                    <div style="height: 46px; display: flex; align-items: baseline; gap: 6px;">
+                      <span class="type-display" style="font-size: 40px; color: {{ p.fgStrong }};">{{ p.yearly }}</span>
+                      <span style="font-size: 12px; font-weight: 700; color: {{ p.fgMuted }};">/ seat / mo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 18px; display: flex; flex-direction: column; gap: 10px;">
+                  <sc-for list="{{ p.features }}" as="f" hint-placeholder-count="4">
+                    <div class="pr-feat" style="display: flex; align-items: flex-start; gap: 9px; animation-delay: {{ f.delay }};">
+                      <span class="material-icons" style="font-size: 17px; color: {{ f.tick }};">check_circle</span>
+                      <span style="font-size: 12.5px; font-weight: 600; line-height: 1.45; color: {{ f.fg }};">{{ f.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="margin-top: 22px;">
+                  <button class="{{ p.ctaCls }}" onClick="{{ p.act }}" style="width: 100%; --accent: {{ p.ctaBg }}; --ctaglow: {{ p.ctaGlow }}; color: {{ p.ctaFg }}; position: relative;">
+                    <span style="display: flex; align-items: center; gap: 7px; transition: opacity var(--duration-200) var(--ease-out), transform var(--duration-260) var(--ease-spring); opacity: {{ p.labelOpacity }}; transform: {{ p.labelScale }};">
+                      <span>{{ p.ctaLabel }}</span>
+                      <span class="material-icons" style="font-size: 16px;">arrow_forward</span>
+                    </span>
+                    <span style="position: absolute; inset: 0; display: grid; place-items: center; opacity: {{ p.spinOpacity }};">
+                      <span style="width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.28); border-top-color: currentColor; animation: pr-spin var(--duration-800) var(--ease-linear) infinite;"></span>
+                    </span>
+                    <span class="material-icons" style="position: absolute; inset: 0; display: grid; place-items: center; font-size: 22px; opacity: {{ p.doneOpacity }}; transition: opacity var(--duration-200) var(--ease-out);">check</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCompact }}" hint-placeholder-val="{{ false }}">
+      <div class="pr-panel card-inner" style="padding: 8px;">
+        <div style="padding: 16px 16px 8px;">
+          <span class="micro-label">Settings · Billing</span>
+          <h2 class="h3" style="margin: 8px 0 0;">Change plan</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px;">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="3">
+            <div class="pr-card" onClick="{{ r.select }}" onKeyDown="{{ r.onKey }}" role="button" tabindex="0" aria-pressed="{{ r.selected }}" style="display: flex; align-items: center; gap: 16px; padding: 16px; border-radius: 16px; cursor: pointer; background: {{ r.bg }}; box-shadow: {{ r.shadow }};">
+              <span style="width: 20px; height: 20px; border-radius: 50%; flex: none; box-shadow: {{ r.radio }}; transition: box-shadow var(--duration-200) var(--ease-out);"></span>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 14px; font-weight: 800; color: #0F172A;">{{ r.name }}</span>
+                  <span style="display: {{ r.tagShow }};" class="badge tag">{{ r.tag }}</span>
+                </div>
+                <div style="margin-top: 3px; font-size: 12px; font-weight: 600; color: #64748B;">{{ r.desc }}</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 17px; font-weight: 900; color: #0F172A;">{{ r.price }}</div>
+                <div style="font-size: 11px; font-weight: 700; color: #94A3B8;">per seat / mo</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; border-top: 1px solid var(--card-border);">
+          <span style="font-size: 12px; font-weight: 600; color: #64748B;">Prorated from today. Cancel anytime.</span>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn-glass">Cancel</button>
+            <button class="btn-primary">Update plan</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isUpgrade }}" hint-placeholder-val="{{ false }}">
+      <div class="pr-panel" style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 20px; align-items: start;">
+        <div class="card-accent" style="padding: 26px;">
+          <div style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 16px;">
+            <span class="badge" style="align-self: flex-start; background: rgba(255,255,255,0.92); color: #047857; padding: 4px 12px;">Limit reached</span>
+            <h2 style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -0.02em;">You're at 100% of your seats</h2>
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: rgba(255,255,255,0.88); max-width: 40ch;">Growth adds unlimited seats, shared pipelines and priority support. Upgrade now and keep the team moving.</p>
+            <div style="height: 6px; border-radius: 9999px; background: rgba(255,255,255,0.25); overflow: hidden;">
+              <div style="height: 100%; width: 100%; border-radius: 9999px; background: #fff;"></div>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px;">
+              <span class="type-display" style="font-size: 38px; color: #fff;">$49</span>
+              <span style="font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.85);">/ seat / mo billed yearly</span>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button class="btn-inverse">Upgrade to Growth</button>
+              <button class="btn-glass" style="background: rgba(255,255,255,0.16); color: #fff; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);">Talk to sales</button>
+            </div>
+          </div>
+        </div>
+        <div class="card-inner" style="padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+          <span class="micro-label">What changes</span>
+          <sc-for list="{{ deltas }}" as="d" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--card-border);">
+              <span style="font-size: 12.5px; font-weight: 700; color: #334155;">{{ d.label }}</span>
+              <span style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-weight: 700; color: #94A3B8; text-decoration: line-through;">{{ d.from }}</span>
+                <span class="material-icons" style="font-size: 15px; color: #CBD5E1;">arrow_forward</span>
+                <span style="font-size: 12.5px; font-weight: 900; color: #059669;">{{ d.to }}</span>
+              </span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isUsage }}" hint-placeholder-val="{{ false }}">
+      <div class="pr-panel" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+        <div class="card-inner" style="padding: 24px; display: flex; flex-direction: column; gap: 18px;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="micro-label">Metered · Credits</span>
+            <span class="badge tag">{{ seats }} seats</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px;">
+            <span class="type-display" style="font-size: 42px;">{{ usagePrice }}</span>
+            <span style="font-size: 12px; font-weight: 700; color: #64748B;">/ month estimated</span>
+          </div>
+          <input type="range" min="5" max="120" step="5" value="{{ seats }}" onChange="{{ setSeats }}" onInput="{{ setSeats }}" style="width: 100%; accent-color: #10B981;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #94A3B8;">
+            <span>5 seats</span>
+            <span>120 seats</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="pill-priority"><span class="dot" style="background: #10B981;"></span>$12 base / seat</span>
+            <span class="pill-priority"><span class="dot" style="background: #F97316;"></span>Volume −{{ discount }}</span>
+          </div>
+          <button class="btn-cta" style="--accent: #10B981; --ctaglow: rgba(16,185,129,0.6); width: 100%;"><span class="material-icons" style="font-size: 17px;">bolt</span>Start metered plan</button>
+        </div>
+        <div class="card-inner" style="padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+          <span class="micro-label">Included every month</span>
+          <sc-for list="{{ meters }}" as="m" hint-placeholder-count="3">
+            <div style="display: flex; flex-direction: column; gap: 7px;">
+              <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; color: #334155;">
+                <span>{{ m.label }}</span>
+                <span style="color: #64748B;">{{ m.value }}</span>
+              </div>
+              <div style="height: 6px; border-radius: 9999px; background: #F1F5F9; overflow: hidden; box-shadow: var(--shadow-recessed);">
+                <div style="height: 100%; border-radius: 9999px; background: #10B981; transition: width var(--duration-480) var(--ease-out); width: {{ m.pct }};"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCompare }}" hint-placeholder-val="{{ false }}">
+      <div class="pr-panel card-inner" style="padding: 0; overflow: hidden;">
+        <div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--card-border);">
+          <span class="micro-label">Compare plans</span>
+          <sc-for list="{{ heads }}" as="h" hint-placeholder-count="3">
+            <div style="text-align: center; display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 13px; font-weight: 900; color: {{ h.fg }};">{{ h.name }}</span>
+              <span style="font-size: 11px; font-weight: 700; color: #94A3B8;">{{ h.price }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ matrix }}" as="row" hint-placeholder-count="6">
+          <div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; align-items: center; padding: 14px 24px; border-bottom: 1px solid var(--card-border); background: {{ row.bg }};">
+            <span style="font-size: 12.5px; font-weight: 700; color: #334155;">{{ row.label }}</span>
+            <sc-for list="{{ row.cells }}" as="c" hint-placeholder-count="3">
+              <span style="text-align: center; font-size: 12.5px; font-weight: 800; color: {{ c.fg }};">{{ c.text }}</span>
+            </sc-for>
+          </div>
+        </sc-for>
+        <div style="display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; align-items: center; padding: 18px 24px; gap: 10px;">
+          <span style="font-size: 12px; font-weight: 600; color: #64748B;">All plans include SSO and 99.9% uptime.</span>
+          <button class="btn-glass" style="justify-content: center;">Choose</button>
+          <button class="btn-primary" style="justify-content: center;">Choose</button>
+          <button class="btn-glass" style="justify-content: center;">Contact</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+const VARIANTS = [
+  { id: 'tiers', label: 'Tier cards' },
+  { id: 'compact', label: 'Settings row' },
+  { id: 'upgrade', label: 'Upgrade prompt' },
+  { id: 'usage', label: 'Metered usage' },
+  { id: 'compare', label: 'Comparison' },
+];
+
+const PLANS = [
+  { id: 'starter', name: 'Starter', icon: 'rocket_launch', accent: '#64748B', m: '$19', y: '$15',
+    desc: 'For solo operators shipping their first pipeline.',
+    features: ['1 workspace', '3 active pipelines', 'Email support', 'Basic analytics'], cta: 'Start free' },
+  { id: 'growth', name: 'Growth', icon: 'trending_up', accent: '#10B981', m: '$49', y: '$39', featured: true,
+    desc: 'For teams that need shared pipelines and automation.',
+    features: ['Unlimited seats', 'Unlimited pipelines', 'Automations & AI drafts', 'Priority support', 'Advanced analytics'], cta: 'Upgrade' },
+  { id: 'scale', name: 'Scale', icon: 'workspace_premium', accent: '#0F172A', m: '$89', y: '$71',
+    desc: 'For orgs with security review and custom rollout.',
+    features: ['Everything in Growth', 'SSO & SCIM', 'Audit log & data residency', 'Dedicated CSM'], cta: 'Contact sales' },
+];
+
+class Component extends DCLogic {
+  state = { variant: 'tiers', billing: 'monthly', selected: 'growth', row: 'growth', cta: {}, seats: 25 };
+
+  go(id) { return () => this.setState({ variant: id }); }
+
+  fireCta(id) {
+    return (e) => {
+      e.stopPropagation();
+      if (this.state.cta[id]) return;
+      this.setState(s => ({ cta: { ...s.cta, [id]: 'loading' } }));
+      setTimeout(() => this.setState(s => ({ cta: { ...s.cta, [id]: 'done' } })), 1300);
+      setTimeout(() => this.setState(s => { const c = { ...s.cta }; delete c[id]; return { cta: c }; }), 3200);
+    };
+  }
+
+  renderVals() {
+    const { variant, billing, selected, seats } = this.state;
+    const yearly = billing === 'yearly';
+
+    const variants = VARIANTS.map(v => ({
+      label: v.label,
+      cls: 'pill-tab' + (variant === v.id ? ' active' : ''),
+      go: this.go(v.id),
+    }));
+
+    const plans = PLANS.map(p => {
+      const isSel = selected === p.id;
+      const st = this.state.cta[p.id];
+      const feat = !!p.featured;
+      return {
+        name: p.name, icon: p.icon, accent: feat ? '#FFFFFF' : p.accent, desc: p.desc,
+        monthly: p.m, yearly: p.y,
+        cardCls: feat ? 'card-accent' : 'card-inner',
+        badgeShow: feat ? 'inline-flex' : 'none',
+        fgStrong: feat ? '#FFFFFF' : '#0F172A',
+        fgMuted: feat ? 'rgba(255,255,255,0.85)' : '#64748B',
+        shadow: feat
+          ? (isSel
+            ? '0 18px 55px -10px rgba(16,185,129,0.65), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 2px rgba(255,255,255,0.55)'
+            : '0 10px 40px -10px rgba(16,185,129,0.5), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15)')
+          : (isSel
+            ? 'inset 0 0 0 2px #10B981, 0 12px 30px -14px rgba(16,185,129,0.55)'
+            : 'inset 0 0 0 1px rgba(15,23,42,0.04)'),
+        selected: isSel,
+        select: () => this.setState({ selected: p.id }),
+        onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ selected: p.id }); } },
+        features: p.features.map((label, i) => ({
+          label, delay: (i * 45) + 'ms',
+          tick: feat ? 'rgba(255,255,255,0.95)' : '#10B981',
+          fg: feat ? 'rgba(255,255,255,0.92)' : '#334155',
+        })),
+        ctaCls: feat ? 'btn-inverse' : 'btn-cta',
+        ctaBg: feat ? '#FFFFFF' : (p.id === 'scale' ? '#0F172A' : '#F1F5F9'),
+        ctaGlow: p.id === 'scale' ? 'rgba(15,23,42,0.45)' : 'rgba(15,23,42,0.14)',
+        ctaFg: feat ? '#059669' : (p.id === 'scale' ? '#FFFFFF' : '#334155'),
+        ctaLabel: st === 'done' ? 'Added' : p.cta,
+        labelOpacity: st ? '0' : '1',
+        labelScale: st ? 'scale(0.82)' : 'scale(1)',
+        spinOpacity: st === 'loading' ? '1' : '0',
+        doneOpacity: st === 'done' ? '1' : '0',
+        act: this.fireCta(p.id),
+      };
+    });
+
+    const rows = PLANS.map(p => {
+      const on = this.state.row === p.id;
+      return {
+        name: p.name, desc: p.desc, price: yearly ? p.y : p.m,
+        tag: p.featured ? 'Current plan' : '', tagShow: p.featured ? 'inline-flex' : 'none',
+        bg: on ? 'rgba(16,185,129,0.06)' : '#FFFFFF',
+        shadow: on ? 'inset 0 0 0 1.5px #10B981' : 'inset 0 0 0 1px #E2E8F0',
+        radio: on ? 'inset 0 0 0 6px #10B981, inset 0 0 0 12px #FFFFFF' : 'inset 0 0 0 1.5px #CBD5E1',
+        selected: on,
+        select: () => this.setState({ row: p.id }),
+        onKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState({ row: p.id }); } },
+      };
+    });
+
+    const base = 12, disc = seats >= 80 ? 0.25 : seats >= 40 ? 0.15 : seats >= 20 ? 0.08 : 0;
+    const total = Math.round(seats * base * (1 - disc));
+
+    return {
+      variants,
+      isTiers: variant === 'tiers', isCompact: variant === 'compact', isUpgrade: variant === 'upgrade',
+      isUsage: variant === 'usage', isCompare: variant === 'compare',
+      mCls: yearly ? '' : 'active', yCls: yearly ? 'active' : '',
+      segLeft: yearly ? '98px' : '3px', segWidth: yearly ? '84px' : '95px',
+      setMonthly: () => this.setState({ billing: 'monthly' }),
+      setYearly: () => this.setState({ billing: 'yearly' }),
+      priceShift: yearly ? 'translateY(-46px)' : 'translateY(0px)',
+      plans, rows,
+      deltas: [
+        { label: 'Seats', from: '10', to: 'Unlimited' },
+        { label: 'Active pipelines', from: '3', to: 'Unlimited' },
+        { label: 'Automations', from: '—', to: 'Included' },
+        { label: 'Support', from: 'Email', to: 'Priority' },
+      ],
+      seats,
+      setSeats: (e) => this.setState({ seats: Number(e.target.value) }),
+      usagePrice: '$' + total.toLocaleString(),
+      discount: Math.round(disc * 100) + '%',
+      meters: [
+        { label: 'AI drafts', value: '4,200 / 6,000', pct: '70%' },
+        { label: 'Enrichment credits', value: '1,850 / 5,000', pct: '37%' },
+        { label: 'Storage', value: '68 GB / 200 GB', pct: '34%' },
+      ],
+      heads: [
+        { name: 'Starter', price: yearly ? '$15' : '$19', fg: '#0F172A' },
+        { name: 'Growth', price: yearly ? '$39' : '$49', fg: '#059669' },
+        { name: 'Scale', price: yearly ? '$71' : '$89', fg: '#0F172A' },
+      ],
+      matrix: [
+        ['Seats', '1', 'Unlimited', 'Unlimited'],
+        ['Pipelines', '3', 'Unlimited', 'Unlimited'],
+        ['Automations', '—', 'Included', 'Included'],
+        ['SSO & SCIM', '—', '—', 'Included'],
+        ['Audit log', '—', '—', 'Included'],
+        ['Support', 'Email', 'Priority', 'Dedicated CSM'],
+      ].map((r, i) => ({
+        label: r[0], bg: i % 2 ? 'rgba(248,250,252,0.7)' : 'transparent',
+        cells: r.slice(1).map((text, j) => ({ text, fg: text === '—' ? '#CBD5E1' : (j === 1 ? '#059669' : '#334155') })),
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

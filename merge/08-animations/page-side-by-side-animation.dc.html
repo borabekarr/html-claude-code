@@ -1,0 +1,395 @@
+<!-- @dsCard group="Merge - animations" name="Page Side By Side Animation" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_multisteps.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  body { margin: 0; background: #F1F5F9; }
+
+  /* Transitions.dev — Page side-by-side */
+  .t-page-slide { position: relative; }
+  .t-page-slide .t-page[data-page-id="1"] { --t-page-from-x: calc(var(--page-slide-distance) * -1); }
+  .t-page-slide .t-page[data-page-id="2"] { --t-page-from-x: var(--page-slide-distance); }
+  .t-page-slide .t-page {
+    position: absolute; inset: 0;
+    opacity: 0; pointer-events: none;
+    transform: translateX(calc(var(--t-page-from-x, 0px) * var(--page-exit-enabled)));
+    filter: blur(calc(var(--page-blur) * var(--page-exit-enabled)));
+    transition:
+      opacity   var(--page-fade-dur)  var(--page-fade-ease),
+      transform var(--page-slide-dur) var(--page-slide-ease),
+      filter    var(--page-slide-dur) var(--page-slide-ease);
+    will-change: opacity, transform, filter;
+  }
+  .t-page-slide[data-page="1"] .t-page[data-page-id="1"],
+  .t-page-slide[data-page="2"] .t-page[data-page-id="2"] {
+    opacity: 1; pointer-events: auto;
+    transform: translateX(0); filter: blur(0);
+    transition-delay: var(--page-stagger);
+  }
+  @media (prefers-reduced-motion: reduce) { .t-page-slide .t-page { transition: none !important; } }
+
+  /* child stagger inside an entering page */
+  .t-page-slide .t-page[data-page-id="1"] > * > .t-item { transform: translateX(-6px); }
+  .t-page-slide .t-page[data-page-id="2"] > * > .t-item { transform: translateX(6px); }
+  .t-page-slide .t-page > * > .t-item { opacity: 0; transition: opacity var(--duration-240) var(--page-fade-ease), transform var(--duration-320) var(--page-slide-ease); }
+  .t-page-slide[data-page="1"] .t-page[data-page-id="1"] .t-item,
+  .t-page-slide[data-page="2"] .t-page[data-page-id="2"] .t-item { opacity: 1; transform: translateX(0); }
+  .t-item:nth-child(1) { transition-delay: var(--duration-40); }
+  .t-item:nth-child(2) { transition-delay: 90ms; /* motion-sweep: kept */ }
+  .t-item:nth-child(3) { transition-delay: var(--duration-140); }
+  .t-item:nth-child(4) { transition-delay: 190ms; /* motion-sweep: kept */ }
+
+  .stage-shell { background: var(--shell-bg, #D4DCE8); border-radius: 28px; padding: 14px; box-shadow: inset 0 2px 6px rgba(15,23,42,0.14); }
+  .t-row { display: flex; align-items: center; gap: 10px; }
+  .t-field { height: 38px; border-radius: 10px; border: 1px solid var(--card-border); background: var(--card-bg); display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 600; color: var(--fg3); }
+  .t-list-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--card-border); background: var(--card-bg); cursor: pointer; transition: transform var(--duration-base) var(--ease-out), box-shadow var(--duration-base) var(--ease-out); }
+  @media (hover: hover) and (pointer: fine) { .t-list-row:hover { transform: translateX(2px); box-shadow: 0 4px 14px -6px rgba(15,23,42,0.28); } }
+  .t-ghost { position: relative; height: 34px; min-width: 92px; padding: 0 14px; border-radius: 9999px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--fg3); font-family: 'Montserrat'; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; justify-content: center; transition: transform var(--duration-base) var(--ease-spring), color var(--duration-base) var(--ease-out); }
+  .t-ghost::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (hover: hover) and (pointer: fine) { .t-ghost:hover { transform: scale(1.03); color: var(--fg1); } }
+  .t-ghost:active { transform: scale(0.96); }
+  .t-ghost:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .pill-tab { cursor: pointer; }
+  @media (hover: hover) and (pointer: fine) { .pill-tab:hover { color: var(--fg1); } }
+  .pills-seg { position: relative; }
+  .pills-seg button { position: relative; }
+  .pills-seg button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .pills-seg button:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div style="min-height: 100vh; padding: 32px; font-family: 'Montserrat'; background-image: var(--bg-section-grid); background-size: 24px 24px;">
+  <div style="max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+      <div>
+        <span class="micro-label">Transitions · motion primitive</span>
+        <h1 class="h1" style="margin: 4px 0 6px;">Page side-by-side</h1>
+        <p class="body" style="margin: 0; max-width: 46ch;">Two sibling pages share one box. Page 1 leaves to the left, page 2 leaves to the right, so direction always encodes hierarchy.</p>
+      </div>
+      <span class="badge tag" style="font-family: ui-monospace, Menlo, monospace;">data-page="{{ page }}"</span>
+    </div>
+
+    <div>
+      <span class="pills-label">Usage areas</span>
+      <div class="pills-row">
+        <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+          <span class="pill-tab {{ v.cls }}" onClick="{{ v.select }}">{{ v.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="stage-shell">
+      <div class="card-inner" style="padding: 0; overflow: hidden;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--card-border);">
+          <div class="t-row">
+            <div class="icon-badge icon-badge--sm" style="--icon-c: var(--semantic-success);"><span class="material-icons">{{ variantIcon }}</span></div>
+            <span style="font-size: 13px; font-weight: 800; color: var(--fg1);">{{ variantTitle }}</span>
+          </div>
+          <div class="pills-seg">
+            <div class="pills-seg-pill" style="left: {{ segLeft }}; width: {{ segWidth }};"></div>
+            <button class="{{ seg1 }}" ref="{{ seg1Ref }}" style="flex: 1 1 0; box-sizing: border-box; white-space: nowrap;" onClick="{{ goPage1 }}">Page 1</button>
+            <button class="{{ seg2 }}" ref="{{ seg2Ref }}" style="flex: 1 1 0; box-sizing: border-box; white-space: nowrap;" onClick="{{ goPage2 }}">Page 2</button>
+          </div>
+        </div>
+
+        <div class="t-page-slide" data-page="{{ page }}" style="height: 344px; --page-slide-dur: {{ durMs }}; --page-fade-dur: {{ durMs }}; --page-slide-distance: {{ distPx }}; --page-blur: {{ blurPx }}; --page-stagger: {{ staggerMs }}; --page-exit-enabled: {{ exitEnabled }}; --page-slide-ease: var(--ease-out); --page-fade-ease: var(--ease-out);">
+
+          <sc-if value="{{ isWizard }}" hint-placeholder-val="{{ true }}">
+            <section class="t-page" data-page-id="1">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+                <div class="t-item">
+                  <span class="micro-label">Step 1 of 2</span>
+                  <div class="h3" style="margin-top: 4px;">Portföy bilgileri</div>
+                </div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <div class="t-field">Beşiktaş, İstanbul</div>
+                  <div class="t-field">3+1 · 148 m²</div>
+                </div>
+                <div class="t-item pills-row">
+                  <span class="pill-priority"><span class="dot" style="background: var(--semantic-danger);"></span> Yüksek</span>
+                  <span class="badge tag"><span class="material-icons">home_work</span> Değerleme</span>
+                </div>
+                <div class="t-item t-row" style="margin-top: auto; justify-content: flex-end;">
+                  <button class="btn-green" onClick="{{ goPage2 }}">Devam <span class="material-icons" style="font-size: 15px;">arrow_forward</span></button>
+                </div>
+              </div>
+            </section>
+            <section class="t-page" data-page-id="2">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+                <div class="t-item">
+                  <span class="micro-label">Step 2 of 2</span>
+                  <div class="h3" style="margin-top: 4px;">Fiyat ve onay</div>
+                </div>
+                <div class="t-item card-accent" style="padding: 16px; border-radius: 20px;">
+                  <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85;">Tahmini GCI</span>
+                  <div class="display-2" style="color: #fff; margin-top: 6px;">$45.2K</div>
+                </div>
+                <div class="t-item pills-row">
+                  <span class="badge success"><span class="material-icons">trending_up</span> +12%</span>
+                  <span class="badge time"><span class="material-icons">schedule</span> 12:00</span>
+                </div>
+                <div class="t-item t-row" style="margin-top: auto; justify-content: space-between;">
+                  <button class="t-ghost" onClick="{{ goPage1 }}"><span class="material-icons" style="font-size: 15px;">arrow_back</span> Geri</button>
+                  <button class="btn-green">Onayla</button>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ isDrill }}">
+            <section class="t-page" data-page-id="1">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <div class="t-item"><span class="pills-label" style="margin: 0;">Pipeline · 3 lead</span></div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: var(--semantic-hot);"><span class="material-icons">local_fire_department</span></div>
+                  <div style="flex: 1;">
+                    <div class="card-name">Ayşe Demir</div>
+                    <div class="card-desc" style="margin-top: 2px;">Beşiktaş · 3+1</div>
+                  </div>
+                  <span class="badge tag"><span class="material-icons">sell</span> Satış</span>
+                </div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: #3B82F6;"><span class="material-icons">insights</span></div>
+                  <div style="flex: 1;">
+                    <div class="card-name">Mert Kaya</div>
+                    <div class="card-desc" style="margin-top: 2px;">Kadıköy · 2+1</div>
+                  </div>
+                  <span class="badge tag"><span class="material-icons">volunteer_activism</span> Nurture</span>
+                </div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: var(--semantic-success);"><span class="material-icons">task_alt</span></div>
+                  <div style="flex: 1;">
+                    <div class="card-name">Elif Yılmaz</div>
+                    <div class="card-desc" style="margin-top: 2px;">Şişli · 4+1</div>
+                  </div>
+                  <span class="badge success"><span class="material-icons">trending_up</span> +8%</span>
+                </div>
+              </div>
+            </section>
+            <section class="t-page" data-page-id="2">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
+                <div class="t-item t-row">
+                  <button class="t-ghost" style="min-width: 0; padding: 0 12px;" onClick="{{ goPage1 }}"><span class="material-icons" style="font-size: 15px;">arrow_back</span> Pipeline</button>
+                </div>
+                <div class="t-item t-row" style="gap: 12px;">
+                  <div class="icon-badge icon-badge--lg icon-badge--glow" style="--icon-c: var(--semantic-hot);"><span class="material-icons">local_fire_department</span></div>
+                  <div>
+                    <div class="h3">Ayşe Demir</div>
+                    <div class="card-desc" style="margin-top: 2px;">Hot lead · son temas 2 gün önce</div>
+                  </div>
+                </div>
+                <div class="t-item pills-row">
+                  <span class="badge-event" style="background-color: var(--semantic-hot);"><span class="material-icons">call</span> Call</span>
+                  <span class="badge-event" style="background-color: #3B82F6;"><span class="material-icons">event</span> Meeting</span>
+                  <span class="badge gci"><span>$</span> 45K GCI</span>
+                </div>
+                <div class="t-item t-row" style="margin-top: auto;">
+                  <button class="btn-green">Ara</button>
+                  <button class="btn-yellow">Ertele</button>
+                  <button class="btn-red">Kaybedildi</button>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ isAuth }}">
+            <section class="t-page" data-page-id="1">
+              <div style="padding: 24px; display: flex; flex-direction: column; gap: 14px; align-items: stretch; max-width: 360px; margin: 0 auto;">
+                <div class="t-item" style="text-align: center;">
+                  <div class="h2">Tekrar hoş geldin</div>
+                  <div class="card-desc" style="margin-top: 4px;">Hesabına giriş yap.</div>
+                </div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <div class="t-field">ayse@deha.co</div>
+                  <div class="t-field">••••••••</div>
+                </div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <button class="btn-green" style="width: 100%;">Giriş yap</button>
+                  <button class="t-ghost" style="width: 100%;" onClick="{{ goPage2 }}">Hesap oluştur</button>
+                </div>
+              </div>
+            </section>
+            <section class="t-page" data-page-id="2">
+              <div style="padding: 24px; display: flex; flex-direction: column; gap: 14px; max-width: 360px; margin: 0 auto;">
+                <div class="t-item" style="text-align: center;">
+                  <div class="h2">Hesap oluştur</div>
+                  <div class="card-desc" style="margin-top: 4px;">30 saniye sürer.</div>
+                </div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <div class="t-field">Ad Soyad</div>
+                  <div class="t-field">ayse@deha.co</div>
+                  <div class="t-field">••••••••</div>
+                </div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <button class="btn-green" style="width: 100%;">Kaydol</button>
+                  <button class="t-ghost" style="width: 100%;" onClick="{{ goPage1 }}">Girişe dön</button>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{ isSettings }}">
+            <section class="t-page" data-page-id="1">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <div class="t-item"><span class="pills-label" style="margin: 0;">Ayarlar</span></div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: #3B82F6;"><span class="material-icons">notifications</span></div>
+                  <div style="flex: 1;"><div class="card-name">Bildirimler</div><div class="card-desc" style="margin-top: 2px;">Push, e-posta, özet</div></div>
+                  <span class="material-icons" style="color: var(--fg4); font-size: 18px;">chevron_right</span>
+                </div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: #0F172A;"><span class="material-icons">lock</span></div>
+                  <div style="flex: 1;"><div class="card-name">Gizlilik</div><div class="card-desc" style="margin-top: 2px;">Görünürlük ve veri</div></div>
+                  <span class="material-icons" style="color: var(--fg4); font-size: 18px;">chevron_right</span>
+                </div>
+                <div class="t-item t-list-row" onClick="{{ goPage2 }}">
+                  <div class="icon-badge" style="--icon-c: var(--semantic-warning);"><span class="material-icons">star</span></div>
+                  <div style="flex: 1;"><div class="card-name">Plan</div><div class="card-desc" style="margin-top: 2px;">Pro · yıllık</div></div>
+                  <span class="material-icons" style="color: var(--fg4); font-size: 18px;">chevron_right</span>
+                </div>
+              </div>
+            </section>
+            <section class="t-page" data-page-id="2">
+              <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                <div class="t-item t-row">
+                  <button class="t-ghost" style="min-width: 0; padding: 0 12px;" onClick="{{ goPage1 }}"><span class="material-icons" style="font-size: 15px;">arrow_back</span> Ayarlar</button>
+                </div>
+                <div class="t-item"><div class="h3">Bildirimler</div></div>
+                <div class="t-item" style="display: grid; gap: 10px;">
+                  <div class="t-list-row" style="cursor: default;">
+                    <div style="flex: 1;"><div class="card-name">Yeni lead</div><div class="card-desc" style="margin-top: 2px;">Anında push</div></div>
+                    <span class="badge success"><span class="material-icons">task_alt</span> Açık</span>
+                  </div>
+                  <div class="t-list-row" style="cursor: default;">
+                    <div style="flex: 1;"><div class="card-name">Haftalık özet</div><div class="card-desc" style="margin-top: 2px;">Pazartesi 09:00</div></div>
+                    <span class="badge tag"><span class="material-icons">schedule</span> Kapalı</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-inner" style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-end;">
+      <div>
+        <span class="pills-label">Slide distance · {{ distPx }}</span>
+        <input type="range" min="0" max="40" step="1" value="{{ dist }}" onChange="{{ setDist }}" style="width: 150px; accent-color: var(--brand-primary);">
+      </div>
+      <div>
+        <span class="pills-label">Duration · {{ durMs }}</span>
+        <input type="range" min="80" max="900" step="10" value="{{ dur }}" onChange="{{ setDur }}" style="width: 150px; accent-color: var(--brand-primary);">
+      </div>
+      <div>
+        <span class="pills-label">Blur · {{ blurPx }}</span>
+        <input type="range" min="0" max="12" step="1" value="{{ blur }}" onChange="{{ setBlur }}" style="width: 150px; accent-color: var(--brand-primary);">
+      </div>
+      <div>
+        <span class="pills-label">Exit slide</span>
+        <div class="pills-row">
+          <span class="pill-tab {{ exitOnCls }}" onClick="{{ enableExit }}">On</span>
+          <span class="pill-tab {{ exitOffCls }}" onClick="{{ disableExit }}">Off</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;duration&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:250,&quot;unit&quot;:&quot;ms&quot;,&quot;min&quot;:80,&quot;max&quot;:900,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;slideDistance&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;unit&quot;:&quot;px&quot;,&quot;min&quot;:0,&quot;max&quot;:40,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;blur&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;unit&quot;:&quot;px&quot;,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;stagger&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;unit&quot;:&quot;ms&quot;,&quot;min&quot;:0,&quot;max&quot;:400,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;exitEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const VARIANTS = [
+  { id: 'wizard',   label: 'Multi-step wizard', icon: 'checklist',  title: 'Yeni portföy' },
+  { id: 'drill',    label: 'List → detail',     icon: 'view_list',  title: 'Pipeline' },
+  { id: 'auth',     label: 'Sign in ↔ sign up', icon: 'login',      title: 'Hesap' },
+  { id: 'settings', label: 'Settings drill-in', icon: 'settings',   title: 'Ayarlar' },
+];
+
+class Component extends DCLogic {
+  state = { variant: 'wizard', page: 1 };
+
+  segRefs = {};
+
+  componentDidMount() { this.syncPill(); }
+  componentDidUpdate() { this.syncPill(); }
+
+  syncPill() {
+    const el = this.segRefs[this.state.page];
+    if (!el) return;
+    const left = el.offsetLeft + 'px';
+    const width = el.offsetWidth + 'px';
+    if (this.state.segLeft !== left || this.state.segWidth !== width) {
+      this.setState({ segLeft: left, segWidth: width });
+    }
+  }
+
+  set(k, v) { this.setState({ [k]: v }); }
+
+  renderVals() {
+    const p = this.props;
+    const variant = this.state.variant;
+    const dist = this.state.dist ?? p.slideDistance ?? 8;
+    const dur = this.state.dur ?? p.duration ?? 250;
+    const blur = this.state.blur ?? p.blur ?? 3;
+    const exitEnabled = this.state.exit ?? (p.exitEnabled === false ? 0 : 1);
+    const active = VARIANTS.find(v => v.id === variant) || VARIANTS[0];
+
+    return {
+      page: this.state.page,
+      variants: VARIANTS.map(v => ({
+        label: v.label,
+        cls: v.id === variant ? 'active' : '',
+        select: () => this.setState({ variant: v.id, page: 1 }),
+      })),
+      variantIcon: active.icon,
+      variantTitle: active.title,
+      isWizard: variant === 'wizard',
+      isDrill: variant === 'drill',
+      isAuth: variant === 'auth',
+      isSettings: variant === 'settings',
+      goPage1: () => this.set('page', 1),
+      goPage2: () => this.set('page', 2),
+      seg1: this.state.page === 1 ? 'active' : '',
+      seg2: this.state.page === 2 ? 'active' : '',
+      seg1Ref: el => { this.segRefs[1] = el; },
+      seg2Ref: el => { this.segRefs[2] = el; },
+      segLeft: this.state.segLeft ?? '3px',
+      segWidth: this.state.segWidth ?? '50%',
+      dist, dur, blur, exitEnabled,
+      distPx: dist + 'px',
+      durMs: dur + 'ms',
+      blurPx: blur + 'px',
+      staggerMs: (p.stagger ?? 0) + 'ms',
+      setDist: e => this.set('dist', +e.target.value),
+      setDur: e => this.set('dur', +e.target.value),
+      setBlur: e => this.set('blur', +e.target.value),
+      enableExit: () => this.set('exit', 1),
+      disableExit: () => this.set('exit', 0),
+      exitOnCls: exitEnabled ? 'active' : '',
+      exitOffCls: exitEnabled ? '' : 'active',
+    };
+  }
+}
+</script>
+</body>
+</html>

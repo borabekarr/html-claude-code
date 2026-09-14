@@ -1,0 +1,377 @@
+<!-- @dsCard group="Merge - ai-chat" name="AI Chat Plan" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F1F5F9; font-family: 'Montserrat', system-ui, sans-serif; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes pl-shimmer { 0% { background-position: -320px 0; } 100% { background-position: 320px 0; } }
+  @keyframes pl-spin { to { transform: rotate(360deg); } }
+  @keyframes pl-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes pl-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.45); } 50% { box-shadow: 0 0 0 7px rgba(16,185,129,0); } }
+  @keyframes pl-caret { 0%,49% { opacity: 1; } 50%,100% { opacity: 0; } }
+  @keyframes pl-pop { 0% { transform: scale(0.4); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  @keyframes pl-sheen { 0% { transform: translateX(-120%); } 100% { transform: translateX(220%); } }
+</style>
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script><style>
+/* ai-chat-plan v2 — component-local additions (plan: claude-design-frontend-pass).
+   Never edit inside a <style data-ds =...> block above; this is a new block. */
+.btn-yellow::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+.pl-header-toggle:focus-visible {
+  outline: 2px solid var(--brand-primary); outline-offset: 2px; border-radius: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="animation:pl-"] {
+    animation-duration: 0.01ms !important; /* motion-sweep: kept, reduced-motion reset floor value */
+    animation-iteration-count: 1 !important;
+  }
+  [style*="transition:"] {
+    transition-duration: 0.01ms !important; /* motion-sweep: kept, reduced-motion reset floor value */
+  }
+}
+</style></helmet>
+
+<div style="min-height:100%;padding:40px 32px 64px;box-sizing:border-box;background:#F1F5F9;background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px);background-size:24px 24px;display:flex;flex-direction:column;align-items:center;gap:24px;--accent:{{ accent }}">
+
+  <div style="width:100%;max-width:760px;display:flex;flex-direction:column;gap:6px">
+    <span class="label">Deha · Components</span>
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+      <h1 class="h1" style="margin:0">AI Chat Plan</h1>
+      <span class="meta" style="color:#64748B">Collapsible plan card — approval and completed states</span>
+    </div>
+  </div>
+
+  <div style="width:100%;max-width:760px;display:flex;flex-direction:column;gap:10px">
+    <span class="pills-label" style="margin:0">Usage / state</span>
+    <div class="pills-row">
+      <sc-for list="{{ variants }}" as="v" hint-placeholder-count="6">
+        <button type="button" class="pill-tab {{ v.cls }}" onClick="{{ v.onSelect }}" style="cursor:pointer;gap:6px;padding:7px 15px">{{ v.label }}</button>
+      </sc-for>
+    </div>
+    <span class="meta" style="color:#64748B;font-weight:600;max-width:620px;text-wrap:pretty">{{ variantNote }}</span>
+  </div>
+
+  <div class="shell zoom" style="width:100%;max-width:760px;box-sizing:border-box;display:flex;justify-content:center">
+
+    <sc-if value="{{ showCompact }}" hint-placeholder-val="{{ false }}">
+      <div style="width:100%;background:#FFFFFF;border-radius:20px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.4);border:1px solid #E2E8F0;animation:pl-rise var(--duration-360) var(--ease-out) both">
+        <span style="width:32px;height:32px;border-radius:11px;display:grid;place-items:center;background:#10B981;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22);flex:none">
+          <span class="material-symbols-outlined" style="font-size:18px">checklist</span>
+        </span>
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+          <span style="font-size:13px;font-weight:800;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Reactivate stale pipeline</span>
+          <span style="font-size:11px;font-weight:600;color:#64748B">3 of 5 steps · 2 running</span>
+        </div>
+        <span class="badge success"><span class="material-icons">bolt</span> Live</span>
+        <button type="button" class="btn-discuss" onClick="{{ onExpandCompact }}" style="flex:none"><span class="material-icons" style="font-size:16px">unfold_more</span>Open</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showCard }}" hint-placeholder-val="{{ true }}">
+      <div style="width:100%;background:#FFFFFF;border:1px solid #E2E8F0;border-radius:24px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4);animation:pl-rise var(--duration-420) var(--ease-out) both">
+
+        <div class="pl-header-toggle" role="button" tabIndex="0" aria-expanded="{{ isExpanded }}" onClick="{{ onToggle }}" onKeyDown="{{ onToggleKey }}" style="display:flex;align-items:flex-start;gap:14px;padding:20px 22px 16px;cursor:pointer;position:relative">
+          <span style="width:44px;height:44px;flex:none;border-radius:15px;display:grid;place-items:center;background:var(--accent);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.18);box-shadow:0 10px 30px -10px rgba(16,185,129,0.5), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15);background-image:linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px);background-size:14px 14px">
+            <span class="material-symbols-outlined" style="font-size:22px">{{ headIcon }}</span>
+          </span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="h4" style="font-size:16px">Reactivate stale pipeline</span>
+              <span class="badge {{ statusCls }}" style="{{ statusStyle }}"><span class="material-icons">{{ statusIcon }}</span> {{ statusLabel }}</span>
+            </div>
+            <span style="font-size:13px;font-weight:600;color:#64748B;line-height:1.45;text-wrap:pretty">{{ subtitle }}<span style="{{ caretStyle }}">▍</span></span>
+          </div>
+          <span style="width:32px;height:32px;flex:none;border-radius:10px;display:grid;place-items:center;color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0;transition:transform var(--duration-320) var(--ease-out), background var(--duration-200);transform:rotate({{ chevronDeg }}deg)">
+            <span class="material-icons" style="font-size:20px">expand_more</span>
+          </span>
+        </div>
+
+        <div style="padding:0 22px 16px;display:flex;align-items:center;gap:12px">
+          <div style="flex:1;height:6px;border-radius:9999px;background:#F1F5F9;box-shadow:inset 0 2px 4px rgba(0,0,0,0.06);overflow:hidden">
+            <div style="height:100%;border-radius:9999px;background:var(--accent);background-image:linear-gradient(90deg, rgba(255,255,255,0.16) 1px, transparent 1px);background-size:7px 7px;box-shadow:0 2px 8px -1px rgba(16,185,129,0.6);transition:width var(--duration-700) var(--ease-out) /* progress-fill: continuous fill, not a state change; width is the fill itself (no transform equivalent) */, background var(--duration-slower);width:{{ progressPct }}%"></div>
+          </div>
+          <span class="meta" style="font-variant-numeric:tabular-nums;color:#475569">{{ progressLabel }}</span>
+        </div>
+
+        <div style="overflow:hidden;transition:max-height 460ms var(--ease-out), opacity var(--duration-260) var(--ease-fade); /* motion-sweep: kept, 460ms is ApplyButton-scoped --duration-expand, not reused here */max-height:{{ bodyMax }};opacity:{{ bodyOpacity }}">
+          <div style="padding:2px 22px 18px;display:flex;flex-direction:column;gap:{{ rowGap }}">
+            <sc-if value="{{ showSummary }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:12px;padding:14px 16px;border-radius:16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.22);animation:pl-rise var(--duration-420) var(--ease-out) both">
+                <span style="font-size:13px;font-weight:700;color:#334155;line-height:1.55;text-wrap:pretty">{{ summaryText }}</span>
+                <div class="pills-row">
+                  <sc-for list="{{ summaryStats }}" as="m" hint-placeholder-count="3">
+                    <span class="badge tag"><span class="material-icons">{{ m.i }}</span> {{ m.l }}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <sc-for list="{{ steps }}" as="s" hint-placeholder-count="5">
+              <div style="display:flex;gap:12px;padding:{{ s.pad }};border-radius:16px;background:{{ s.rowBg }};border:1px solid {{ s.rowBorder }};transition:background var(--duration-320) var(--ease-fade), border-color var(--duration-320) var(--ease-fade);animation:pl-rise var(--duration-420) var(--ease-out) both;animation-delay:{{ s.delay }}">
+                <div style="position:relative;width:26px;height:26px;flex:none;margin-top:1px">
+                  <span style="position:absolute;inset:0;border-radius:9999px;display:grid;place-items:center;font-size:11px;font-weight:900;background:{{ s.dotBg }};color:{{ s.dotFg }};border:1.5px solid {{ s.dotBorder }};animation:{{ s.dotAnim }}">
+                    <sc-if value="{{ s.showNum }}" hint-placeholder-val="{{ true }}"><span>{{ s.n }}</span></sc-if>
+                    <sc-if value="{{ s.showIcon }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size:15px;animation:pl-pop 340ms var(--ease-card-pop) both /* motion-sweep: kept, no 340ms tier */">{{ s.icon }}</span></sc-if>
+                  </span>
+                  <sc-if value="{{ s.spin }}" hint-placeholder-val="{{ false }}">
+                    <span style="position:absolute;inset:-3px;border-radius:9999px;border:2px solid rgba(16,185,129,0.18);border-top-color:#10B981;animation:pl-spin 820ms var(--ease-linear) infinite /* motion-sweep: kept, no 820ms tier */"></span>
+                  </sc-if>
+                </div>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+                  <span style="font-size:13.5px;font-weight:800;line-height:1.35;color:{{ s.titleFg }};text-decoration:{{ s.titleDeco }};transition:color var(--duration-slower)">{{ s.title }}</span>
+                  <sc-if value="{{ s.showDesc }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size:12px;font-weight:600;color:#64748B;line-height:1.5;text-wrap:pretty">{{ s.desc }}</span>
+                  </sc-if>
+                  <sc-if value="{{ s.showTags }}" hint-placeholder-val="{{ true }}">
+                    <div class="pills-row" style="gap:6px">
+                      <sc-for list="{{ s.tags }}" as="t" hint-placeholder-count="2">
+                        <span class="badge tag"><span class="material-icons">{{ t.i }}</span> {{ t.l }}</span>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ s.showError }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#FEF2F2;border:1px solid rgba(239,68,68,0.25)">
+                      <span class="material-icons" style="font-size:15px;color:#EF4444">error_outline</span>
+                      <span style="font-size:11.5px;font-weight:700;color:#B91C1C;flex:1">Rate limit reached on the messaging API.</span>
+                      <button type="button" class="btn-discuss" style="padding:4px 10px;font-size:11px"><span class="material-icons" style="font-size:14px">refresh</span>Retry</button>
+                    </div>
+                  </sc-if>
+                </div>
+                <span class="meta" style="flex:none;color:{{ s.metaFg }};align-self:flex-start;margin-top:3px;font-size:11px">{{ s.meta }}</span>
+              </div>
+            </sc-for>
+
+            <sc-for list="{{ skeletons }}" as="k" hint-placeholder-count="0">
+              <div style="display:flex;gap:12px;padding:10px 12px;align-items:flex-start;opacity:{{ k.op }}">
+                <span style="width:26px;height:26px;flex:none;border-radius:9999px;background:linear-gradient(90deg,#F1F5F9 0%,#E2E8F0 40%,#F1F5F9 80%);background-size:320px 100%;animation:pl-shimmer 1.25s var(--ease-linear) infinite /* motion-sweep: kept, no 1250ms tier */"></span>
+                <div style="flex:1;display:flex;flex-direction:column;gap:7px;padding-top:4px">
+                  <span style="height:10px;border-radius:9999px;width:{{ k.w1 }};background:linear-gradient(90deg,#F1F5F9 0%,#E2E8F0 40%,#F1F5F9 80%);background-size:320px 100%;animation:pl-shimmer 1.25s var(--ease-linear) infinite /* motion-sweep: kept, no 1250ms tier */"></span>
+                  <span style="height:8px;border-radius:9999px;width:{{ k.w2 }};background:linear-gradient(90deg,#F1F5F9 0%,#E2E8F0 40%,#F1F5F9 80%);background-size:320px 100%;animation:pl-shimmer 1.25s var(--ease-linear) infinite /* motion-sweep: kept, no 1250ms tier */"></span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div class="btn-page-root" style="position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;border-top:1px solid #E2E8F0;background:#FAFBFC;overflow:hidden">
+          <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;top:0;left:0;width:38%;height:100%;background:linear-gradient(90deg,transparent,rgba(16,185,129,0.10),transparent);animation:pl-sheen 1.9s var(--ease-in-out) infinite;pointer-events:none /* motion-sweep: kept, no 1900ms tier */"></span>
+          </sc-if>
+          <span class="meta" style="flex:1;min-width:120px;color:#64748B">{{ footerNote }}</span>
+          <sc-if value="{{ showApprove }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="btn-red" onClick="{{ onReject }}"><span class="material-icons" style="font-size:16px">close</span>Reject</button>
+            <button type="button" class="btn-green" onClick="{{ onApprove }}"><span class="material-icons" style="font-size:16px">check_circle</span>Approve plan</button>
+          </sc-if>
+          <sc-if value="{{ showStop }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="btn-discuss" onClick="{{ onStop }}"><span class="material-icons" style="font-size:16px">stop_circle</span>Stop</button>
+          </sc-if>
+          <sc-if value="{{ showRetry }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="btn-discuss"><span class="material-icons" style="font-size:16px">chat</span>Discuss</button>
+            <button type="button" class="btn-yellow" onClick="{{ onRetry }}"><span class="material-icons" style="font-size:16px">refresh</span>Retry plan</button>
+          </sc-if>
+          <sc-if value="{{ showApply }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="btn-discuss"><span class="material-icons" style="font-size:16px">chat</span>Discuss</button>
+            <button type="button" class="btn-green btn-apply {{ applyCls }}" onClick="{{ onApply }}">
+              <span class="btn-apply-label"><span class="material-symbols-outlined btn-apply-icon">check</span>Apply plan</span>
+              <span class="btn-apply-spinner" aria-hidden="true">
+                <svg class="btn-apply-spin-svg" viewBox="0 0 32 32" fill="none">
+                  <circle class="btn-apply-spin-track" cx="16" cy="16" r="11"></circle>
+                  <circle class="btn-apply-spin-arc" cx="16" cy="16" r="11"></circle>
+                </svg>
+              </span>
+              <span class="btn-apply-check" aria-hidden="true"><span class="material-symbols-outlined btn-apply-check-ic">check</span></span>
+            </button>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <div style="width:100%;max-width:760px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+    <span class="pills-label" style="margin:0">Playground</span>
+    <button type="button" class="btn-discuss" onClick="{{ onToggle }}"><span class="material-icons" style="font-size:16px">unfold_less</span>{{ collapseLabel }}</button>
+    <button type="button" class="btn-discuss" onClick="{{ onReplay }}"><span class="material-icons" style="font-size:16px">replay</span>Replay animation</button>
+    <button type="button" class="btn-discuss" onClick="{{ onSlow }}"><span class="material-icons" style="font-size:16px">slow_motion_video</span>{{ slowLabel }}</button>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:860,&quot;height&quot;:900},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#10B981&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#10B981&quot;,&quot;#3B82F6&quot;,&quot;#F97316&quot;,&quot;#0F172A&quot;]},&quot;autoPlay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;showTags&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;comfortable&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;tsType&quot;:&quot;string&quot;}}">
+const TAGS = {
+  crm: { i: 'storage', l: 'CRM' },
+  filter: { i: 'filter_alt', l: '21+ days idle' },
+  score: { i: 'insights', l: 'GCI model' },
+  mail: { i: 'mail', l: 'Email' },
+  sms: { i: 'sms', l: 'SMS' },
+  cal: { i: 'event', l: 'Calendar' },
+  doc: { i: 'description', l: 'Report' },
+};
+
+const BASE = [
+  { title: 'Scan the pipeline for stale leads', desc: 'Query every contact with no logged touch in the last 21 days.', tags: [TAGS.crm, TAGS.filter], meta: '2s' },
+  { title: 'Score and rank by GCI potential', desc: 'Rank the 412 matches by expected commission and close probability.', tags: [TAGS.score], meta: '6s' },
+  { title: 'Draft personalised outreach', desc: 'Write one email and one SMS variant per segment, in the agent voice.', tags: [TAGS.mail, TAGS.sms], meta: '14s' },
+  { title: 'Schedule follow-up calls', desc: 'Place call blocks into the free slots of the next five workdays.', tags: [TAGS.cal], meta: '4s' },
+  { title: 'Compile the summary report', desc: 'One page: segments, expected GCI, and everything queued for approval.', tags: [TAGS.doc], meta: '3s' },
+];
+
+const VARIANTS = [
+  { id: 'approval', label: 'Needs approval', note: 'Human-in-the-loop gate. Nothing runs until the plan is approved, so every step sits pending and the footer offers approve / reject.' },
+  { id: 'complete', label: 'Completed', note: 'Terminal success state. The step list gives way to a short brief of what the plan actually did, and the primary action becomes the three-phase Apply button.' },
+];
+
+class Component extends DCLogic {
+  state = { variant: 'approval', expanded: true, tick: 2, apply: 'default', slow: false, replay: 0 };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (this.state.variant !== 'running' || !(this.props.autoPlay ?? true)) return;
+      this.setState((s) => ({ tick: (s.tick + 1) % (BASE.length + 1) }));
+    }, 2400);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.applyT1); clearTimeout(this.applyT2); }
+
+  pick(id) { this.setState({ variant: id, expanded: id !== 'compact', tick: 2, apply: 'default', replay: this.state.replay + 1 }); }
+
+  runApply() {
+    if (this.state.apply !== 'default') return;
+    this.setState({ apply: 'loading' });
+    this.applyT1 = setTimeout(() => {
+      this.setState({ apply: 'done' });
+      this.applyT2 = setTimeout(() => this.setState({ apply: 'default' }), 2600);
+    }, 1800);
+  }
+
+  statuses(v) {
+    const n = BASE.length;
+    if (v === 'complete') return BASE.map(() => 'done');
+    if (v === 'approval') return BASE.map(() => 'pending');
+    if (v === 'error') return ['done', 'done', 'error', 'pending', 'pending'];
+    if (v === 'streaming') return ['done', 'active', 'pending'].slice(0, 2).concat([]);
+    const t = this.state.tick;
+    return Array.from({ length: n }, (_, i) => (i < t ? 'done' : i === t ? 'active' : 'pending'));
+  }
+
+  renderVals() {
+    const v = this.state.variant;
+    const accent = this.props.accentColor ?? '#10B981';
+    const showTags = this.props.showTags ?? true;
+    const dense = (this.props.density ?? 'comfortable') === 'compact';
+    const st = this.statuses(v);
+    const streaming = v === 'streaming';
+    const list = streaming ? BASE.slice(0, 2) : v === 'complete' ? [] : BASE;
+
+    const steps = list.map((b, i) => {
+      const s = st[i] || 'pending';
+      const done = s === 'done', active = s === 'active', err = s === 'error';
+      return {
+        n: i + 1,
+        title: b.title,
+        desc: b.desc,
+        tags: b.tags,
+        meta: err ? 'failed' : done ? b.meta : active ? 'running' : 'queued',
+        metaFg: err ? '#EF4444' : done ? '#94A3B8' : active ? accent : '#CBD5E1',
+        pad: dense ? '8px 10px' : '11px 12px',
+        rowBg: active ? 'rgba(16,185,129,0.06)' : err ? '#FEF7F7' : 'transparent',
+        rowBorder: active ? 'rgba(16,185,129,0.28)' : err ? 'rgba(239,68,68,0.22)' : 'transparent',
+        dotBg: done ? accent : err ? '#EF4444' : active ? '#FFFFFF' : '#F8FAFC',
+        dotFg: done || err ? '#FFFFFF' : active ? accent : '#94A3B8',
+        dotBorder: done ? accent : err ? '#EF4444' : active ? accent : '#E2E8F0',
+        dotAnim: active ? 'pl-pulse 1.8s ease-out infinite' : 'none',
+        showNum: !done && !err,
+        showIcon: done || err,
+        icon: err ? 'priority_high' : 'check',
+        spin: active,
+        titleFg: done ? '#94A3B8' : err ? '#B91C1C' : '#0F172A',
+        titleDeco: done ? 'line-through' : 'none',
+        showDesc: !dense && !done,
+        showTags: showTags && !done && !dense,
+        showError: err,
+        delay: `${(this.state.replay % 2) * 0 + i * 70}ms`,
+      };
+    });
+
+    const doneCount = st.filter((x) => x === 'done').length;
+    const pct = streaming ? 28 : Math.round((doneCount / BASE.length) * 100);
+
+    return {
+      accent,
+      showSummary: v === 'complete',
+      summaryText: '412 quiet contacts were scored, drafted for, and scheduled. Outreach is queued for tomorrow 09:00 and 38 call blocks now sit in the calendar — nothing has been sent yet.',
+      summaryStats: [{ i: 'groups', l: '412 contacts' }, { i: 'payments', l: '$186K GCI' }, { i: 'schedule', l: '29s' }],
+      variants: VARIANTS.map((x) => ({ label: x.label, cls: x.id === v ? 'active' : '', onSelect: () => this.pick(x.id) })),
+      variantNote: (VARIANTS.find((x) => x.id === v) || {}).note,
+      showCard: v !== 'compact',
+      showCompact: v === 'compact',
+      onExpandCompact: () => this.pick('running'),
+      headIcon: v === 'complete' ? 'task_alt' : v === 'error' ? 'error' : v === 'approval' ? 'gavel' : 'neurology',
+      subtitle: streaming
+        ? 'Working out how to re-engage 412 contacts that went quiet'
+        : 'Re-engage 412 contacts that went quiet, worth an estimated $186K GCI.',
+      caretStyle: streaming
+        ? 'display:inline-block;margin-left:2px;color:#10B981;animation:pl-caret var(--duration-900) steps(1) infinite'
+        : 'display:none',
+      statusCls: v === 'error' ? 'danger' : v === 'complete' || v === 'running' || streaming ? 'success' : 'tag',
+      statusStyle: v === 'approval' ? 'background:#FEFCE8;color:#A16207;border-color:rgba(234,179,8,0.35)' : '',
+      statusIcon: v === 'error' ? 'error_outline' : v === 'complete' ? 'task_alt' : v === 'approval' ? 'pending' : streaming ? 'edit_note' : 'bolt',
+      statusLabel: v === 'error' ? 'Failed' : v === 'complete' ? 'Completed' : v === 'approval' ? 'Awaiting approval' : streaming ? 'Planning' : 'Running',
+      progressPct: pct,
+      progressLabel: streaming ? 'Drafting steps…' : `${doneCount} of ${BASE.length} steps`,
+      steps,
+      skeletons: streaming ? [{ w1: '72%', w2: '48%', op: 1 }, { w1: '58%', w2: '36%', op: 0.6 }, { w1: '44%', w2: '28%', op: 0.3 }] : [],
+      rowGap: dense ? '2px' : '4px',
+      bodyMax: this.state.expanded ? '900px' : '0px',
+      bodyOpacity: this.state.expanded ? 1 : 0,
+      chevronDeg: this.state.expanded ? 180 : 0,
+      onToggle: () => this.setState((s) => ({ expanded: !s.expanded })),
+      onToggleKey: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.setState((s) => ({ expanded: !s.expanded })); } },
+      isExpanded: this.state.expanded,
+      collapseLabel: this.state.expanded ? 'Collapse' : 'Expand',
+      isStreaming: streaming,
+      footerNote: streaming ? 'Generating plan…' : v === 'approval' ? 'Runs 5 steps · ~29s · sends 412 messages' : v === 'error' ? 'Stopped at step 3 · 2 steps completed' : v === 'complete' ? 'Finished in 29s · 412 contacts touched' : 'Step 3 of 5 · about 20s remaining',
+      showApprove: v === 'approval',
+      showStop: streaming || v === 'running',
+      showRetry: v === 'error',
+      showApply: v === 'complete',
+      onApprove: () => this.pick('complete'),
+      onReject: () => this.pick('approval'),
+      onStop: () => this.pick('approval'),
+      onRetry: () => this.pick('approval'),
+      applyCls: this.state.apply === 'loading' ? 'is-loading' : this.state.apply === 'done' ? 'is-done' : '',
+      onApply: () => this.runApply(),
+      onReplay: () => this.setState((s) => ({ tick: 0, replay: s.replay + 1, expanded: true })),
+      onSlow: () => {
+        const next = !this.state.slow;
+        document.documentElement.setAttribute('data-anim-slow', next ? 'true' : 'false');
+        this.setState({ slow: next });
+      },
+      slowLabel: this.state.slow ? 'Normal speed' : 'Slow motion',
+    };
+  }
+}
+
+</script>
+</body>
+</html>

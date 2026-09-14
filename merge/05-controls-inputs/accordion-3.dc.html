@@ -1,0 +1,444 @@
+<!-- @dsCard group="Merge - controls-inputs" name="Accordion 3" subtitle="-> Controls (+ Multisteps, Dynamic Calendar)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css"><script src="../../_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+
+<style>
+  body { margin:0; }
+  a { color:#10B981; text-decoration:none; }
+  a:hover { color:#047857; }
+  .icon-badge .ms { font-size:18px; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,0.35); }
+  .icon-badge--sm .ms { font-size:14px; }
+  .ms { font-family:'Material Symbols Outlined'; font-weight:400; font-style:normal; line-height:1; letter-spacing:normal; text-transform:none; display:inline-block; white-space:nowrap; direction:ltr; -webkit-font-feature-settings:'liga'; -webkit-font-smoothing:antialiased; }
+  .acc-trigger:focus-visible, .acc-switch:focus-visible, .acc-tab:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring-color); outline-offset: -2px; }
+  .acc-switch { position: relative; }
+  .acc-switch::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .acc-tab { position: relative; }
+  .acc-tab::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (prefers-reduced-motion: reduce) {
+    .acc-trigger, .acc-switch, .acc-switch > div, [style*="grid-template-rows"], [style*="rotate("] { transition-duration: 0.01ms !important; } /* motion-sweep: kept */
+  }
+</style>
+</helmet>
+
+<div style="font-family:'Montserrat',system-ui,sans-serif; background:#FFFFFF; background-image:linear-gradient(to right, rgba(15,23,42,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.035) 1px, transparent 1px); background-size:24px 24px; min-height:100vh; padding:48px 24px 80px; display:flex; flex-direction:column; align-items:center; gap:28px">
+
+  <div style="width:100%; max-width:560px; display:flex; flex-direction:column; gap:8px">
+    <div style="display:flex; align-items:center; gap:8px">
+      <span class="ms" style="font-size:18px; color:#10B981">auto_awesome</span>
+      <span style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.10em; color:#94A3B8">Deha · Component</span>
+    </div>
+    <div style="font-size:28px; font-weight:900; letter-spacing:-0.02em; color:#0F172A; line-height:1.15">Accordion 3</div>
+    <div style="font-size:14px; font-weight:500; color:#64748B; line-height:1.6; text-wrap:pretty">Genişleyen satır listesi. Her satır bir ikon karosu, başlık, alt başlık ve durum etiketi taşır. Aşağıdaki pill'lerle kullanım alanları arasında geçiş yap.</div>
+  </div>
+
+  <div style="width:100%; max-width:560px; display:flex; flex-wrap:wrap; gap:8px">
+    <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+      <button class="acc-tab" onClick="{{ tab.go }}" style="display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:16px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; transition:background-color var(--duration-slow) var(--ease-out), color var(--duration-slow) var(--ease-out), border-color var(--duration-slow) var(--ease-out), box-shadow var(--duration-slow) var(--ease-out), filter var(--duration-slow) var(--ease-out), transform var(--duration-slow) var(--ease-out); border:1px solid {{ tab.border }}; background:{{ tab.bg }}; color:{{ tab.fg }}; box-shadow:{{ tab.shadow }}" style-hover="filter:brightness(1.03); transform:translateY(-1px)" style-active="transform:scale(0.98)">
+        <span class="ms" style="font-size:16px">{{ tab.icon }}</span>{{ tab.label }}
+      </button>
+    </sc-for>
+  </div>
+
+  <div style="width:100%; max-width:560px; background:#D4DCE8; border-radius:28px; padding:10px">
+    <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:20px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.4); overflow:hidden">
+
+      <sc-if value="{{ isFaq }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="padding:15px 20px 12px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <div style="display:flex; align-items:center; gap:10px; font-size:16px; font-weight:900; letter-spacing:-0.01em; color:#0F172A"><span class="icon-badge icon-badge--sm" style="--icon-c:#10B981; width:24px; height:24px; border-radius:100px; flex:none"><span class="ms">help</span></span>Sıkça Sorulanlar</div>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_faq1 }}" onKeyDown="{{ k_faq1 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#10B981; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">how_to_reg</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Lead skoru nasıl hesaplanıyor?</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Scoring model · güncel</div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_faq1 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_faq1 }} var(--ease-out); grid-template-rows:{{ o_faq1 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; font-size:14px; font-weight:500; line-height:1.6; color:#334155; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_faq1 }}; text-wrap:pretty">Model her lead için form verisi, kampanya kaynağı ve son 14 günün etkileşimini ağırlıklandırır. Skor 0–100 arasında döner; 80 üzeri <strong style="font-weight:800; color:#F97316">Hot Lead</strong> olarak işaretlenir ve günlük olarak yeniden hesaplanır.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_faq2 }}" onKeyDown="{{ k_faq2 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#3B82F6; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">payments</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Reklam harcaması nereden geliyor?</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Meta &amp; WhatsApp · günlük senkron</div>
+              </div>
+              <span style="flex:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">CPL ₺112.5</span>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_faq2 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_faq2 }} var(--ease-out); grid-template-rows:{{ o_faq2 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; font-size:14px; font-weight:500; line-height:1.6; color:#334155; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_faq2 }}; text-wrap:pretty">Bu alandaki veriler günlük reklam sonuçlarına göre güncellenir. Harcama TRY, gelir USD olarak raporlanır — ikisi normalize edilmez.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_faq3 }}" onKeyDown="{{ k_faq3 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#EAB308; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">emoji_events</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Leaderboard sıralaması ne sıklıkla yenilenir?</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Son 30 gün penceresi</div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_faq3 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_faq3 }} var(--ease-out); grid-template-rows:{{ o_faq3 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; font-size:14px; font-weight:500; line-height:1.6; color:#334155; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_faq3 }}; text-wrap:pretty">Sıralama gece 03:00'te yeniden hesaplanır. Top 1% rozeti kapanan ciroya göre verilir, aktiviteye göre değil.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isLead }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:15px 20px 12px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <div style="display:flex; align-items:center; gap:10px; font-size:16px; font-weight:900; letter-spacing:-0.01em; color:#0F172A"><span class="icon-badge icon-badge--sm" style="--icon-c:#F97316; width:24px; height:24px; border-radius:100px; flex:none"><span class="ms">how_to_reg</span></span>New Leads</div>
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#10B981; color:#fff">▲ +12%</span>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_lead1 }}" onKeyDown="{{ k_lead1 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#F97316; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">trending_up</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Selin Aydın</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Kadıköy · 3+1 · ₺4.2M bütçe</div>
+              </div>
+              <span style="flex:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#FFF7ED; color:#F97316">Hot Lead</span>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_lead1 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_lead1 }} var(--ease-out); grid-template-rows:{{ o_lead1 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_lead1 }}">
+                  <div style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:20px; padding:16px; display:flex; flex-direction:column; gap:14px">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                      <div style="display:flex; flex-direction:column; gap:4px">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.10em; color:#94A3B8">Score</div>
+                        <div style="font-size:24px; font-weight:900; line-height:1; letter-spacing:-0.02em; color:#0F172A">92</div>
+                      </div>
+                      <div style="display:flex; flex-direction:column; gap:4px">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.10em; color:#94A3B8">Exp. Revenue</div>
+                        <div style="font-size:24px; font-weight:900; line-height:1; letter-spacing:-0.02em; color:#0F172A">$1.2M</div>
+                      </div>
+                      <div style="display:flex; flex-direction:column; gap:4px">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.10em; color:#94A3B8">Kaynak</div>
+                        <div style="font-size:15px; font-weight:800; color:#0F172A; padding-top:6px">Meta Ads</div>
+                      </div>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px">
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">Deniz manzara</span>
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">Kredi uygun</span>
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#ECFDF5; color:#059669">AI matched · 4</span>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px">
+                      <button style="display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; border-radius:16px; background:#10B981; color:#fff; font-family:inherit; font-weight:800; font-size:14px; border:none; cursor:pointer; text-shadow:0 1px 2px rgba(0,0,0,0.18); box-shadow:0 10px 30px -10px rgba(16,185,129,0.50), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15); background-image:linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px); background-size:14px 14px; transition:filter var(--duration-200) var(--ease-out), transform var(--duration-200)" style-hover="filter:brightness(1.05)" style-active="transform:scale(0.98)"><span class="ms" style="font-size:18px">arrow_forward</span>Randevu Oluştur</button>
+                      <button style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:16px; background:#fff; color:#10B981; font-family:inherit; font-weight:700; font-size:14px; border:1px solid #E2E8F0; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#ECFDF5">Profili Aç</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_lead2 }}" onKeyDown="{{ k_lead2 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#0F172A; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">business_center</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Mert Kaplan</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Ataşehir · Ofis · ₺8.0M bütçe</div>
+              </div>
+              <span style="flex:none; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#FEFCE8; color:#EAB308">Orta</span>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_lead2 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_lead2 }} var(--ease-out); grid-template-rows:{{ o_lead2 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_lead2 }}">
+                  <div style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:20px; padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px">
+                    <div style="display:flex; flex-direction:column; gap:2px">
+                      <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.10em; color:#94A3B8">Son temas</div>
+                      <div style="font-size:14px; font-weight:600; color:#334155">5m 12d 14h önce · WhatsApp</div>
+                    </div>
+                    <button style="display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border-radius:16px; background:#fff; color:#10B981; font-family:inherit; font-weight:700; font-size:14px; border:1px solid #E2E8F0; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#ECFDF5">Takibe Al</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:15px 20px 12px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <div style="display:flex; align-items:center; gap:10px; font-size:16px; font-weight:900; letter-spacing:-0.01em; color:#0F172A"><span class="icon-badge icon-badge--sm" style="--icon-c:#3B82F6; width:24px; height:24px; border-radius:100px; flex:none"><span class="ms">tune</span></span>Bildirim Ayarları</div>
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">{{ swOnLabel }}</span>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_set1 }}" onKeyDown="{{ k_set1 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#10B981; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">group</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Yeni lead bildirimi</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Anlık push · tüm kaynaklar</div>
+              </div>
+              <div class="acc-switch" role="switch" tabindex="0" onClick="{{ sw1click }}" onKeyDown="{{ k_sw1 }}" style="flex:none; width:44px; height:26px; border-radius:9999px; padding:3px; cursor:pointer; transition:background var(--duration-slow) var(--ease-out); background:{{ sw1bg }}; box-shadow:inset 0 2px 4px 0 rgba(0,0,0,0.06)">
+                <div style="width:20px; height:20px; border-radius:9999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.25); transition:transform var(--duration-slow) var(--ease-out); transform:{{ sw1knob }}"></div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_set1 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_set1 }} var(--ease-out); grid-template-rows:{{ o_set1 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_set1 }}">
+                  <div style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:20px; padding:16px; display:flex; flex-direction:column; gap:12px">
+                    <div style="font-size:14px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty">Skor eşiğini geçen leadler için anında bildirim gönderilir. Eşiğin altındakiler günlük özete düşer.</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px">
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#ECFDF5; color:#059669">Eşik: 80</span>
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">Meta</span>
+                      <span style="display:inline-flex; align-items:center; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_set2 }}" onKeyDown="{{ k_set2 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#F97316; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">schedule</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Randevu hatırlatıcı</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">30 dk önce</div>
+              </div>
+              <div class="acc-switch" role="switch" tabindex="0" onClick="{{ sw2click }}" onKeyDown="{{ k_sw2 }}" style="flex:none; width:44px; height:26px; border-radius:9999px; padding:3px; cursor:pointer; transition:background var(--duration-slow) var(--ease-out); background:{{ sw2bg }}; box-shadow:inset 0 2px 4px 0 rgba(0,0,0,0.06)">
+                <div style="width:20px; height:20px; border-radius:9999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.25); transition:transform var(--duration-slow) var(--ease-out); transform:{{ sw2knob }}"></div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_set2 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_set2 }} var(--ease-out); grid-template-rows:{{ o_set2 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_set2 }}">
+                  <div style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:20px; padding:16px; font-size:14px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty">Takvimdeki her randevu için tek hatırlatma gönderilir. Katılımcılar ayrı bildirim almaz.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="acc-trigger" role="button" tabindex="0" onClick="{{ t_set3 }}" onKeyDown="{{ k_set3 }}" style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; cursor:pointer; transition:background var(--duration-180) var(--ease-fade)" style-hover="background:#F8FAFC">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#3B82F6; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">bar_chart</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Haftalık performans özeti</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">Pazartesi 09:00 · e-posta</div>
+              </div>
+              <div class="acc-switch" role="switch" tabindex="0" onClick="{{ sw3click }}" onKeyDown="{{ k_sw3 }}" style="flex:none; width:44px; height:26px; border-radius:9999px; padding:3px; cursor:pointer; transition:background var(--duration-slow) var(--ease-out); background:{{ sw3bg }}; box-shadow:inset 0 2px 4px 0 rgba(0,0,0,0.06)">
+                <div style="width:20px; height:20px; border-radius:9999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,0.25); transition:transform var(--duration-slow) var(--ease-out); transform:{{ sw3knob }}"></div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#94A3B8; transition:transform var(--duration-320) var(--ease-out); transform:{{ r_set3 }}">expand_more</span>
+            </div>
+            <div style="display:grid; transition:grid-template-rows {{ gd_set3 }} var(--ease-out); grid-template-rows:{{ o_set3 }}">
+              <div style="overflow:hidden; min-height:0">
+                <div style="padding:0 20px 16px 66px; transition:opacity var(--duration-260) var(--ease-fade) 60ms /* motion-sweep: kept */; opacity:{{ f_set3 }}">
+                  <div style="background:#FFFFFF; border:1px solid #CBD5E1; border-radius:20px; padding:16px; font-size:14px; font-weight:500; line-height:1.6; color:#334155; text-wrap:pretty">Monthly Leads, Exp. Revenue ve conversion oranını içeren özet. Kapalıyken veriler yine de panoda görünür.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isStates }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="padding:15px 20px 12px; border-bottom:1px solid #E2E8F0; display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <div style="display:flex; align-items:center; gap:10px; font-size:16px; font-weight:900; letter-spacing:-0.01em; color:#0F172A"><span class="icon-badge icon-badge--sm" style="--icon-c:#0F172A; width:24px; height:24px; border-radius:100px; flex:none"><span class="ms">layers</span></span>Durumlar</div>
+            <span style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; background:#F1F5F9; color:#334155">5 state</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; border-bottom:1px solid #E2E8F0">
+            <div class="icon-badge icon-badge--lg" style="--icon-c:#94A3B8; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">radio_button_unchecked</span></div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+              <div style="font-size:15px; font-weight:700; color:#0F172A">Default</div>
+              <div style="font-size:13px; font-weight:500; color:#64748B">Beyaz zemin, hairline ayraç</div>
+            </div>
+            <span class="ms" style="flex:none; font-size:22px; color:#94A3B8">expand_more</span>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; border-bottom:1px solid #E2E8F0; background:#F8FAFC">
+            <div class="icon-badge icon-badge--lg" style="--icon-c:#3B82F6; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">touch_app</span></div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+              <div style="font-size:15px; font-weight:700; color:#0F172A">Hover</div>
+              <div style="font-size:13px; font-weight:500; color:#64748B">slate-50 tint · 180ms</div>
+            </div>
+            <span class="ms" style="flex:none; font-size:22px; color:#64748B">expand_more</span>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; background:#ECFDF5; box-shadow:inset 0 0 0 2px rgba(16,185,129,0.35)">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#10B981; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">keyboard_tab</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Focus</div>
+                <div style="font-size:13px; font-weight:500; color:#475569">2px emerald ring, klavye ile gezinme</div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#10B981">expand_more</span>
+            </div>
+          </div>
+
+          <div style="border-bottom:1px solid #E2E8F0">
+            <div style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px">
+              <div class="icon-badge icon-badge--lg" style="--icon-c:#10B981; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">check</span></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                <div style="font-size:15px; font-weight:700; color:#0F172A">Open</div>
+                <div style="font-size:13px; font-weight:500; color:#64748B">grid-rows 0fr → 1fr · 340ms</div>
+              </div>
+              <span class="ms" style="flex:none; font-size:22px; color:#10B981; transform:rotate(180deg)">expand_more</span>
+            </div>
+            <div style="padding:0 20px 16px 66px; font-size:14px; font-weight:500; line-height:1.6; color:#334155">İçerik açılırken satır yüksekliği yumuşak eğriyle büyür, metin 60ms gecikmeyle fade in olur.</div>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:14px; padding:15px 20px 11px; opacity:0.45; cursor:not-allowed">
+            <div class="icon-badge icon-badge--lg" style="--icon-c:#0F172A; width:32px; height:32px; border-radius:100px; flex:none"><span class="ms">lock</span></div>
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+              <div style="font-size:15px; font-weight:700; color:#334155">Disabled</div>
+              <div style="font-size:13px; font-weight:500; color:#94A3B8">Yetki yok · %45 opaklık</div>
+            </div>
+            <span class="ms" style="flex:none; font-size:22px; color:#CBD5E1">expand_more</span>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+
+  <div style="width:100%; max-width:560px; font-size:12px; font-weight:600; color:#94A3B8">Tek satır aç/kapat modunda başlar. Çoklu açılma için Tweaks panelinden <strong style="font-weight:800; color:#64748B">singleOpen</strong> kapatılabilir.</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:720,&quot;height&quot;:900},&quot;singleOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Behavior&quot;},&quot;defaultVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;faq&quot;,&quot;lead&quot;,&quot;settings&quot;,&quot;states&quot;],&quot;default&quot;:&quot;faq&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Behavior&quot;}}">
+const GROUPS = {
+  faq: ['faq1', 'faq2', 'faq3'],
+  lead: ['lead1', 'lead2'],
+  settings: ['set1', 'set2', 'set3'],
+  states: []
+};
+
+const TABS = [
+  { key: 'faq', label: 'FAQ', icon: 'help' },
+  { key: 'lead', label: 'Lead Detail', icon: 'how_to_reg' },
+  { key: 'settings', label: 'Settings', icon: 'tune' },
+  { key: 'states', label: 'States', icon: 'layers' }
+];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const v = props.defaultVariant || 'faq';
+    this.state = {
+      variant: TABS.some(t => t.key === v) ? v : 'faq',
+      open: { faq1: true, lead1: true, set1: true },
+      sw: { sw1: true, sw2: true, sw3: false }
+    };
+  }
+
+  toggle(id) {
+    const single = this.props.singleOpen ?? true;
+    this.setState(s => {
+      const wasOpen = !!s.open[id];
+      let open;
+      if (single) {
+        const group = Object.keys(GROUPS).find(g => GROUPS[g].includes(id)) || '';
+        open = Object.assign({}, s.open);
+        GROUPS[group].forEach(k => { open[k] = false; });
+        open[id] = !wasOpen;
+      } else {
+        open = Object.assign({}, s.open, { [id]: !wasOpen });
+      }
+      return { open };
+    });
+  }
+
+  toggleSwitch(key, e) {
+    if (e) e.stopPropagation();
+    this.setState(s => ({ sw: Object.assign({}, s.sw, { [key]: !s.sw[key] }) }));
+  }
+
+  /* :focus-visible / keyboard-activation rule (div-role=button/switch
+     triggers): Enter or Space runs the same handler a click would. */
+  kbd(fn) {
+    return (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn(); } };
+  }
+
+  renderVals() {
+    const v = this.state.variant;
+    const vals = {
+      isFaq: v === 'faq',
+      isLead: v === 'lead',
+      isSettings: v === 'settings',
+      isStates: v === 'states',
+      tabs: TABS.map(t => {
+        const active = t.key === v;
+        return {
+          label: t.label,
+          icon: t.icon,
+          go: () => this.setState({ variant: t.key }),
+          bg: active ? '#10B981' : '#FFFFFF',
+          fg: active ? '#FFFFFF' : '#334155',
+          border: active ? 'rgba(255,255,255,0.15)' : '#E2E8F0',
+          shadow: active
+            ? '0 10px 30px -10px rgba(16,185,129,0.50), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22)'
+            : '0 1px 2px 0 rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.40)'
+        };
+      })
+    };
+
+    Object.keys(GROUPS).forEach(g => GROUPS[g].forEach(id => {
+      const isOpen = !!this.state.open[id];
+      vals['o_' + id] = isOpen ? '1fr' : '0fr';
+      /* faster-exits rule: exit (closing) runs one duration tier faster than
+         enter (opening) -- var(--duration-340) on open (matches the original
+         340ms recipe), var(--accordion-exit-dur) (260ms) on close. motion-sweep: kept */
+      vals['gd_' + id] = isOpen ? 'var(--duration-340)' : 'var(--accordion-exit-dur)';
+      vals['f_' + id] = isOpen ? 1 : 0;
+      vals['r_' + id] = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+      vals['t_' + id] = () => this.toggle(id);
+      vals['k_' + id] = this.kbd(() => this.toggle(id));
+    }));
+
+    ['sw1', 'sw2', 'sw3'].forEach(k => {
+      const on = !!this.state.sw[k];
+      vals[k + 'bg'] = on ? '#10B981' : '#E2E8F0';
+      vals[k + 'knob'] = on ? 'translateX(18px)' : 'translateX(0px)';
+      vals[k + 'click'] = (e) => this.toggleSwitch(k, e);
+      vals['k_' + k] = this.kbd(() => this.toggleSwitch(k));
+    });
+    const onCount = ['sw1', 'sw2', 'sw3'].filter(k => this.state.sw[k]).length;
+    vals.swOnLabel = onCount + ' açık';
+
+    return vals;
+  }
+}
+
+</script>
+</body>
+</html>

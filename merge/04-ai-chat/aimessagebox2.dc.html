@@ -1,0 +1,330 @@
+<!-- @dsCard group="Merge - ai-chat" name="AiMessageBox2" subtitle="-> AI Message Box / AI Caveat (new AI Chat section)" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_ai-message-box.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { background: #0B1220; }
+  @keyframes a2Spin { to { transform: rotate(360deg); } }
+  @keyframes a2ChipIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes a2Bar { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  .a2-spin { animation: a2Spin calc(var(--duration-760) * var(--anim-mult,1)) linear infinite; }
+  .a2-chip { animation: a2ChipIn calc(var(--duration-340) * var(--anim-mult,1)) var(--ease-spring-soft) both; }
+  .a2-shim { background-size: 200% 100%; animation: a2Bar calc(1.6s /* motion-sweep: kept */ * var(--anim-mult,1)) linear infinite; }
+  .mb-open-btn { position: relative; }
+  .mb-open-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .mb-generate-btn { position: relative; }
+  .mb-generate-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (prefers-reduced-motion: reduce) {
+    .a2-spin, .a2-chip, .a2-shim { animation: none; }
+  }
+  :focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+</style>
+</helmet>
+
+<div onMouseDown="{{ onBackdrop }}" style="min-height: 100vh; box-sizing: border-box; padding: 40px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-family: 'Montserrat', sans-serif; background: #0B1220;">
+
+  <div class="pills-row" role="tablist" aria-label="Composer variant" style="width: 100%; max-width: 660px; justify-content: flex-start;">
+    <sc-for list="{{ variants }}" as="v" hint-placeholder-count="4">
+      <sc-if value="{{ v.active }}" hint-placeholder-val="{{ true }}">
+        <button type="button" role="tab" aria-selected="true" class="pill-tab active" onClick="{{ v.onSelect }}" style="box-sizing: border-box; height: 26px; padding: 0 15px; border-radius: 100px; font-size: 11px; cursor: pointer;">{{ v.label }}</button>
+      </sc-if>
+      <sc-if value="{{ v.inactive }}">
+        <button type="button" role="tab" aria-selected="false" class="pill-tab" onClick="{{ v.onSelect }}" style="box-sizing: border-box; height: 26px; padding: 0 15px; border-radius: 100px; font-size: 11px; cursor: pointer;">{{ v.label }}</button>
+      </sc-if>
+    </sc-for>
+  </div>
+
+  <div class="mb-shell" style="{{ shellStyle }}">
+    <div class="mb" ref="{{ boxRef }}" onMouseDown="{{ stop }}" style="{{ innerStyle }}">
+
+      <div onPointerDown="{{ onResizeStart }}" onPointerMove="{{ onResizeMove }}" onPointerUp="{{ onResizeEnd }}" title="Drag to resize" style="{{ handleStyle }}">
+        <svg viewBox="0 0 30 30" width="30" height="30" fill="none" style="position: absolute; inset: 0; pointer-events: none;">
+          <path d="M5 9 H9 A11 11 0 0 1 20 20 V24" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"></path>
+        </svg>
+      </div>
+
+      <span class="a2-spin" style="{{ spinStyle }}"></span>
+
+      <button type="button" class="btn-primary mb-open-btn" onClick="{{ onOpen }}" aria-label="Open composer" style="{{ collapsedBtnStyle }}">
+        <span class="material-icons btn-mi" style="font-size: 14px; margin: 0;">auto_awesome</span>
+      </button>
+
+      <textarea class="mb-input" placeholder="{{ placeholder }}" value="{{ text }}" onChange="{{ onText }}" onFocus="{{ onOpen }}" style="{{ areaStyle }}"></textarea>
+
+      <div style="{{ toolStyle }}">
+        <div class="mb-toolbar" style="align-items: center; flex-wrap: wrap;">
+          <div class="mb-tools-left" ref="{{ scrollRef }}" onScroll="{{ onScroll }}" style="{{ scrollerStyle }}">
+            <button type="button" class="mb-btn a2-chip" aria-label="Add attachment" style="box-sizing: border-box; height: 24px; padding: 0 7px; border-radius: 100px; flex-shrink: 0; white-space: nowrap;">
+              <span class="material-icons" style="font-size: 14px;">add</span>
+            </button>
+            <button type="button" class="mb-btn a2-chip" aria-label="Mention a reference" style="box-sizing: border-box; height: 24px; padding: 0 7px; border-radius: 100px; flex-shrink: 0; white-space: nowrap;">
+              <span class="material-icons" style="font-size: 14px;">alternate_email</span>
+            </button>
+            <sc-for list="{{ controls }}" as="c" hint-placeholder-count="6">
+              <sc-if value="{{ c.on }}" hint-placeholder-val="{{ true }}">
+                <button type="button" class="mb-btn a2-chip" onClick="{{ c.onCycle }}" style="{{ c.style }}">
+                  <span class="material-icons" style="color: var(--brand-primary); font-size: 14px;">{{ c.icon }}</span>{{ c.value }}
+                </button>
+              </sc-if>
+              <sc-if value="{{ c.off }}">
+                <button type="button" class="mb-btn a2-chip" onClick="{{ c.onCycle }}" style="{{ c.style }}">
+                  <span class="material-icons" style="font-size: 14px;">{{ c.icon }}</span>{{ c.value }}
+                </button>
+              </sc-if>
+            </sc-for>
+          </div>
+
+          <div class="mb-tools-right" style="gap: 6px;">
+            <button type="button" class="btn-primary mb-generate-btn" onClick="{{ onGenerate }}" style="height: 30px; padding: 0 6px 0 13px; border-radius: 100px; font-size: 12px; gap: 7px; flex-shrink: 0; filter: none; background-size: 14px 14px; box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.55), inset 0 -2.5px 0 rgba(0,0,0,0.26), inset 0 0 0 1px rgba(255,255,255,0.18), inset 0 6px 10px -6px rgba(255,255,255,0.45);">
+              <span class="material-icons btn-mi" style="font-size: 15px;">auto_awesome</span>
+              {{ ctaLabel }}
+              <span class="badge" style="box-sizing: border-box; display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px; border-radius: 100px; background: rgba(255,255,255,0.22); color: #fff; font-size: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.18);">
+                <span class="material-icons" style="font-size: 12px;">toll</span>
+                <span style="text-decoration: line-through; opacity: .75;">{{ credits }}</span> FREE
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style="{{ shimWrapStyle }}">
+        <div class="a2-shim" style="height: 100%; background-image: linear-gradient(90deg, rgba(16,185,129,0) 0%, var(--brand-primary-300) 50%, rgba(16,185,129,0) 100%);"></div>
+      </div>
+    </div>
+  </div>
+
+  <span class="hint" style="width: 100%; max-width: 660px;">{{ hint }}</span>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const VARIANTS = [
+  { key: 'video', label: 'Video', placeholder: 'Describe the video you want to create...', cta: 'Generate', credits: 476,
+    controls: [
+      { icon: 'bar_chart', options: ['Seedance 2.0', 'Bora Motion 1.5', 'Kite XL'] },
+      { icon: 'crop_free', options: ['Auto', '16:9', '9:16', '1:1'] },
+      { icon: 'diamond', options: ['4K', '1080p', '720p'] },
+      { icon: 'schedule', options: ['8s', '4s', '12s'] },
+      { icon: 'auto_awesome', options: ['High', 'Draft', 'Ultra'] },
+      { icon: 'volume_up', options: ['Sound', 'Muted'], toggle: true }
+    ] },
+  { key: 'image', label: 'Image', placeholder: 'Describe the scene you imagine...', cta: 'Generate', credits: 120,
+    controls: [
+      { icon: 'bar_chart', options: ['Bora Diffusion 3', 'Bora Sketch'] },
+      { icon: 'crop_free', options: ['1:1', '3:2', '4:5'] },
+      { icon: 'diamond', options: ['2K', '4K', '1K'] },
+      { icon: 'collections', options: ['4 images', '1 image', '8 images'] },
+      { icon: 'palette', options: ['Vivid', 'Natural', 'Mono'] }
+    ] },
+  { key: 'audio', label: 'Audio', placeholder: 'Describe the voice or track you need...', cta: 'Synthesize', credits: 60,
+    controls: [
+      { icon: 'bar_chart', options: ['Bora Voice 2', 'Bora Music 1'] },
+      { icon: 'language', options: ['EN-US', 'TR-TR', 'DE-DE'] },
+      { icon: 'record_voice_over', options: ['Warm', 'Neutral', 'Bright'] },
+      { icon: 'schedule', options: ['30s', '15s', '60s'] },
+      { icon: 'headphones', options: ['MP3', 'WAV'] }
+    ] },
+  { key: 'text', label: 'Copy', placeholder: 'Describe what you want written...', cta: 'Write', credits: 20,
+    controls: [
+      { icon: 'bar_chart', options: ['Bora LLM 4', 'Bora LLM 4 mini'] },
+      { icon: 'tune', options: ['Balanced', 'Precise', 'Creative'] },
+      { icon: 'notes', options: ['Long', 'Short'] },
+      { icon: 'code', options: ['Markdown', 'Plain'] }
+    ] }
+];
+
+const MIN_H = 56, MAX_H = 300, MIN_W = 420, MAX_W = 900, BASE_W = 660;
+
+class Component extends DCLogic {
+  state = { vi: 0, text: '', expanded: false, maxed: false, phase: 'idle', picks: {}, dragH: null, dragW: null, sL: 0, sMax: 0 };
+  boxRef = React.createRef();
+  scrollRef = React.createRef();
+
+  componentDidMount() {
+    document.documentElement.classList.add('dark');
+    this.outside = e => {
+      const el = this.boxRef.current;
+      if (el && !el.contains(e.target)) this.collapse();
+    };
+    document.addEventListener('mousedown', this.outside, true);
+    this.measureScroller();
+    this.mT = setTimeout(this.measureScroller, 400);
+    window.addEventListener('resize', this.onScroll);
+  }
+  componentDidUpdate() { this.onScroll(); }
+  componentWillUnmount() {
+    clearTimeout(this.t1); clearTimeout(this.t2); clearTimeout(this.lockT); clearTimeout(this.mT);
+    if (this.ro) this.ro.disconnect();
+    window.removeEventListener('resize', this.onScroll);
+    document.removeEventListener('mousedown', this.outside, true);
+    window.removeEventListener('pointermove', this.onResizeMove);
+    window.removeEventListener('pointerup', this.onResizeEnd);
+  }
+
+  collapse = () => {
+    if (this.state.phase === 'busy' || this.dragging) return;
+    this.locked = true;
+    const el = this.boxRef.current;
+    if (el) { const ta = el.querySelector('textarea'); if (ta) ta.blur(); }
+    this.setState({ expanded: false, maxed: false, dragH: null, dragW: null });
+    clearTimeout(this.lockT);
+    this.lockT = setTimeout(() => { this.locked = false; }, 260);
+  };
+
+  open = () => { if (!this.locked) this.setState({ expanded: true }); };
+
+  onScroll = () => {
+    const el = this.scrollRef.current;
+    if (!el) return;
+    const sMax = el.scrollWidth - el.clientWidth;
+    if (el.scrollLeft !== this.state.sL || sMax !== this.state.sMax) this.setState({ sL: el.scrollLeft, sMax });
+  };
+
+  measureScroller = () => {
+    const el = this.scrollRef.current;
+    if (!el) return;
+    if (!this.ro && window.ResizeObserver) {
+      this.ro = new ResizeObserver(() => this.onScroll());
+      this.ro.observe(el);
+      if (el.firstElementChild) this.ro.observe(el.parentElement || el);
+    }
+    this.onScroll();
+  };
+
+  fadeMask() {
+    const { sL, sMax } = this.state;
+    const atStart = sL <= 4, atEnd = sMax <= 4 || sL >= sMax - 4;
+    const l = atStart ? '0px' : '34px';
+    const r = atEnd ? '0px' : '34px';
+    return 'linear-gradient(to right, transparent 0, #000 ' + l + ', #000 calc(100% - ' + r + '), transparent 100%)';
+  }
+
+  onResizeStart = e => {
+    if (!this.state.expanded) return;
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragging = true;
+    this.startY = e.clientY;
+    this.startX = e.clientX;
+    this.startH = this.currentH();
+    this.startW = this.currentW();
+    this.setState({ maxed: false, dragH: this.startH, dragW: this.startW });
+    window.addEventListener('pointermove', this.onResizeMove);
+    window.addEventListener('mousemove', this.onResizeMove);
+    window.addEventListener('pointerup', this.onResizeEnd);
+    window.addEventListener('pointercancel', this.onResizeEnd);
+    window.addEventListener('mouseup', this.onResizeEnd);
+  };
+  onResizeMove = e => {
+    if (!this.dragging) return;
+    const h = Math.max(MIN_H, Math.min(MAX_H, this.startH + (this.startY - e.clientY)));
+    const w = Math.max(MIN_W, Math.min(MAX_W, this.startW + (e.clientX - this.startX) * 2));
+    if (h !== this.state.dragH || w !== this.state.dragW) this.setState({ dragH: h, dragW: w });
+  };
+  onResizeEnd = () => {
+    if (!this.dragging) return;
+    this.dragging = false;
+    window.removeEventListener('pointermove', this.onResizeMove);
+    window.removeEventListener('mousemove', this.onResizeMove);
+    window.removeEventListener('pointerup', this.onResizeEnd);
+    window.removeEventListener('pointercancel', this.onResizeEnd);
+    window.removeEventListener('mouseup', this.onResizeEnd);
+  };
+
+  currentH() {
+    const s = this.state;
+    if (s.dragH != null) return s.dragH;
+    return s.maxed ? MAX_H : (s.expanded ? MIN_H : 26);
+  }
+
+  currentW() { return this.state.dragW ?? BASE_W; }
+
+  cycle = (vk, i, len) => () => {
+    const k = vk + ':' + i;
+    this.setState(s => ({ picks: { ...s.picks, [k]: ((s.picks[k] ?? 0) + 1) % len }, expanded: true }));
+  };
+
+  onGenerate = () => {
+    if (this.state.phase === 'busy') return;
+    this.setState({ phase: 'busy', expanded: true });
+    this.t1 = setTimeout(() => {
+      this.setState({ phase: 'done' });
+      this.t2 = setTimeout(() => this.setState({ phase: 'idle' }), 2000);
+    }, 2200);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const v = VARIANTS[s.vi];
+    const busy = s.phase === 'busy';
+
+    return {
+      boxRef: this.boxRef,
+      stop: e => e.stopPropagation(),
+      onBackdrop: this.collapse,
+      onResizeStart: this.onResizeStart,
+      onResizeMove: this.onResizeMove,
+      onResizeEnd: this.onResizeEnd,
+      variants: VARIANTS.map((x, i) => ({
+        label: x.label, active: i === s.vi, inactive: i !== s.vi,
+        onSelect: () => this.setState({ vi: i, expanded: true, maxed: false, phase: 'idle', dragH: null, dragW: null })
+      })),
+      placeholder: v.placeholder,
+      text: s.text,
+      onText: e => this.setState({ text: e.target.value, expanded: true }),
+      onOpen: this.open,
+      scrollRef: this.scrollRef,
+      onScroll: this.onScroll,
+      scrollerStyle: { flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', flexWrap: 'nowrap', gap: 6, overflowX: 'auto', overflowY: 'hidden', scrollbarWidth: 'none', WebkitMaskImage: this.fadeMask(), maskImage: this.fadeMask() },
+      innerStyle: { padding: s.expanded ? '12px 14px 10px' : '10px 12px', borderRadius: 27, transition: 'padding 300ms /* motion-sweep: kept */ var(--ease-out)' },
+      shellStyle: { width: '100%', maxWidth: this.currentW(), boxSizing: 'border-box', borderRadius: 34, padding: 7, transition: this.dragging ? 'none' : 'max-width 300ms /* motion-sweep: kept */ var(--ease-out)' },
+      collapsedBtnStyle: { position: 'absolute', top: '50%', right: 11, transform: 'translateY(-50%)', width: 26, height: 26, minWidth: 0, padding: 0, borderRadius: 100, justifyContent: 'center', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15)', backgroundSize: '14px 14px', zIndex: 3, opacity: s.expanded ? 0 : 1, pointerEvents: s.expanded ? 'none' : 'auto', transition: 'opacity var(--duration-slow) var(--ease-standard)' },
+      areaStyle: { boxSizing: 'border-box', minHeight: 0, height: this.currentH(), resize: 'none', fontSize: 14, lineHeight: s.expanded ? '21px' : '26px', display: 'block', padding: s.expanded ? '2px 48px 0 2px' : '0 42px 0 2px', transition: this.dragging ? 'none' : 'height var(--duration-380) var(--ease-out)' },
+      toolStyle: { maxHeight: s.expanded ? 240 : 0, opacity: s.expanded ? 1 : 0, overflow: 'hidden', transition: 'max-height var(--duration-380) var(--ease-out), opacity var(--duration-260) var(--ease-standard)' },
+      handleStyle: { position: 'absolute', top: 0, right: 0, width: 30, height: 30, zIndex: 4, cursor: 'nesw-resize', borderTopRightRadius: 'inherit', touchAction: 'none', opacity: s.expanded ? 1 : 0, pointerEvents: s.expanded ? 'auto' : 'none', transition: 'opacity var(--duration-200) var(--ease-standard)' },
+      spinStyle: { position: 'absolute', top: 40, right: 14, width: 18, height: 18, borderRadius: 9999, border: '2.5px solid rgba(148,163,184,0.22)', borderTopColor: 'var(--brand-primary)', zIndex: 3, opacity: busy ? 1 : 0, transition: 'opacity var(--duration-240) var(--ease-standard)' },
+      shimWrapStyle: { position: 'absolute', left: 16, right: 16, bottom: 4, height: 3, borderRadius: 9999, overflow: 'hidden', opacity: busy ? 1 : 0, transition: 'opacity var(--duration-240) var(--ease-standard)' },
+      controls: v.controls.map((c, i) => {
+        const idx = s.picks[v.key + ':' + i] ?? 0;
+        return {
+          icon: c.icon, value: c.options[idx],
+          on: !!c.toggle && idx === 0,
+          off: !(!!c.toggle && idx === 0),
+          style: { animationDelay: (50 + i * 50) + 'ms', boxSizing: 'border-box', height: 24, padding: '0 10px', borderRadius: 100, fontSize: 11, gap: 4, whiteSpace: 'nowrap', flexShrink: 0 },
+          onCycle: this.cycle(v.key, i, c.options.length)
+        };
+      }),
+      onGenerate: this.onGenerate,
+      ctaLabel: busy ? 'Working' : (s.phase === 'done' ? 'Queued' : v.cta),
+      credits: v.credits,
+      busyOpacity: busy ? 1 : 0,
+      hint: busy ? 'Generating — you can keep editing the prompt' : (s.expanded ? 'Drag the top-right corner to resize · click outside to collapse' : 'Click the field to open the controls')
+    };
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!-- @dsCard group="Merge - animations" name="Panel Reveal Animation" subtitle="-> Animations Registry / Shimmer" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_controls.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+:root {
+  --panel-open-dur: 260ms; /* motion-sweep: kept -- JS-set default, overwritten on mount by applyTokens() from openDuration prop */
+  --panel-close-dur: 150ms; /* motion-sweep: kept -- JS-set default, overwritten on mount by applyTokens() from closeDuration prop */
+  --panel-travel: 100%;
+  --panel-blur: 1px;
+  --panel-ease: var(--ease-out-soft); /* nearest DS curve to source (.32,.72,0,1); delta ~0.194 */
+}
+.t-panel-slide {
+  opacity: 0;
+  filter: blur(var(--panel-blur));
+  pointer-events: none;
+  transition:
+    transform var(--panel-close-dur) var(--panel-ease),
+    opacity   var(--panel-close-dur) var(--panel-ease),
+    filter    var(--panel-close-dur) var(--panel-ease);
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+.t-panel-slide[data-from="left"]   { transform: translate3d(calc(-1 * var(--panel-travel)), 0, 0); }
+.t-panel-slide[data-from="right"]  { transform: translate3d(var(--panel-travel), 0, 0); }
+.t-panel-slide[data-from="bottom"] { transform: translate3d(0, var(--panel-travel), 0); }
+.t-panel-slide[data-open="true"] {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  filter: blur(0);
+  pointer-events: auto;
+  transition:
+    transform var(--panel-open-dur) var(--panel-ease),
+    opacity   var(--panel-open-dur) var(--panel-ease),
+    filter    var(--panel-open-dur) var(--panel-ease);
+}
+.t-scrim {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--panel-close-dur) var(--panel-ease);
+}
+.t-scrim[data-open="true"] { opacity: 1; pointer-events: auto; transition: opacity var(--panel-open-dur) var(--panel-ease); }
+@media (prefers-reduced-motion: reduce) {
+  .t-panel-slide, .t-scrim { transition: none !important; }
+}
+html, body { margin: 0; background: var(--bg-app); }
+@media (hover: hover) and (pointer: fine) { a:hover { color: var(--brand-primary-600); } }
+a { color: var(--brand-primary); text-decoration: none; }
+.t-icon-btn { position: relative; display: grid; place-items: center; border: none; cursor: pointer; background: #F1F5F9; }
+.t-icon-btn::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.t-icon-btn:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+/* .btn-primary/.btn-glass render under 44px tall at this padding scale; scope
+   the hit-layer to this component's panels rather than editing _ds/ globally. */
+.t-panel-slide .btn-primary,
+.t-panel-slide .btn-glass { position: relative; }
+.t-panel-slide .btn-primary::after,
+.t-panel-slide .btn-glass::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+</style>
+</helmet>
+<div style="min-height: 100vh; padding: 40px 28px 72px; font-family: 'Montserrat', system-ui, sans-serif; color: #0F172A; background: #FFFFFF;">
+  <div style="max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+
+    <header style="display: flex; flex-direction: column; gap: 10px;">
+      <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #94A3B8;">Transitions.dev · motion primitive</span>
+      <h1 style="margin: 0; font-size: 30px; font-weight: 900; letter-spacing: -0.025em; line-height: 1.05;">Panel Reveal</h1>
+      <p style="margin: 0; max-width: 58ch; font-size: 14px; font-weight: 500; line-height: 1.6; color: #334155; text-wrap: pretty;">One transition, three entry edges. The panel travels on its own axis, fades, and cross-blurs on a single shared duration and ease, over a placeholder page that stays put.</p>
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+        <span class="badge tag"><span class="material-icons">bolt</span>open {{ openMs }}</span>
+        <span class="badge tag"><span class="material-icons">bolt</span>close {{ closeMs }}</span>
+        <span class="badge tag"><span class="material-icons">blur_on</span>blur {{ blurPx }}</span>
+        <span class="badge tag"><span class="material-icons">swipe</span>from {{ edge }}</span>
+        <span class="badge tag" style="font-variant-numeric: tabular-nums;"><span class="material-icons">sensors</span>{{ phase }}</span>
+      </div>
+    </header>
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <span class="pills-label" style="margin: 0;">Entry edge · usage area</span>
+        <div class="pills-row">
+          <button type="button" class="pill-tab {{ tabLeft }}" onClick="{{ goLeft }}">Left · navigation</button>
+          <button type="button" class="pill-tab {{ tabRight }}" onClick="{{ goRight }}">Right · record detail</button>
+          <button type="button" class="pill-tab {{ tabBottom }}" onClick="{{ goBottom }}">Bottom · action sheet</button>
+        </div>
+      </div>
+      <button type="button" class="btn-green" onClick="{{ toggle }}"><span class="material-icons" style="font-size: 16px;">{{ toggleIcon }}</span>{{ toggleLabel }}</button>
+    </div>
+
+    <div style="position: relative; height: 520px; border-radius: 26px; overflow: hidden; background: #F8FAFC; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08);">
+
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; background: #FFFFFF; box-shadow: inset 0 -1px 0 #E2E8F0;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <button type="button" class="t-icon-btn" onClick="{{ openLeft }}" style="width: 34px; height: 34px; border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(15,23,42,0.08);"><span class="material-icons" style="font-size: 20px; color: #334155;">menu</span></button>
+            <span style="font-size: 14px; font-weight: 800;">Pipeline</span>
+            <span class="badge tag">42 deals</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="btn-discuss" onClick="{{ openBottom }}"><span class="material-icons" style="font-size: 15px;">inventory_2</span>Archive</button>
+            <button type="button" class="btn-green" onClick="{{ openRight }}"><span class="material-icons" style="font-size: 16px;">open_in_full</span>Open record</button>
+          </div>
+        </div>
+
+        <div style="flex: 1; padding: 18px; display: flex; flex-direction: column; gap: 10px; overflow: hidden;">
+          <div class="card-inner" style="display: flex; align-items: center; gap: 12px;">
+            <span class="icon-badge" style="--icon-c: #F97316;"><span class="material-icons">local_fire_department</span></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+              <span class="card-name">Northwind renewal · Q3</span>
+              <span style="height: 8px; width: 62%; border-radius: 9999px; background: #E2E8F0;"></span>
+            </span>
+            <span class="badge time"><span class="material-icons">schedule</span>2d</span>
+          </div>
+          <div class="card-inner" style="display: flex; align-items: center; gap: 12px;">
+            <span class="icon-badge" style="--icon-c: #10B981;"><span class="material-icons">trending_up</span></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+              <span class="card-name">Halden Group · negotiation</span>
+              <span style="height: 8px; width: 48%; border-radius: 9999px; background: #E2E8F0;"></span>
+            </span>
+            <span class="badge gci">$84,000</span>
+          </div>
+          <div class="card-inner" style="display: flex; align-items: center; gap: 12px;">
+            <span class="icon-badge" style="--icon-c: #64748B;"><span class="material-icons">work_outline</span></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+              <span class="card-name">Petra Labs · discovery</span>
+              <span style="height: 8px; width: 54%; border-radius: 9999px; background: #E2E8F0;"></span>
+            </span>
+          </div>
+          <div class="card-inner" style="display: flex; align-items: center; gap: 12px; opacity: 0.7;">
+            <span class="icon-badge" style="--icon-c: #94A3B8;"><span class="material-icons">work_outline</span></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+              <span style="height: 10px; width: 40%; border-radius: 9999px; background: #E2E8F0;"></span>
+              <span style="height: 8px; width: 58%; border-radius: 9999px; background: #EEF2F7;"></span>
+            </span>
+          </div>
+          <div class="card-inner" style="display: flex; align-items: center; gap: 12px; opacity: 0.45;">
+            <span class="icon-badge" style="--icon-c: #CBD5E1;"><span class="material-icons">work_outline</span></span>
+            <span style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+              <span style="height: 10px; width: 34%; border-radius: 9999px; background: #E2E8F0;"></span>
+              <span style="height: 8px; width: 46%; border-radius: 9999px; background: #EEF2F7;"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-scrim" data-open="{{ scrimAttr }}" onClick="{{ close }}" style="position: absolute; inset: 0; background: rgba(15,23,42,0.32);"></div>
+
+      <sc-if value="{{ isLeft }}" hint-placeholder-val="{{ true }}">
+        <div class="t-panel-slide" data-from="left" data-open="{{ openAttr }}" style="position: absolute; top: 0; left: 0; bottom: 0; width: 268px; padding: 16px; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; box-shadow: 24px 0 50px -24px rgba(15,23,42,0.35), inset -1px 0 0 rgba(15,23,42,0.06);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span class="icon-badge icon-badge--sm icon-badge--glow" style="--icon-c: #10B981;"><span class="material-icons">dashboard</span></span>
+              <span style="font-size: 13px; font-weight: 800;">Workspace</span>
+            </span>
+            <button type="button" class="t-icon-btn" onClick="{{ close }}" style="width: 28px; height: 28px; border-radius: 8px;"><span class="material-icons" style="font-size: 17px; color: #64748B;">close</span></button>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span class="pills-label" style="margin: 0;">Boards</span>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <span class="pill-tab dark" style="justify-content: flex-start; gap: 8px; border-radius: 12px; padding: 9px 12px;"><span class="material-icons" style="font-size: 16px;">view_kanban</span>Pipeline</span>
+              <span class="pill-tab" style="justify-content: flex-start; gap: 8px; border-radius: 12px; padding: 9px 12px;"><span class="material-icons" style="font-size: 16px;">groups</span>Accounts</span>
+              <span class="pill-tab" style="justify-content: flex-start; gap: 8px; border-radius: 12px; padding: 9px 12px;"><span class="material-icons" style="font-size: 16px;">insights</span>Reporting</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <span class="pills-label" style="margin: 0;">Saved views</span>
+            <div class="pills-row">
+              <span class="badge tag"><span class="material-icons">sell</span>Inbound</span>
+              <span class="badge tag"><span class="material-icons">apartment</span>Enterprise</span>
+              <span class="badge tag"><span class="material-icons">event</span>This week</span>
+            </div>
+          </div>
+          <div style="margin-top: auto; display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" class="btn-primary" style="justify-content: center;"><span class="material-icons btn-mi">add</span>New deal</button>
+            <span class="card-tag" style="margin: 0;">travel 100% · from left</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRight }}">
+        <div class="t-panel-slide" data-from="right" data-open="{{ openAttr }}" style="position: absolute; top: 0; right: 0; bottom: 0; width: 340px; padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; box-shadow: -24px 0 50px -24px rgba(15,23,42,0.35), inset 1px 0 0 rgba(15,23,42,0.06);">
+          <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <span class="icon-badge icon-badge--lg" style="--icon-c: #F97316;"><span class="material-icons">local_fire_department</span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+              <span class="card-name">Northwind renewal · Q3</span>
+              <span class="card-desc" style="margin: 0;">Hot lead · closing 12 Oct</span>
+            </span>
+            <button type="button" class="t-icon-btn" onClick="{{ close }}" style="width: 28px; height: 28px; border-radius: 8px;"><span class="material-icons" style="font-size: 17px; color: #64748B;">close</span></button>
+          </div>
+          <div class="pills-row">
+            <span class="badge gci">$84,000 GCI</span>
+            <span class="badge time"><span class="material-icons">schedule</span>2d</span>
+          </div>
+          <div class="card-inner" style="display: flex; flex-direction: column; gap: 10px;">
+            <span class="pills-label" style="margin: 0;">Blockers</span>
+            <span class="card-desc" style="margin: 0;">Owner asked for a revised scope before signature. Legal review is the only open item.</span>
+            <div class="pills-row">
+              <span class="badge tag"><span class="material-icons">description</span>Contract v4</span>
+              <span class="badge tag"><span class="material-icons">gavel</span>Legal review</span>
+            </div>
+          </div>
+          <div class="card-inner" style="display: flex; flex-direction: column; gap: 10px;">
+            <span class="pills-label" style="margin: 0;">Priority</span>
+            <div class="pills-row">
+              <span class="pill-priority"><span class="dot" style="background: #EF4444;"></span>High</span>
+              <span class="pill-priority"><span class="dot" style="background: #EAB308;"></span>Medium</span>
+              <span class="pill-priority"><span class="dot" style="background: #10B981;"></span>Low</span>
+            </div>
+          </div>
+          <div style="margin-top: auto; display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="btn-task" style="--fbtn: #0F172A;"><span class="material-icons">task_alt</span>Advance stage</button>
+            <button type="button" class="btn-discuss"><span class="material-icons" style="font-size: 15px;">forum</span>Discuss</button>
+          </div>
+          <span class="card-tag" style="margin: 0;">travel 100% · from right</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isBottom }}">
+        <div class="t-panel-slide" data-from="bottom" data-open="{{ openAttr }}" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 12px; background: #FFFFFF; border-radius: 26px 26px 0 0; box-shadow: 0 -22px 50px -24px rgba(15,23,42,0.4), inset 0 1px 0 rgba(255,255,255,0.8);">
+          <span style="width: 44px; height: 4px; border-radius: 9999px; background: #CBD5E1; margin: 0 auto;"></span>
+          <div class="card-accent" style="display: flex; flex-direction: column; gap: 6px;">
+            <span class="card-name" style="font-size: 15px;">Archive 12 closed deals?</span>
+            <span class="card-desc card-desc-w" style="margin: 0;">They leave the active board and stay searchable in reporting. Undo stays available for 30 days.</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <span class="badge tag"><span class="material-icons">inventory_2</span>12 selected</span>
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn-glass" onClick="{{ close }}"><span class="material-icons btn-mi">close</span>Cancel</button>
+              <button type="button" class="btn-primary"><span class="material-icons btn-mi">archive</span>Archive</button>
+            </div>
+          </div>
+          <span class="card-tag" style="margin: 0; text-align: center;">travel 100% · from bottom</span>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="pills-label" style="margin: 0;">Closed</span>
+        <span class="card-desc" style="margin: 0;">Parked one full travel off its edge, opacity 0, blurred, no pointer events.</span>
+      </div>
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="pills-label" style="margin: 0;">Opening</span>
+        <span class="card-desc" style="margin: 0;">Transform, opacity and blur share one duration; the scrim fades with them.</span>
+      </div>
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="pills-label" style="margin: 0;">Open</span>
+        <span class="card-desc" style="margin: 0;">translate(0), opacity 1, blur 0, interactive; scrim click closes.</span>
+      </div>
+      <div class="card-inner" style="display: flex; flex-direction: column; gap: 4px;">
+        <span class="pills-label" style="margin: 0;">Closing</span>
+        <span class="card-desc" style="margin: 0;">Shorter return on the same ease. Reduced motion cuts transitions.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;openDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:260,&quot;min&quot;:120,&quot;max&quot;:600,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;closeDuration&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:150,&quot;min&quot;:80,&quot;max&quot;:600,&quot;step&quot;:10,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;panelBlur&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0,&quot;max&quot;:6,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;px&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
+const EDGES = { left: 'left', right: 'right', bottom: 'bottom' };
+
+class Component extends DCLogic {
+  state = { variant: 'left', open: true, phase: 'open', switching: false };
+
+  componentDidMount() { this.applyTokens(); }
+  componentDidUpdate() { this.applyTokens(); }
+  componentWillUnmount() { clearTimeout(this.t); clearTimeout(this.t2); }
+
+  dur(open) { return open ? (this.props.openDuration ?? 260) : (this.props.closeDuration ?? 150); }
+
+  applyTokens() {
+    const r = document.documentElement.style;
+    r.setProperty('--panel-open-dur', this.dur(true) + 'ms');
+    r.setProperty('--panel-close-dur', this.dur(false) + 'ms');
+    r.setProperty('--panel-blur', (this.props.panelBlur ?? 2) + 'px');
+  }
+
+  setOpen(open) {
+    clearTimeout(this.t);
+    this.setState({ open, phase: open ? 'opening' : 'closing' });
+    this.t = setTimeout(() => this.setState({ phase: open ? 'open' : 'closed', switching: false }), this.dur(open));
+  }
+
+  /* Open on the frame AFTER the panel mounts, so the browser has a closed
+     state to transition from — mounting straight into data-open="true"
+     skipped the transition and made the panel flash in. */
+  openNextFrame() {
+    cancelAnimationFrame(this.raf);
+    this.raf = requestAnimationFrame(() => {
+      this.raf = requestAnimationFrame(() => this.setOpen(true));
+    });
+  }
+
+  pick(variant) {
+    clearTimeout(this.t); clearTimeout(this.t2); cancelAnimationFrame(this.raf);
+    const s = this.state;
+    if (variant === s.variant) { if (!s.open) this.setOpen(true); return; }
+    if (!s.open) {
+      this.setState({ variant, phase: 'closed', switching: true });
+      this.openNextFrame();
+      return;
+    }
+    // Let the current panel finish closing before swapping edges.
+    this.setState({ open: false, phase: 'closing', switching: true });
+    this.t2 = setTimeout(() => {
+      this.setState({ variant, phase: 'closed' });
+      this.openNextFrame();
+    }, this.dur(false));
+  }
+
+  renderVals() {
+    const { variant, open, phase, switching } = this.state;
+    const cls = v => (variant === v ? 'active' : '');
+    return {
+      phase,
+      edge: EDGES[variant],
+      openMs: this.dur(true) + 'ms',
+      closeMs: this.dur(false) + 'ms',
+      blurPx: (this.props.panelBlur ?? 2) + 'px',
+      openAttr: open ? 'true' : 'false',
+      scrimAttr: (open || switching) ? 'true' : 'false',
+      toggleLabel: open ? 'Close panel' : 'Reveal panel',
+      toggleIcon: open ? 'close_fullscreen' : 'open_in_full',
+      toggle: () => this.setOpen(!open),
+      close: () => this.setOpen(false),
+      isLeft: variant === 'left',
+      isRight: variant === 'right',
+      isBottom: variant === 'bottom',
+      tabLeft: cls('left'),
+      tabRight: cls('right'),
+      tabBottom: cls('bottom'),
+      goLeft: () => this.pick('left'),
+      goRight: () => this.pick('right'),
+      goBottom: () => this.pick('bottom'),
+      openLeft: () => this.pick('left'),
+      openRight: () => this.pick('right'),
+      openBottom: () => this.pick('bottom')
+    };
+  }
+}
+</script>
+</body>
+</html>

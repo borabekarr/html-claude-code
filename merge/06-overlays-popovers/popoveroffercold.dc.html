@@ -1,0 +1,474 @@
+<!-- @dsCard group="Merge - overlays-popovers" name="PopoverOfferCold" subtitle="-> new: Overlays & popovers" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_iconography.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  /* component-local :root override removed — it shadowed the DS --duration-fast/--duration-base/--duration-slow/--ease-out/--ease-spring/--gap-icon-text tokens with unused, sometimes-conflicting local values (nothing in this component's markup referenced them); the component already uses component-scoped var(--poc-*) tokens below for its own timings. */
+  html body, html.dark body { background: #07080A !important; --mx: .25; --my: -.2; --holo: .55; }
+  a { color: #E4FF3A; }
+  @media (hover: hover) and (pointer: fine) {
+    a:hover { color: #F2FF8A; }
+  }
+  @keyframes pocScrim { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pocRise { from { opacity: 0; transform: translateY(26px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes pocRiseExit { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(18px) scale(.97); } }
+  @keyframes pocSheet { from { opacity: 0; transform: translateY(102%); } to { opacity: 1; transform: none; } }
+  @keyframes pocSheetExit { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(102%); } }
+  @keyframes pocSlideIn { from { opacity: 0; transform: translateX(30px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes pocFlip { from { opacity: 0; transform: translateY(-58%); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+  @keyframes pocPop { 0% { transform: scale(0); } 62% { transform: scale(1.16); } 100% { transform: scale(1); } }
+  @keyframes pocFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes pocHalo { 0%,100% { opacity: .35; transform: scale(1); } 50% { opacity: .7; transform: scale(1.12); } }
+  @keyframes pocSpin { to { transform: rotate(360deg); } }
+  @keyframes pocSweep { 0% { left: -40%; } 100% { left: 130%; } }
+  @keyframes pocPulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+  @keyframes pocFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes pocBurst { 0% { opacity: .55; transform: scale(.2); } 100% { opacity: 0; transform: scale(1.9); } }
+  @keyframes pocCheckIn { 0% { opacity: 0; transform: scale(.3) rotate(-24deg); } 55% { opacity: 1; transform: scale(1.22) rotate(4deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+  @keyframes pocSwapIn { from { opacity: 0; transform: translateY(7px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+  .poc-burst { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 62%); animation: pocBurst calc(var(--duration-760) * var(--anim-mult,1)) var(--ease-out) both; }
+  .poc-check { animation: pocCheckIn calc(620ms * var(--anim-mult,1)) var(--ease-spring-medium) both; } /* 620ms: motion-sweep: kept — no exact DS duration tier */
+  .poc-swap { display: inline-block; animation: pocSwapIn calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-out) both; }
+  .poc-scrim { animation: pocScrim calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-fade) both; }
+  .poc-rise { animation: pocRise calc(var(--duration-560) * var(--anim-mult,1)) var(--ease-spring-loose) both; }
+  .poc-rise.is-exiting { animation: pocRiseExit calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-out) both; } /* faster-exits rule: exit duration tier is one step below the enter tier */
+  .poc-sheet { animation: pocSheet calc(620ms * var(--anim-mult,1)) var(--ease-spring-loose) both; } /* 620ms: motion-sweep: kept — no exact DS duration tier */
+  .poc-sheet.is-exiting { animation: pocSheetExit calc(var(--duration-400) * var(--anim-mult,1)) var(--ease-out) both; } /* faster-exits rule: exit duration tier is faster than the (kept-literal) enter duration */
+  .poc-slide { animation: pocSlideIn calc(520ms * var(--anim-mult,1)) var(--ease-spring-loose) both; } /* 520ms: motion-sweep: kept — no exact DS duration tier */
+  .poc-digit { display: inline-block; animation: pocFlip calc(var(--duration-280) * var(--anim-mult,1)) var(--ease-out); }
+  .poc-gift { animation: pocFloat calc(4200ms * var(--anim-mult,1)) var(--ease-in-out) infinite; } /* 4200ms: motion-sweep: kept — no exact DS duration tier (ambient float loop) */
+  .poc-halo { animation: pocHalo calc(3200ms * var(--anim-mult,1)) var(--ease-in-out) infinite; } /* 3200ms: motion-sweep: kept — no exact DS duration tier (ambient halo loop) */
+  .poc-spin { display: inline-block; animation: pocSpin calc(var(--duration-700) * var(--anim-mult,1)) var(--ease-linear) infinite; }
+  .poc-pop { animation: pocPop calc(var(--duration-560) * var(--anim-mult,1)) var(--ease-spring-medium) both; }
+  .poc-live { animation: pocPulse calc(1600ms * var(--anim-mult,1)) var(--ease-in-out) infinite; } /* 1600ms: motion-sweep: kept — no exact DS duration tier (live-pulse loop) */
+  .poc-fade { animation: pocFadeUp calc(var(--duration-420) * var(--anim-mult,1)) var(--ease-out) both; }
+  .poc-stag1 { animation-delay: calc(var(--duration-80) * var(--anim-mult,1)); }
+  .poc-stag2 { animation-delay: calc(var(--duration-180) * var(--anim-mult,1)); }
+  .poc-stag3 { animation-delay: calc(var(--duration-260) * var(--anim-mult,1)); }
+  .poc-cta { position: relative; overflow: hidden; }
+  .poc-cta::after { content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 34%; transform: skewX(-18deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent); animation: pocSweep calc(3600ms * var(--anim-mult,1)) var(--ease-in-out) infinite; pointer-events: none; } /* 3600ms: motion-sweep: kept — no exact DS duration tier (ambient sheen sweep) */
+  .poc-cta:disabled::after { display: none; }
+  .poc-cta:disabled { cursor: not-allowed; }
+  .poc-cta:focus-visible, .poc-x:focus-visible, .poc-copy:focus-visible, .poc-secondary:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+  .poc-x { position: relative; transition: background calc(var(--duration-180) * var(--anim-mult,1)), transform calc(var(--duration-200) * var(--anim-mult,1)) var(--ease-out), color calc(var(--duration-180) * var(--anim-mult,1)); }
+  .poc-x::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (hover: hover) and (pointer: fine) {
+    .poc-x:hover { background: rgba(255,255,255,.14); color: #fff; transform: rotate(90deg); }
+  }
+  .poc-x:active { transform: rotate(90deg) scale(.88); }
+  .poc-ticket { transition: box-shadow calc(var(--duration-slower) * var(--anim-mult,1)), transform calc(var(--duration-slower) * var(--anim-mult,1)) var(--ease-out), opacity calc(var(--duration-slower) * var(--anim-mult,1)), filter calc(var(--duration-400) * var(--anim-mult,1)); }
+  .poc-ticket { will-change: transform; }
+  .poc-copy { position: relative; transition: background calc(var(--duration-180) * var(--anim-mult,1)), color calc(var(--duration-180) * var(--anim-mult,1)), transform calc(var(--duration-base) * var(--anim-mult,1)) var(--ease-out); }
+  .poc-copy::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  .poc-secondary { position: relative; }
+  .poc-secondary::after { content: ''; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+  @media (hover: hover) and (pointer: fine) {
+    .poc-copy:hover { background: rgba(228,255,58,.16); }
+  }
+  .poc-copy:active { transform: scale(.94); }
+  .poc-secondary { transition: color calc(var(--duration-180) * var(--anim-mult,1)), opacity calc(var(--duration-180) * var(--anim-mult,1)); }
+  @media (hover: hover) and (pointer: fine) {
+    .poc-secondary:hover { color: #E2E8F0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .poc-burst, .poc-check, .poc-swap, .poc-scrim, .poc-rise, .poc-sheet, .poc-slide, .poc-digit,
+    .poc-gift, .poc-halo, .poc-spin, .poc-pop, .poc-live, .poc-fade, .poc-cta::after {
+      animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; /* motion-sweep: kept — reduced-motion floor, cannot be 0 for animation-duration */
+    }
+    .poc-x, .poc-ticket, .poc-copy, .poc-secondary { transition-duration: 0.01ms !important; } /* motion-sweep: kept — reduced-motion floor */
+  }
+</style>
+</helmet>
+
+<div style="min-height: 100%; box-sizing: border-box; padding: 30px 22px 60px; display: flex; flex-direction: column; align-items: center; gap: 26px; font-family: var(--font-display); background: #07080A; background-image: radial-gradient(120% 60% at 50% 0%, rgba(228,255,58,.07) 0%, transparent 62%);">
+
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+    <span style="font-size: 10.5px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #64748B;">Deha DS · popover-offer-cold</span>
+    <div class="pills-row" style="justify-content: center;">
+      <button type="button" class="pill-tab" onClick="{{ pickModal }}" style="{{ tabModal }}">Desktop modal</button>
+      <button type="button" class="pill-tab" onClick="{{ pickSheet }}" style="{{ tabSheet }}">Mobile sheet</button>
+    </div>
+    <div class="pills-row" style="justify-content: center;">
+      <span class="pills-label" style="margin: 0 4px 0 0;">State</span>
+      <button type="button" class="pill-tab" onClick="{{ setIdle }}" style="{{ stIdle }}">Idle</button>
+      <button type="button" class="pill-tab" onClick="{{ setClaiming }}" style="{{ stClaiming }}">Claiming</button>
+      <button type="button" class="pill-tab" onClick="{{ setClaimed }}" style="{{ stClaimed }}">Claimed</button>
+      <button type="button" class="pill-tab" onClick="{{ setExpiring }}" style="{{ stExpiring }}">Last minute</button>
+      <button type="button" class="pill-tab" onClick="{{ setExpired }}" style="{{ stExpired }}">Expired</button>
+      <button type="button" class="pill-tab" onClick="{{ setDismissed }}" style="{{ stDismissed }}">Dismissed</button>
+    </div>
+  </div>
+
+  <!-- ─────────── DESKTOP MODAL ─────────── -->
+  <sc-if value="{{ isModal }}" hint-placeholder-val="{{ true }}">
+    <div style="position: relative; width: 100%; max-width: 780px; height: 720px; border-radius: 22px; overflow: hidden; background: #0D0F13; box-shadow: 0 40px 90px -30px rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.06);">
+
+      <div style="position: absolute; inset: 0; padding: 26px 28px; display: flex; flex-direction: column; gap: 16px; filter: blur(6px) saturate(.7); opacity: .55;">
+        <div style="height: 26px; width: 220px; border-radius: 8px; background: rgba(255,255,255,.09);"></div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+          <div style="height: 120px; border-radius: 16px; background: rgba(255,255,255,.06);"></div>
+          <div style="height: 120px; border-radius: 16px; background: rgba(255,255,255,.05);"></div>
+          <div style="height: 120px; border-radius: 16px; background: rgba(255,255,255,.06);"></div>
+        </div>
+        <div style="height: 180px; border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+        <div style="height: 120px; border-radius: 18px; background: rgba(255,255,255,.04);"></div>
+      </div>
+
+      <sc-if value="{{ isDismissed }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; inset: 0; display: grid; place-items: center;">
+          <button type="button" class="btn-cta poc-fade" onClick="{{ reopen }}" style="--accent: rgba(255,255,255,.09); --ctaglow: rgba(0,0,0,0); color: #E2E8F0; text-shadow: none; height: 44px; padding: 0 22px;"><span class="material-icons" style="font-size: 18px;">replay</span>Bring the offer back</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isOpen }}" hint-placeholder-val="{{ true }}">
+        <div class="poc-scrim" style="position: absolute; inset: 0; background: rgba(4,5,7,.62); backdrop-filter: blur(3px);"></div>
+      </sc-if>
+
+      <sc-if value="{{ isOpen }}">
+        <div style="position: absolute; inset: 0; display: grid; place-items: center; padding: 24px;">
+        <div class="{{ pocRiseCls }}" role="dialog" aria-modal="true" aria-labelledby="poc-modal-title" style="position: relative; width: 428px; max-width: 100%; box-sizing: border-box; padding: 34px 26px 26px; border-radius: 24px; overflow: hidden; background: #0B0C0F; background-image: radial-gradient(120% 70% at 50% 0%, rgba(228,255,58,.07) 0%, transparent 58%); box-shadow: 0 50px 100px -30px rgba(0,0,0,.95), inset 0 0 0 1px rgba(255,255,255,.07); text-align: center;">
+          <span aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(circle, rgba(255,255,255,.045) 1.1px, transparent 1.4px); background-size: 22px 22px; mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 88%); -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 88%);"></span>
+
+          <button type="button" class="poc-x" onClick="{{ dismiss }}" aria-label="Dismiss offer" style="position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border: none; border-radius: 9999px; display: grid; place-items: center; cursor: pointer; color: #94A3B8; background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,.09);">
+            <span class="material-icons" style="font-size: 18px;">close</span>
+          </button>
+
+          <div style="position: relative; width: 44px; height: 44px; margin: 0 auto 14px; display: grid; place-items: center;">
+            <span class="poc-halo" aria-hidden="true" style="position: absolute; inset: -8px; border-radius: 14px; background: radial-gradient(circle, rgba(228,255,58,.24) 0%, transparent 70%);"></span>
+            <span class="icon-badge icon-badge--lg icon-badge--glow poc-gift" style="--icon-c: {{ accentColor }}; position: relative; width: 44px; height: 44px; border-radius: 13px;">
+              <span class="material-icons" style="font-size: 22px; color: #12200B;">redeem</span>
+            </span>
+          </div>
+
+          <div class="pills-row poc-fade" style="justify-content: center; margin-bottom: 14px;">
+            <span class="badge gci" style="background: {{ accentColor }}; color: #12200B; text-shadow: none;"><span class="material-icons" style="font-size: 14px;">redeem</span>Personal offer</span>
+            <span class="badge time" style="{{ badgeStyle }}"><span class="material-icons">timer</span><span class="poc-digit" key="{{ clockCompact }}">{{ clockCompact }}</span></span>
+          </div>
+
+          <h2 id="poc-modal-title" class="poc-fade" style="margin: 0 0 8px; font-size: 23px; line-height: 1.14; font-weight: 800; letter-spacing: -.02em; color: #FFFFFF; text-wrap: balance;">
+            Congratulations! You received <span style="color: {{ accentColor }};">{{ headlineAccent }}</span>
+          </h2>
+
+          <p class="poc-fade poc-stag1" style="margin: 0 auto 22px; max-width: 38ch; font-size: 13px; font-weight: 500; line-height: 1.45; color: #8A94A6; text-wrap: pretty;">{{ body }}</p>
+
+          <div class="poc-ticket poc-fade poc-stag2" onMouseMove="{{ tiltMove }}" onMouseLeave="{{ tiltLeave }}" style="{{ ticketStyle }}">
+            <span aria-hidden="true" style="position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; mix-blend-mode: overlay; opacity: calc(var(--holo,.55) * .8); transition: opacity var(--duration-slow) var(--ease-fade), background-position var(--duration-420) var(--ease-out); background-image: repeating-linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(59,130,246,.35) 6%, rgba(255,255,255,.6) 9%, rgba(228,255,58,.35) 14%, rgba(255,255,255,0) 22%); background-size: 200% 200%; background-position: calc(50% + var(--mx,.25) * 50%) calc(50% + var(--my,-.2) * 50%);"></span>
+            <div style="position: relative; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 16px 16px 15px;">
+              <span class="icon-badge icon-badge--sm" style="--icon-c: {{ promoIconColor }}; align-self: center;"><span class="material-icons">{{ promoIcon }}</span></span>
+              <span style="flex: 1 1 auto; display: flex; flex-direction: column; gap: 3px; min-width: 0;">
+                <span style="font-size: 13px; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; color: {{ promoCodeColor }};">{{ promoCode }}</span>
+                <span style="font-size: 11px; font-weight: 500; line-height: 1.2; color: #7C8698;">{{ promoNote }}</span>
+              </span>
+              <button type="button" class="poc-copy" onClick="{{ copyCode }}" style="{{ copyStyle }} flex: none;"><span class="material-icons" style="font-size: 14px;">{{ copyIcon }}</span>{{ copyLabel }}</button>
+            </div>
+            <div style="position: relative; border-top: 2px dashed rgba(255,255,255,.14);">
+              <span aria-hidden="true" style="position: absolute; top: -11px; left: -11px; width: 22px; height: 22px; border-radius: 9999px; background: #0B0C0F;"></span>
+              <span aria-hidden="true" style="position: absolute; top: -11px; right: -11px; width: 22px; height: 22px; border-radius: 9999px; background: #0B0C0F;"></span>
+            </div>
+            <div style="position: relative; z-index: 3; display: grid; grid-template-columns: 1fr 1px 1fr; align-items: stretch; gap: 16px; padding: 18px 16px 20px;">
+              <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+                <span class="badge-event" style="background-color: #F0439E; font-size: 15px; font-weight: 900; letter-spacing: -.01em; padding: 6px 14px;">{{ discountLabel }}</span>
+                <span style="font-size: 10.5px; font-weight: 500; color: #6B7484;">With special-offer promo</span>
+              </div>
+              <span aria-hidden="true" style="justify-self: center; align-self: stretch; width: 1px; background: repeating-linear-gradient(to bottom, rgba(255,255,255,.18) 0 4px, transparent 4px 8px);"></span>
+              <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <span style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
+                  <span class="poc-digit" key="{{ hh }}" style="font-size: 21px; font-weight: 900; color: {{ clockColor }}; font-variant-numeric: tabular-nums; letter-spacing: -.01em;">{{ hh }}</span>
+                  <span style="font-size: 11px; font-weight: 500; color: #6B7484;">hours</span>
+                </span>
+                <span class="poc-live" style="font-size: 21px; font-weight: 800; color: #3C4351; line-height: 1.2;">:</span>
+                <span style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
+                  <span class="poc-digit" key="{{ mm }}" style="font-size: 21px; font-weight: 900; color: {{ clockColor }}; font-variant-numeric: tabular-nums; letter-spacing: -.01em;">{{ mm }}</span>
+                  <span style="font-size: 11px; font-weight: 500; color: #6B7484;">minutes</span>
+                </span>
+                <span class="poc-live" style="font-size: 21px; font-weight: 800; color: #3C4351; line-height: 1.2;">:</span>
+                <span style="display: flex; flex-direction: column; align-items: center; gap: 3px;">
+                  <span class="poc-digit" key="{{ ss }}" style="font-size: 21px; font-weight: 900; color: {{ clockColor }}; font-variant-numeric: tabular-nums; letter-spacing: -.01em;">{{ ss }}</span>
+                  <span style="font-size: 11px; font-weight: 500; color: #6B7484;">seconds</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-cta poc-cta poc-fade poc-stag3" onClick="{{ claim }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyle }} margin-top: 26px;">
+            <sc-if value="{{ isClaiming }}" hint-placeholder-val="{{ false }}"><span class="poc-spin" style="width: 18px; height: 18px; border-radius: 9999px; border: 2.5px solid rgba(18,32,11,.25); border-top-color: #12200B;"></span></sc-if>
+            <sc-if value="{{ isClaimed }}" hint-placeholder-val="{{ false }}"><span class="poc-burst" aria-hidden="true"></span></sc-if>
+            <sc-if value="{{ isClaimed }}" hint-placeholder-val="{{ false }}"><span class="material-symbols-outlined poc-check" style="font-size: 22px; font-variation-settings: 'wght' 700, 'FILL' 1;">check_circle</span></sc-if>
+            <sc-if value="{{ isExpired }}" hint-placeholder-val="{{ false }}"><span class="material-icons" style="font-size: 20px;">lock_clock</span></sc-if>
+            <sc-if value="{{ isIdle }}" hint-placeholder-val="{{ true }}"><span class="material-symbols-outlined" style="font-size: 20px; font-variation-settings: 'wght' 700, 'FILL' 1;">redeem</span></sc-if>
+            <span class="poc-swap" key="{{ ctaLabel }}">{{ ctaLabel }}</span>
+          </button>
+
+          <sc-if value="{{ isClaimed }}" hint-placeholder-val="{{ false }}">
+            <div class="poc-fade" style="margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13.5px; font-weight: 600; color: #A9B4C4;">
+              <span class="material-icons" style="font-size: 18px; color: #10B981;">verified</span>{{ successNote }}
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isExpired }}" hint-placeholder-val="{{ false }}">
+            <button type="button" class="poc-secondary" onClick="{{ dismiss }}" style="margin-top: 16px; border: none; background: transparent; font-family: inherit; font-size: 13.5px; font-weight: 700; color: #6B7484; cursor: pointer;">See standard Premium plans</button>
+          </sc-if>
+        </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- ─────────── MOBILE SHEET ─────────── -->
+  <sc-if value="{{ isSheet }}">
+    <div style="position: relative; width: 356px; height: 720px; border-radius: 54px; padding: 11px; background: linear-gradient(155deg, #2B313C 0%, #11141B 60%, #05070B 100%); box-shadow: 0 40px 90px -24px rgba(0,0,0,.85), inset 0 1px 1px rgba(255,255,255,.16);">
+      <div style="position: relative; width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: #0D0F13;">
+        <div style="position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 104px; height: 26px; border-radius: 14px; background: #05070B; z-index: 6;"></div>
+        <div style="position: absolute; inset: 0; padding: 60px 18px 0; display: flex; flex-direction: column; gap: 12px; filter: blur(4px) saturate(.75); opacity: .6;">
+          <div style="height: 22px; width: 62%; border-radius: 7px; background: rgba(255,255,255,.09);"></div>
+          <div style="height: 12px; width: 40%; border-radius: 6px; background: rgba(255,255,255,.06);"></div>
+          <div style="height: 96px; border-radius: 18px; background: rgba(255,255,255,.05);"></div>
+          <div style="display: flex; gap: 12px;"><div style="flex: 1; height: 70px; border-radius: 16px; background: rgba(255,255,255,.05);"></div><div style="flex: 1; height: 70px; border-radius: 16px; background: rgba(255,255,255,.05);"></div></div>
+        </div>
+
+        <sc-if value="{{ isDismissed }}">
+          <div style="position: absolute; inset: 0; display: grid; place-items: center;">
+            <button type="button" class="btn-cta poc-fade" onClick="{{ reopen }}" style="--accent: rgba(255,255,255,.09); --ctaglow: rgba(0,0,0,0); color: #E2E8F0; text-shadow: none; height: 42px; padding: 0 20px; font-size: 13px;"><span class="material-icons" style="font-size: 17px;">replay</span>Bring the offer back</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isOpen }}">
+          <div class="poc-scrim" style="position: absolute; inset: 0; background: rgba(4,5,7,.6); backdrop-filter: blur(2px);"></div>
+        </sc-if>
+
+        <sc-if value="{{ isOpen }}">
+          <div class="{{ pocSheetCls }}" role="dialog" aria-modal="true" aria-labelledby="poc-sheet-title" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 14px 20px 26px; border-radius: 34px 34px 44px 44px; background: #0B0C0F; background-image: radial-gradient(120% 60% at 50% 0%, rgba(228,255,58,.08) 0%, transparent 58%); box-shadow: 0 -24px 50px -12px rgba(4,5,7,.7), inset 0 0 0 1px rgba(255,255,255,.07); text-align: center;">
+            <div style="width: 42px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.24); margin: 0 auto 16px;"></div>
+
+            <div style="position: relative; width: 58px; height: 58px; margin: 0 auto 16px; display: grid; place-items: center;">
+              <span class="poc-halo" aria-hidden="true" style="position: absolute; inset: -8px; border-radius: 9999px; background: radial-gradient(circle, rgba(228,255,58,.22) 0%, transparent 70%);"></span>
+              <span class="poc-gift" style="position: relative; width: 58px; height: 58px; border-radius: 9999px; display: grid; place-items: center; background: #1A1C21; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 0 0 1px rgba(255,255,255,.09);">
+                <span class="material-icons" style="font-size: 26px; color: #FFFFFF;">redeem</span>
+              </span>
+            </div>
+
+            <h2 id="poc-sheet-title" class="poc-fade" style="margin: 0 0 12px; font-size: 27px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em; color: #FFFFFF; text-wrap: balance;">
+              Congratulations! You received <span style="color: {{ accentColor }};">{{ headlineAccent }}</span>
+            </h2>
+            <p class="poc-fade poc-stag1" style="margin: 0 0 20px; font-size: 14px; font-weight: 500; line-height: 1.45; color: #8A94A6;">{{ body }}</p>
+
+            <div class="poc-ticket poc-fade poc-stag2" style="{{ ticketStyleSm }}">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 14px 13px; flex-wrap: wrap;">
+                <span class="material-icons" style="font-size: 17px; color: {{ promoIconColor }};">{{ promoIcon }}</span>
+                <span style="font-size: 13.5px; font-weight: 800; color: {{ promoCodeColor }};">{{ promoCode }}</span>
+                <span style="font-size: 12.5px; font-weight: 500; color: #8A94A6;">{{ promoNote }}</span>
+              </div>
+              <div style="position: relative; border-top: 2px dashed rgba(255,255,255,.14);">
+                <span aria-hidden="true" style="position: absolute; top: -11px; left: -11px; width: 22px; height: 22px; border-radius: 9999px; background: #0B0C0F;"></span>
+                <span aria-hidden="true" style="position: absolute; top: -11px; right: -11px; width: 22px; height: 22px; border-radius: 9999px; background: #0B0C0F;"></span>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1px 1fr; align-items: center; padding: 16px 14px 18px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                  <span style="font-size: 24px; font-weight: 900; letter-spacing: -.02em; background: linear-gradient(100deg, #FF2E85, #FF5FA8); -webkit-background-clip: text; background-clip: text; color: transparent;">{{ discountLabel }}</span>
+                  <span style="font-size: 11px; font-weight: 500; color: #6B7484;">Special-offer promo</span>
+                </div>
+                <span aria-hidden="true" style="justify-self: center; width: 1px; height: 46px; background: repeating-linear-gradient(to bottom, rgba(255,255,255,.18) 0 4px, transparent 4px 8px);"></span>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                  <span style="font-size: 24px; font-weight: 900; color: {{ clockColor }}; font-variant-numeric: tabular-nums;"><span class="poc-digit" key="{{ hh }}">{{ hh }}</span>:<span class="poc-digit" key="{{ mm }}">{{ mm }}</span>:<span class="poc-digit" key="{{ ss }}">{{ ss }}</span></span>
+                  <span style="font-size: 11px; font-weight: 500; color: #6B7484;">left to claim</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="btn-cta poc-cta poc-fade poc-stag3" onClick="{{ claim }}" disabled="{{ ctaDisabled }}" style="{{ ctaStyleSm }} margin-top: 20px;">
+              <sc-if value="{{ isClaiming }}"><span class="poc-spin" style="width: 16px; height: 16px; border-radius: 9999px; border: 2.5px solid rgba(18,32,11,.25); border-top-color: #12200B;"></span></sc-if>
+              <sc-if value="{{ isClaimed }}"><span class="poc-burst" aria-hidden="true"></span></sc-if>
+              <sc-if value="{{ isClaimed }}"><span class="material-symbols-outlined poc-check" style="font-size: 20px; font-variation-settings: 'wght' 700, 'FILL' 1;">check_circle</span></sc-if>
+              <sc-if value="{{ isExpired }}"><span class="material-icons" style="font-size: 18px;">lock_clock</span></sc-if>
+              <span class="poc-swap" key="{{ ctaLabel }}">{{ ctaLabel }}</span>
+            </button>
+            <button type="button" class="poc-secondary" onClick="{{ dismiss }}" style="margin-top: 10px; border: none; background: transparent; font-family: inherit; font-size: 12.5px; font-weight: 700; color: #6B7484; cursor: pointer;">Not now</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:760},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E4FF3A&quot;,&quot;options&quot;:[&quot;#E4FF3A&quot;,&quot;#10B981&quot;,&quot;#F0439E&quot;,&quot;#38BDF8&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Look&quot;},&quot;discountLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;55% OFF&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Offer&quot;},&quot;promoCode&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;bora_PERSONAL_PROMO&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Offer&quot;},&quot;headlineAccent&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;a personal 55% OFF offer&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Copy&quot;},&quot;body&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;This offer is active for limited time only. Get Premium plans with 55% OFF&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Copy&quot;},&quot;ctaLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Claim Discount&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Copy&quot;},&quot;successNote&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Applied to your account — visible at checkout for the next 30 days.&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Copy&quot;},&quot;initialSeconds&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8022,&quot;min&quot;:30,&quot;max&quot;:86400,&quot;step&quot;:30,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Offer&quot;}}">
+class Component extends DCLogic {
+  state = { variant: 'modal', phase: 'idle', left: 2 * 3600 + 13 * 60 + 42, copied: false, closing: false };
+
+  closeThenDismiss = () => {
+    if (this.state.phase === 'dismissed' || this.state.closing) return;
+    this.setState({ closing: true });
+    clearTimeout(this.closeT);
+    this.closeT = setTimeout(() => this.setState({ phase: 'dismissed', closing: false }), 420);
+  };
+
+  componentDidMount() {
+    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
+    this.timer = setInterval(() => {
+      const { phase, left } = this.state;
+      if (phase === 'expired' || phase === 'claimed' || phase === 'dismissed' || left <= 0) return;
+      this.setState(s => (s.left <= 1 ? { left: 0, phase: 'expired' } : { left: s.left - 1 }));
+    }, 1000);
+    this._onKeydown = (e) => {
+      if (e.key === 'Escape' && this.state.phase !== 'dismissed') this.closeThenDismiss();
+    };
+    document.addEventListener('keydown', this._onKeydown);
+  }
+  componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.claimT); clearTimeout(this.copyT); clearTimeout(this.closeT); document.removeEventListener('keydown', this._onKeydown); }
+
+  pick(variant) { return () => this.setState({ variant }); }
+
+  setPhase(phase) {
+    return () => {
+      clearTimeout(this.claimT);
+      const full = (this.props.initialSeconds ?? 8022);
+      if (phase === 'expired') return this.setState({ phase, left: 0 });
+      if (phase === 'expiring') return this.setState({ phase: 'idle', left: 47 });
+      this.setState({ phase, left: this.state.left > 0 ? this.state.left : full });
+    };
+  }
+
+  claim() {
+    if (this.state.phase !== 'idle') return;
+    this.setState({ phase: 'claiming' });
+    clearTimeout(this.claimT);
+    this.claimT = setTimeout(() => this.setState({ phase: 'claimed' }), 1700);
+  }
+
+  copy() {
+    this.setState({ copied: true });
+    clearTimeout(this.copyT);
+    this.copyT = setTimeout(() => this.setState({ copied: false }), 1800);
+  }
+
+  tab(on) {
+    return on
+      ? 'background: #E4FF3A; color: #12200B; border-color: transparent; font-weight: 800; box-shadow: inset 0 -2px 5px rgba(0,0,0,.14), 0 4px 14px -5px rgba(228,255,58,.75); cursor: pointer;'
+      : 'background: #14161B; color: #8A94A6; border-color: #23262E; cursor: pointer;';
+  }
+
+  ticket(sm) {
+    const p = this.state.phase;
+    const base = `position: relative; text-align: left; border-radius: ${sm ? 16 : 20}px; background: #14161B; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 0 rgba(255,255,255,.05), 0 18px 34px -22px rgba(0,0,0,.9); isolation: isolate; transform-style: preserve-3d; transform: perspective(900px) rotateY(calc(var(--mx,.25) * 5deg)) rotateX(calc(var(--my,-.2) * -5deg));`;
+    if (p === 'expired') return base + ' filter: grayscale(1); opacity: .5;';
+    if (p === 'claimed') return base + ' box-shadow: inset 0 0 0 1px rgba(16,185,129,.42), 0 18px 40px -20px rgba(16,185,129,.35);';
+    return base;
+  }
+
+  cta(big) {
+    const p = this.state.phase;
+    const size = big
+      ? 'height: 52px; font-size: 15px; padding: 0 26px;'
+      : 'height: 46px; font-size: 14px; padding: 0 22px;';
+    const common = `width: 100%; box-sizing: border-box; ${size} font-family: 'Montserrat'; font-weight: 900; letter-spacing: .01em; gap: 8px; transition: background-color var(--duration-560) var(--ease-out), color var(--duration-slow) var(--ease-fade), box-shadow var(--duration-560) var(--ease-out), filter var(--duration-200), transform var(--duration-200) var(--ease-spring-wide);`;
+    if (p === 'expired') {
+      return common + '--accent: rgba(255,255,255,.06); --ctaglow: rgba(0,0,0,0); color: #6B7484; text-shadow: none;'
+        + ' background-image: radial-gradient(ellipse at top right, rgba(255,255,255,.05) 0%, transparent 55%), linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px);';
+    }
+    if (p === 'claimed') return common + '--accent: #10B981; --ctaglow: rgba(16,185,129,.55); color: #04231A; text-shadow: none; cursor: default;';
+    const accent = this.props.accent ?? '#E4FF3A';
+    return common + `--accent: ${accent}; --ctaglow: rgba(228,255,58,.5); color: #12200B; text-shadow: none;`
+      + (p === 'claiming' ? ' filter: saturate(.92); cursor: progress;' : '');
+  }
+
+  vars(el, o) { Object.entries(o).forEach(([k, v]) => el.style.setProperty(k, v)); }
+
+  renderVals() {
+    const { variant, phase, left, copied } = this.state;
+    const pad = n => String(n).padStart(2, '0');
+    const hh = pad(Math.floor(left / 3600));
+    const mm = pad(Math.floor((left % 3600) / 60));
+    const ss = pad(left % 60);
+    const urgent = left > 0 && left <= 300;
+    const accent = this.props.accent ?? '#E4FF3A';
+    const discount = this.props.discountLabel ?? '55% OFF';
+    const code = this.props.promoCode ?? 'bora_PERSONAL_PROMO';
+
+    const ctaLabel = phase === 'claiming' ? 'Securing your discount'
+      : phase === 'claimed' ? 'Discount applied'
+      : phase === 'expired' ? 'Offer expired'
+      : (this.props.ctaLabel ?? 'Claim Discount');
+
+    return {
+      accentColor: accent,
+      headlineAccent: this.props.headlineAccent ?? 'a personal 55% OFF offer',
+      body: phase === 'expired'
+        ? 'This personal offer has ended. Premium plans are still available at standard pricing.'
+        : (this.props.body ?? 'This offer is active for limited time only. Get Premium plans with 55% OFF'),
+      discountLabel: discount,
+      promoCode: code,
+      promoNote: phase === 'claimed' ? 'promocode is redeemed' : phase === 'expired' ? 'promocode is no longer valid' : 'promocode is applied',
+      promoIcon: phase === 'expired' ? 'close' : 'check',
+      promoIconColor: phase === 'expired' ? '#6B7484' : phase === 'claimed' ? '#10B981' : accent,
+      promoCodeColor: phase === 'expired' ? '#6B7484' : phase === 'claimed' ? '#34D399' : accent,
+      successNote: this.props.successNote ?? 'Applied to your account — visible at checkout for the next 30 days.',
+      hh, mm, ss,
+      clockCompact: left <= 0 ? 'Offer ended' : urgent ? 'LAST MINUTE!' : (Number(hh) > 0 ? `${hh}h ${mm}m left` : `${mm}:${ss} left`),
+      clockColor: phase === 'expired' ? '#525A69' : urgent ? '#FF5FA8' : '#F1F5F9',
+      badgeStyle: phase === 'expired'
+        ? 'background: rgba(255,255,255,.07); color: #8A94A6; box-shadow: none; text-shadow: none;'
+        : urgent ? 'background: #EF4444; letter-spacing: .06em;' : 'background: #F0439E;',
+
+      isModal: variant === 'modal', isSheet: variant === 'sheet',
+      pickModal: this.pick('modal'), pickSheet: this.pick('sheet'),
+      tabModal: this.tab(variant === 'modal'), tabSheet: this.tab(variant === 'sheet'),
+
+      setIdle: this.setPhase('idle'), setClaiming: this.setPhase('claiming'), setClaimed: this.setPhase('claimed'),
+      setExpiring: this.setPhase('expiring'), setExpired: this.setPhase('expired'), setDismissed: this.setPhase('dismissed'),
+      stIdle: this.tab(phase === 'idle' && !urgent), stClaiming: this.tab(phase === 'claiming'),
+      stClaimed: this.tab(phase === 'claimed'), stExpiring: this.tab(phase === 'idle' && urgent),
+      stExpired: this.tab(phase === 'expired'), stDismissed: this.tab(phase === 'dismissed'),
+
+      isOpen: phase !== 'dismissed', isDismissed: phase === 'dismissed', isIdle: phase === 'idle',
+      isClaiming: phase === 'claiming', isClaimed: phase === 'claimed', isExpired: phase === 'expired',
+      ctaDisabled: phase !== 'idle',
+      ctaLabel,
+      ctaStyle: this.cta(true), ctaStyleSm: this.cta(false),
+      ticketStyle: this.ticket(false), ticketStyleSm: this.ticket(true),
+      copyIcon: copied ? 'check' : 'content_copy',
+      copyLabel: copied ? 'Copied' : 'Copy',
+      copyStyle: 'display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 9999px; padding: 6px 12px; font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; '
+        + (phase === 'expired' ? 'background: rgba(255,255,255,.06); color: #6B7484;'
+          : copied ? 'background: rgba(16,185,129,.16); color: #34D399;' : `background: rgba(228,255,58,.1); color: ${accent};`),
+      tiltMove: (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        const my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        this.vars(e.currentTarget, { '--mx': mx.toFixed(3), '--my': my.toFixed(3), '--holo': '1' });
+      },
+      tiltLeave: (e) => this.vars(e.currentTarget, { '--mx': '0.25', '--my': '-0.2', '--holo': '.55' }),
+      copyCode: () => this.copy(),
+      claim: () => this.claim(),
+      dismiss: this.closeThenDismiss,
+      pocRiseCls: 'poc-rise' + (this.state.closing ? ' is-exiting' : ''),
+      pocSheetCls: 'poc-sheet' + (this.state.closing ? ' is-exiting' : ''),
+      reopen: () => this.setState({ phase: 'idle', left: this.state.left > 0 ? this.state.left : (this.props.initialSeconds ?? 8022) }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!-- @dsCard group="Merge - pills-chips-badges" name="Shiny Pill" subtitle="-> Pills, chips & badges" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="../../colors_and_type.css"><link rel="stylesheet" href="../../preview/_motion-tokens.css">
+<link rel="stylesheet" href="../../preview/_base.css">
+<link rel="stylesheet" href="../../preview/_darkmode.css">
+<link rel="stylesheet" href="../../preview/_shared-feedback.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_buttons.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_cards.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_colors-semantic.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_pills.css">
+<link rel="stylesheet" href="../../preview/done/jsx/_spacing-shadows.css">
+<link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script>
+
+<style>
+  body { margin: 0; background: #F8FAFC; font-family: 'Montserrat', sans-serif; }
+  a { color: #059669; text-decoration: none; }
+  a:hover { color: #047857; }
+  @keyframes sp-rotate { to { transform: rotate(360deg); } }
+  @keyframes sp-edge { from { transform: translateX(-160%) skewX(-14deg); } to { transform: translateX(560%) skewX(-14deg); } }
+  @keyframes sp-sweep { 0% { background-position: 160% 0; } 100% { background-position: -60% 0; } }
+  @keyframes sp-in { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes sp-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.7); } }
+  @keyframes sp-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { * { animation-duration: .001ms/* motion-sweep: kept */ !important; } }
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:40px 32px 72px;background-image:radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(248,250,252,1) 50%, #FFFFFF 100%);font-family:'Montserrat',sans-serif;">
+  <div style="max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:28px;">
+
+    <header style="display:flex;flex-direction:column;gap:12px;">
+      <span class="pills-label" style="margin:0;">Deha · new component</span>
+      <h1 class="type-display" style="margin:0;font-size:40px;color:#0F172A;">Shiny Pill</h1>
+      <p style="margin:0;max-width:560px;font-size:14px;line-height:1.6;color:#64748B;text-wrap:pretty;">A compact announcement pill with an edge-light that travels left to right, plus a shimmer sweep across the face. Built from the design system's card, pill, badge and button primitives. Pick a usage area below.</p>
+    </header>
+
+    <div class="pills-row" role="tablist" style="gap:8px;">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+        <button type="button" class="{{ t.cls }}" onClick="{{ t.go }}" style="cursor:pointer;gap:6px;padding:7px 16px;font-family:'Montserrat';">
+          <span class="material-icons" style="font-size:15px;">{{ t.icon }}</span>
+          {{ t.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+        <h2 class="type-display" style="margin:0;font-size:20px;color:#0F172A;">{{ activeTitle }}</h2>
+        <span style="font-size:13px;color:#64748B;">{{ activeDesc }}</span>
+      </div>
+
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:14px;padding:18px 20px 20px;animation:sp-in calc(340ms/* motion-sweep: kept */ * var(--anim-mult,1)) var(--ease-out) both;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <span class="pills-label" style="margin:0;">{{ g.label }}</span>
+            <span class="card-tag" style="margin:0;">{{ g.tag }}</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button type="button" disabled="{{ it.disabled }}" style="position:relative;display:inline-flex;padding:1.6px;border:none;border-radius:9999px;background:{{ it.edge }};overflow:hidden;cursor:{{ it.cursor }};opacity:{{ it.opacity }};isolation:isolate;box-shadow:{{ it.glow }};transition:transform 200ms/* motion-sweep: kept */ var(--ease-spring), box-shadow 220ms/* motion-sweep: kept */ var(--ease-out);" style-hover="transform:{{ it.lift }};box-shadow:{{ it.glowHover }}" style-active="transform:{{ it.pressT }}" style-focus="outline:{{ it.ring }};outline-offset:3px" style-after="content:'';position:absolute;inset:50% auto auto 50%;width:44px;height:44px;transform:translate(-50%,-50%);pointer-events:none">
+                <span aria-hidden="true" style="position:absolute;top:-30%;bottom:-30%;left:0;width:18%;background:linear-gradient(90deg, transparent 0%, {{ it.shine }} 40%, #FFFFFF 50%, {{ it.shine }} 60%, transparent 100%);filter:blur(2px);animation:sp-edge calc(2.6s * var(--anim-mult,1)) linear infinite;animation-play-state:{{ it.play }};opacity:{{ it.sheenOn }};"></span>
+                <span style="position:relative;z-index:1;display:inline-flex;align-items:center;gap:9px;padding:{{ it.pad }};border-radius:9999px;background:{{ it.bg }};color:{{ it.fg }};font-size:{{ it.size }};font-weight:800;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;">
+                  <span class="material-icons" style="font-size:{{ it.iconSize }};opacity:.8;margin-left:-1px;">{{ it.icon }}</span>
+                  <span>{{ it.label }}</span>
+                  <sc-if value="{{ it.meta }}" hint-placeholder-val="{{ true }}">
+                    <span class="badge success" style="background:{{ it.accent }};padding:2px 8px;font-size:10px;">{{ it.meta }}</span>
+                  </sc-if>
+                  <sc-if value="{{ it.arrow }}" hint-placeholder-val="{{ true }}">
+                    <span class="material-icons" style="font-size:16px;opacity:.75;margin-right:2px;">arrow_forward</span>
+                  </sc-if>
+                  <span aria-hidden="true" style="position:absolute;inset:0;border-radius:9999px;background:linear-gradient(100deg, transparent 42%, rgba(255,255,255,{{ it.sheen }}) 50%, transparent 58%);background-size:250% 100%;animation:sp-sweep calc(2.8s * var(--anim-mult,1)) linear infinite;pointer-events:none;"></span>
+                </span>
+              </button>
+            </sc-for>
+          </div>
+          <p style="margin:0;font-size:12px;line-height:1.55;color:#64748B;text-wrap:pretty;">{{ g.note }}</p>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{ showStates }}" hint-placeholder-val="{{ false }}">
+        <div class="card-inner" style="display:flex;flex-direction:column;gap:16px;padding:18px 20px 20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <span class="pills-label" style="margin:0;">Interactive · loading → done → reset</span>
+            <span class="card-tag" style="margin:0;">state machine</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
+            <button type="button" onClick="{{ runDemo }}" style="position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;min-width:0;width:{{ demoWidth }};height:44px;padding:1.6px;border:none;border-radius:9999px;background:rgba(15,23,42,.55);overflow:hidden;cursor:pointer;box-shadow:0 10px 30px -14px rgba(15,23,42,.7);transition:width 340ms/* motion-sweep: kept */ var(--ease-spring), box-shadow 220ms/* motion-sweep: kept */;" style-hover="box-shadow:0 14px 34px -12px rgba(16,185,129,.55)" style-active="transform:scale(.97)">
+              <span aria-hidden="true" style="position:absolute;top:-30%;bottom:-30%;left:0;width:18%;background:linear-gradient(90deg, transparent 0%, #10B981 40%, #FFFFFF 50%, #10B981 60%, transparent 100%);filter:blur(2px);animation:sp-edge calc(2.6s * var(--anim-mult,1)) linear infinite;"></span>
+              <span style="position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;height:100%;padding:0 16px;border-radius:9999px;background:{{ demoBg }};color:#fff;font-size:13px;font-weight:800;white-space:nowrap;transition:background 300ms/* motion-sweep: kept */ var(--ease-out);">
+                <span style="display:inline-flex;align-items:center;gap:9px;opacity:{{ demoLabelOpacity }};transform:scale({{ demoLabelScale }});transition:opacity 200ms/* motion-sweep: kept */ var(--ease-spring), transform 260ms/* motion-sweep: kept */ var(--ease-spring);">
+                  <span class="material-icons" style="font-size:17px;opacity:.8;">rocket_launch</span>
+                  Join the beta
+                  <span class="material-icons" style="font-size:16px;opacity:.7;">arrow_forward</span>
+                </span>
+                <span style="position:absolute;inset:0;display:grid;place-items:center;opacity:{{ demoSpinOpacity }};transition:opacity 200ms/* motion-sweep: kept */;">
+                  <span style="width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(255,255,255,.25);border-top-color:#fff;animation:sp-spin calc(800ms/* motion-sweep: kept */ * var(--anim-mult,1)) linear infinite;"></span>
+                </span>
+                <span style="position:absolute;inset:0;display:grid;place-items:center;opacity:{{ demoDoneOpacity }};transform:scale({{ demoDoneScale }});transition:opacity 200ms/* motion-sweep: kept */, transform 260ms/* motion-sweep: kept */ var(--ease-spring);">
+                  <span class="material-icons" style="font-size:22px;">check</span>
+                </span>
+              </span>
+            </button>
+            <span style="font-size:12px;color:#64748B;max-width:280px;line-height:1.55;">Click it. The pill compresses from the right, swaps the label for a radial spinner, then settles on emerald with a check before returning to idle.</span>
+          </div>
+          <div class="btn-row" style="margin-top:2px;">
+            <button type="button" class="btn-primary" style="height:40px;padding:0 18px;font-size:13px;"><span class="material-icons btn-mi">content_copy</span> Copy component</button>
+            <button type="button" class="btn-discuss"><span class="material-icons" style="font-size:15px;">code</span> View tokens</button>
+            <button type="button" class="btn-text">Docs <span class="material-icons" style="font-size:16px;">north_east</span></button>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:900}}">
+const TONES = {
+  dark:    { bg: '#0F172A', fg: '#FFFFFF', edge: 'rgba(15,23,42,.55)', shine: '#10B981', sheen: 0.30,
+             glow: '0 8px 24px -14px rgba(15,23,42,.85)', glowHover: '0 16px 34px -14px rgba(16,185,129,.75)' },
+  light:   { bg: 'var(--card-bg)', fg: '#0F172A', edge: 'rgba(203,213,225,.9)', shine: '#10B981', sheen: 0.75,
+             glow: '0 6px 18px -12px rgba(15,23,42,.5)', glowHover: '0 14px 30px -14px rgba(16,185,129,.55)' },
+  emerald: { bg: '#10B981', fg: '#FFFFFF', edge: 'rgba(6,95,70,.7)', shine: '#ECFDF5', sheen: 0.45,
+             glow: '0 8px 24px -12px rgba(16,185,129,.7)', glowHover: '0 16px 34px -12px rgba(16,185,129,.9)' },
+  amber:   { bg: '#F59E0B', fg: '#FFFFFF', edge: 'rgba(180,83,9,.65)', shine: '#FEF3C7', sheen: 0.45,
+             glow: '0 8px 24px -12px rgba(245,158,11,.65)', glowHover: '0 16px 34px -12px rgba(245,158,11,.85)' },
+  danger:  { bg: '#EF4444', fg: '#FFFFFF', edge: 'rgba(153,27,27,.65)', shine: '#FEE2E2', sheen: 0.45,
+             glow: '0 8px 24px -12px rgba(239,68,68,.65)', glowHover: '0 16px 34px -12px rgba(239,68,68,.85)' }
+};
+
+const SIZES = {
+  sm: { size: '11px', pad: '5px 12px', iconSize: '14px' },
+  md: { size: '13px', pad: '8px 16px', iconSize: '16px' },
+  lg: { size: '15px', pad: '11px 20px', iconSize: '18px' }
+};
+
+const TABS = [
+  { id: 'announce', label: 'Announcement', icon: 'campaign' },
+  { id: 'ai',       label: 'AI & Beta',    icon: 'auto_awesome' },
+  { id: 'status',   label: 'Status',       icon: 'insights' },
+  { id: 'nav',      label: 'Navigation',   icon: 'explore' },
+  { id: 'anatomy',  label: 'Sizes & tones', icon: 'tune' },
+  { id: 'states',   label: 'States',       icon: 'bolt' }
+];
+
+const CONTENT = {
+  announce: {
+    title: 'Announcement',
+    desc: 'Above-the-fold launch news, sat over a hero headline.',
+    groups: [
+      { label: 'Launch banner', tag: 'hero / top of page', note: 'One per view. Anchored above the H1, it carries a single link and never wraps to a second line.',
+        items: [
+          { icon: 'rocket_launch', label: 'Just launched on ProductHunt', accent: '#F97316', tone: 'dark', size: 'lg', arrow: true },
+          { icon: 'campaign', label: 'Deha 2.0 is live', accent: '#10B981', tone: 'light', size: 'lg', arrow: true }
+        ] },
+      { label: 'Release note', tag: 'changelog row', note: 'Paired with a version badge, the pill becomes a dateline for a changelog entry.',
+        items: [
+          { icon: 'new_releases', label: 'Pipeline board', meta: 'v2.4', accent: '#10B981', tone: 'light', size: 'md' },
+          { icon: 'bolt', label: 'Faster calendar sync', meta: 'new', accent: '#3B82F6', tone: 'light', size: 'md' },
+          { icon: 'event', label: 'Webinar · 14 Oct', accent: '#EC4899', tone: 'dark', size: 'md', arrow: true }
+        ] }
+    ]
+  },
+  ai: {
+    title: 'AI & Beta',
+    desc: 'Marking generated content and gated features.',
+    groups: [
+      { label: 'AI surfaces', tag: 'above an AI message box', note: 'The rotating edge-light reads as "thinking". Use the emerald tone while a response streams, the light tone once it settles.',
+        items: [
+          { icon: 'auto_awesome', label: 'Generated by Jeru', accent: '#10B981', tone: 'light', size: 'md' },
+          { icon: 'psychology', label: 'Thinking…', accent: '#10B981', tone: 'emerald', size: 'md' },
+          { icon: 'smart_toy', label: 'Ask Jeru anything', accent: '#0F172A', tone: 'dark', size: 'md', arrow: true }
+        ] },
+      { label: 'Access gates', tag: 'feature flag', note: 'Beta and early-access labels sit inline with a section title, never inside a form.',
+        items: [
+          { icon: 'science', label: 'Beta', accent: '#3B82F6', tone: 'light', size: 'sm' },
+          { icon: 'lock_open', label: 'Early access', meta: 'invite', accent: '#8B5CF6', tone: 'light', size: 'sm' },
+          { icon: 'workspace_premium', label: 'Pro plan', accent: '#EAB308', tone: 'amber', size: 'sm' }
+        ] }
+    ]
+  },
+  status: {
+    title: 'Status',
+    desc: 'Live system state and deal-level signals.',
+    groups: [
+      { label: 'System status', tag: 'header strip', note: 'Only the live-status pill animates continuously; resolved states drop the shimmer by using the light tone.',
+        items: [
+          { icon: 'radio_button_checked', label: 'All systems operational', accent: '#10B981', tone: 'light', size: 'md' },
+          { icon: 'sync', label: 'Syncing 3 pipelines', accent: '#F97316', tone: 'light', size: 'md' },
+          { icon: 'warning', label: 'Degraded · CRM import', accent: '#EF4444', tone: 'danger', size: 'md' }
+        ] },
+      { label: 'Deal signals', tag: 'pipeline card', note: 'Sits in the card header next to the GCI badge. Cap at one shiny pill per card so the motion stays meaningful.',
+        items: [
+          { icon: 'local_fire_department', label: 'Hot lead', meta: '92', accent: '#F97316', tone: 'dark', size: 'sm' },
+          { icon: 'trending_up', label: 'Closing this week', accent: '#10B981', tone: 'emerald', size: 'sm' },
+          { icon: 'schedule', label: 'Follow-up due', accent: '#EF4444', tone: 'light', size: 'sm' }
+        ] }
+    ]
+  },
+  nav: {
+    title: 'Navigation',
+    desc: 'Entry points that move someone somewhere else.',
+    groups: [
+      { label: 'Inline link', tag: 'in body copy', note: 'The trailing arrow is required whenever the pill navigates. Without it the pill reads as a label, not a control.',
+        items: [
+          { icon: 'menu_book', label: 'Read the changelog', accent: '#64748B', tone: 'light', size: 'md', arrow: true },
+          { icon: 'groups', label: 'Join 4,200 agents', accent: '#3B82F6', tone: 'light', size: 'md', arrow: true }
+        ] },
+      { label: 'Footer call to action', tag: 'end of page', note: 'The dark tone carries the most contrast, so reserve it for the single strongest action on the page.',
+        items: [
+          { icon: 'north_east', label: 'Book a demo', accent: '#10B981', tone: 'dark', size: 'lg', arrow: true },
+          { icon: 'volunteer_activism', label: 'Refer an agent · earn $250', accent: '#EC4899', tone: 'emerald', size: 'lg', arrow: true }
+        ] }
+    ]
+  },
+  anatomy: {
+    title: 'Sizes & tones',
+    desc: 'Three sizes, five tones. Everything else is content.',
+    groups: [
+      { label: 'Size', tag: 'sm 11px · md 13px · lg 15px', note: 'Small for in-card labels, medium for section headers, large only for hero and footer moments.',
+        items: [
+          { icon: 'star', label: 'Small', accent: '#10B981', tone: 'light', size: 'sm' },
+          { icon: 'star', label: 'Medium', accent: '#10B981', tone: 'light', size: 'md' },
+          { icon: 'star', label: 'Large', accent: '#10B981', tone: 'light', size: 'lg' }
+        ] },
+      { label: 'Tone', tag: 'surface fill', note: 'The conic edge-light is always emerald-into-white; the tone only changes the fill beneath it.',
+        items: [
+          { icon: 'dark_mode', label: 'Dark', accent: '#10B981', tone: 'dark', size: 'md' },
+          { icon: 'light_mode', label: 'Light', accent: '#10B981', tone: 'light', size: 'md' },
+          { icon: 'eco', label: 'Emerald', accent: '#065F46', tone: 'emerald', size: 'md' },
+          { icon: 'bolt', label: 'Amber', accent: '#B45309', tone: 'amber', size: 'md' },
+          { icon: 'priority_high', label: 'Danger', accent: '#991B1B', tone: 'danger', size: 'md' }
+        ] }
+    ]
+  },
+  states: {
+    title: 'States',
+    desc: 'Idle, hover, press, focus, loading, done, disabled.',
+    groups: [
+      { label: 'Resting states', tag: 'hover · press · focus', note: 'Hover lifts 2px and warms the glow to emerald; press settles to 96.5%; keyboard focus draws a 2px emerald ring at 3px offset.',
+        items: [
+          { icon: 'touch_app', label: 'Hover me', accent: '#10B981', tone: 'dark', size: 'md', arrow: true },
+          { icon: 'keyboard', label: 'Tab to focus me', accent: '#3B82F6', tone: 'light', size: 'md' },
+          { icon: 'block', label: 'Disabled', accent: '#94A3B8', tone: 'light', size: 'md', disabled: true }
+        ] }
+    ]
+  }
+};
+
+class Component extends DCLogic {
+  state = { tab: 'announce', phase: 'idle' };
+
+  componentWillUnmount() { clearTimeout(this._t1); clearTimeout(this._t2); }
+
+  run = () => {
+    if (this.state.phase !== 'idle') return;
+    this.setState({ phase: 'loading' });
+    this._t1 = setTimeout(() => this.setState({ phase: 'done' }), 1500);
+    this._t2 = setTimeout(() => this.setState({ phase: 'idle' }), 3200);
+  };
+
+  decorate(it) {
+    const tone = TONES[it.tone] || TONES.light;
+    const size = SIZES[it.size] || SIZES.md;
+    const dim = it.disabled;
+    return {
+      ...it, ...size,
+      bg: tone.bg,
+      fg: dim ? '#94A3B8' : tone.fg,
+      edge: dim ? 'rgba(203,213,225,.8)' : tone.edge,
+      edgeGrad: (() => {
+        const base = dim ? 'rgba(203,213,225,.8)' : tone.edge;
+        const shine = dim ? '#E2E8F0' : tone.shine;
+        return `linear-gradient(90deg, ${base} 0%, ${base} 34%, ${shine} 45%, #FFFFFF 50%, ${shine} 55%, ${base} 66%, ${base} 100%)`;
+      })(),
+      shine: dim ? '#CBD5E1' : tone.shine,
+      sheen: dim ? 0 : tone.sheen,
+      glow: dim ? 'none' : tone.glow,
+      glowHover: dim ? 'none' : tone.glowHover,
+      meta: it.meta || null,
+      arrow: !!it.arrow,
+      disabled: !!dim,
+      cursor: dim ? 'not-allowed' : 'pointer',
+      opacity: dim ? 0.55 : 1,
+      lift: dim ? 'none' : 'translateY(-2px)',
+      pressT: dim ? 'none' : 'scale(.965)',
+      ring: dim ? 'none' : '2px solid #10B981',
+      play: dim ? 'paused' : 'running',
+      sheenOn: dim ? 0 : 1
+    };
+  }
+
+  renderVals() {
+    const tab = this.state.tab;
+    const c = CONTENT[tab];
+    const p = this.state.phase;
+    return {
+      tabs: TABS.map(t => ({
+        ...t,
+        cls: 'pill-tab' + (t.id === tab ? ' active' : ''),
+        go: () => this.setState({ tab: t.id })
+      })),
+      activeTitle: c.title,
+      activeDesc: c.desc,
+      groups: c.groups.map(g => ({ ...g, items: g.items.map(i => this.decorate(i)) })),
+      showStates: tab === 'states',
+      runDemo: this.run,
+      demoBg: p === 'done' ? '#10B981' : '#0F172A',
+      demoLabelOpacity: p === 'idle' ? 1 : 0,
+      demoLabelScale: p === 'idle' ? 1 : 0.82,
+      demoSpinOpacity: p === 'loading' ? 1 : 0,
+      demoDoneOpacity: p === 'done' ? 1 : 0,
+      demoDoneScale: p === 'done' ? 1 : 0.82,
+      demoWidth: p === 'idle' ? '190px' : '76px'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
