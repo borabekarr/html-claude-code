@@ -1,0 +1,45 @@
+.bg-card-no-pad { padding: 0; }
+.bg-holder { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px; background: #FFFFFF; }
+.bg-stage {
+  height: 200px; border-radius: 16px;
+  position: relative; overflow: hidden;
+  border: 1px solid #ECECEC;
+}
+.bg-stage.flat { background: #FFFFFF; }
+.bg-stage.grid {
+  background: #FFFFFF;
+  background-image:
+    linear-gradient(to right, rgba(17,17,17,0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17,17,17,0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.bg-pill {
+  position: absolute; top: 16px; left: 16px;
+  padding: 5px 11px; border-radius: 9999px;
+  background: #111111; color: #fff;
+  font-size: 10px; font-weight: 800; letter-spacing: 0.05em;
+  font-family: 'Montserrat';
+}
+.bg-meta {
+  position: absolute; left: 16px; bottom: 14px; right: 16px;
+  font-family: 'Montserrat';
+}
+.bg-meta .bg-name { font-weight: 800; font-size: 13px; color: #111111; letter-spacing: -0.01em; }
+.bg-meta .bg-desc { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 10px; color: #6B6B6B; margin-top: 3px; line-height: 1.4; }
+
+/* ── Dark mode: chrome adapts; gradient specimens stay as-is ── */
+html.dark .bg-holder { background: #111111; }
+html.dark .bg-stage { border-color: #232323; }
+/* Specimen card surfaces switch to dark-panel tones */
+html.dark .bg-stage.flat { background: #1C1C1C; }
+html.dark .bg-stage.grid {
+  background: #1C1C1C;
+  background-image:
+    linear-gradient(to right, rgba(241,245,249,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(241,245,249,0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+/* Default pill (dark bg) keeps its color; SECTION pill has inline var(--brand-primary-500) (specimen) — stays */
+/* Chrome text labels and descriptions adapt */
+html.dark .bg-meta .bg-name { color: #F5F5F5; }
+html.dark .bg-meta .bg-desc { color: #A1A1A1; }

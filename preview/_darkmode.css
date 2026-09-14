@@ -1,0 +1,377 @@
+/* =========================================================================
+   Deha Design System — Dark mode overrides for component previews
+   Activated by `dark` class on <html> (toggled by _darkmode.js).
+   Components hardcode their colors, so these remap them to a coherent
+   dark palette. Brand emerald + semantic colors are intentionally kept.
+
+   Palette:
+     page      #111111     recessed   #111111 / #0A0A0A
+     shell     #0A0A0A     panel/card #1C1C1C
+     hover     #242424     border     #232323
+     text-1    #F5F5F5     text-2     #D4D4D4     text-3 #A1A1A1
+   ========================================================================= */
+
+/* ── Page-level surfaces (shared) ───────────────────────────────────── */
+html.dark body { background: #111111 !important; }
+
+html.dark .card {
+  background: #111111 !important;
+  background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, rgba(17,17,17,1) 55%, #111111 100%);
+  color: #F5F5F5;
+}
+/* Workflow-nodes keeps its dotted canvas look */
+html.dark .card:has(.wf-grid) {
+  background: #111111 !important;
+  background-image: radial-gradient(circle at 1px 1px, #232323 1px, transparent 1px) !important;
+  background-size: 16px 16px !important;
+}
+/* Template-cards card is a flat tray */
+html.dark .card:has(.tmpl-grid) {
+  background: #111111 !important;
+  background-image: none;
+}
+html.dark .frame {
+  background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.10) 0%, rgba(17,17,17,1) 50%, #111111 100%);
+}
+html.dark .card.card--flat {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Shared gray "outer shells" → dark bezel */
+html.dark .ms-outer,
+html.dark .exp-outer,
+html.dark .te-outer,
+html.dark .wf-outer,
+html.dark .lb-outer,
+html.dark .tmpl-outer,
+html.dark .pop-outer,
+html.dark .mem-outer,
+html.dark .wp-bezel,
+html.dark .mb-shell { background: #0A0A0A; }
+
+/* ── Segmented control (controls + leaderboard) ─────────────────────── */
+html.dark .seg { background: #111111; }
+html.dark .seg button { color: #A1A1A1; }
+html.dark .seg .seg-pill { background: #F5F5F5; }
+html.dark .seg button.active { color: #111111; }
+/* accent variant stays emerald in dark (same as light) */
+html.dark .seg.accent .seg-pill { background: #10B981; }
+html.dark .seg.accent button.active { color: #FFFFFF; }
+/* must out-specify the controls-scoped track rule (`.card > .row .seg …`) */
+html.dark .card > .row .seg.accent .seg-pill { background: #10B981; }
+html.dark .card > .row .seg.accent button.active { color: #FFFFFF; }
+
+/* ── components-controls ────────────────────────────────────────────── */
+html.dark .title { color: #F5F5F5; }
+html.dark .meta  { color: #A1A1A1; }
+html.dark .row + .row { border-top-color: #232323; }
+html.dark .sw-off { background: #4A4A4A; }
+html.dark .slider { background: #232323; }
+html.dark .slider .thumb { background: #F5F5F5; border-color: #232323; }
+/* The segmented control sits directly on the page card (#111111), so the
+   shared #111111 track is invisible. Raise the track + add a border so the two
+   options read as a distinct grouped control. */
+html.dark .card > .row .seg {
+  background: #1C1C1C;
+  box-shadow: inset 0 0 0 1px #232323, inset 0 2px 4px rgba(0,0,0,0.30);
+}
+html.dark .card > .row .seg button { color: #D4D4D4; }
+html.dark .card > .row .seg .seg-pill { background: #F5F5F5; }
+html.dark .card > .row .seg button.active { color: #111111; }
+
+/* ── components-pills ───────────────────────────────────────────────── */
+html.dark .pill-priority {
+  background: #1C1C1C; border-color: #232323; color: #D4D4D4;
+}
+html.dark .pill-tab {
+  background: #1C1C1C; border-color: #232323; color: #D4D4D4;
+}
+html.dark .pill-tab.dark { background: #0A0A0A; }
+/* Active (emerald) pill: drop the sharp white bottom highlight that breaks at
+   the rounded ends — match the soft inset of the inactive pills. */
+html.dark .pill-tab.active { box-shadow: inset 0 -2px 5px rgba(0,0,0,0.20); }
+html.dark .badge.tag {
+  background: #242424; color: #D4D4D4; border-color: #232323;
+}
+
+/* ── components-model-selector ──────────────────────────────────────── */
+html.dark .ms-trigger { background: #1C1C1C; border-color: #232323; }
+html.dark .ms-t-icon  { color: #D4D4D4; }
+html.dark .ms-t-model { color: #F5F5F5; }
+html.dark .ms-t-sep   { background: #232323; }
+html.dark .ms-panel   { background: #1C1C1C; }
+html.dark .ms-row::after { background: #232323; }
+html.dark .ms-row:hover  { background: #242424; }
+html.dark .ms-row:active { background: #232323; }
+html.dark .ms-row.sel        { background: rgba(16,185,129,0.16); box-shadow: inset 0 0 0 1px rgba(16,185,129,0.30); }
+html.dark .ms-row.sel:hover  { background: rgba(16,185,129,0.22); }
+html.dark .ms-name { color: #F5F5F5; }
+html.dark .ms-stat { color: #A1A1A1; }
+/* Selected row sits flush to the panel edge — round its outer corners so the
+   emerald ring follows the panel's rounding instead of cutting a straight line
+   across the top (Auto) / bottom (Pro). */
+html.dark .ms-row.sel:first-of-type { border-top-left-radius: 22px; border-top-right-radius: 22px; }
+html.dark .ms-row.sel:last-of-type  { border-bottom-left-radius: 22px; border-bottom-right-radius: 22px; }
+
+/* ── components-metric-card ─────────────────────────────────────────── */
+html.dark .metric { background: #1C1C1C; border-color: #232323; }
+html.dark .m-label { color: #D4D4D4; }
+html.dark .m-num   { color: #F5F5F5; }
+html.dark .exp-card  { background: #1C1C1C; }
+html.dark .exp-crumb strong { color: #D4D4D4; }
+html.dark .exp-close { background: #232323; color: #D4D4D4; }
+html.dark .exp-close:hover { background: #4A4A4A; }
+html.dark .exp-num   { color: #F5F5F5; }
+html.dark .exp-insight { color: #D4D4D4; }
+html.dark .exp-insight b { color: #F5F5F5; }
+html.dark .exp-chart-svg-wrap::after {
+  background: linear-gradient(to right, #1C1C1C 0%, transparent 16%, transparent 84%, #1C1C1C 100%);
+}
+
+/* ── components-leaderboard ─────────────────────────────────────────── */
+html.dark .lb { background: #1C1C1C; }
+html.dark .lb .h-title { color: #F5F5F5; }
+html.dark .lb .name { color: #F5F5F5 !important; }
+html.dark .lb .rev  { color: #F5F5F5 !important; }
+html.dark .lb .a2 { background: #232323; color: #D4D4D4; }
+html.dark .lb .row.win {
+  background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.35);
+}
+html.dark .lb .row:not(.win):hover { background: #242424; }
+
+/* ── components-task-card ───────────────────────────────────────────── */
+/* Card body is fully token-driven (bg/border/text). Only swap the glossy
+   white insets for dark edges and de-gloss the status tag. */
+html.dark .task {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.30), 0 1px 2px rgba(0,0,0,0.4);
+}
+html.dark .status-tag {
+  background: #111111;
+  border-color: #232323;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -2px 4px rgba(0,0,0,0.25);
+}
+html.dark .avatar { border-color: #1C1C1C; }
+
+/* ── components-theme-editor ────────────────────────────────────────── */
+html.dark { --tk-empty: #232323; }
+html.dark .te-panel { background: #1C1C1C; }
+html.dark .te-search { background: #111111; border-color: #232323; }
+html.dark .te-search input { color: #D4D4D4; }
+html.dark .te-save { background: #F5F5F5; color: #111111; }
+html.dark .te-save:hover { background: #ECECEC; }
+html.dark .te-divider { background: #232323; }
+html.dark .te-s-title { color: #F5F5F5; }
+html.dark .te-s-head .material-icons { color: #4A4A4A; }
+html.dark .te-mode { background: #111111; border-color: #232323; }
+html.dark .te-mode.sel { background: #202020; }
+html.dark .te-mode:not(.sel):hover { background: #202020; border-color: #4A4A4A; }
+html.dark .te-thumb { background: #0A0A0A; }
+html.dark .tw-block { background: #4A4A4A; }
+html.dark .tw-line  { background: #4A4A4A; }
+html.dark .te-mode-name { color: #F5F5F5; }
+html.dark .te-checkmark { background: #1C1C1C; border-color: #4A4A4A; }
+/* Selected checkmark badge: keep the emerald + grid-line treatment (matches the
+   hero accent card). The base .te-checkmark.active rule is out-specificity'd by
+   the html.dark .te-checkmark reset above, so restate it here. */
+html.dark .te-checkmark.active {
+  background: #10B981;
+  border-color: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px);
+  background-size: 5px 5px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), inset 0 -2px 0 rgba(17,17,17,0.15);
+}
+html.dark .te-row:not(:last-child)::after { background: #232323; }
+html.dark .te-label { color: #F5F5F5; }
+html.dark .te-sw.sel { box-shadow: 0 0 0 2.5px #1C1C1C, 0 0 0 5px var(--c), 0 2px 8px rgba(0,0,0,0.4); }
+html.dark .te-a-lg { color: #F5F5F5; }
+html.dark input[type=range].te-range::-webkit-slider-thumb { border-color: #232323; background: #F5F5F5; }
+html.dark input[type=range].te-range::-moz-range-thumb { border-color: #232323; background: #F5F5F5; }
+html.dark .te-bright-pct { color: #D4D4D4; }
+html.dark .te-hotkey { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .te-tog { background: #4A4A4A; }
+/* Toggled-on stays emerald with grid (the html.dark .te-tog reset above wins on
+   specificity over the base .te-tog.on, so restate the green version). */
+html.dark .te-tog.on {
+  background: #10B981;
+  background-image: linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: 7px 7px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.42), inset 0 -2px 0 rgba(17,17,17,0.14), inset 0 0 0 1px rgba(17,17,17,0.08);
+}
+
+/* ── components-workflow-add-elements ───────────────────────────────── */
+html.dark #canvas {
+  background-color: #111111;
+  background-image: radial-gradient(circle, #232323 1px, transparent 1px);
+}
+html.dark .canvas-hint {
+  background: rgba(28,28,28,0.85); border-color: rgba(255,255,255,0.08); color: #A1A1A1;
+}
+html.dark .pop-inner { background: #1C1C1C; }
+html.dark .ae-title { color: #F5F5F5; }
+html.dark .ae-tabs { background: #111111; }
+html.dark .ae-tab { color: #A1A1A1; }
+html.dark .ae-tab.active { background: #232323; color: #F5F5F5; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+html.dark .ae-tab:not(.active):hover { color: #D4D4D4; }
+html.dark .ae-search { background: #111111; border-color: #232323; }
+html.dark .ae-search input { color: #F5F5F5; }
+html.dark .ae-item:hover, html.dark .ae-item.hovered { background: #242424; }
+html.dark .ae-item.hovered .ae-chevron { color: #A1A1A1 !important; }
+html.dark .ae-name { color: #F5F5F5; }
+html.dark .ae-chevron { color: #4A4A4A !important; }
+html.dark .ae-sep { background: #232323; }
+html.dark .ae-ai-btn {
+  background-image: linear-gradient(#1C1C1C,#1C1C1C), linear-gradient(135deg,#6EE7B7 0%,#10B981 50%,#059669 100%);
+  color: #6EE7B7;
+}
+html.dark .ae-ai-btn:hover {
+  background-image: linear-gradient(#242424,#242424), linear-gradient(135deg,#6EE7B7 0%,#10B981 50%,#059669 100%);
+}
+html.dark .nodes-list::-webkit-scrollbar-thumb { background: #232323; }
+html.dark .node-item:hover { background: #242424; }
+html.dark .node-name { color: #F5F5F5; }
+
+/* ── components-workflow-nodes ──────────────────────────────────────── */
+html.dark .wf-tool { background: #1C1C1C; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-tool.connect { background: transparent; border-color: #6B6B6B; }
+html.dark .wf-tool.connect:hover { border-color: #A1A1A1; }
+html.dark .wf-tool.add:hover  { color: #6EE7B7; background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.40); }
+html.dark .wf-tool.edit:hover { color: #F5F5F5; background: #242424; border-color: #4A4A4A; }
+html.dark .wf-tool.del:hover  { color: #FCA5A5; background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.40); }
+html.dark .wf-card { background: #1C1C1C; }
+html.dark .wf-title { color: #F5F5F5; }
+html.dark .wf-title .ic { color: #D4D4D4; }
+html.dark .wf-menu:hover { background: #242424; color: #D4D4D4; }
+html.dark .wf-chip { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-chip.method { background: #242424; color: #A1A1A1; }
+html.dark .wf-url { color: #A1A1A1; }
+html.dark .wf-connect { background: #111111; border-color: #232323; color: #F5F5F5; }
+html.dark .wf-connect:hover { background: #242424; }
+html.dark .wf-connect .ic { color: #D4D4D4; }
+html.dark .wf-desc { color: #D4D4D4; }
+html.dark .wf-prompt { background: #111111; border-color: #232323; color: #D4D4D4; }
+html.dark .wf-prompt .var { background: rgba(16,185,129,0.18); color: #6EE7B7; }
+html.dark .wf-warn { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.40); color: #FCA5A5; }
+
+/* ── components-workflow-publish ────────────────────────────────────── */
+html.dark .pb-btn { background: #F5F5F5; color: #111111; }
+html.dark .pb-btn:hover { background: #ECECEC; }
+html.dark .pb-popover { background: #1C1C1C; border-color: #232323; }
+html.dark .pb-pop-title { color: #F5F5F5; }
+html.dark .pb-version { color: #D4D4D4; background: #111111; border-color: #232323; }
+html.dark .pb-update-btn { background: #F5F5F5; color: #111111; }
+html.dark .pb-update-btn:hover { background: #ECECEC; }
+html.dark .pb-edited { border-top-color: #232323; }
+html.dark .pb-edited:hover { background: #242424; }
+html.dark .pb-edited-left { color: #D4D4D4; }
+html.dark .pb-edited .arrow { color: #4A4A4A; }
+html.dark .pb-div { background: #232323; }
+html.dark .pb-action:hover { background: #242424; }
+html.dark .pb-action:active { background: #232323; }
+html.dark .pb-action-label { color: #F5F5F5; }
+html.dark .pb-action .arrow { color: #4A4A4A; }
+
+/* ── components-workflow-template-cards ─────────────────────────────── */
+html.dark .tmpl-card { background: #1C1C1C; }
+html.dark .tmpl-preview { background: #0A0A0A; }
+html.dark .tmpl-conn { border-top-color: #4A4A4A; }
+html.dark .tmpl-use { background: #F5F5F5; color: #111111; }
+html.dark .tmpl-info { border-top-color: #232323; }
+html.dark .tmpl-title { color: #F5F5F5; }
+html.dark .tmpl-desc { color: #D4D4D4; }
+html.dark .badge-pro { background-color: #4A4A4A; }
+
+/* ── iconography ─────────────────────────────────────────────────────── */
+html.dark .ic .material-icons,
+html.dark .ic .material-symbols-outlined { color: #F5F5F5; }
+html.dark .ic span.name { color: #A1A1A1; }
+
+/* ── components-ai-caveat ───────────────────────────────────────────── */
+html.dark .ai-bubble {
+  background: #1C1C1C; border-color: #232323;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20), 0 2px 12px rgba(0,0,0,0.30);
+}
+html.dark .ai-text { color: #D4D4D4; }
+html.dark .ai-action-btn { color: #4A4A4A; }
+html.dark .ai-action-btn:hover { background: #242424; color: #D4D4D4; }
+/* Orange caveat keeps its accent — just deepen the wash and drop the white sheen. */
+html.dark .ai-caveat {
+  background: rgba(249,115,22,0.12);
+  border-color: #F97316;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 2px 8px rgba(0,0,0,0.30);
+}
+
+/* =========================================================================
+   Kill the glossy white top-highlight on dark surfaces
+   The components bake `inset 0 1px 0 rgba(255,255,255,1)` into every card/
+   panel/button for a light-mode sheen — on dark it reads as a hard white
+   line. Re-state each box-shadow with a faint 0.05 highlight + dark edges.
+   (Colored badges/icons keep their gloss; it sits on a colored fill.)
+   ========================================================================= */
+html.dark .ms-trigger {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 4px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.04), 0 2px 8px rgba(0,0,0,0.30);
+}
+html.dark .ms-panel {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+html.dark .metric {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+html.dark .metric:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.28);
+}
+html.dark .exp-card { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .lb {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -2px 0 rgba(0,0,0,0.20), inset 1px 0 0 rgba(255,255,255,0.03), inset -1px 0 0 rgba(255,255,255,0.03);
+}
+html.dark .lb .a2 {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+html.dark .badge.tag {
+  box-shadow: inset 0 -2px 5px rgba(0,0,0,0.20), inset 0 -1px 0 rgba(255,255,255,0.05);
+}
+html.dark .te-panel { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .te-hotkey {
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html.dark .pop-inner {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .pb-popover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+html.dark .pb-version { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .tmpl-card { box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .wf-tool {
+  box-shadow: 0 3px 8px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+html.dark .wf-card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .wf-chip {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+html.dark .wf-connect {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.20);
+}
+
+/* ── components-fab ─────────────────────────────────────────────────── */
+html.dark .fab-screen {
+  background: #1C1C1C;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+html.dark .sc-name { color: #F5F5F5; }
+html.dark .sc-hero { background: #0A0A0A; box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .sc-ic { background: #111111; color: #D4D4D4; }
+html.dark .sc-it-name { color: #F5F5F5; }
+html.dark .sc-it-amt { color: #F5F5F5; }
+/* Round-3 parity fix: this rule used to own the expanded panel's dark
+   background + shadow, but it has HIGHER selector specificity than Fab.css's
+   own `.fab-screen.open .fab` rule (html + 4 classes here vs 3 classes
+   there), so its box-shadow silently won the cascade over Fab.css's
+   box-shadow:none and leaked a stray shadow/highlight onto the cards-page
+   parity shell. Background + border + filter are now fully owned locally in
+   Fab.css (see --fp-bezel-bg / dark-only border / filter:drop-shadow), so
+   this rule is retired rather than left to fight the cascade. */

@@ -1,0 +1,139 @@
+/* _animations-registry.css — ported verbatim from AnimationsRegistry.css,
+   plus a small .areg-demo-* block for the simplified per-slug demo stages
+   (see the jsx file's header comment for why they are simplified). Duration
+   and easing values below are lifted straight from guides.ts's documented
+   tokens for each slug (not invented curves). */
+
+.areg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 4px;
+}
+
+.areg-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--border-hairline);
+  background: var(--shell-bg);
+  padding: 14px;
+}
+
+.areg-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.areg-stage {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  border-radius: var(--radius-md, 10px);
+  background: var(--shell-bg);
+}
+
+.areg-stage-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: scale(0.5);
+  transform-origin: top left;
+  width: 200%;
+}
+
+.areg-guide-line {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg3);
+}
+
+.areg-guide-label {
+  font-weight: 600;
+  color: var(--fg1);
+}
+
+.areg-family-rules {
+  padding: 20px 18px 24px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.areg-family-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.areg-family-intro {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg3);
+  margin-bottom: 12px;
+  max-width: 720px;
+}
+
+.areg-family-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.areg-family-table th,
+.areg-family-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 10px 6px 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.areg-family-table th {
+  color: var(--fg3);
+  font-weight: 600;
+}
+
+/* ── simplified per-slug demo stages ── */
+.areg-demo { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); }
+
+/* animated-list: per-row DOM-order stagger reveal — 240ms + 100ms increment (guide row). */
+.areg-demo-list { flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; }
+.areg-demo-row {
+  padding: 8px 14px; border-radius: 10px; background: var(--card-bg, #fff);
+  border: 1px solid var(--border-hairline); font-size: 13px;
+  animation: aregRowIn calc(var(--duration-560, 560ms) * var(--anim-mult, 1)) var(--ease-out) both;
+  animation-delay: calc(var(--areg-i) * calc(100ms * var(--anim-mult, 1)));
+}
+@keyframes aregRowIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* number-flow: --duration-slow transform, eased with --ease-out. */
+.areg-demo-number {
+  font-size: 40px; font-weight: 900; font-variant-numeric: tabular-nums;
+  animation: aregNumberIn calc(var(--duration-slow, 220ms) * var(--anim-mult, 1)) var(--ease-out) both;
+}
+@keyframes aregNumberIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* prize-sheet: --duration-560 spring entrance via --ease-spring (guide row's documented curve). */
+.areg-demo-prize-card {
+  padding: 18px 26px; border-radius: 18px; background: var(--card-bg, #fff);
+  border: 1px solid var(--border-hairline); font-size: 14px; font-weight: 700;
+  animation: aregPrizeIn calc(var(--duration-560, 560ms) * var(--anim-mult, 1)) var(--ease-spring) both;
+}
+@keyframes aregPrizeIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+/* shimmer: continuous wave loop, --ease-linear (guide row's documented curve). */
+.areg-demo-shimmer {
+  width: 70%; height: 60px; border-radius: 10px; position: relative; overflow: hidden;
+  background: var(--fp-hover-on-light, #eee);
+}
+.areg-demo-shimmer::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.06), transparent);
+  animation: aregShimmerWave calc(var(--shim-dur, 1500ms) * var(--anim-mult, 1)) linear infinite;
+}
+@keyframes aregShimmerWave { 100% { transform: translateX(100%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .areg-demo-row, .areg-demo-number, .areg-demo-prize-card, .areg-demo-shimmer::after { animation: none !important; }
+}

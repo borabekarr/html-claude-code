@@ -1,0 +1,29 @@
+/* swatches + sw defined here so ColorsPrimary works standalone */
+.cp-swatches { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.cp-sw { aspect-ratio: 1; border-radius: 10px; display:flex; flex-direction:column; justify-content:flex-end; padding: 6px; font-size: 9px; font-weight: 700; line-height: 1.1; color: white; }
+.cp-sw.lite { color: var(--gray-900); }
+.cp-label-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom: 10px; }
+.cp-lr-title { font-weight: 900; font-size: 18px; letter-spacing: -0.02em; color: var(--gray-900); display:flex; align-items:center; gap:8px; }
+.cp-lr-dot { width: 14px; height: 14px; border-radius: 4px; background: var(--brand-primary-500); }
+.cp-lr-meta { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--gray-500); }
+
+.cp-extra-row { margin-top: 16px; }
+.cp-lr-title-sm { font-size: 13px; font-weight: 800; gap: 0; }
+
+.cp-usage { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--gray-200); display: flex; flex-direction: column; gap: 6px; }
+.cp-usage-title { font-weight: 900; font-size: 12px; letter-spacing: -0.01em; color: var(--gray-900); margin-bottom: 2px; }
+.cp-usage-row { display: flex; align-items: baseline; gap: 8px; font-size: 12px; }
+.cp-usage-row code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; font-weight: 700; color: var(--gray-900); background: var(--gray-200); border-radius: 4px; padding: 1px 5px; }
+.cp-usage-row span { color: var(--gray-500); }
+.cp-usage-note { font-size: 11px; color: var(--gray-500); margin: 4px 0 0; }
+.cp-usage-note code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; color: var(--gray-900); background: var(--gray-200); border-radius: 4px; padding: 1px 5px; }
+
+/* Dark mode — chrome adapts, swatch fills stay */
+html.dark .card { background: var(--gray-800); background-image: radial-gradient(ellipse at top right, rgba(16,185,129,0.08) 0%, rgba(28,28,28,1) 50%, var(--gray-800) 100%); }
+html.dark .cp-lr-title { color: var(--gray-100); }
+html.dark .cp-lr-meta { color: var(--gray-400); }
+html.dark .cp-usage { border-top-color: var(--gray-700); }
+html.dark .cp-usage-title { color: var(--gray-100); }
+html.dark .cp-usage-row code, html.dark .cp-usage-note code { color: var(--gray-100); background: var(--gray-700); }
+html.dark .cp-usage-row span { color: var(--gray-400); }
+html.dark .cp-usage-note { color: var(--gray-400); }

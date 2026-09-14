@@ -1,0 +1,406 @@
+/* _shared-feedback.css
+ * Shared utility classes for feedback UI patterns.
+ * Single source of truth -- component partials @reference these
+ * instead of redeclaring their own copies.
+ */
+
+/* --------------------------------------------------------------------------
+ * Grid texture utility
+ * Diluted from 0.14 to 0.07 per the "too griddy" complaint.
+ * Override --grid-alpha on a scoped selector to fine-tune per component.
+ * -------------------------------------------------------------------------- */
+:root {
+  --grid-alpha: 0.07;
+
+  /* Card surface tokens -- consumed by .card-inner and any other white-card surface */
+  --card-bg: #FFFFFF;
+  --card-border: #D4D4D4;
+  /* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+  --card-radius: var(--radius-xl, 20px);
+}
+
+html.dark {
+  --card-bg: #1C1C1C;
+  --card-border: #232323;
+}
+
+/* --------------------------------------------------------------------------
+ * .btn-green -- canonical green pill button
+ * Mirrors .pc-apply from _pipeline-card.css (class name swapped).
+ * -------------------------------------------------------------------------- */
+.btn-green {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #111111; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 6px rgba(17,17,17,0.28);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-green::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-green:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(17,17,17,0.32), inset 0 1px 0 rgba(255,255,255,0.2); }
+.btn-green:active { transform: scale(0.96); }
+html.dark .btn-green { background: var(--brand-primary-500); color: var(--brand-on-primary); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px color-mix(in srgb, var(--brand-primary-500) 34%, transparent); }
+
+/* --------------------------------------------------------------------------
+ * .btn-yellow -- canonical yellow pill button (mirrors .btn-green structure)
+ * Amber fill in BOTH light and dark for distinct/colorful look
+ * -------------------------------------------------------------------------- */
+.btn-yellow {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #F59E0B; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 2px 6px rgba(245,158,11,0.30);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-yellow:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(245,158,11,0.34), inset 0 1px 0 rgba(255,255,255,0.28); }
+.btn-yellow:active { transform: scale(0.96); }
+html.dark .btn-yellow { background: #F59E0B; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px rgba(245,158,11,0.34); }
+
+/* --------------------------------------------------------------------------
+ * .btn-red -- canonical red pill button (mirrors .btn-green structure)
+ * Red fill in BOTH light and dark for distinct/colorful look
+ * -------------------------------------------------------------------------- */
+.btn-red {
+  position: relative; overflow: hidden; height: 36px; min-width: 104px; padding: 0 17px; gap: 7px;
+  border-radius: 9999px; border: none; cursor: pointer;
+  background: #EF4444; color: #fff; font-size: 12px; font-weight: 800; font-family: 'Montserrat';
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 2px 6px rgba(239,68,68,0.30);
+  transition:
+    background-color calc(180ms * var(--anim-mult, 1)),
+    transform calc(var(--duration-base) * var(--anim-mult, 1)) var(--ease-press-calm),
+    box-shadow calc(200ms * var(--anim-mult, 1));
+}
+.btn-red::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 44px; height: 44px; transform: translate(-50%,-50%); }
+.btn-red:hover { transform: scale(1.03); box-shadow: 0 8px 20px rgba(239,68,68,0.34), inset 0 1px 0 rgba(255,255,255,0.28); }
+.btn-red:active { transform: scale(0.96); }
+html.dark .btn-red { background: #EF4444; box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 2px 8px rgba(239,68,68,0.34); }
+
+/* --------------------------------------------------------------------------
+ * House focus-visible ring (plan: focus-ring-tokens) -- single shared ring
+ * for every interactive control, replacing the three hardcoded rings this
+ * rule folds (.btn-green/.btn-yellow/.btn-red used to each declare their
+ * own literal outline above). :where() keeps specificity at zero so any
+ * component rule can still override the ring locally if it ever needs to.
+ * --brand-primary-500 is a single global value (not theme-scoped), same
+ * as the ring it replaces, so no html.dark fallback is needed here.
+ * -------------------------------------------------------------------------- */
+:where(
+  .btn-green, .btn-yellow, .btn-red,
+  .btn-primary, .btn-inverse, .btn-glass, .btn-text,
+  .ap-edge-btn, .ap-thumb, .ap-submit, .ie-act
+):focus-visible,
+:where(.ie-field):focus-within {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* --------------------------------------------------------------------------
+ * AiMessageBox control family focus-visible + 44px hit layer (plan:
+ * claude-design-frontend-pass, step 6) -- .mb-btn/.mb-ai-btn/.mb-send are
+ * shared AiMessageBox.css classes reused across every ai-chat-* / ai-message-
+ * box-* component; the frontend pass rule set requires focus-visible and a
+ * 44px hit layer on every sub-44px button. Added once here (global DS rule)
+ * rather than per component, per the fix-loop-sequence amendment. .mb-send
+ * is the only one that already sits at a fixed 36x36 box; .mb-btn/.mb-ai-btn
+ * are variable-width pills whose height (padding 8px + line height) also
+ * falls under 44px.
+ * -------------------------------------------------------------------------- */
+.mb-btn, .mb-ai-btn, .mb-send { position: relative; }
+.mb-btn::after, .mb-ai-btn::after, .mb-send::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%;
+  width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+:where(.mb-btn, .mb-ai-btn, .mb-send):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* --------------------------------------------------------------------------
+ * .btn-primary 44px hit layer (plan: claude-design-frontend-pass, step 22)
+ * -- .btn-primary already carries the shared :focus-visible ring above, but
+ * had no hit-layer counterpart to .btn-text/.btn-apply/.btn-discuss; its
+ * default padding (12px 20px, 14px text) renders under 44px tall. Added
+ * once here (global DS rule) rather than per component.
+ * -------------------------------------------------------------------------- */
+.btn-primary { position: relative; }
+.btn-primary::after {
+  content: ""; position: absolute; inset: 50% auto auto 50%;
+  width: 44px; height: 44px; transform: translate(-50%,-50%);
+}
+
+/* ==========================================================================
+ * SHARED FOUNDATIONS — appended block; do NOT redefine tokens above this line.
+ * ========================================================================== */
+
+/* --------------------------------------------------------------------------
+ * (a) Spacing scale — 4px base
+ * -------------------------------------------------------------------------- */
+:root {
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  /* Named use-case aliases */
+  --gap-icon-text: var(--space-2);   /* gap between an icon and adjacent text */
+  --pad-card:      var(--space-4);   /* padding from card border to content (matches .card-inner 16px) */
+  --gap-stack:     var(--space-4);   /* vertical rhythm between stacked elems  */
+  --gap-inline:    var(--space-3);   /* between sibling controls               */
+}
+
+/* --------------------------------------------------------------------------
+ * (b) Display typography — mirrors TypeDisplay.css exactly
+ * -------------------------------------------------------------------------- */
+:root {
+  --font-display: 'Montserrat';
+}
+
+.type-display {
+  font-family: 'Montserrat';
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+ * (c) Semantic color tokens — copied verbatim from ColorsSemantic.css
+ * -------------------------------------------------------------------------- */
+:root {
+  --sem-success: var(--brand-primary-500);
+  --sem-success-bg:   color-mix(in srgb, var(--brand-primary-500) 12%, transparent);
+  --sem-success-text: var(--brand-primary-600);
+
+  --sem-warning: #FBBF24;
+  --sem-warning-bg:   rgba(251, 191, 36, 0.12);
+  --sem-warning-text: #D97706;
+
+  --sem-danger: #EF4444;
+  --sem-danger-bg:   rgba(239, 68, 68, 0.12);
+  --sem-danger-text: #DC2626;
+
+  --sem-hot: #F97316;
+  --sem-hot-bg:   rgba(249, 115, 22, 0.12);
+  --sem-hot-text: #EA580C;
+}
+
+/* Dark mode panel backgrounds — verbatim from ColorsSemantic.css */
+html.dark .sem.success { background: #0c2a20 !important; color: var(--brand-primary-200) !important; }
+html.dark .sem.warning { background: #2a1f06 !important; color: #FDE68A !important; }
+html.dark .sem.danger  { background: #2a0d0d !important; color: #FCA5A5 !important; }
+html.dark .sem.hot     { background: #2a1506 !important; color: #FDBA74 !important; }
+
+/* --------------------------------------------------------------------------
+ * (d) .icon-badge — glossy colored-square utility
+ * DNA from .ms-icon (ModelSelector) + .tp-w-ic (TaskCard).
+ * Set --icon-c on a parent or the element itself to tint.
+ * -------------------------------------------------------------------------- */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge {
+  width: 30px; height: 30px; border-radius: var(--radius-sm, 8px);
+  display: grid; place-items: center; flex-shrink: 0;
+  background-color: var(--icon-c, var(--brand-primary-500));
+  background-image:
+    radial-gradient(ellipse at top right, rgba(255,255,255,0.20) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
+  background-size: cover, 16px 16px, 16px 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+}
+html.dark .icon-badge, :root[data-theme="dark"] .icon-badge {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10);
+}
+
+.icon-badge .material-icons,
+.icon-badge .material-symbols-outlined {
+  font-size: 16px; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  line-height: 1; display: block;
+}
+
+/* Size modifiers */
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--sm {
+  width: 22px; height: 22px; border-radius: var(--radius-xs, 6px);
+}
+.icon-badge--sm .material-icons,
+.icon-badge--sm .material-symbols-outlined { font-size: 13px; }
+
+/* canvas-font-badge 2026-09-11: tokenized / dark-only ring */
+.icon-badge--lg {
+  width: 38px; height: 38px; border-radius: var(--radius-md, 12px);
+}
+.icon-badge--lg .material-icons,
+.icon-badge--lg .material-symbols-outlined { font-size: 20px; }
+
+/* Glow modifier — outward glow tinted to --icon-c, from .tp-w-ic */
+.icon-badge--glow {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.20),
+    inset 0 0 0 1px rgba(17,17,17,0.12),
+    0 2px 6px rgba(0,0,0,0.10),
+    0 0 10px -2px var(--icon-c, var(--brand-primary-500));
+}
+
+/* --------------------------------------------------------------------------
+ * Motion vocabulary
+ * --ease-spring / --ease-out now defined once in motion-tokens.css
+ * (loaded earlier via global.css); this file only consumes them.
+ * -------------------------------------------------------------------------- */
+
+/* Fade + rise — enter/exit pair */
+@keyframes db-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+@keyframes db-exit {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(8px); }
+}
+
+/* Scale + fade — popover pair */
+@keyframes db-scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+@keyframes db-scale-out {
+  from { opacity: 1; transform: scale(1);    }
+  to   { opacity: 0; transform: scale(0.88); }
+}
+
+/* Spring press */
+@keyframes db-bounce {
+  0%   { transform: scale(1);    }
+  35%  { transform: scale(0.93); }
+  65%  { transform: scale(1.04); }
+  82%  { transform: scale(0.98); }
+  100% { transform: scale(1);    }
+}
+
+/* Size / grid-template morph helper */
+@keyframes db-morph {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to   { grid-template-rows: 1fr; opacity: 1; }
+}
+
+/* Slide — horizontal pair */
+@keyframes db-slide-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+@keyframes db-slide-out {
+  from { opacity: 1; transform: translateX(0);     }
+  to   { opacity: 0; transform: translateX(-12px); }
+}
+
+/* Motion utility classes — durations use --anim-mult for global slow-down */
+.db-fade-in  { animation: db-enter  calc(260ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-fade-out { animation: db-exit   calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-pop-in   { animation: db-scale-in  calc(280ms * var(--anim-mult, 1)) var(--ease-spring) both; }
+.db-pop-out  { animation: db-scale-out calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-press    { animation: db-bounce    calc(360ms * var(--anim-mult, 1)) var(--ease-spring) both; }
+.db-slide-in  { animation: db-slide-in  calc(260ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+.db-slide-out { animation: db-slide-out calc(200ms * var(--anim-mult, 1)) var(--ease-out)    both; }
+
+/* ============================================================
+   SQUIRCLE INNER-SURFACE RECIPE (shared, scoped opt-in)
+   Any surface driven by useSquircle() (lib/hooks/use-squircle.ts)
+   carries data-squircle="on" once its clip-path + ring custom
+   properties (--squircle-border-path / --squircle-hairline-path,
+   written by lib/squircle.ts) are computed. This block is the
+   shared "inner-card" treatment: the real border/box-shadow are
+   dropped in favour of two clip-path pseudo-elements that trace
+   the squircle outline.
+
+   Adopting components keep their own `padding` declaration --
+   `padding: calc(<their pad var> + 1px)` (the padding-box/
+   border-box offset + unpainted-crescent fix) -- since the pad
+   amount is component-specific; only the shared reset + ring
+   painting live here. Surface colors trace to the canonical
+   inner-card token (--card-border) so every adopter matches the
+   DS value truth.
+
+   Shadowed surfaces: box-shadow is clipped by clip-path, so a
+   surface that used box-shadow for depth must migrate that
+   shadow to filter: drop-shadow(...) on a wrapping element
+   instead (see .concentric-demo in Cards.css for the pattern).
+
+   Canon (corrected): the recipe defaults every squircle surface to
+   line-less in both modes. Only a dark-mode OUTER shell should ever
+   show the 1px --card-border ring; it opts in on its own scoped
+   selector (e.g. html.dark .tf-shell[data-squircle="on"]::before),
+   which fully redeclares content/position/background/clip-path and
+   wins on specificity over the default below (see .concentric-demo-outer
+   in Cards.css for the reference pattern).
+   ============================================================ */
+/* `html` prefix is a specificity bump, not a scoping change: at equal
+   attribute-only specificity, a component's own base rule (e.g. .card-inner's
+   border/box-shadow) loads after this shared block in the bundle and would
+   otherwise win the cascade purely on source order. The extra element
+   selector keeps this reset order-independent without adding a class. */
+html [data-squircle="on"] {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Default: no ring, no hairline, anywhere. */
+[data-squircle="on"]::before,
+[data-squircle="on"]::after {
+  content: none;
+}
+
+/* ============================================================
+   CANON HOVER — single shared hover recipe for card/tile surfaces
+   Source of truth: .concentric-demo / .concentric-demo:hover in
+   cards/Cards.css (the inner-card reference pattern). Card and tile
+   surfaces converging on the library-wide hover should apply this
+   class (or match its values 1:1) instead of redeclaring their own.
+   Scope: hover + active transform/shadow ONLY -- does not touch
+   layout, color, or entrance. JS-spring/proximity-driven surfaces
+   (use-proximity-group, hover-tokens.css [data-proximity]) already
+   own their transform via inline style and must NOT adopt this
+   class -- it would double up the animation.
+   ============================================================ */
+:root {
+  --canon-hover-scale:  1.006;
+  --canon-active-scale: 1.003;
+  --canon-shadow-rest:  drop-shadow(0 10px 15px rgba(17,17,17,0.12)) drop-shadow(0 2px 4px rgba(17,17,17,0.06));
+  --canon-shadow-hover: drop-shadow(0 16px 25px rgba(17,17,17,0.13)) drop-shadow(0 3px 4.5px rgba(17,17,17,0.07));
+  /* Tiered press-shrink scales, migrated from scattered literals
+     (.985 / .97 / .94 / .92 / .9 / .88) across design-system components:
+     card = whole cards, control = buttons and medium controls,
+     chip = small chips and tags. */
+  --press-card:    0.985;
+  --press-control: 0.94;
+  --press-chip:    0.90;
+}
+.canon-hover {
+  transition:
+    transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out),
+    filter    calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+  filter: var(--canon-shadow-rest);
+}
+/* Literal values repeated here (not just via custom property) so the
+   canon-hover recipe is grep-able and diff-able at a glance: hover
+   resolves to scale(1.006), active to scale(1.003) -- must match
+   --canon-hover-scale / --canon-active-scale above. */
+.canon-hover:hover  { transform: scale(1.006); filter: var(--canon-shadow-hover); }
+.canon-hover:active { transform: scale(1.003); }
+

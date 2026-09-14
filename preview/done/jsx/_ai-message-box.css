@@ -1,0 +1,287 @@
+/* AiMessageBox.css — verbatim from components-ai-message-box.html inline <style> */
+
+body { background: #FAFAFA; font-family: 'Montserrat', sans-serif; }
+.card {
+  padding: 60px 24px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: #FAFAFA;
+  background-image: radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 6%, transparent) 0%, #FAFAFA 55%);
+}
+
+/* ── Grey external shell — canonical inner-card pattern (mirrors Cards.css .concentric-demo-outer) ── */
+.mb-shell {
+  position: relative;
+  background: var(--shell-bg);
+  border-radius: 36px;
+  padding: 8px;
+  --corner-radius: 36px;
+}
+.mb-shell[data-squircle="on"] { border-radius: 0; }
+.mb-shell[data-squircle="on"]::before,
+.mb-shell[data-squircle="on"]::after { content: none; }
+html.dark .mb-shell[data-squircle="on"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--card-border);
+  clip-path: var(--squircle-border-path);
+}
+
+/* ── Message box ── */
+.mb {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-top-color: rgba(255,255,255,0.9);
+  /* Concentric pairing with the 36px .mb-shell outer shell (canon delta 8,
+     matching Cards.css .concentric-demo-inner) -- was var(--card-radius),
+     which read as a mismatched, broken corner curve against the outer shell. */
+  border-radius: 28px;
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 1px rgba(17,17,17,0.04);
+  transition: border-color calc(var(--duration-260) * var(--anim-mult, 1)), box-shadow calc(var(--duration-slower) * var(--anim-mult, 1));
+}
+/* useSquircle takes over corner rendering: shared [data-squircle="on"]
+   recipe (_shared-feedback.css) drops the real border/box-shadow for
+   clip-path + ring pseudo-elements. Padding gets the +1px padding-box/
+   border-box offset (see Cards.css .card-inner); corner-radius binds
+   to the box's own 28px concentric-inner radius. */
+.mb[data-squircle="on"] {
+  padding: calc(16px + 1px);
+  --corner-radius: 28px;
+}
+/* keep content above the glow layer */
+.mb > * { position: relative; z-index: 1; }
+/* Outer glow lives on a pseudo so it can fade in/out smoothly (no snap) */
+.mb::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary-500) 12%, transparent), 0 8px 28px color-mix(in srgb, var(--brand-primary-500) 22%, transparent);
+}
+/* fade the glow in, breathe while lit, then fade out gracefully (keyframes = reliable) */
+.mb.generating::before { animation: mbGlowIn calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-fade) both, glowPulse calc(2.5s /* motion-sweep: kept, 2500ms, used <3x library-wide, >15% off nearest tier */ * var(--anim-mult, 1)) var(--ease-in-out) calc(var(--duration-expand) * var(--anim-mult, 1)) infinite; }
+/* faster-exits rule: exit was slower than enter (560 vs 460), moved one tier below */
+.mb.exiting::before { animation: mbGlowOut calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-standard) both; }
+@keyframes mbGlowIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mbGlowOut { from { opacity: 1; } to { opacity: 0; } }
+
+.mb-input {
+  width: 100%; min-height: 84px;
+  border: none; outline: none;
+  font-family: 'Montserrat'; font-size: 15px; font-weight: 500; color: #111111;
+  line-height: 1.5; background: transparent;
+  padding: 4px 4px 0;
+}
+
+/* Stack lets the input + skeleton occupy the same space and crossfade */
+.mb-stack { position: relative; }
+
+/* Skeleton bars — crossfade in over the input when generating */
+.mb-skel {
+  position: absolute; inset: 0;
+  display: flex; padding: 4px 4px 0;
+  flex-direction: column; gap: 10px;
+  min-height: 84px;
+  pointer-events: none;
+}
+.mb.generating .mb-input { pointer-events: none; }
+.skel-bar {
+  height: 12px; border-radius: 6px;
+  background: linear-gradient(90deg, #F5F5F5 0%, #ECECEC 50%, #F5F5F5 100%);
+  background-size: 200% 100%;
+  opacity: 0;
+}
+/* ── Morph: ENTER (static → generating) ── */
+.mb.generating .mb-input  { animation: mbInputOut calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+.mb.generating .skel-bar  { animation: mbBarIn calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-bounce-glow) both, shimmer calc(1.6s /* motion-sweep: kept, 1600ms, used <3x library-wide, >15% off nearest tier */ * var(--anim-mult, 1)) var(--ease-linear) infinite; }
+.mb.generating .skel-bar.w1 { animation-delay: calc(var(--duration-60) * var(--anim-mult, 1)), 0s /* motion-sweep: kept, zero-duration (delay/visibility reset), no token needed */; }
+.mb.generating .skel-bar.w2 { animation-delay: calc(var(--duration-140) * var(--anim-mult, 1)), 0s /* motion-sweep: kept, zero-duration (delay/visibility reset), no token needed */; }
+.mb.generating .skel-bar.w3 { animation-delay: calc(var(--duration-slow) * var(--anim-mult, 1)), 0s /* motion-sweep: kept, zero-duration (delay/visibility reset), no token needed */; }
+/* ── Morph: EXIT (generating → static) ── */
+/* faster-exits rule: exit was slower than enter (440 vs 420), moved one tier below */
+.mb.exiting .mb-input { animation: mbInputIn calc(var(--duration-380) * var(--anim-mult, 1)) var(--ease-out) both; }
+/* faster-exits rule: exit already faster than enter (300 vs 460), kept */
+.mb.exiting .skel-bar { animation: mbBarOut calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-fade) both; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes mbInputOut { from { opacity: 1; transform: translateY(0); filter: blur(0); } to { opacity: 0; transform: translateY(-8px) scale(.99); filter: blur(2px); } }
+@keyframes mbInputIn  { from { opacity: 0; transform: translateY(8px); filter: blur(2px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+@keyframes mbBarIn  { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes mbBarOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(6px); } }
+.skel-bar.w1 { width: 92%; }
+.skel-bar.w2 { width: 38%; }
+.skel-bar.w3 { width: 78%; }
+
+/* Toolbar */
+.mb-toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 10px; }
+.mb-tools-left, .mb-tools-right { display: flex; gap: 8px; align-items: center; }
+
+.mb-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  background: #fff; border: 1px solid #D4D4D4; border-radius: 9999px;
+  font-family: 'Montserrat'; font-size: 13px; font-weight: 700; color: #111111;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), inset 0 -1px 0 rgba(17,17,17,0.04);
+  transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), transform calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-out),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.mb-btn:hover { background: var(--fp-hover); }
+.mb-btn:active { transform: scale(var(--press-control)); }
+.mb-btn .material-icons { font-size: 16px; color: #4A4A4A; }
+
+/* Extend AI button — emerald gradient */
+.mb-ai-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  border: 1.5px solid transparent;
+  border-radius: 9999px;
+  font-family: 'Montserrat'; font-size: 13px; font-weight: 800; cursor: pointer;
+  background-image: linear-gradient(#fff, #fff), linear-gradient(135deg, var(--brand-primary-300) 0%, var(--brand-primary-500) 50%, var(--brand-primary-600) 100%);
+  background-origin: border-box; background-clip: padding-box, border-box;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 1px 3px color-mix(in srgb, var(--brand-primary-500) 20%, transparent);
+  transition: transform calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-150) * var(--anim-mult, 1)), opacity calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-fade),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.mb-ai-btn:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 4px 12px color-mix(in srgb, var(--brand-primary-500) 30%, transparent); }
+.mb-ai-btn:active { transform: scale(var(--press-control)); }
+/* btn exits in .3s; give it full runway before gen-label enters */
+.mb.generating .mb-ai-btn { animation: mbBtnOut calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out) both; pointer-events: none; }
+/* btn re-enters after gen-label fully exits (.24s); add matching delay */
+/* faster-exits rule: exit was slower than enter (360 vs 300), moved one tier below */
+.mb.exiting .mb-ai-btn { animation: mbBtnIn calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-bounce-glow) calc(var(--duration-slow) * var(--anim-mult, 1)) both; }
+@keyframes mbBtnOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.9); } }
+@keyframes mbBtnIn  { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: scale(1); } }
+
+.mb-gradient-text {
+  background: linear-gradient(135deg, var(--brand-primary-800) 0%, var(--brand-primary-700) 50%, var(--brand-primary-600) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  filter: drop-shadow(0 1px 2px rgba(5,95,70,0.22));
+}
+.mb-gradient-icon {
+  background: linear-gradient(135deg, var(--brand-primary-800) 0%, var(--brand-primary-700) 50%, var(--brand-primary-600) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 16px;
+  filter: drop-shadow(0 1px 2px rgba(5,95,70,0.22));
+}
+
+/* Generating label — crossfades in over the Extend button (same slot) */
+.mb-ai-slot {
+  position: relative; display: inline-flex; align-items: center;
+  border-radius: 9999px;
+  /* done state: animated green outline reveal */
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-fade);
+}
+.mb.done .mb-ai-slot { outline-color: var(--brand-primary-500); animation: mbSlotOutlineIn calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+/* faster-exits rule: exit already faster than enter (280 vs 420), kept */
+.mb.done-out .mb-ai-slot { outline-color: transparent; transition: outline-color calc(var(--duration-280) * var(--anim-mult, 1)) var(--ease-fade); }
+@keyframes mbSlotOutlineIn {
+  from { outline-color: color-mix(in srgb, var(--brand-primary-500) 0%, transparent); box-shadow: 0 0 0 0 color-mix(in srgb, var(--brand-primary-500) 0%, transparent); }
+  60%  { outline-color: color-mix(in srgb, var(--brand-primary-500) 100%, transparent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary-500) 18%, transparent); }
+  to   { outline-color: color-mix(in srgb, var(--brand-primary-500) 100%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary-500) 10%, transparent); }
+}
+html.dark .mb.done .mb-ai-slot { outline-color: var(--brand-primary-400); }
+.mb-gen-label {
+  position: absolute; inset: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 13px; font-weight: 800;
+  opacity: 0; pointer-events: none;
+  white-space: nowrap;
+}
+/* delay gen-label enter until btn exit is nearly complete (.28s ≈ .3s btn exit) */
+.mb.generating .mb-gen-label { animation: mbGenIn calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-bounce-glow) calc(var(--duration-280) * var(--anim-mult, 1)) both; }
+/* gen-label exits first (0s delay); btn re-enters after (.22s delay on mbBtnIn) */
+/* faster-exits rule: exit already faster than enter (220 vs 360), kept */
+.mb.exiting .mb-gen-label { animation: mbGenOut calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-fade) both; }
+@keyframes mbGenIn  { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+@keyframes mbGenOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.94); } }
+.mb-gen-label .material-icons { font-size: 16px; }
+
+/* Send button */
+.mb-send {
+  width: 36px; height: 36px;
+  border-radius: 50%; border: none;
+  background: #111111; color: #fff;
+  display: grid; place-items: center; cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -2px 0 rgba(0,0,0,0.22);
+  transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), transform calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-out),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.mb-send:hover { background: var(--fp-hover); }
+.mb-send:active { transform: scale(var(--press-control)); }
+/* No click animation while the "Extend with AI" button is hidden
+   (generating → exiting → done). Restored once Extend returns. */
+.mb.generating .mb-send,
+.mb.exiting .mb-send,
+.mb.done .mb-send { transition: background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade); }
+.mb.generating .mb-send:active,
+.mb.exiting .mb-send:active,
+.mb.done .mb-send:active { transform: none; }
+.mb-send .material-icons { font-size: 18px; line-height: 1; }
+.mb.generating .mb-send { background: #D4D4D4; cursor: default; box-shadow: none; }
+
+/* Done badge — appears in the Extend-with-AI slot when generating completes */
+.mb-done-badge {
+  position: absolute; inset: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+  font-size: 13px; font-weight: 800; color: var(--brand-primary-600);
+  opacity: 0; pointer-events: none;
+}
+.mb-done-badge svg { display: block; }
+.mb.done .mb-done-badge { animation: mbDoneIn calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+/* faster-exits rule: exit already faster than enter (320 vs 420), kept */
+.mb.done-out .mb-done-badge { animation: mbDoneOut calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-standard) both; }
+@keyframes mbDoneIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes mbDoneOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-7px); } }
+.mb-done-check path { stroke: var(--brand-primary-600); stroke-dasharray: 28; stroke-dashoffset: 28; }
+.mb.done .mb-done-check path { animation: mbCheckDraw calc(var(--duration-420) * var(--anim-mult, 1)) calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-draw) forwards; }
+@keyframes mbCheckDraw { to { stroke-dashoffset: 0; } }
+/* the simple Done icon+text replaces the Extend button while shown */
+.mb.done .mb-ai-btn { animation: none !important; opacity: 0 !important; }
+.mb.done-out .mb-ai-btn { animation: mbBtnReturn calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-320) * var(--anim-mult, 1)) both; }
+@keyframes mbBtnReturn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+/* dark-mode done-badge: handled in the html.dark block below */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand-primary-500) 12%, transparent), 0 8px 28px color-mix(in srgb, var(--brand-primary-500) 22%, transparent); }
+  50%      { box-shadow: 0 0 0 6px color-mix(in srgb, var(--brand-primary-500) 18%, transparent), 0 12px 36px color-mix(in srgb, var(--brand-primary-500) 32%, transparent); }
+}
+
+/* Hint */
+.hint { font-size: 11px; font-weight: 600; color: #A1A1A1; text-align: center; letter-spacing: 0.04em; }
+.hint kbd { background: #F5F5F5; border: 1px solid #ECECEC; padding: 2px 6px; border-radius: 5px; font-family: 'Montserrat'; font-weight: 700; color: #6B6B6B; }
+
+/* ── Dark mode ── */
+html.dark body{ background:#111111 !important; }
+html.dark .card{ background:#111111 !important; background-image:radial-gradient(ellipse at top right, color-mix(in srgb, var(--brand-primary-500) 8%, transparent) 0%, #111111 55%) !important; }
+html.dark .mb{ background:#1C1C1C; border-color:#232323; border-radius:20px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 0 0 1px rgba(255,255,255,.04); }
+/* html.dark .mb has higher specificity than the shared reset's box-shadow:none --
+   re-cancel it explicitly so the squircle ring pseudo paints the dark hairline. */
+html.dark .mb[data-squircle="on"]{ box-shadow: none; }
+/* Canon (corrected): the inner surface stays line-less in both modes --
+   only the outer shell (.mb-shell above) opts into the dark-mode ring. The
+   shared [data-squircle="on"] recipe already sets ::before/::after to
+   content:none by default, so no override is needed here. */
+html.dark .mb-input{ color:#F5F5F5; }
+html.dark .mb-btn{ background:#1C1C1C; border-color:#232323; color:#F5F5F5; box-shadow:inset 0 1px 0 rgba(255,255,255,.05); }
+html.dark .mb-btn:hover{ background:var(--fp-hover); }
+html.dark .mb-btn .material-icons{ color:#A1A1A1; }
+html.dark .mb-send{ background:var(--brand-primary-500); }
+html.dark .mb-send:hover{ background:var(--brand-primary-400); }
+html.dark .skel-bar{ background:linear-gradient(90deg,#1C1C1C 0%,#232323 50%,#1C1C1C 100%); background-size:200% 100%; }
+html.dark .mb-ai-btn{ background-image:linear-gradient(#1C1C1C,#1C1C1C), linear-gradient(135deg,var(--brand-primary-300) 0%,var(--brand-primary-500) 50%,var(--brand-primary-600) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 1px 3px color-mix(in srgb, var(--brand-primary-500) 25%, transparent); }
+html.dark .mb-gradient-text{ background:linear-gradient(135deg,var(--brand-primary-300) 0%,var(--brand-primary-400) 50%,var(--brand-primary-500) 100%); -webkit-background-clip:text; background-clip:text; }
+html.dark .mb-gradient-icon{ background:linear-gradient(135deg,var(--brand-primary-300) 0%,var(--brand-primary-400) 50%,var(--brand-primary-500) 100%); -webkit-background-clip:text; background-clip:text; }
+html.dark .hint kbd{ background:#1C1C1C; border-color:#232323; color:#D4D4D4; }
+html.dark .mb-done-badge { color: var(--brand-primary-400); }
+html.dark .mb-done-check path { stroke: var(--brand-primary-400); }

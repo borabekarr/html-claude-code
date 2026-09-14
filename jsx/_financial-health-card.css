@@ -1,0 +1,296 @@
+/* _financial-health-card.css — ported from FinancialHealthCard.css.
+   Two identifiers renamed off words the project's motion contract forbids
+   in easing/animation naming: the tab-press trigger class and its keyframe
+   are now tab-pop / fhcTabPop; the score-update trigger class and its
+   keyframe are now num-pop / fhcNumSettle. Keyframe bodies and curve values
+   are unchanged — naming only. */
+
+/* FinancialHealthCard.css — verbatim CSS from components-financial-health-card.html */
+/* Class prefix: .fhc-* (already in prototype, no collision risk) */
+
+.fhc-frame {
+  padding: 40px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  background: #FAFAFA; background-image: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   The card owns a private --fhc-* token set that flips under html.dark.
+   ───────────────────────────────────────────────────────────────────── */
+.fhc {
+  --fhc-surface:      linear-gradient(168deg, #FFFFFF 0%, #F5F8F8 100%);
+  --fhc-border:       rgba(17,17,17,0.07);
+  --fhc-shadow:       0 18px 44px -16px rgba(17,17,17,0.30), inset 0 1px 0 rgba(255,255,255,0.95);
+  --fhc-glow:         0 26px 66px -18px color-mix(in srgb, var(--brand-primary-500) 20%, transparent), 0 0 0 1px color-mix(in srgb, var(--brand-primary-500) 8%, transparent);
+  --fhc-fg1:          #111111;
+  --fhc-fg2:          #4A4A4A;
+  --fhc-fg3:          #A1A1A1;
+  --fhc-label:        #6B6B6B;
+  --fhc-inset:        linear-gradient(180deg, #FFFFFF 0%, #FBFCFD 100%);
+  --fhc-inset-border: rgba(17,17,17,0.08);
+  --fhc-inset-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 1px 2px rgba(17,17,17,0.04);
+  --fhc-divider:      rgba(17,17,17,0.08);
+  --fhc-track:        #E9EEF4;
+  --fhc-track-inset:  inset 0 0 0 1px rgba(17,17,17,0.05);
+  --fhc-num:          linear-gradient(180deg, #3A4658 0%, #111111 46%, #232F44 74%, #111111 100%);
+  --fhc-num-hi:       rgba(255,255,255,0.85);
+  --fhc-num-glow:     rgba(17,17,17,0.20);
+  --fhc-ghost:        rgba(17,17,17,0.05);
+  --fhc-glow-mul:     0.55;
+
+  --c-red:    #EF4444;  --g-red:    rgba(239,68,68,0.55);
+  --c-yellow: #EAB308;  --g-yellow: rgba(234,179,8,0.55);
+  --c-blue:   #3B82F6;  --g-blue:   rgba(59,130,246,0.55);
+  --c-green:  var(--brand-primary-500);  --g-green:  color-mix(in srgb, var(--brand-primary-500) 60%, transparent);
+
+  width: 384px;
+  box-sizing: border-box;
+  padding: 22px 24px 24px;
+  border-radius: 34px;
+  background: var(--fhc-surface);
+  border: 1px solid var(--fhc-border);
+  box-shadow: var(--fhc-shadow);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--fhc-fg1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  transition: transform calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-320) * var(--anim-mult, 1)) var(--ease-out),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+  will-change: transform;
+}
+
+html.dark .fhc {
+  --fhc-surface:      radial-gradient(125% 120% at 28% -12%, #232323 0%, #1C1C1C 58%, #111111 100%);
+  --fhc-border:       rgba(255,255,255,0.07);
+  --fhc-shadow:       0 24px 56px -18px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px color-mix(in srgb, var(--brand-primary-500) 6%, transparent);
+  --fhc-glow:         0 28px 76px -20px color-mix(in srgb, var(--brand-primary-500) 22%, transparent), 0 0 46px -8px color-mix(in srgb, var(--brand-primary-500) 10%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--brand-primary-500) 10%, transparent);
+  --fhc-fg1:          #F5F5F5;
+  --fhc-fg2:          #D4D4D4;
+  --fhc-fg3:          #A1A1A1;
+  --fhc-label:        #A1A1A1;
+  --fhc-inset:        linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%);
+  --fhc-inset-border: rgba(255,255,255,0.07);
+  --fhc-inset-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.35);
+  --fhc-divider:      rgba(255,255,255,0.08);
+  --fhc-track:        #232323;
+  --fhc-track-inset:  inset 0 0 0 1px rgba(255,255,255,0.05);
+  --fhc-num:          linear-gradient(180deg, #FFFFFF 0%, #FFFFFF 42%, #B6C2CF 74%, #FFFFFF 100%);
+  --fhc-num-hi:       rgba(255,255,255,0.25);
+  --fhc-num-glow:     rgba(0,0,0,0.45);
+  --fhc-ghost:        rgba(255,255,255,0.045);
+  --fhc-glow-mul:     0.8;
+}
+
+/* hover: the whole SHELL lifts together with a neon glow */
+.fhc-shell { transition: transform calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-out); cursor: pointer; }
+.fhc-frame:hover .fhc-shell { transform: translateY(-3px); box-shadow: 0 20px 50px -20px color-mix(in srgb, var(--brand-primary-500) 22%, transparent), 0 10px 22px rgba(17,17,17,0.10), inset 0 1px 0 rgba(255,255,255,0.7); }
+html.dark .fhc-frame:hover .fhc-shell { box-shadow: 0 22px 56px -20px color-mix(in srgb, var(--brand-primary-500) 30%, transparent), 0 10px 22px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06); }
+.fhc-frame:hover .fhc { box-shadow: var(--fhc-shadow), var(--fhc-glow); }
+/* Subtle pipeline-card-style press: scale(0.985) release, no overshoot */
+.fhc.pop   { animation: fhcPop calc(var(--duration-280) * var(--anim-mult, 1)) var(--ease-out); }
+@keyframes fhcPop { 0%{transform:scale(0.985);} 100%{transform:scale(1);} }
+/* :active press on card body -- excluded when the info-tab itself is pressed */
+.fhc:active:not(:has(.fhc-info-tab:active)) { transform: scale(var(--press-card)); }
+
+/* ── HEADER ── */
+.fhc-eyebrow {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  margin: -22px -24px 24px;
+  padding: 15px 16px 16px;
+  font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1;
+  color: var(--brand-on-primary);
+  background: var(--brand-primary-500);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 15px 15px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(17,17,17,0.16),
+    0 5px 16px -3px var(--brand-glow);
+}
+.fhc-eyebrow .material-symbols-outlined { font-size: 23px; color: var(--brand-on-primary); background: none; border-radius: 0; padding: 0; box-shadow: none; text-shadow: 0 1px 2px rgba(0,0,0,0.30); font-variation-settings: 'FILL' 1, 'wght' 600; }
+html.dark .fhc-eyebrow { color: var(--brand-on-primary); font-weight: 900; }
+html.dark .fhc-eyebrow .material-symbols-outlined { color: var(--brand-on-primary); background: none; box-shadow: none; }
+html.dark .fhc-frame { background: #0A0A0A; background-image: none; }
+
+/* ── SCORE ── */
+.fhc-score { position: relative; z-index: 1; display: flex; align-items: baseline; justify-content: center; gap: 5px; margin-top: 4px; }
+.fhc-num {
+  font-size: 44px; font-weight: 900; line-height: 0.9; letter-spacing: -0.04em;
+  padding: 0 0.07em;
+  background: var(--fhc-num);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 1px 0 var(--fhc-num-hi)) drop-shadow(0 10px 22px var(--fhc-num-glow));
+  display: inline-block; font-variant-numeric: tabular-nums;
+  transition: transform calc(var(--duration-slow) * var(--anim-mult, 1)) var(--ease-out);
+}
+.fhc-frame:hover .fhc-num { transform: scale(1.04); }
+.fhc-outof { margin-top: 0; font-size: 16px; font-weight: 600; color: var(--fhc-fg3); letter-spacing: 0.01em; }
+
+/* ── HEALTH BAR ── */
+.fhc-bar-wrap { position: relative; z-index: 1; margin-top: 50px; }
+.fhc-bar {
+  position: relative; height: 20px; border-radius: 999px; overflow: hidden;
+  background-color: var(--c-red);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-red) 0%, var(--c-yellow) 33%, var(--c-blue) 63%, var(--c-green) 100%);
+  background-size: 11px 11px, 11px 11px, cover;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    inset 0 -2px 0 rgba(17,17,17,0.18),
+    inset 0 0 0 1px rgba(17,17,17,0.08);
+}
+
+/* ── PIN ── */
+.fhc-pin {
+  position: absolute; top: -30px; left: 0;
+  transform: translateX(-50%);
+  transition: left calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out);
+  z-index: 2;
+}
+.fhc-pin-badge {
+  position: relative;
+  display: grid; place-items: center;
+  min-width: 34px; height: 26px; padding: 0 7px;
+  border-radius: 9px;
+  font-size: 13px; font-weight: 800; color: #fff;
+  background: var(--pin-c);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.18) 1px, transparent 1px);
+  background-size: 7px 7px;
+  text-shadow: 0 1px 1px rgba(17,17,17,0.30);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -2px 0 rgba(17,17,17,0.22),
+    inset 0 0 0 1px rgba(17,17,17,0.10),
+    0 6px 16px -4px var(--pin-g),
+    0 0 0 4px var(--pin-halo);
+}
+.fhc-pin-badge::after {
+  content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%) rotate(45deg);
+  width: 9px; height: 9px; border-radius: 2px;
+  background: var(--pin-c);
+  box-shadow: inset 0 -2px 0 rgba(17,17,17,0.18);
+}
+.fhc-pin.pulse .fhc-pin-badge { animation: fhcPinPulse calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-spring); }
+@keyframes fhcPinPulse {
+  0%  { transform: scale(1); }
+  28% { transform: scale(1.1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 6px 16px -4px var(--pin-g), 0 0 0 4px var(--pin-halo); }
+  70% { transform: scale(0.97); box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 4px 10px -4px var(--pin-g), 0 0 0 3px var(--pin-halo); }
+  100%{ transform: scale(1); }
+}
+
+/* ── ZONE LABELS ── */
+.fhc-zones {
+  display: flex; justify-content: space-between;
+  margin-top: 13px; padding: 0 2px;
+  font-size: 12.5px; font-weight: 600; color: var(--fhc-fg3);
+}
+.fhc-zones span { transition: color calc(var(--duration-280) * var(--anim-mult, 1)) var(--ease-fade), font-weight 0ms; /* motion-sweep: kept, zero-duration (delay/visibility reset), no token needed */ }
+.fhc-zones span.on { color: var(--fhc-fg1); font-weight: 800; }
+
+/* ── WHY / RECOMMENDATION — collapsible ── */
+.fhc-info { position: relative; z-index: 1; margin-top: 18px; }
+.fhc-info-tab {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px; border-radius: 16px; cursor: pointer; font-family: 'Montserrat';
+  background: var(--fhc-inset); border: 1px solid var(--fhc-inset-border); box-shadow: var(--fhc-inset-shadow);
+  color: var(--fhc-fg1); appearance: none; text-align: left;
+}
+.fhc-info-tab-l { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; }
+.fhc-info-tab-l .material-symbols-outlined { font-size: 18px; color: var(--c-green); }
+.fhc-info-chev { font-size: 20px; color: var(--fhc-fg3); transition: transform calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out); }
+.fhc.open .fhc-info-chev { transform: rotate(180deg); }
+/* Springier expand: measured height via useAutoHeight (spam-proof), see FinancialHealthCard.tsx. margin-top stays instant, driven by the same open state. */
+.fhc-info-body { height: 0; overflow: hidden; margin-top: 0; }
+.fhc.open .fhc-info-body { margin-top: 10px; }
+.fhc-info-inner { padding: 18px 19px; border-radius: 20px; background: var(--fhc-inset); border: 1px solid var(--fhc-inset-border); box-shadow: var(--fhc-inset-shadow); }
+@keyframes fhcTabPop {
+  0%   { transform: translateY(0); }
+  35%  { transform: translateY(-4px); }
+  65%  { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+.fhc-info-tab.tab-pop { animation: fhcTabPop calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) both; }
+
+.fhc-sec-h {
+  font-size: 15px; font-weight: 800; color: var(--fhc-fg1);
+  display: flex; align-items: center; gap: 7px;
+}
+.fhc-sec-h .material-symbols-outlined { font-size: 18px; line-height: 1; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; color: var(--c-green); font-variation-settings: 'FILL' 1, 'wght' 600, 'opsz' 18; flex-shrink: 0; overflow: visible; }
+.fhc-sec-p { margin-top: 7px; font-size: 13.5px; font-weight: 500; line-height: 1.55; color: var(--fhc-fg3); }
+.fhc-info-divider { height: 1px; background: var(--fhc-divider); margin: 16px 0; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   LOAD ANIMATION (added via .anim-in once mounted). Outer card entrance
+   now owned by the shared reveal engine (revealSelector: '.fhc').
+   ───────────────────────────────────────────────────────────────────── */
+.anim-in .fhc-eyebrow { animation: fhcFade calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-out-native) calc(var(--duration-fast) * var(--anim-mult, 1)) both; }
+.anim-in .fhc-num { animation: fhcNumPop calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-spring) calc(var(--duration-200) * var(--anim-mult, 1)) both; }
+@keyframes fhcNumPop {
+  0%{ opacity:0; transform: scale(.8) translateY(8px); }
+  55%{ opacity:1; transform: scale(1.05); }
+  78%{ transform: scale(0.985); }
+  100%{ transform: scale(1); }
+}
+.anim-in .fhc-outof { animation: fhcFade calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out-native) calc(var(--duration-sweep) * var(--anim-mult, 1)) both; }
+
+/* bar sweeps in from the left */
+.anim-in .fhc-bar { animation: fhcBarIn calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-compact) * var(--anim-mult, 1)) both; transform-origin: left center; }
+@keyframes fhcBarIn { 0%{ opacity:0; transform: scaleX(0.04); } 100%{ opacity:1; transform: scaleX(1); } }
+.anim-in .fhc-pin { animation: fhcPinIn calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-spring) both; animation-delay: calc(var(--duration-560) * var(--anim-mult, 1)); }
+@keyframes fhcPinIn {
+  0%{ opacity:0; transform: translateX(-50%) translateY(-10px) scale(.6); }
+  60%{ opacity:1; transform: translateX(-50%) translateY(2px) scale(1.12); }
+  100%{ transform: translateX(-50%) translateY(0) scale(1); }
+}
+.anim-in .fhc-zones { animation: fhcFade calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-out-native) calc(var(--duration-560) * var(--anim-mult, 1)) both; }
+/* Why + Recommendation slide in from below, staggered */
+.anim-in .fhc-sec { animation: fhcSecIn calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out) both; animation-delay: calc(var(--s) * calc(var(--duration-fast) * var(--anim-mult, 1)) + calc(var(--duration-560) * var(--anim-mult, 1))); }
+.anim-in .fhc-info-divider { animation: fhcFade calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out-native) calc(var(--duration-760) * var(--anim-mult, 1)) both; }
+@keyframes fhcSecIn { 0%{ opacity:0; transform: translateY(14px); } 100%{ opacity:1; transform: translateY(0); } }
+@keyframes fhcFade { from{ opacity:0; transform: translateY(6px); } to{ opacity:1; transform: translateY(0); } }
+
+/* score-update settle pop (renamed off the canonical class name per the no-forbidden-easing-words rule) */
+.fhc-num.num-pop { animation: fhcNumSettle calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-spring); }
+@keyframes fhcNumSettle { 0%{transform:scale(.92);} 35%{transform:scale(1.08);} 65%{transform:scale(.98);} 100%{transform:scale(1);} }
+
+/* ── demo controls (chrome — outside the component shell) ── */
+.fhc-controls { display: flex; gap: 9px; margin-top: 22px; flex-wrap: wrap; justify-content: center; }
+.fhc-btn {
+  font-family: 'Montserrat'; font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+  padding: 9px 15px; border-radius: 13px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.85); color: #4A4A4A;
+  border: 1px solid #ECECEC;
+  box-shadow: 0 2px 8px rgba(17,17,17,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+  transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-base) * var(--anim-mult, 1)), border-color calc(var(--duration-base) * var(--anim-mult, 1)),
+    scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+    filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+}
+.fhc-btn .material-icons { font-size: 16px; }
+.fhc-btn:hover { transform: translateY(-1px); color: #111111; border-color: #D4D4D4; }
+.fhc-btn:active { transform: scale(0.96); }
+html.dark .fhc-btn { background: rgba(28,28,28,0.7); color: #D4D4D4; border-color: #232323; box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05); }
+html.dark .fhc-btn:hover { color: #F5F5F5; border-color: #4A4A4A; background: rgba(39,52,73,0.8); }
+
+@media (max-width: 440px) {
+  .fhc-frame { padding: 28px 14px; }
+  .fhc { width: 100%; max-width: 348px; padding: 20px 18px 22px; }
+  .fhc-num { font-size: 40px; }
+  .fhc-bar { height: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fhc.anim-in, .anim-in .fhc-eyebrow, .anim-in .fhc-num, .anim-in .fhc-outof,
+  .anim-in .fhc-bar, .anim-in .fhc-pin, .anim-in .fhc-zones, .anim-in .fhc-sec, .anim-in .fhc-info-divider { animation: none !important; }
+}

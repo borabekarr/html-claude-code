@@ -1,0 +1,333 @@
+  .material-icons {
+    font-weight: normal; font-style: normal; line-height: 1;
+    letter-spacing: normal; text-transform: none; display: inline-block;
+    white-space: nowrap; word-wrap: normal; direction: ltr;
+    -webkit-font-feature-settings: 'liga'; font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Dark background scoped to this component only -- never paints body/html */
+  .card.nf-page { width: auto; padding: 0; background: transparent; }
+  .nf-page .frame {
+    padding: 30px 22px 26px;
+    background: transparent;
+    background-image: none;
+  }
+  html.dark .nf-page .frame {
+    background: transparent !important;
+    background-image: none !important;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────
+     The two cards sit side by side, each in its own grey .shell bezel.
+     ───────────────────────────────────────────────────────────────────── */
+  .nf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* ─────────────────────────────────────────────────────────────────────
+     Each card owns a private --nf-* token set. Always dark surface.
+     Tone (.nf--bull / .nf--bear) only swaps hue, never structure.
+     ───────────────────────────────────────────────────────────────────── */
+  .nf-card {
+    --nf-radius:       18px;
+    --nf-surface:      #1C1C1C;
+    --nf-glow:         radial-gradient(125% 105% at 64% 124%, var(--nf-c-strong) 0%, var(--nf-c-soft) 38%, transparent 72%);
+    --nf-border:       #232323;
+    --nf-shadow:       0 16px 36px -16px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.06);
+    --nf-grid-line:    rgba(255,255,255,0.06);
+
+    --nf-kicker:       #FFFFFF;
+    --nf-sub:          rgba(255,255,255,0.46); /* restored: dropped in the HTML→React port, consumed by .nf-empty */
+    --nf-title:        #F4F7F5;
+    --nf-title-sh:     0 1px 1px rgba(0,0,0,0.45);
+    --nf-date:         rgba(255,255,255,0.52);
+
+    --nf-arrow-fg:     #FFFFFF;
+    --nf-arrow-bd:     rgba(255,255,255,0.22);
+    --nf-arrow-bg:     rgba(255,255,255,0.04);
+
+    --nf-bar-track:    rgba(255,255,255,0.16);
+    --nf-bar-fill:     #FFFFFF;
+    --nf-bar-glow:     rgba(255,255,255,0.8);
+
+    position: relative;
+    box-sizing: border-box;
+    height: 262px;
+    padding: 16px 16px 14px;
+    border-radius: var(--nf-radius);
+    background: var(--nf-surface);
+    border: 1px solid var(--nf-border);
+    box-shadow: var(--nf-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    user-select: none;
+    transition: transform calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out);
+    will-change: transform;
+  }
+
+  /* tone hues (dark surface — used in BOTH modes) */
+  .nf--bull { --nf-c-strong: rgba(20,180,108,0.92); --nf-c-soft: rgba(11,90,58,0.85); --nf-c-bar: #FFFFFF; }
+  .nf--bear { --nf-c-strong: rgba(239,68,68,0.95);  --nf-c-soft: rgba(120,30,30,0.85);  --nf-c-bar: #FFFFFF; --nf-title: #E7E3E3; }
+
+  /* (component renders dark in both light & dark modes — no theme split) */
+
+  /* glow layer — this is what the heartbeat pulse animates */
+  .nf-glow {
+    position: absolute; inset: 0; z-index: -1;
+    background: var(--nf-glow);
+    opacity: 0.92;
+    animation: nfPulse calc(var(--duration-2200) * var(--anim-mult, 1)) var(--ease-in-out) infinite;
+    pointer-events: none;
+  }
+  @keyframes nfPulse {
+    0%, 100% { opacity: 0.80; filter: brightness(0.96) saturate(1); }
+    50%      { opacity: 1;    filter: brightness(1.12) saturate(1.08); }
+  }
+  /* faint vertical grid texture */
+  .nf-grid {
+    position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(var(--nf-grid-line) 1.2px, transparent 1.3px);
+    background-size: 15px 15px;
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 100%);
+  }
+
+  /* hover lifts the whole grey/black shell (bezel + card) together */
+  .nf-shell { background: #0A0A0A; transition: transform calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-sweep) * var(--anim-mult, 1)) var(--ease-out); }
+  .nf-shell:hover { transform: translateY(-2px); }
+  /* arrow press must not shake the shell — :has guard isolates the arrows */
+  .nf-shell:active:not(:has(.nf-arrow:active)) { transform: scale(0.99); transition-duration: calc(var(--duration-fast) * var(--anim-mult, 1)); }
+  .nf-shell:hover .nf-card { box-shadow: var(--nf-shadow), 0 20px 44px -24px var(--nf-c-strong); }
+  /* Root cause of the reported hover "beeping": this used to speed up the
+     infinite nfPulse animation from --duration-2200 to --duration-fast on
+     hover, an ~18x speedup that reads as rapid strobing/flashing rather than
+     an energized pulse. Removed — the glow keeps its calm resting cadence
+     while hovered. */
+  /* genuine card-body click presses shell + card together (hook toggles .nf-shell.tap) */
+  .nf-shell.tap { animation: nfTap calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out); }
+  @keyframes nfTap {
+    0%   { transform: scale(0.99); }
+    100% { transform: scale(1); }
+  }
+
+  /* ── HEADER ── */
+  .nf-head { display: flex; align-items: flex-start; gap: 11px; }
+  .nf-head-ic { flex: none; display: grid; place-items: center; color: var(--nf-c-strong); }
+  .nf-head-ic .material-icons { font-size: 32px; filter: drop-shadow(0 0 8px var(--nf-c-strong)); }
+  .nf-head-txt { margin-right: auto; }
+  .nf-kicker { font-size: 13px; font-weight: 700; letter-spacing: 0.005em; color: var(--nf-kicker); }
+  .nf-arrow {
+    flex: none;
+    width: 30px; height: 30px; border-radius: 999px;
+    display: grid; place-items: center;
+    background: var(--nf-arrow-bg);
+    border: 1.5px solid var(--nf-arrow-bd);
+    color: var(--nf-arrow-fg);
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    transition: transform calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out), box-shadow calc(var(--duration-slow) * var(--anim-mult, 1)), border-color calc(var(--duration-200) * var(--anim-mult, 1));
+  }
+  .nf-arrow svg { width: 15px; height: 15px; }
+  /* Proximity: own transition (0,1,0) beats hover-tokens.css's [data-proximity]x3
+     fallback; scale + filter channels added here so the engine's --prox mapping
+     doesn't snap. */
+  .nf-arrow[data-proximity] {
+    transition:
+      transform calc(var(--duration-200) * var(--anim-mult, 1)) var(--ease-out),
+      box-shadow calc(var(--duration-slow) * var(--anim-mult, 1)),
+      border-color calc(var(--duration-200) * var(--anim-mult, 1)),
+      scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+      filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+  }
+  .nf-arrow:hover { transform: scale(1.04); border-color: var(--nf-c-strong); box-shadow: 0 0 0 4px color-mix(in srgb, var(--nf-c-strong) 18%, transparent), 0 6px 18px -6px var(--nf-c-strong); }
+  .nf-arrow:active { transform: scale(var(--press-chip)); }
+  .nf-arrow .material-icons { transition: transform calc(var(--duration-240) * var(--anim-mult, 1)) var(--ease-spring); }
+  .nf-arrow:hover .material-icons { transform: translate(2px, -2px); }
+
+  /* ── TITLE ── */
+  .nf-title-wrap { flex: 1; min-height: 0; display: flex; align-items: center; margin-top: 14px; }
+  .nf-title {
+    margin: 0;
+    font-size: clamp(11px, 1.4vw, 13px);
+    font-weight: 800;
+    line-height: 1.16;
+    letter-spacing: -0.018em;
+    color: var(--nf-title);
+    text-shadow: var(--nf-title-sh);
+    text-wrap: balance;
+  }
+
+  /* ── FOOTER ── */
+  .nf-date { font-size: 12px; font-weight: 500; color: var(--nf-date); margin-bottom: 10px; }
+  .nf-bar { display: flex; gap: 6px; height: 4px; position: relative; }
+  .nf-seg {
+    flex: 1; border-radius: 999px;
+    background: var(--nf-bar-track);
+  }
+  /* Primary sliding indicator — one pill wide, translates by index */
+  .nf-ind {
+    position: absolute;
+    top: 0; left: 0;
+    width: calc((100% - 12px) / 3);
+    height: 100%;
+    border-radius: 999px;
+    background: #FFFFFF;
+    box-shadow: 0 0 10px var(--nf-bar-glow);
+    transform: translateX(calc(var(--nf-idx, 0) * (100% + 6px)));
+    transition: transform calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out);
+    pointer-events: none;
+  }
+
+  /* Ghost indicator — hidden by default, only visible during wrap animation */
+  .nf-ind-ghost {
+    transform: translateX(calc(var(--nf-ghost-idx, 0) * (100% + 6px)));
+    opacity: 0;
+    transition: transform calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out);
+  }
+
+  /* Wrap animation: primary exits right */
+  .nf-ind--exit-right {
+    animation: nfIndExitRight calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out) forwards;
+    transition: none !important;
+  }
+  @keyframes nfIndExitRight {
+    0%   { transform: translateX(calc(2 * (100% + 6px))); opacity: 1; }
+    100% { transform: translateX(calc(3 * (100% + 6px))); opacity: 0; }
+  }
+
+  /* Wrap animation: ghost enters from left */
+  .nf-ind--enter-left {
+    animation: nfIndEnterLeft calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out) forwards;
+    transition: none !important;
+  }
+  @keyframes nfIndEnterLeft {
+    0%   { transform: translateX(calc(-1 * (100% + 6px))); opacity: 1; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  /* Reverse-wrap animation: primary at position 0 exits to the left */
+  .nf-ind--exit-left {
+    animation: nfIndExitLeft calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out) forwards;
+    transition: none !important;
+  }
+  @keyframes nfIndExitLeft {
+    0%   { transform: translateX(0); opacity: 1; }
+    100% { transform: translateX(calc(-1 * (100% + 6px))); opacity: 0; }
+  }
+
+  /* Reverse-wrap animation: ghost enters from right to last position (index 2) */
+  .nf-ind--enter-right {
+    animation: nfIndEnterRight calc(var(--duration-slower) * var(--anim-mult, 1)) var(--ease-out) forwards;
+    transition: none !important;
+  }
+  @keyframes nfIndEnterRight {
+    0%   { transform: translateX(calc(3 * (100% + 6px))); opacity: 1; }
+    100% { transform: translateX(calc(2 * (100% + 6px))); opacity: 1; }
+  }
+
+  /* Snap ghost position without transition */
+  .nf-ind--no-transition {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────
+     1. LOAD — outer card entrance now owned by the shared reveal engine
+     (revealSelector: '.nf-card'); content still staggers via .anim-in.
+     ───────────────────────────────────────────────────────────────────── */
+  .anim-in .nf-kicker { animation: nfFade calc(var(--duration-expand) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-200) * var(--anim-mult, 1)) both; }
+  /* --ease-spring is the legacy overshoot alias, denylisted by the house
+     easing rule; the settled --ease-out matches the sibling .nf-title/.nf-date pops. */
+  .anim-in .nf-arrow  { animation: nfPopSm calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-sweep) * var(--anim-mult, 1)) both; }
+  .anim-in .nf-title  { animation: nfTitlePop calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-sweep) * var(--anim-mult, 1)) both; }
+  .anim-in .nf-date   { animation: nfGlowFade calc(var(--duration-420) * var(--anim-mult, 1)) var(--ease-out) calc(var(--duration-560) * var(--anim-mult, 1)) both; }
+  .anim-in .nf-seg    { animation: nfFade calc(var(--duration-560) * var(--anim-mult, 1)) var(--ease-out) both; animation-delay: calc(var(--i) * calc(var(--duration-60) * var(--anim-mult, 1)) + calc(var(--duration-560) * var(--anim-mult, 1))); }
+  @keyframes nfTitlePop {
+    0%   { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes nfPopSm {
+    0%   { opacity: 0; transform: scale(0.4); }
+    60%  { opacity: 1; transform: scale(1.12); }
+    100% { transform: scale(1); }
+  }
+  @keyframes nfFade { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes nfGlowFade {
+    0%   { opacity: 0; filter: blur(5px); transform: translateY(5px); }
+    100% { opacity: 1; filter: blur(0);   transform: translateY(0); }
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────
+     2. TRANSITION -- flat horizontal ease-out slide, no rotation/tilt
+     ───────────────────────────────────────────────────────────────────── */
+  .nf-swap-out { animation: nfSwapOut calc(var(--duration-180) * var(--anim-mult, 1)) var(--ease-out) forwards; }
+  .nf-swap-in  { animation: nfSwapIn  calc(var(--duration-260) * var(--anim-mult, 1)) var(--ease-out) both; }
+  @keyframes nfSwapOut {
+    0%   { opacity: 1; transform: translateX(0); }
+    100% { opacity: 0; transform: translateX(var(--swap-dir, -38px)); }
+  }
+  @keyframes nfSwapIn {
+    0%   { opacity: 0; transform: translateX(calc(var(--swap-dir, 38px) * -1)); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── LOADING SKELETON ── */
+  .nf-card.is-loading .nf-real { visibility: hidden; }
+  .nf-skeleton { position: absolute; inset: 26px; display: none; flex-direction: column; z-index: 2; }
+  .nf-card.is-loading .nf-skeleton { display: flex; }
+  .sk { border-radius: 8px; background: var(--nf-bar-track); position: relative; overflow: hidden; }
+  .sk::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--nf-c-strong) 30%, transparent), transparent);
+    animation: nfShimmer calc(var(--duration-1100) * var(--anim-mult, 1)) infinite; }
+  @keyframes nfShimmer { 100% { transform: translateX(100%); } }
+
+  /* ── EMPTY STATE ── */
+  .nf-card.is-empty .nf-real { display: none; }
+  .nf-empty { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; color: var(--nf-sub); }
+  .nf-card.is-empty .nf-empty { display: flex; }
+  .nf-empty .material-icons { font-size: 38px; color: var(--nf-c-strong); }
+  .nf-empty-t { font-size: 15px; font-weight: 700; color: var(--nf-title); }
+  .nf-empty-s { font-size: 13px; font-weight: 500; }
+
+  /* ── demo chrome (outside the component) ── */
+  .nf-controls { display: flex; gap: 9px; margin-top: 26px; flex-wrap: wrap; justify-content: center; }
+  .nf-btn {
+    font-family: 'Montserrat'; font-size: 12px; font-weight: 700; letter-spacing: 0.01em;
+    padding: 9px 15px; border-radius: 13px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(28,28,28,0.7); color: #D4D4D4; border: 1px solid #232323;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out), background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade), color calc(var(--duration-base) * var(--anim-mult, 1)), border-color calc(var(--duration-base) * var(--anim-mult, 1));
+  }
+  .nf-btn .material-icons { font-size: 16px; }
+  /* Proximity: own transition (0,1,0) beats hover-tokens.css's [data-proximity]x3
+     fallback; scale + filter channels added here so the engine's --prox mapping
+     doesn't snap. */
+  .nf-btn[data-proximity] {
+    transition:
+      transform calc(var(--duration-140) * var(--anim-mult, 1)) var(--ease-out),
+      background calc(var(--duration-fast) * var(--anim-mult, 1)) var(--ease-fade),
+      color calc(var(--duration-base) * var(--anim-mult, 1)),
+      border-color calc(var(--duration-base) * var(--anim-mult, 1)),
+      scale calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear),
+      filter calc(var(--duration-instant) * var(--anim-mult, 1)) var(--ease-linear);
+  }
+  .nf-btn:hover { transform: translateY(-1px); color: #F5F5F5; border-color: #4A4A4A; background: var(--fp-hover-on-dark); }
+  .nf-btn:active { transform: scale(0.96); }
+
+  @media (max-width: 720px) {
+    .card.nf-page { width: 100%; }
+    .frame { padding: 28px 16px; }
+    .nf-row { grid-template-columns: 1fr; gap: 16px; }
+    .nf-card { height: 220px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nf-glow { animation: none !important; }
+    .anim-in *, .nf-swap-out, .nf-swap-in, .nf-card.tap { animation: none !important; }
+    .nf-ind, .nf-ind-ghost { transition: none !important; }
+    .nf-ind--exit-right, .nf-ind--enter-left, .nf-ind--exit-left, .nf-ind--enter-right { animation: none !important; }
+  }
